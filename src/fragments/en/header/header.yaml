@@ -17,30 +17,30 @@ nav:
   - title: Learn
     items:
       - title: Featured Products
-        url: "#"
+        url: '#'
         items:
           - title: Analytis
-            url: "#"
+            url: '#'
           - title: Campaign
-            url: "#"
+            url: '#'
           - title: Customer Journey Analytics
-            url: "#"
+            url: '#'
           - title: Data Collection
-            url: "#"
+            url: '#'
           - title: Experience Manager
-            url: "#"
+            url: '#'
           - title: Experience Platform
-            url: "#"
+            url: '#'
           - title: Journey Optimizer
-            url: "#"
+            url: '#'
           - title: Marketo Engage
-            url: "#"
+            url: '#'
           - title: Target
-            url: "#"
+            url: '#'
           - title: Real-Time CDP
-            url: "#"
+            url: '#'
           - title: Workfront
-            url: "#"
+            url: '#'
       - title: Content Types
         items:
           - title: Courses
