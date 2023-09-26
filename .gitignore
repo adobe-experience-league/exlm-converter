@@ -1,0 +1,5 @@
+.env
+.aio
+dist/
+node_modules
+dev.json

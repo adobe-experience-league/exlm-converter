@@ -1,0 +1,29 @@
+name: Deploy Converter Action
+
+on:
+  push:
+    paths:
+      - .github/workflows/deploy-actions.yaml
+      - ./**
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: exlm
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Run npm ci
+      run: npm ci
+    - name: Deploy Converter Action
+      run: ./node_modules/.bin/aio app deploy
+      env:
+        AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
+        AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
