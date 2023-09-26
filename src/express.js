@@ -38,7 +38,6 @@ const handler = (req, res) => {
   });
 };
 
-app.get('/**.html', handler);
-app.get('/**.md', handler);
+app.get('/**', handler);
 // eslint-disable-next-line no-console
 app.listen(port, () => console.log(`Converter listening on port ${port}`));

@@ -51,7 +51,10 @@ const getLastPart = (path) => {
 
 const removeExtension = (path) => {
   const parts = path.split(".");
-  return parts.slice(0, -1).join(".");
+  if (parts.length === 1) return parts[0];
+  else {
+    return parts.slice(0, -1).join(".");
+  }
 }
 
 const lookupId = (path) => {
