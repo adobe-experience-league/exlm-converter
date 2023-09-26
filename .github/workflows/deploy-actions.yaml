@@ -2,9 +2,6 @@ name: Deploy Converter Action
 
 on:
   push:
-    paths:
-      - .github/workflows/deploy-actions.yaml
-      - ./**
     branches:
       - main
 
