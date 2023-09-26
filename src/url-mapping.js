@@ -18,5 +18,9 @@ export const mappings = [
     {
         path: "/docs/data-workbench/using/hidden-test-page",
         id: "rec3qevEC7zbIeJco"
+    },
+    {
+        path: "/docs/integrations-learn/experience-cloud/solution-categories/content-management",
+        id: "recrWO51UB125Pd29"
     }
 ]

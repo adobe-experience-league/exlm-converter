@@ -56,6 +56,7 @@ export const render = async function render(path) {
   if (path.startsWith("/docs")) {
     return renderDoc(path);
   } else {
+    // handle other things that are not docs
     return { error: new Error(`Path not supported: ${path}`) };
   }
 }
