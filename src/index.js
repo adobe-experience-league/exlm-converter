@@ -20,33 +20,20 @@ let aioLogger = Logger("App");
 
 
 const exlClient = new ExlClient();
-
-function addExtensionIfNotExists(str, ext) {
-  if (!str.endsWith(ext)) {
-    return str + ext;
+const renderDoc = async function renderDocs(path) {
+  const id = lookupId(path);
+  if (id) {
+    // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
+    // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
+    // has:  <meta name="id" content="recXh9qG5sL543CUD">
+    // ExL API does not provide a way to lookup by path, so for now, we hard code it.
+    const response = await exlClient.getArticle(id);
+    const md = response.data.FullBody;
+    const html = md2html(md);
+    return { md, html };
+  } else {
+    return { error: new Error(`No ID found for path: ${path}, see the url-mapping file for a list of available paths`) };
   }
-  return str;
-}
-
-const parseDocsPath = (path) => {
-  if (!path.startsWith("/")) {
-    throw new Error("path must start with /");
-  }
-  const [, org, repo, branch, ...rest] = path.split("/");
-  const fileName = rest[rest.length - 1];
-  const folderPath = `/${rest.slice(0, -1).join("/")}`;
-  return {
-    org,
-    repo,
-    branch,
-    fileName,
-    folderPath,
-  };
-};
-
-const getLastPart = (path) => {
-  const parts = path.split("/");
-  return parts[parts.length - 1];
 }
 
 const removeExtension = (path) => {
@@ -66,18 +53,10 @@ const lookupId = (path) => {
 }
 
 export const render = async function render(path) {
-  const id = lookupId(path);
-  if (id) {
-    // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
-    // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
-    // has:  <meta name="id" content="recXh9qG5sL543CUD">
-    // ExL API does not provide a way to lookup by path, so for now, we hard code it.
-    const response = await exlClient.getArticle(id);
-    const md = response.data.FullBody;
-    const html = md2html(md);
-    return { md, html };
+  if (path.startsWith("/docs")) {
+    return renderDoc(path);
   } else {
-    return { error: new Error(`No ID found for path: ${path}, see the url-mapping file for a list of available paths`) };
+    return { error: new Error(`Path not supported: ${path}`) };
   }
 }
 
@@ -88,6 +67,9 @@ export const main = async function main(params) {
   if (!error) {
     return {
       statusCode: 200,
+      headers: {
+        "x-html2md-img-src": "https://experienceleague.adobe.com",
+      },
       body: html,
     };
   }
