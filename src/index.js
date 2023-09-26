@@ -15,6 +15,7 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
+import { mappings } from './url-mapping.js';
 let aioLogger = Logger("App");
 
 
@@ -53,23 +54,34 @@ const removeExtension = (path) => {
   return parts.slice(0, -1).join(".");
 }
 
+const lookupId = (path) => {
+  const noExtension = removeExtension(path);
+  const mapping = mappings.find((mapping) => {
+    return mapping.path.trim() === noExtension.trim();
+  });
+  return mapping?.id;
+}
+
 export const render = async function render(path) {
-  console.log(`path: ${path}`);
-  // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
-  // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
-  // has:  <meta name="id" content="recXh9qG5sL543CUD">
-  // ExL API does not provide a way to lookup by path, so for now, we hard code it.
-  const response = await exlClient.getArticle('rectayDBiYlXPDjbn');
-  const md = response.data.FullBody;
-  const html = md2html(md);
-  return { md, html };
+  const id = lookupId(path);
+  if (id) {
+    // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
+    // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
+    // has:  <meta name="id" content="recXh9qG5sL543CUD">
+    // ExL API does not provide a way to lookup by path, so for now, we hard code it.
+    const response = await exlClient.getArticle(id);
+    const md = response.data.FullBody;
+    const html = md2html(md);
+    return { md, html };
+  } else {
+    return { error: new Error(`No ID found for path: ${path}, see the url-mapping file for a list of available paths`) };
+  }
 }
 
 export const main = async function main(params) {
   aioLogger.info({ params });
   const path = params.__ow_path ? params.__ow_path : "";
   const { html, error } = await render(path, { ...params });
-
   if (!error) {
     return {
       statusCode: 200,
@@ -77,5 +89,5 @@ export const main = async function main(params) {
     };
   }
 
-  return { statusCode: error.code, body: error.message };
+  return { statusCode: 404, body: error.message };
 }
