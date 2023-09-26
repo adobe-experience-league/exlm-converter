@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const EXIT = require('unist-util-visit').EXIT;
-const visit = require('unist-util-visit').visit;
+import {EXIT} from 'unist-util-visit';
+import {visit} from 'unist-util-visit';
 
 export function replace(tree, oldNode, newNode) {
   // $table.parentNode.replaceChild($div, $table);

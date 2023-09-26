@@ -12,9 +12,9 @@
 /* eslint-disable import/no-relative-packages */
 /* eslint-disable no-underscore-dangle */
 
-const Logger = require("@adobe/aio-lib-core-logging");
-const { default: ExlClient } = require("./modules/ExlClient.js");
+import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
+import ExlClient from './modules/ExlClient.js';
 let aioLogger = Logger("App");
 
 

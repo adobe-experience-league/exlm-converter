@@ -21,7 +21,7 @@ export default {
   devtool: 'source-map',
   target: 'node',
   output: {
-    filename: 'main.js',
+    filename: 'main.cjs',
     path: path.resolve(dirname, 'dist'),
     library: {
       type: 'commonjs2',
