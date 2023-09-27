@@ -6,12 +6,26 @@ import {fromHtml} from 'hast-util-from-html'
 import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 import { h } from 'hastscript';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
+import {replace } from '@adobe/helix-html-pipeline/src/utils/hast-utils.js';
 import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
+import { selectAll, select } from 'hast-util-select';
 
-
-
+function tableBlock({content}) {
+  const { hast } = content;
+  selectAll('table', hast).forEach(($table) => {
+    const $newTable = h('table', [
+      h('thead', [
+        h('tr', [
+          h('th', 'Table'),
+        ])
+      ]),
+      ...$table.children
+    ]);
+    replace(hast, $table, $newTable);
+  });
+}
 
 function converter (mdString, nested = false) {
   const convertedHtml = markdownit({
@@ -32,6 +46,7 @@ function converter (mdString, nested = false) {
 
 
   fixSections({ content });
+  tableBlock({content})
   // createPageBlocks({ content });
 
   const hast = h('html', [
