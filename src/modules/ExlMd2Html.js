@@ -12,16 +12,29 @@ import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import { selectAll, select } from 'hast-util-select';
 
+// attempt to make table blocks by adding a heading to each table with value "Table"
+// in hopes that the html pipeline will maintain them as tables
+// per: https://www.hlx.live/developer/block-collection/table
 function tableBlock({content}) {
   const { hast } = content;
   selectAll('table', hast).forEach(($table) => {
+
+    // old header th to td
+    const $tds = selectAll('thead > tr > th', $table).map(($th) => {
+      return h('td', $th.children)
+    });
+
+    const $tbody = select('tbody', $table);
+    const $newTBody = h('tbody', [ h('tr', $tds ), ...$tbody.children]);
+
+
     const $newTable = h('table', [
       h('thead', [
         h('tr', [
           h('th', 'Table'),
         ])
       ]),
-      ...$table.children
+      $newTBody
     ]);
     replace(hast, $table, $newTable);
   });
