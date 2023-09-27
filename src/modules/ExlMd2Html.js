@@ -32,7 +32,7 @@ function converter (mdString, nested = false) {
 
 
   fixSections({ content });
-  createPageBlocks({ content });
+  // createPageBlocks({ content });
 
   const hast = h('html', [
     h('body', [
