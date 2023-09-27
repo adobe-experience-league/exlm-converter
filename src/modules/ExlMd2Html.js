@@ -19,24 +19,10 @@ function tableBlock({content}) {
   const { hast } = content;
   selectAll('table', hast).forEach(($table) => {
 
-    // old header th to td
-    const $tds = selectAll('thead > tr > th', $table).map(($th) => {
-      return h('td', $th.children)
-    });
-
-    const $tbody = select('tbody', $table);
-    const $newTBody = h('tbody', [ h('tr', $tds ), ...$tbody.children]);
-
-
-    const $newTable = h('table', [
-      h('thead', [
-        h('tr', [
-          h('th', 'Table'),
-        ])
-      ]),
-      $newTBody
+    const $section = h('section', [
+      $table
     ]);
-    replace(hast, $table, $newTable);
+    replace(hast, $table, $section);
   });
 }
 
