@@ -22,5 +22,9 @@ export const mappings = [
     {
         path: "/docs/integrations-learn/experience-cloud/solution-categories/content-management",
         id: "recrWO51UB125Pd29"
+    },
+    {
+        path: "/docs/authoring-guide-exl/using/markdown/cheatsheet",
+        id: "recXZZxBo4pkOnx9k",
     }
 ]

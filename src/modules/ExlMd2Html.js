@@ -1,21 +1,23 @@
 import markdownit from 'markdown-it';
 import markdownItAttrs from 'markdown-it-attrs';
 import markdownItAnchor from 'markdown-it-anchor';
-import {afm} from 'adobe-afm-transform';
-import {fromHtml} from 'hast-util-from-html'
+import { afm } from 'adobe-afm-transform';
+import { fromHtml } from 'hast-util-from-html'
 import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 import { h } from 'hastscript';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
-import {replace } from '@adobe/helix-html-pipeline/src/utils/hast-utils.js';
+import { replace } from '@adobe/helix-html-pipeline/src/utils/hast-utils.js';
 import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import { selectAll, select } from 'hast-util-select';
+import jsdom from 'jsdom';
+import createNote from './blocks/create-note.js';
 
 // attempt to make table blocks by adding a heading to each table with value "Table"
 // in hopes that the html pipeline will maintain them as tables
 // per: https://www.hlx.live/developer/block-collection/table
-function tableBlock({content}) {
+function tableBlock({ content }) {
   const { hast } = content;
   selectAll('table', hast).forEach(($table) => {
 
@@ -25,7 +27,7 @@ function tableBlock({content}) {
     });
 
     const $tbody = select('tbody', $table);
-    const $newTBody = h('tbody', [ h('tr', $tds ), ...$tbody.children]);
+    const $newTBody = h('tbody', [h('tr', $tds), ...$tbody.children]);
 
 
     const $newTable = h('table', [
@@ -40,17 +42,17 @@ function tableBlock({content}) {
   });
 }
 
-function converter (mdString, nested = false) {
+function converter(mdString, nested = false) {
   const convertedHtml = markdownit({
     html: true,
     breaks: true,
     typographer: true
   })
-  .use(markdownItAttrs, {allowedAttributes: ['id', 'class']})
-  .use(markdownItAnchor, {level: [1, 2, 3, 4, 5, 6]})
-  .render(mdString);
+    .use(markdownItAttrs, { allowedAttributes: ['id', 'class'] })
+    .use(markdownItAnchor, { level: [1, 2, 3, 4, 5, 6] })
+    .render(mdString);
 
-  const main = fromHtml(convertedHtml, {fragment: true})
+  const main = fromHtml(convertedHtml, { fragment: true })
 
 
   const content = {
@@ -59,7 +61,7 @@ function converter (mdString, nested = false) {
 
 
   fixSections({ content });
-  tableBlock({content})
+  tableBlock({ content })
   // createPageBlocks({ content });
 
   const hast = h('html', [
@@ -74,12 +76,21 @@ function converter (mdString, nested = false) {
   raw(hast);
   rehypeFormat()(hast);
 
-  return toHtml(hast, {
+  const htmlForDomTrasnsformation = toHtml(hast, {
     upperDoctype: true,
   });
 
+  // Custom HTML transformations.
+  const dom = new jsdom.JSDOM(htmlForDomTrasnsformation)
+  const document = dom.window.document;
+
+  // See examples - https://github.com/hlxsites/danaher-ls-aem/blob/main/tools/importer/import.js
+  createNote(document);
+
+  return dom.serialize();
+
 }
 
-export default function md2html (mdString) {
+export default function md2html(mdString) {
   return converter(afm(mdString, 'extension', larg => converter(larg, true)))
 }

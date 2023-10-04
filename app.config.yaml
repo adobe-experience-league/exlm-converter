@@ -1,6 +1,6 @@
 application:
-  hooks:
-    pre-app-build: ./bundle-action.js
+  # hooks:
+  #   pre-app-build: ./bundle-action.js
   runtimeManifest:
     packages:
       main:
