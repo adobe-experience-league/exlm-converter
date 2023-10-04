@@ -12,7 +12,7 @@ export default function createVideo(document) {
         p1.append(img);
 
         const p2 = document.createElement('p');
-        p2.innerHTML = '<a href="' + href + '">' + href + '</a>';
+        p2.innerHTML = `<a href="${href}">${href}</a>`;
 
         div.append(p1);
         div.append(p2);
