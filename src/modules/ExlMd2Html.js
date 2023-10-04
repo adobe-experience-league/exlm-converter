@@ -11,6 +11,8 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import { selectAll, select } from 'hast-util-select';
+import jsdom from 'jsdom';
+import createVideo from './blocks/create-video.js';
 
 // attempt to make table blocks by adding a heading to each table with value "Table"
 // in hopes that the html pipeline will maintain them as tables
@@ -74,10 +76,17 @@ function converter (mdString, nested = false) {
   raw(hast);
   rehypeFormat()(hast);
 
-  return toHtml(hast, {
+  const htmlForDomTrasnsformation =  toHtml(hast, {
     upperDoctype: true,
   });
 
+  // Custom HTML transformations.
+  const dom = new jsdom.JSDOM(htmlForDomTrasnsformation)
+  const document = dom.window.document;
+
+  createVideo(document);
+
+  return dom.serialize();
 }
 
 export default function md2html (mdString) {
