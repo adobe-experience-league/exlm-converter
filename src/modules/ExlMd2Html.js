@@ -76,12 +76,12 @@ function converter(mdString, nested = false) {
   raw(hast);
   rehypeFormat()(hast);
 
-  const htmlForDomTrasnsformation = toHtml(hast, {
+  const html = toHtml(hast, {
     upperDoctype: true,
   });
 
   // Custom HTML transformations.
-  const dom = new jsdom.JSDOM(htmlForDomTrasnsformation)
+  const dom = new jsdom.JSDOM(html)
   const document = dom.window.document;
 
   // See examples - https://github.com/hlxsites/danaher-ls-aem/blob/main/tools/importer/import.js

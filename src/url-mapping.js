@@ -25,6 +25,10 @@ export const mappings = [
     },
     {
         path: "/docs/authoring-guide-exl/using/markdown/cheatsheet",
-        id: "recXZZxBo4pkOnx9k",
+        id: "recXZZxBo4pkOnx9k"
+    },
+    {
+        path: "/docs/workfront/using/adobe-workfront-api/api-general-information/rich-text-field-api",
+        id: "rechyRjUfs7xI4oZT"
     }
 ]
