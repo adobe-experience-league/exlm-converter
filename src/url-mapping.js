@@ -25,4 +25,12 @@ export const mappings = [
     path: '/docs/integrations-learn/experience-cloud/solution-categories/content-management',
     id: 'recrWO51UB125Pd29',
   },
+  {
+    path: '/docs/analytics-learn/tutorials/analysis-workspace/navigating-workspace-projects/annotations-in-analysis-workspace',
+    id: 'recAjPiXNFnQj3jG3',
+  },
+  {
+    path: '/docs/authoring-guide-exl/using/markdown/cheatsheet',
+    id: 'recXZZxBo4pkOnx9k',
+  },
 ];

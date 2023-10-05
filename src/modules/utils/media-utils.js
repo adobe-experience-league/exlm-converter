@@ -83,13 +83,15 @@ const mediaTypes = {
 };
 
 export default function isBinary(contentType) {
-  if (contentType.startsWith('text/') || contentType.startsWith('message/'))
+  if (contentType.startsWith('text/') || contentType.startsWith('message/')) {
     return false;
+  }
   if (
     contentType.startsWith('audio/') ||
     contentType.startsWith('image/') ||
     contentType.startsWith('video/')
-  )
+  ) {
     return true;
+  }
   return mediaTypes[contentType];
 }
