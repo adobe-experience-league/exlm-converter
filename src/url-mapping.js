@@ -24,6 +24,10 @@ export const mappings = [
         id: "recrWO51UB125Pd29"
     },
     {
+        path: "/docs/analytics-learn/tutorials/analysis-workspace/navigating-workspace-projects/annotations-in-analysis-workspace",
+        id: "recAjPiXNFnQj3jG3"
+    },
+    {
         path: "/docs/authoring-guide-exl/using/markdown/cheatsheet",
         id: "recXZZxBo4pkOnx9k"
     },

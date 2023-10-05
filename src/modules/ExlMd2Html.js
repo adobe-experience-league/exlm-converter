@@ -12,8 +12,8 @@ import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import { selectAll, select } from 'hast-util-select';
 import jsdom from 'jsdom';
+import createVideo from './blocks/create-video.js';
 import createNote from './blocks/create-note.js';
-
 // attempt to make table blocks by adding a heading to each table with value "Table"
 // in hopes that the html pipeline will maintain them as tables
 // per: https://www.hlx.live/developer/block-collection/table
@@ -76,7 +76,7 @@ function converter(mdString, nested = false) {
   raw(hast);
   rehypeFormat()(hast);
 
-  const html = toHtml(hast, {
+  const html =  toHtml(hast, {
     upperDoctype: true,
   });
 
@@ -84,11 +84,10 @@ function converter(mdString, nested = false) {
   const dom = new jsdom.JSDOM(html)
   const document = dom.window.document;
 
-  // See examples - https://github.com/hlxsites/danaher-ls-aem/blob/main/tools/importer/import.js
+  createVideo(document);
   createNote(document);
-
+   
   return dom.serialize();
-
 }
 
 export default function md2html(mdString) {
