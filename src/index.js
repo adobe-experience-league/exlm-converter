@@ -9,15 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* eslint-disable import/no-relative-packages */
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable */
 
 import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import { mappings } from './url-mapping.js';
-let aioLogger = Logger("App");
 
+const aioLogger = Logger('App');
 
 const exlClient = new ExlClient();
 const renderDoc = async function renderDocs(path) {
@@ -31,49 +30,50 @@ const renderDoc = async function renderDocs(path) {
     const md = response.data.FullBody;
     const html = md2html(md);
     return { md, html };
-  } else {
-    return { error: new Error(`No ID found for path: ${path}, see the url-mapping file for a list of available paths`) };
   }
-}
+  return {
+    error: new Error(
+      `No ID found for path: ${path}, see the url-mapping file for a list of available paths`,
+    ),
+  };
+};
 
 const removeExtension = (path) => {
-  const parts = path.split(".");
+  const parts = path.split('.');
   if (parts.length === 1) return parts[0];
-  else {
-    return parts.slice(0, -1).join(".");
-  }
-}
+
+  return parts.slice(0, -1).join('.');
+};
 
 const lookupId = (path) => {
   const noExtension = removeExtension(path);
-  const mapping = mappings.find((mapping) => {
-    return mapping.path.trim() === noExtension.trim();
-  });
+  const mapping = mappings.find(
+    (mapping) => mapping.path.trim() === noExtension.trim(),
+  );
   return mapping?.id;
-}
+};
 
 export const render = async function render(path) {
-  if (path.startsWith("/docs")) {
+  if (path.startsWith('/docs')) {
     return renderDoc(path);
-  } else {
-    // handle other things that are not docs
-    return { error: new Error(`Path not supported: ${path}`) };
   }
-}
+  // handle other things that are not docs
+  return { error: new Error(`Path not supported: ${path}`) };
+};
 
 export const main = async function main(params) {
   aioLogger.info({ params });
-  const path = params.__ow_path ? params.__ow_path : "";
+  const path = params.__ow_path ? params.__ow_path : '';
   const { html, error } = await render(path, { ...params });
   if (!error) {
     return {
       statusCode: 200,
       headers: {
-        "x-html2md-img-src": "https://experienceleague.adobe.com",
+        'x-html2md-img-src': 'https://experienceleague.adobe.com',
       },
       body: html,
     };
   }
 
   return { statusCode: 404, body: error.message };
-}
+};

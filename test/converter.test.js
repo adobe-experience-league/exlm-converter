@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+/* eslint-disable */
 /* eslint-env mocha */
 
 import assert from 'assert';
@@ -18,17 +19,25 @@ import nock from 'nock';
 import { render } from '../src/index.js';
 
 async function test(spec) {
-  const html = await readFile(resolve(__testdir, 'fixtures', `${spec}.html`), 'utf-8');
-  nock('http://www.example.com')
-    .get(`/${spec}.html`)
-    .reply(200, html);
-  const expected = await readFile(resolve(__testdir, 'fixtures', `${spec}-semantic.html`), 'utf-8');
-  const actual = await render(`/${spec}.html`, {}, {
-    env: {
-      publicURL: 'https://stage.lifesciences.danaher.com/',
-      aemURL: 'http://www.example.com',
+  const html = await readFile(
+    resolve(__testdir, 'fixtures', `${spec}.html`),
+    'utf-8',
+  );
+  nock('http://www.example.com').get(`/${spec}.html`).reply(200, html);
+  const expected = await readFile(
+    resolve(__testdir, 'fixtures', `${spec}-semantic.html`),
+    'utf-8',
+  );
+  const actual = await render(
+    `/${spec}.html`,
+    {},
+    {
+      env: {
+        publicURL: 'https://stage.lifesciences.danaher.com/',
+        aemURL: 'http://www.example.com',
+      },
     },
-  });
+  );
   assert.strictEqual(actual.html.trim(), expected.trim());
 }
 
@@ -49,7 +58,10 @@ describe('Converter Tests', () => {
     await test('footer');
   });
   it('convert the header html', async () => {
-    const json = await readFile(resolve(__testdir, 'fixtures', 'megamenu_items_us.json'), 'utf-8');
+    const json = await readFile(
+      resolve(__testdir, 'fixtures', 'megamenu_items_us.json'),
+      'utf-8',
+    );
     nock('https://stage.lifesciences.danaher.com')
       .get('/content/dam/danaher/system/navigation/megamenu_items_us.json')
       .reply(200, json);

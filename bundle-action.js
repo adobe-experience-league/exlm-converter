@@ -11,22 +11,21 @@
  * governing permissions and limitations under the License.
  */
 
-// 
+/* eslint-disable */
 
-import * as url from "node:url";
-import * as path from "node:path";
-import { fork } from "node:child_process";
-import { existsSync } from "node:fs";
-import { readdir } from "node:fs/promises";
+import * as url from 'node:url';
+import * as path from 'node:path';
+import { fork } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
 // read all directories, for those that have a webpack executable, run it with --mode production
-const webpackArgs = ["--mode", "production"];
-const dirname = url.fileURLToPath(new URL(".", import.meta.url));
+const webpackArgs = ['--mode', 'production'];
+const dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const buildAction = async (dir) => {
   {
     const childDir = path.resolve(dirname, dir);
-    const webpackScript = path.resolve(childDir, "node_modules/.bin/webpack");
+    const webpackScript = path.resolve(childDir, 'node_modules/.bin/webpack');
     if (existsSync(webpackScript)) {
       return new Promise((resolve, reject) => {
         // run the webpack script in the childDir
@@ -36,8 +35,8 @@ const buildAction = async (dir) => {
           cwd: childDir,
           silent: false,
         });
-        webpackProcess.on("error", (err) => reject(err));
-        webpackProcess.on("exit", (code) => {
+        webpackProcess.on('error', (err) => reject(err));
+        webpackProcess.on('exit', (code) => {
           if (code > 0) {
             reject(code);
           } else {
@@ -52,7 +51,7 @@ const buildAction = async (dir) => {
     }
     return Promise.resolve();
   }
-}
+};
 
 // build curren
-buildAction("")
+buildAction('');
