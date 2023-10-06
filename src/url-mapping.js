@@ -31,4 +31,8 @@ export default [
     path: '/docs/authoring-guide-exl/using/markdown/cheatsheet',
     id: 'recXZZxBo4pkOnx9k',
   },
+  {
+    path: '/docs/authoring-guide-exl/using/markdown/syntax-style-guide',
+    id: 'rec9WkO4eYWupFTrM',
+   }
 ];
