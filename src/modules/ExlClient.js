@@ -1,5 +1,4 @@
-
-/** 
+/**
  * @typedef {object} ExlArticle
  * @property {string} ID
  * @property {string} URL
@@ -28,55 +27,55 @@
  */
 
 /**
-* @typedef {Object} ExlArticleResponse
-* @property {ExlArticle} data 
-* @property {string|null} error
-* @property {Array} links
-* @property {Number} status
-*/
-
-
+ * @typedef {Object} ExlArticleResponse
+ * @property {ExlArticle} data
+ * @property {string|null} error
+ * @property {Array} links
+ * @property {Number} status
+ */
 
 export default class ExlClient {
-    constructor({
-        domain = "https://experienceleague.adobe.com"
-    } = {}) {
+  constructor({ domain = 'https://experienceleague.adobe.com' } = {}) {
+    this.domain = domain;
+  }
 
-        this.domain = domain;
-    }
+  /**
+   * Get Article By ID
+   * @param {string} id
+   * @param {string} lang
+   * @returns {ExlArticleResponse}
+   */
+  async getArticle(id, lang = 'en') {
+    const path = `api/articles/${id}?lang=${lang}`;
+    // eslint-disable-next-line no-underscore-dangle
+    const response = await this._fetch(path);
 
-    /**
-     * Get Article By ID
-     * @param {string} id 
-     * @param {string} lang 
-     * @returns {ExlArticleResponse}
-     */
-    async getArticle(id, lang = 'en') {
-        const path = `api/articles/${id}?lang=${lang}`;
-        const response = await this._fetch(path);
+    if (response.error) {
+      throw new Error(response.error);
+    } else {
+      return this.removeSpacesFromKeysRecursively(response);
+    }
+  }
 
-        if (response.error) {
-            throw new Error(response.error);
-        } else {
-            return this.removeSpacesFromKeysRecursively(response)
-        }
-    }
-    async _fetch(path) {
-        const url = new URL(path, this.domain);
-        const response = await fetch(url);
-        return await response.json();
-    }
+  // eslint-disable-next-line no-underscore-dangle
+  async _fetch(path) {
+    const url = new URL(path, this.domain);
+    const response = await fetch(url);
+    // eslint-disable-next-line no-return-await
+    return await response.json();
+  }
 
-    removeSpacesFromKeysRecursively(obj) {
-        for (const key in obj) {
-            if (key.includes(' ')) {
-                const newKey = key.replace(/ /g, '');
-                obj[newKey] = obj[key];
-                delete obj[key];
-            } else if (typeof obj[key] === 'object') {
-                this.removeSpacesFromKeysRecursively(obj[key]);
-            }
-          }
-          return obj;
+  removeSpacesFromKeysRecursively(obj) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in obj) {
+      if (key.includes(' ')) {
+        const newKey = key.replace(/ /g, '');
+        obj[newKey] = obj[key];
+        delete obj[key];
+      } else if (typeof obj[key] === 'object') {
+        this.removeSpacesFromKeysRecursively(obj[key]);
+      }
     }
+    return obj;
+  }
 }
