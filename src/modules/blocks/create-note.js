@@ -12,9 +12,13 @@ export default function createNote(document) {
     const cells = [[`note (${variation})`]];
 
     // Row for each divs inside a note
-    Array.from(el.children).forEach((innerDiv) => {
+    Array.from(el.children).forEach((innerDiv, i) => {
       const div = document.createElement('div');
-      div.innerHTML = `<p>${innerDiv.textContent}</p>`;
+      if (i === 0) {
+        div.innerHTML = `<p>:${variation}: ${innerDiv.textContent}</p>`; // Add icon for note heading
+      } else {
+        div.innerHTML = `<p>${innerDiv.textContent}</p>`;
+      }
       cells.push([div]);
     });
     const block = WebImporter.DOMUtils.createTable(cells, document);
