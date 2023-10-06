@@ -28,7 +28,6 @@ import { h } from 'hastscript';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 
 export default function md2html(md) {
-
   // note: we could use the entire unified chain, but it would need to be async -
   // which would require too much of a change
   const mdast = unified()
@@ -46,17 +45,14 @@ export default function md2html(md) {
   });
 
   const content = {
-    hast: main
+    hast: main,
   };
 
   fixSections({ content });
   createPageBlocks({ content });
 
   const hast = h('html', [
-    h('body', [
-      h('header', []),
-      h('main', content.hast),
-      h('footer', [])]),
+    h('body', [h('header', []), h('main', content.hast), h('footer', [])]),
   ]);
 
   raw(hast);
