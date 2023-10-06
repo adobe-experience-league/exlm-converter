@@ -4,12 +4,14 @@
   "description": "",
   "type": "module",
   "scripts": {
+    "lint:js": "eslint .",
     "serve": "npm-run-all build --parallel serve:*",
     "serve:build": "webpack ./src/express.js --watch",
     "serve:server": "nodemon --inspect ./dist/main.cjs --watch ./dist",
     "build": "rimraf dist/ && webpack --mode production",
     "build:dev": "rimraf dist/ && webpack",
-    "test": "instant-mocha"
+    "test": "instant-mocha",
+    "prepare": "husky install"
   },
   "mocha": {
     "spec": "test/**/*.test.js",
@@ -43,17 +45,31 @@
     "unist-util-visit": "5.0.0"
   },
   "devDependencies": {
+    "@adobe/aio-cli": "^9.3.0",
+    "@babel/core": "7.21.0",
+    "@babel/eslint-parser": "7.19.1",
     "dotenv": "^16.3.1",
+    "eslint": "^8.50.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.27.5",
     "express": "^4.18.2",
+    "husky": "^8.0.3",
     "instant-mocha": "^1.5.2",
+    "lint-staged": "^14.0.1",
     "nock": "^13.3.3",
     "nodemon": "^3.0.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "^3.0.3",
     "rimraf": "^3.0.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.0.1",
     "webpack-merge": "^5.9.0",
-    "yaml-loader": "^0.8.0",
-    "@adobe/aio-cli": "^9.3.0"
+    "yaml-loader": "^0.8.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint",
+      "prettier --write"
+    ]
   }
 }

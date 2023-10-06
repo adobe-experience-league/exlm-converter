@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import express from "express";
-import { render } from "./index.js";
+import express from 'express';
+import { render } from './index.js';
 
 const app = express();
 const port = 3030;
