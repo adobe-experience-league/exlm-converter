@@ -13,6 +13,7 @@ import { toHtml } from 'hast-util-to-html';
 import { selectAll, select } from 'hast-util-select';
 import jsdom from 'jsdom';
 import createVideo from './blocks/create-video.js';
+import createBadge from './blocks/create-badge.js';
 
 // attempt to make table blocks by adding a heading to each table with value "Table"
 // in hopes that the html pipeline will maintain them as tables
@@ -85,6 +86,7 @@ function converter (mdString, nested = false) {
   const document = dom.window.document;
 
   createVideo(document);
+  createBadge(document);
 
   return dom.serialize();
 }
