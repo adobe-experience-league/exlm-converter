@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export const mappings = [
+export default [
   {
     path: '/docs/workfront/using/adobe-workfront-api/api-general-information/rich-text-field-api',
     id: 'rechyRjUfs7xI4oZT',
