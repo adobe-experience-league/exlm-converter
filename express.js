@@ -9,16 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import express from 'express';
-import { render } from './index.js';
+import { render } from './src/index.js';
 
 const app = express();
 const port = 3030;
 
 const handler = (req, res) => {
-  // eslint-disable-next-line prefer-const
-  let { path, query } = req;
+  const { path, query } = req;
   const params = {
     ...query,
   };
@@ -39,5 +37,4 @@ const handler = (req, res) => {
 };
 
 app.get('/**', handler);
-// eslint-disable-next-line no-console
 app.listen(port, () => console.log(`Converter listening on port ${port}`));
