@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /**
  * @typedef {object} ExlArticle
  * @property {string} ID
@@ -49,6 +47,7 @@ export default class ExlClient {
    */
   async getArticle(id, lang = 'en') {
     const path = `api/articles/${id}?lang=${lang}`;
+    // eslint-disable-next-line no-underscore-dangle
     const response = await this._fetch(path);
 
     if (response.error) {
@@ -58,13 +57,16 @@ export default class ExlClient {
     }
   }
 
+  // eslint-disable-next-line no-underscore-dangle
   async _fetch(path) {
     const url = new URL(path, this.domain);
     const response = await fetch(url);
+    // eslint-disable-next-line no-return-await
     return await response.json();
   }
 
   removeSpacesFromKeysRecursively(obj) {
+    // eslint-disable-next-line no-restricted-syntax
     for (const key in obj) {
       if (key.includes(' ')) {
         const newKey = key.replace(/ /g, '');

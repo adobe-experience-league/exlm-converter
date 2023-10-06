@@ -1,11 +1,8 @@
-/* eslint-disable */
-
 import markdownit from 'markdown-it';
 import markdownItAttrs from 'markdown-it-attrs';
 import markdownItAnchor from 'markdown-it-anchor';
 import { afm } from 'adobe-afm-transform';
 import { fromHtml } from 'hast-util-from-html';
-import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 import { h } from 'hastscript';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 import { replace } from '@adobe/helix-html-pipeline/src/utils/hast-utils.js';
@@ -38,7 +35,7 @@ function tableBlock({ content }) {
   });
 }
 
-function converter(mdString, nested = false) {
+function converter(mdString) {
   const convertedHtml = markdownit({
     html: true,
     breaks: true,
@@ -75,7 +72,7 @@ function converter(mdString, nested = false) {
 
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
-  const document = dom.window.document;
+  const { document } = dom.window;
 
   createVideo(document);
 

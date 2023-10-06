@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* eslint-disable */
 /* eslint-env mocha */
 
 import assert from 'assert';
@@ -20,11 +19,13 @@ import { render } from '../src/index.js';
 
 async function test(spec) {
   const html = await readFile(
+    // eslint-disable-next-line no-undef
     resolve(__testdir, 'fixtures', `${spec}.html`),
     'utf-8',
   );
   nock('http://www.example.com').get(`/${spec}.html`).reply(200, html);
   const expected = await readFile(
+    // eslint-disable-next-line no-undef
     resolve(__testdir, 'fixtures', `${spec}-semantic.html`),
     'utf-8',
   );
@@ -59,6 +60,7 @@ describe('Converter Tests', () => {
   });
   it('convert the header html', async () => {
     const json = await readFile(
+      // eslint-disable-next-line no-undef
       resolve(__testdir, 'fixtures', 'megamenu_items_us.json'),
       'utf-8',
     );

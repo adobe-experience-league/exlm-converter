@@ -10,10 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable */
-
-import { EXIT } from 'unist-util-visit';
-import { visit } from 'unist-util-visit';
+import { EXIT, visit } from 'unist-util-visit';
 
 export function replace(tree, oldNode, newNode) {
   // $table.parentNode.replaceChild($div, $table);

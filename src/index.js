@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* eslint-disable */
 
 import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
@@ -19,6 +18,22 @@ import { mappings } from './url-mapping.js';
 const aioLogger = Logger('App');
 
 const exlClient = new ExlClient();
+
+const removeExtension = (path) => {
+  const parts = path.split('.');
+  if (parts.length === 1) return parts[0];
+
+  return parts.slice(0, -1).join('.');
+};
+
+const lookupId = (path) => {
+  const noExtension = removeExtension(path);
+  const mapping = mappings.find(
+    (map) => map.path.trim() === noExtension.trim(),
+  );
+  return mapping?.id;
+};
+
 const renderDoc = async function renderDocs(path) {
   const id = lookupId(path);
   if (id) {
@@ -38,21 +53,6 @@ const renderDoc = async function renderDocs(path) {
   };
 };
 
-const removeExtension = (path) => {
-  const parts = path.split('.');
-  if (parts.length === 1) return parts[0];
-
-  return parts.slice(0, -1).join('.');
-};
-
-const lookupId = (path) => {
-  const noExtension = removeExtension(path);
-  const mapping = mappings.find(
-    (mapping) => mapping.path.trim() === noExtension.trim(),
-  );
-  return mapping?.id;
-};
-
 export const render = async function render(path) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
@@ -63,6 +63,7 @@ export const render = async function render(path) {
 
 export const main = async function main(params) {
   aioLogger.info({ params });
+  /* eslint-disable-next-line no-underscore-dangle */
   const path = params.__ow_path ? params.__ow_path : '';
   const { html, error } = await render(path, { ...params });
   if (!error) {

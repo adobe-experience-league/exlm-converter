@@ -11,8 +11,6 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable */
-
 import * as url from 'node:url';
 import * as path from 'node:path';
 import { fork } from 'node:child_process';
@@ -23,34 +21,32 @@ const webpackArgs = ['--mode', 'production'];
 const dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const buildAction = async (dir) => {
-  {
-    const childDir = path.resolve(dirname, dir);
-    const webpackScript = path.resolve(childDir, 'node_modules/.bin/webpack');
-    if (existsSync(webpackScript)) {
-      return new Promise((resolve, reject) => {
-        // run the webpack script in the childDir
-        // eslint-disable-next-line no-console
-        console.log(`Bundling ${dir} ... `);
-        const webpackProcess = fork(webpackScript, webpackArgs, {
-          cwd: childDir,
-          silent: false,
-        });
-        webpackProcess.on('error', (err) => reject(err));
-        webpackProcess.on('exit', (code) => {
-          if (code > 0) {
-            reject(code);
-          } else {
-            resolve();
-          }
-        });
-      }).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log(`Failed bundling ${dir.name}.`);
-        throw err;
+  const childDir = path.resolve(dirname, dir);
+  const webpackScript = path.resolve(childDir, 'node_modules/.bin/webpack');
+  if (existsSync(webpackScript)) {
+    return new Promise((resolve, reject) => {
+      // run the webpack script in the childDir
+      // eslint-disable-next-line no-console
+      console.log(`Bundling ${dir} ... `);
+      const webpackProcess = fork(webpackScript, webpackArgs, {
+        cwd: childDir,
+        silent: false,
       });
-    }
-    return Promise.resolve();
+      webpackProcess.on('error', (err) => reject(err));
+      webpackProcess.on('exit', (code) => {
+        if (code > 0) {
+          reject(code);
+        } else {
+          resolve();
+        }
+      });
+    }).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log(`Failed bundling ${dir.name}.`);
+      throw err;
+    });
   }
+  return Promise.resolve();
 };
 
 // build curren
