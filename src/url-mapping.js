@@ -33,7 +33,7 @@ export const mappings = [
     id: 'recXZZxBo4pkOnx9k',
   },
   {
-    path: "/docs/authoring-guide-exl/using/markdown/syntax-style-guide",
-    id: "rec9WkO4eYWupFTrM"
+    path: '/docs/authoring-guide-exl/using/markdown/syntax-style-guide',
+    id: 'rec9WkO4eYWupFTrM',
    }
 ];
