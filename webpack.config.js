@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import * as url from "node:url";
-import path from 'path'
-import webpack from 'webpack'
-const dirname = url.fileURLToPath(new URL(".", import.meta.url));
+import * as url from 'node:url';
+import path from 'path';
+import webpack from 'webpack';
 
+const dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 export default {
   mode: 'development',
