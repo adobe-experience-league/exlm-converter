@@ -6,6 +6,7 @@ const iconMapping = {
   warning: 'warning',
   caution: 'warning',
   error: 'warning',
+  success: 'check',
 };
 
 export default function createNote(document) {
