@@ -1,4 +1,4 @@
-import { mappings } from './url-mapping.js';
+import mappings from './url-mapping.js';
 
 const previewPath = async (
   path,
@@ -8,7 +8,6 @@ const previewPath = async (
     method: 'POST',
   });
   const json = await response.json();
-  // eslint-disable-next-line no-console
   console.log(`published: ${json.preview.url}`);
 };
 

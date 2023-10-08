@@ -47,8 +47,7 @@ export default class ExlClient {
    */
   async getArticle(id, lang = 'en') {
     const path = `api/articles/${id}?lang=${lang}`;
-    // eslint-disable-next-line no-underscore-dangle
-    const response = await this._fetch(path);
+    const response = await this.doFetch(path);
 
     if (response.error) {
       throw new Error(response.error);
@@ -57,17 +56,15 @@ export default class ExlClient {
     }
   }
 
-  // eslint-disable-next-line no-underscore-dangle
-  async _fetch(path) {
+  async doFetch(path) {
     const url = new URL(path, this.domain);
     const response = await fetch(url);
-    // eslint-disable-next-line no-return-await
-    return await response.json();
+    return response.json();
   }
 
   removeSpacesFromKeysRecursively(obj) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key in obj) {
+    if (!obj) return obj;
+    Object.entries(obj).forEach(([key]) => {
       if (key.includes(' ')) {
         const newKey = key.replace(/ /g, '');
         obj[newKey] = obj[key];
@@ -75,7 +72,7 @@ export default class ExlClient {
       } else if (typeof obj[key] === 'object') {
         this.removeSpacesFromKeysRecursively(obj[key]);
       }
-    }
+    });
     return obj;
   }
 }

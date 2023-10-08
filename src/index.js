@@ -13,7 +13,7 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
-import { mappings } from './url-mapping.js';
+import mappings from './url-mapping.js';
 
 const aioLogger = Logger('App');
 

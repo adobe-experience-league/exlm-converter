@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export const mappings = [
+export default [
   {
     path: '/docs/workfront/using/adobe-workfront-api/api-general-information/rich-text-field-api',
     id: 'rechyRjUfs7xI4oZT',
@@ -31,5 +30,9 @@ export const mappings = [
   {
     path: '/docs/authoring-guide-exl/using/markdown/cheatsheet',
     id: 'recXZZxBo4pkOnx9k',
+  },
+  {
+    path: '/docs/authoring-guide-exl/using/markdown/syntax-style-guide',
+    id: 'rec9WkO4eYWupFTrM',
   },
 ];

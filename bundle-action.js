@@ -26,7 +26,6 @@ const buildAction = async (dir) => {
   if (existsSync(webpackScript)) {
     return new Promise((resolve, reject) => {
       // run the webpack script in the childDir
-      // eslint-disable-next-line no-console
       console.log(`Bundling ${dir} ... `);
       const webpackProcess = fork(webpackScript, webpackArgs, {
         cwd: childDir,
@@ -41,7 +40,6 @@ const buildAction = async (dir) => {
         }
       });
     }).catch((err) => {
-      // eslint-disable-next-line no-console
       console.log(`Failed bundling ${dir.name}.`);
       throw err;
     });
