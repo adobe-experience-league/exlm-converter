@@ -22,13 +22,13 @@ export default function createBadge(document) {
       const variant = spBadge.getAttribute('variant');
       const title = spBadge.getAttribute('title');
 
-      let cells = [[`Badge md (${variant})`], [div1]];
+      let cells = [[`Badge (${variant})`], [div1]];
 
       if (title !== null) {
         p2.textContent = title;
         div2.append(p2);
 
-        cells = [[`Badge md (${variant})`], [div1], [div2]];
+        cells = [[`Badge (${variant})`], [div1], [div2]];
       }
 
       const block = WebImporter.DOMUtils.createTable(cells, document);
@@ -46,13 +46,13 @@ export default function createBadge(document) {
       const variant = spBadge.getAttribute('variant');
       const title = spBadge.getAttribute('title');
 
-      let cells = [[`Badge md (${variant})`], [div1]];
+      let cells = [[`Badge (${variant})`], [div1]];
 
       if (title !== null) {
         p2.textContent = title;
         div2.append(p2);
 
-        cells = [[`Badge md (${variant})`], [div1], [div2]];
+        cells = [[`Badge (${variant})`], [div1], [div2]];
       }
 
       const block = WebImporter.DOMUtils.createTable(cells, document);
