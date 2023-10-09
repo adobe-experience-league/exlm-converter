@@ -24,7 +24,7 @@ export default function createBadge(document) {
         const title = spBadge.getAttribute('title');
 
         let cells = [
-            ["Badge md" + " (" + variant + ")"],
+            ["Badge" + " (" + variant + ")"],
             [div1]
         ];
 
@@ -34,7 +34,7 @@ export default function createBadge(document) {
             div2.append(p2);
 
             cells = [
-                ["Badge md" + " (" + variant + ")"],
+                ["Badge" + " (" + variant + ")"],
                 [div1],
                 [div2]
             ];
@@ -55,7 +55,7 @@ export default function createBadge(document) {
         const title = spBadge.getAttribute('title');
         
         let cells = [
-            ["Badge md" + " (" + variant + ")"],
+            ["Badge" + " (" + variant + ")"],
             [div1]
         ];
 
@@ -65,7 +65,7 @@ export default function createBadge(document) {
             div2.append(p2);
 
             cells = [
-                ["Badge md" + " (" + variant + ")"],
+                ["Badge" + " (" + variant + ")"],
                 [div1],
                 [div2]
             ];
