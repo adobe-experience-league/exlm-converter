@@ -14,6 +14,7 @@ import jsdom from 'jsdom';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
+import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 
 // attempt to make table blocks by adding a heading to each table with value "Table"
@@ -80,6 +81,7 @@ function converter(mdString) {
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
+  createNote(document);
   createTabs(document);
 
   return dom.serialize();
