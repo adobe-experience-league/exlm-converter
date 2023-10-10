@@ -73,40 +73,26 @@ export const createSections = (document) => {
   if (!main) return;
   const sections = [];
   let currentSection = [];
-  let headingLevel = 1;
 
-  const addToCurrentSection = (element) => {
-    currentSection.push(element);
-  };
-
-  const addNewSection = (section) => {
-    sections.push([...section]);
-    currentSection = [];
+  const addToCurrentSection = (element, commit, isLast) => {
+    if (commit) {
+      if (currentSection.length) sections.push([...currentSection]);
+      currentSection = [element];
+    } else if (isLast) {
+      currentSection.push(element);
+      sections.push([...currentSection]);
+    } else {
+      currentSection.push(element);
+    }
   };
 
   Array.from(main.children).forEach((child) => {
     const childClone = child.cloneNode(true); // clone to avoid issues
-    const currentLevel = getHeadingLevel(childClone); // get current child's heading level, or -1 of not a header
+    const isHeading = getHeadingLevel(childClone) > -1; // get current child's heading level, or -1 of not a header
 
-    if (currentLevel === -1) {
-      // not a heading el, add it to current section
-      addToCurrentSection(childClone);
-    } else if (currentLevel > headingLevel) {
-      // heading level is greater than current heading level, add to current section
-      addToCurrentSection(childClone);
-      headingLevel = currentLevel;
-    } else {
-      // heading level is less than or equal to current heading level, this marks the start of a new section
-      addNewSection([...currentSection]);
-      addToCurrentSection(childClone); // start the section with the new node
-      headingLevel = currentLevel;
-    }
-
-    // reached the end, push the current, and last, section
-    if (child === main.lastChild) {
-      sections.push([...currentSection]);
-    }
-
+    // is last
+    const isLast = child === main.lastChild;
+    addToCurrentSection(childClone, isHeading, isLast);
     child.remove(); // remove the child from the DOM
   });
 
@@ -116,6 +102,7 @@ export const createSections = (document) => {
 
   sections.forEach((section) => {
     const $div = div(document);
+    // if array, oush all children
     section.forEach((child) => {
       $div.appendChild(child);
     });
