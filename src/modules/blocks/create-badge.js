@@ -1,4 +1,4 @@
-import * as WebImporter from '@adobe/helix-importer';
+import { replaceElement, toBlock } from '../utils/dom-utils.js';
 
 export default function createBadge(document) {
   const BadgeElements = Array.from(
@@ -22,16 +22,16 @@ export default function createBadge(document) {
       const variant = spBadge.getAttribute('variant');
       const title = spBadge.getAttribute('title');
 
-      let cells = [[`Badge (${variant})`], [div1]];
+      let cells = [[div1]];
 
       if (title !== null) {
         p2.textContent = title;
         div2.append(p2);
 
-        cells = [[`Badge (${variant})`], [div1], [div2]];
+        cells = [[div1], [div2]];
       }
 
-      const block = WebImporter.DOMUtils.createTable(cells, document);
+      const block = toBlock(`Badge ${variant}`, cells, document);
       element.parentNode.parentNode.parentNode.replaceChild(
         block,
         element.parentNode.parentNode,
@@ -46,17 +46,17 @@ export default function createBadge(document) {
       const variant = spBadge.getAttribute('variant');
       const title = spBadge.getAttribute('title');
 
-      let cells = [[`Badge (${variant})`], [div1]];
+      let cells = [[div1]];
 
       if (title !== null) {
         p2.textContent = title;
         div2.append(p2);
 
-        cells = [[`Badge (${variant})`], [div1], [div2]];
+        cells = [[div1], [div2]];
       }
 
-      const block = WebImporter.DOMUtils.createTable(cells, document);
-      element.parentNode.replaceChild(block, element);
+      const block = toBlock(`Badge (${variant})`, cells, document);
+      replaceElement(element, block);
     }
   });
 }
