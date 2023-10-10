@@ -35,4 +35,20 @@ export default [
     path: '/docs/authoring-guide-exl/using/markdown/syntax-style-guide',
     id: 'rec9WkO4eYWupFTrM',
   },
+  {
+    path: "/docs/integrations-learn/experience-cloud/integrations-between-applications/acrobat-sign/acrobat-sign-experience-manager",
+    id: "rec8kVXIkl6bf1Vl0"
+  },
+  {
+    path: "/docs/integrations-learn/experience-cloud/integrations-between-applications/experience-manager/workfront-creative-cloud",
+    id: "recriI7ggpfPIdQWg"
+  },
+  {
+    path: "/docs/experience-platform/tags/term-updates",
+    id: "rechzX4XMu9NbvH0P"
+  },
+  {
+    path: "/docs/experience-platform/collection/visitor-identification/visitor-identification",
+    id: "recU6P6MFEqCjHh0R"
+  }
 ];
