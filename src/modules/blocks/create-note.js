@@ -21,15 +21,19 @@ export default function createNote(document) {
     const cells = [[`note (${variation})`]];
     const svgName = iconMapping[variation] ? iconMapping[variation] : 'info'; // Make default icon - info
 
-    // Row for each divs inside a note
     Array.from(el.children).forEach((innerDiv, i) => {
-      const div = document.createElement('div');
       if (i === 0) {
+        const div = document.createElement('div');
         div.innerHTML = `<p>:${svgName}: ${innerDiv.textContent}</p>`; // Add icon for note heading
+        cells.push([div]);
       } else {
-        div.innerHTML = `<p>${innerDiv.textContent}</p>`;
+        // Add rows for multiple paragraphs
+        Array.from(innerDiv.children).forEach((innerP) => {
+          const div = document.createElement('div');
+          div.innerHTML = `<p>${innerP.textContent}</p>`;
+          cells.push([div]);
+        });
       }
-      cells.push([div]);
     });
     const block = WebImporter.DOMUtils.createTable(cells, document);
     el.parentNode.replaceChild(block, el);
