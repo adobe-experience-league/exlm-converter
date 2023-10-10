@@ -4,19 +4,20 @@ import markdownItAnchor from 'markdown-it-anchor';
 import { afm } from 'adobe-afm-transform';
 import { fromHtml } from 'hast-util-from-html';
 import { h } from 'hastscript';
-import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
+import prettier from 'prettier';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
+import { createSections } from './utils/dom-utils.js';
 
-function converter(mdString) {
+async function converter(mdString) {
   const convertedHtml = markdownit({
     html: true,
     breaks: true,
@@ -32,15 +33,8 @@ function converter(mdString) {
     hast: main,
   };
 
-  fixSections({ content });
-  // createPageBlocks({ content });
-
   const hast = h('html', [
-    h('body', [
-      h('header', []),
-      h('main', [h('div', content.hast)]),
-      h('footer', []),
-    ]),
+    h('body', [h('header', []), h('main', [content.hast]), h('footer', [])]),
   ]);
 
   raw(hast);
@@ -53,7 +47,7 @@ function converter(mdString) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-
+  createSections(document);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
@@ -61,9 +55,9 @@ function converter(mdString) {
   createTabs(document);
   createTables(document);
 
-  return dom.serialize();
+  return prettier.format(dom.serialize(), { parser: 'html' });
 }
 
-export default function md2html(mdString) {
-  return converter(afm(mdString, 'extension', (larg) => converter(larg, true)));
+export default async function md2html(mdString) {
+  return converter(afm(mdString, 'extension'));
 }
