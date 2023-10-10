@@ -15,7 +15,7 @@ import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
-import { createSections } from './utils/dom-utils.js';
+// import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 
 async function converter(mdString) {
@@ -35,7 +35,11 @@ async function converter(mdString) {
   };
 
   const hast = h('html', [
-    h('body', [h('header', []), h('main', [content.hast]), h('footer', [])]),
+    h('body', [
+      h('header', []),
+      h('main', [h('div', content.hast)]),
+      h('footer', []),
+    ]),
   ]);
 
   raw(hast);
@@ -48,7 +52,7 @@ async function converter(mdString) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  createSections(document);
+  // createSections(document);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
