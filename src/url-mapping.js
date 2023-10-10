@@ -35,4 +35,8 @@ export default [
     path: '/docs/authoring-guide-exl/using/markdown/syntax-style-guide',
     id: 'rec9WkO4eYWupFTrM',
   },
+  {
+    path: '/docs/experience-platform/landing/platform-apis/api-authentication',
+    id: 'reckcjRiLD5XYLFri',
+  },
 ];
