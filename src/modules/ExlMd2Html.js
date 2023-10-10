@@ -16,6 +16,7 @@ import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
 import { createSections } from './utils/dom-utils.js';
+import createShadeBox from './blocks/create-shade-box.js';
 
 async function converter(mdString) {
   const convertedHtml = markdownit({
@@ -54,6 +55,7 @@ async function converter(mdString) {
   createNote(document);
   createTabs(document);
   createTables(document);
+  createShadeBox(document);
 
   return prettier.format(dom.serialize(), { parser: 'html' });
 }
