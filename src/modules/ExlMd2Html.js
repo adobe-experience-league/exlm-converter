@@ -16,6 +16,7 @@ import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
+import createCodeBlock from './blocks/create-code-block.js';
 
 // attempt to make table blocks by adding a heading to each table with value "Table"
 // in hopes that the html pipeline will maintain them as tables
@@ -83,6 +84,7 @@ function converter(mdString) {
   createRelatedArticles(document);
   createNote(document);
   createTabs(document);
+  createCodeBlock(document);
 
   return dom.serialize();
 }
