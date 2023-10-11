@@ -6,8 +6,9 @@ import { jsdomPatch } from './esbuild-plugins/jsdomPatch.cjs';
 const esbuildOptions = {
   entryPoints: ['src/index.js'],
   bundle: true,
-  outfile: 'dist/main.cjs',
+  outfile: 'dist/index.js',
   platform: 'node',
+  format: 'esm',
   target: 'node18',
   external: ['canvas', 'bufferutil', 'utf-8-validate'],
   plugins: [jsdomPatch],
