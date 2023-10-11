@@ -1,4 +1,4 @@
-import * as WebImporter from '@adobe/helix-importer';
+import { toBlock } from '../utils/dom-utils.js';
 
 export default function createRelatedArticles(document) {
   const articleElements = Array.from(
@@ -42,12 +42,9 @@ export default function createRelatedArticles(document) {
           divInnerElementTag.append(divElement);
         }
         // Update the DOM with the modified Structure
-        const cells = [
-          ['related articles'],
-          [divElementTag],
-          [divInnerElementTag],
-        ];
-        const block = WebImporter.DOMUtils.createTable(cells, document);
+        const cells = [[divElementTag], [divInnerElementTag]];
+
+        const block = toBlock('related-articles', cells, document);
         element.parentNode.replaceChild(block, element);
       }
     });

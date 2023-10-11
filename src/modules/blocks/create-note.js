@@ -1,4 +1,4 @@
-import * as WebImporter from '@adobe/helix-importer';
+import { replaceElement, toBlock } from '../utils/dom-utils.js';
 
 // For list of icons refer - https://github.com/adobe-experience-league/exlm/tree/main/icons
 const iconMapping = {
@@ -18,7 +18,7 @@ export default function createNote(document) {
   noteElements.forEach((el) => {
     el.classList.remove('extension');
     const variation = el.classList[0];
-    const cells = [[`note (${variation})`]];
+    const cells = [];
     const svgName = iconMapping[variation] ? iconMapping[variation] : 'info'; // Make default icon - info
 
     // Row for each divs inside a note
@@ -31,7 +31,7 @@ export default function createNote(document) {
       }
       cells.push([div]);
     });
-    const block = WebImporter.DOMUtils.createTable(cells, document);
-    el.parentNode.replaceChild(block, el);
+    const block = toBlock(`note ${variation}`, cells, document);
+    replaceElement(el, block);
   });
 }

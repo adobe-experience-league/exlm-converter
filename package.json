@@ -9,7 +9,7 @@
     "serve": "npm-run-all build --parallel serve:*",
     "serve:build": "webpack ./express.js --watch",
     "serve:server": "nodemon --inspect ./dist/main.cjs --watch ./dist",
-    "build": "rimraf dist/ && webpack --mode production",
+    "build": "rimraf dist/ && webpack",
     "build:dev": "rimraf dist/ && webpack",
     "test": "instant-mocha",
     "prepare": "husky install"
