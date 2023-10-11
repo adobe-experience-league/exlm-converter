@@ -13,6 +13,7 @@ const execute = async (command, desc) =>
     const [cmd, ...args] = command.split(' ');
     const proc = spawn(cmd, args, {
       stdio: [process.stdin, process.stdout, process.stderr],
+      shell: true,
     });
     proc.on('exit', (code) => {
       if (code === 0) {
