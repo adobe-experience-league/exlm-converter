@@ -17,6 +17,7 @@ import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
 // import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
+import createCodeBlock from './blocks/create-code-block.js';
 
 async function converter(mdString) {
   const convertedHtml = markdownit({
@@ -60,6 +61,7 @@ async function converter(mdString) {
   createTabs(document);
   createTables(document);
   createShadeBox(document);
+  createCodeBlock(document);
 
   /* Need to relook, as the entire page is breaking due to parser */
   // return prettier.format(dom.serialize(), { parser: 'html' });
