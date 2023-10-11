@@ -7,7 +7,7 @@ application:
         license: Apache-2.0
         actions:
           convert:
-            function: dist/index.cjs
+            function: dist/main.cjs
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:

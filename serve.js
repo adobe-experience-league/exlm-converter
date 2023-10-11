@@ -27,7 +27,7 @@ const execute = async (command, desc) =>
 // watch for change in action, bundle it, then restart express server
 watchAction(() => {
   execute(
-    './node_modules/.bin/nodemon ./express.js --inspect ./dist/index.cjs --watch ./dist',
+    './node_modules/.bin/nodemon ./express.js --inspect ./dist/main.cjs --watch ./dist',
     'nodemon',
   );
 });
