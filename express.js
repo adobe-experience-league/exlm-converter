@@ -37,4 +37,5 @@ const handler = (req, res) => {
 };
 
 app.get('/**', handler);
+
 app.listen(port, () => console.log(`Converter listening on port ${port}`));
