@@ -8,8 +8,7 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import prettier from 'prettier/standalone';
-import prettierPluginHTML from 'prettier/plugins/html';
+// import prettier from 'prettier';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
@@ -62,10 +61,9 @@ async function converter(mdString) {
   createTables(document);
   createShadeBox(document);
 
-  return prettier.format(dom.serialize(), {
-    parser: 'html',
-    plugins: [prettierPluginHTML],
-  });
+  /* Need to relook, as the entire page is breaking due to parser */
+  // return prettier.format(dom.serialize(), { parser: 'html' });
+  return dom.serialize();
 }
 
 export default async function md2html(mdString) {
