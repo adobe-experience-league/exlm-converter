@@ -43,4 +43,8 @@ export default [
     path: '/docs/experience-platform/sources/ui-tutorials/create/cloud-storage/google-pubsub',
     id: 'recSsOSKBiv9XioJA',
   },
+  {
+    path: '/docs/target-learn/tutorials/activities/create-ab-tests',
+    id: 'recCgLaXS1llwMbvb',
+  },
 ];
