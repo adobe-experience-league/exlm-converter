@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import { watchAction } from './bundle-action.js';
+import os from 'os';
 
 /**
  * Execute a Command
@@ -27,8 +28,7 @@ const execute = async (command, desc) =>
 
 // watch for change in action, bundle it, then restart express server
 watchAction(() => {
-  execute(
-    './node_modules/.bin/nodemon ./express.js --inspect ./dist/index.js --watch ./dist',
-    'nodemon',
-  );
+  const pathSeparator = os && os.platform() === 'win32' ? '\\' : '/';
+  const execPath = `.${pathSeparator}node_modules${pathSeparator}.bin${pathSeparator}nodemon .${pathSeparator}express.js --inspect .${pathSeparator}dist${pathSeparator}index.js --watch .${pathSeparator}dist`;
+  execute(execPath, 'nodemon');
 });
