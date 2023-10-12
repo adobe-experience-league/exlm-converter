@@ -36,6 +36,6 @@ watchAction(() => {
   const express = join(currentDirectory, 'express.js');
   const dist = join(currentDirectory, 'dist');
   const distBundle = join(currentDirectory, 'dist', 'index.js');
-  const command = `${nodeMon} ${express} --inspect ${distBundle}--watch ${dist}`;
+  const command = `${nodeMon} ${express} --inspect ${distBundle} --watch ${dist}`;
   execute(command, 'nodemon');
 });
