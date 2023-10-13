@@ -56,7 +56,7 @@ const renderDoc = async function renderDocs(path) {
 const renderFragment = async function renderFragments(path) {
   if (path) {
     // Get header and footer static content from Github
-    const url = `https://raw.githubusercontent.com/Sivaramvt/exlm-converter/sample-header/${path}`;
+    const url = `https://raw.githubusercontent.com/adobe-experience-league/exlm-converter/feature/EXLM-221-Footer/${path}`;
     const response = await fetch(url, {
       headers: { Accept: 'text/html' },
     });
