@@ -53,9 +53,30 @@ const renderDoc = async function renderDocs(path) {
   };
 };
 
+const renderFragment = async function renderFragments(path) {
+  if (path) {
+    // Get header and footer static content from Github
+    const url = `https://raw.githubusercontent.com/Sivaramvt/exlm-converter/sample-header/${path}`;
+    const response = await fetch(url, {
+      headers: { Accept: 'text/html' },
+    });
+    const responseText = await response.text();
+    const html = responseText;
+    // const md = '';
+    return { html };
+  }
+  return {
+    error: new Error(`Content path: ${path} not found`),
+  };
+};
+
 export const render = async function render(path) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
+  }
+  // Handle header and footer fragments with static content
+  if (path.startsWith('/content')) {
+    return renderFragment(path);
   }
   // handle other things that are not docs
   return { error: new Error(`Path not supported: ${path}`) };
