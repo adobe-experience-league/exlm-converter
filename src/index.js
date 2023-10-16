@@ -11,13 +11,13 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
-import { readFileSync } from 'fs';
-import { load } from 'js-yaml';
+// import { readFileSync } from 'fs';
+// import { load } from 'js-yaml';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
 
-const converterCfg = load(readFileSync('./converter.yaml', 'utf8'));
+// const converterCfg = load(readFileSync('./converter.yaml', 'utf8'));
 
 const aioLogger = Logger('App');
 
@@ -67,7 +67,7 @@ const renderFragment = async function renderFragments(path) {
     }
 
     // Get header and footer static content from Github
-    const url = `${converterCfg.env.githubURL}${contentPath}`;
+    const url = `https://raw.githubusercontent.com/adobe-experience-league/exlm-converter/feature/EXLM-221-Footer/${contentPath}`;
     const response = await fetch(url, {
       headers: { Accept: 'text/html' },
     });
@@ -76,7 +76,7 @@ const renderFragment = async function renderFragments(path) {
     return { html };
   }
   return {
-    error: new Error(`Content path: ${path} not found`),
+    error: new Error(`Fragment: ${path} not found`),
   };
 };
 
