@@ -19,9 +19,6 @@ import mappings from './url-mapping.js';
 
 const converterCfg = load(readFileSync('./converter.yaml', 'utf8'));
 
-// Use the YAML data in your JavaScript code
-console.log('Url:', converterCfg.env.githubURL);
-
 const aioLogger = Logger('App');
 
 const exlClient = new ExlClient();
@@ -62,8 +59,15 @@ const renderDoc = async function renderDocs(path) {
 
 const renderFragment = async function renderFragments(path) {
   if (path) {
+    let contentPath = path;
+    // Handle case when .html is not appended to fragments path
+    const parts = path.split('.');
+    if (parts.length === 1) {
+      contentPath = `${path}.html`;
+    }
+
     // Get header and footer static content from Github
-    const url = `${converterCfg.env.githubURL}${path}`;
+    const url = `${converterCfg.env.githubURL}${contentPath}`;
     const response = await fetch(url, {
       headers: { Accept: 'text/html' },
     });
