@@ -70,7 +70,7 @@ export default function createCodeBlock(document) {
 
     const cells = [[pre]];
 
-    const block = toBlock(`Code ${blockOptions.join(' ')}`, cells, document);
+    const block = toBlock(`code ${blockOptions.join(' ')}`, cells, document);
     element.parentNode.parentNode.replaceChild(block, element.parentNode);
   });
 }

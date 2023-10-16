@@ -35,7 +35,7 @@ export default function createBadge(document) {
         cells = [[div1], [div2]];
       }
 
-      const block = toBlock(`Badge ${variant}`, cells, document);
+      const block = toBlock(`badge ${variant}`, cells, document);
       element.parentNode.parentNode.replaceChild(block, element.parentNode);
     } else {
       const div1 = document.createElement('div');
@@ -56,7 +56,7 @@ export default function createBadge(document) {
         cells = [[div1], [div2]];
       }
 
-      const block = toBlock(`Badge (${variant})`, cells, document);
+      const block = toBlock(`badge (${variant})`, cells, document);
       replaceElement(element, block);
     }
   });
