@@ -75,7 +75,7 @@ export const render = async function render(path) {
     return renderDoc(path);
   }
   // Handle header and footer fragments with static content
-  if (path.startsWith('/content')) {
+  if (path.startsWith('/fragments')) {
     return renderFragment(path);
   }
   // handle other things that are not docs
