@@ -29,7 +29,7 @@ const append = (parent, children) => {
  * @returns {HTMLDivElement} the block element (and subtree)
  */
 export const toBlock = (className, rows, document) => {
-  const parent = div(document, className);
+  const parent = div(document, className.toLowerCase());
   rows.forEach((row) => {
     const rowDiv = div(document);
     row.forEach((cell) => {
