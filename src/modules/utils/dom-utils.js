@@ -99,7 +99,6 @@ export const blockToTable = (block, document) => {
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    console.log(block.innerHTML);
     // create table body
     const tbody = document.createElement('tbody');
     [...block.children].forEach((row) => {
@@ -107,7 +106,6 @@ export const blockToTable = (block, document) => {
       const cells = Array.from(row.children);
       cells.forEach((cell) => {
         const td = document.createElement('td');
-        // console.log(cell.innerHTML)
         td.append(...Array.from(cell.childNodes));
         tr.appendChild(td);
       });
@@ -148,7 +146,6 @@ const getHeadingLevel = (element) => {
  * @param {Document} document
  */
 export const createSections = (document) => {
-  console.log(`create sections`);
   const main = document.body.querySelector('main');
   if (!main) return;
   const sections = [];

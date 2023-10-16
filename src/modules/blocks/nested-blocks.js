@@ -8,10 +8,10 @@ import { blockToTable, replaceElement } from '../utils/dom-utils.js';
  */
 export default function handleNestedBlocks(document) {
   // Add container block classes this array
-  const containerBlockClasses = ['shade-box', 'table', 'tabs'];
-
-  // Add content block classes this array
-  const contentBlockClasses = [
+  const blockClasses = [
+    'shade-box',
+    'table',
+    'tabs',
     'code',
     'note',
     'related-articles',
@@ -19,25 +19,19 @@ export default function handleNestedBlocks(document) {
     'embed',
   ];
 
-  containerBlockClasses.forEach((containerBlock) => {
-    // container blocks have the strict structure body > main > div > .${containerBlock}
-    const containers = Array.from(
-      document.querySelectorAll(`body > main > div > .${containerBlock}`),
-    );
+  // top level blocks (container blocks) blocks have the strict structure body > main > div > div
+  const blocks = Array.from(
+    document.querySelectorAll('body > main > div > div'),
+  );
 
-    // find nested blocks (converted in previous steps), and convert it to a table
-    containers.forEach((container) => {
-      [...containerBlockClasses, ...contentBlockClasses].forEach(
-        (nestedBlockClass) => {
-          const nestedBlocks = [
-            ...container.getElementsByClassName(nestedBlockClass),
-          ];
-          nestedBlocks.forEach((nestedBlock) => {
-            const table = blockToTable(nestedBlock, document);
-            replaceElement(nestedBlock, table);
-          });
-        },
-      );
+  // find nested blocks (converted in previous steps), and convert it to a table
+  blocks.forEach((block) => {
+    blockClasses.forEach((nestedBlockClass) => {
+      const nestedBlocks = [...block.getElementsByClassName(nestedBlockClass)];
+      nestedBlocks.forEach((nestedBlock) => {
+        const table = blockToTable(nestedBlock, document);
+        replaceElement(nestedBlock, table);
+      });
     });
   });
 }
