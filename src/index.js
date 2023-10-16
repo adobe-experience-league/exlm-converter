@@ -11,10 +11,16 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
+import { readFileSync } from 'fs';
+import { load } from 'js-yaml';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
-import converterCfg from '../converter.yaml';
+
+const converterCfg = load(readFileSync('./converter.yaml', 'utf8'));
+
+// Use the YAML data in your JavaScript code
+console.log('Url:', converterCfg.env.githubURL);
 
 const aioLogger = Logger('App');
 
