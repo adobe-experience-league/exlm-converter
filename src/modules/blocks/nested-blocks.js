@@ -1,7 +1,9 @@
 import { blockToTable, replaceElement } from '../utils/dom-utils.js';
 
 /**
- *
+ * retroactively converts any nested blocks into tables.
+ * hlx converter does not handle nested blocks, for good reason. but we do have use-cases where block are nested
+ * For that, this conversion turns only nested blocks into tables, and those tables will be handled at the frontend.
  * @param {Document} document
  */
 export default function handleNestedBlocks(document) {

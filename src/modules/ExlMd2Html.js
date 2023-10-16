@@ -63,6 +63,7 @@ async function converter(mdString) {
   createShadeBox(document);
   createCodeBlock(document);
 
+  // leave this at the end
   handleNestedBlocks(document);
 
   return {
