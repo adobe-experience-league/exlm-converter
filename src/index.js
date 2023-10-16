@@ -14,6 +14,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
+import converterCfg from '../converter.yaml';
 
 const aioLogger = Logger('App');
 
@@ -56,13 +57,12 @@ const renderDoc = async function renderDocs(path) {
 const renderFragment = async function renderFragments(path) {
   if (path) {
     // Get header and footer static content from Github
-    const url = `https://raw.githubusercontent.com/adobe-experience-league/exlm-converter/feature/EXLM-221-Footer/${path}`;
+    const url = `${converterCfg.env.githubURL}${path}`;
     const response = await fetch(url, {
       headers: { Accept: 'text/html' },
     });
     const responseText = await response.text();
     const html = responseText;
-    // const md = '';
     return { html };
   }
   return {
