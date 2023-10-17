@@ -11,10 +11,14 @@ export default function createBadge(document) {
       const a = document.createElement('a');
       const p = document.createElement('p');
       const p2 = document.createElement('p');
+      const target = element.parentNode.getAttribute('target');
       const href = element.parentNode.getAttribute('href');
       const spBadge = element.querySelector('sp-badge');
       a.textContent = spBadge.textContent;
 
+      if (target) {
+        a.setAttribute('target', target);
+      }
       a.setAttribute('href', href);
       p.append(a);
       div1.append(p);
@@ -32,10 +36,7 @@ export default function createBadge(document) {
       }
 
       const block = toBlock(`Badge ${variant}`, cells, document);
-      element.parentNode.parentNode.parentNode.replaceChild(
-        block,
-        element.parentNode.parentNode,
-      );
+      element.parentNode.parentNode.replaceChild(block, element.parentNode);
     } else {
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');

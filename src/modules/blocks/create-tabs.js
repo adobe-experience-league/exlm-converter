@@ -12,7 +12,7 @@ export default function createTabs(document) {
           const tabName = document.createElement('div');
           const tabValue = document.createElement('div');
           tabName.innerHTML = `<p>${tab.getAttribute('label')}</p>`;
-          tabValue.innerHTML = `<p>${tabsPanels[i].textContent}</p>`;
+          tabValue.innerHTML = `<div>${tabsPanels[i].innerHTML}</div>`;
           return [[tabName], [tabValue]];
         });
 

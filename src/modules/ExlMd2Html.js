@@ -8,7 +8,8 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-// import prettier from 'prettier';
+// import prettier from 'prettier/standalone';
+// import prettierPluginHTML from 'prettier/plugins/html';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
@@ -17,6 +18,7 @@ import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
 // import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
+import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 
 async function converter(mdString) {
@@ -61,10 +63,14 @@ async function converter(mdString) {
   createTabs(document);
   createTables(document);
   createShadeBox(document);
+  createCodeBlock(document);
   createVideoTranscript(document);
 
-  /* Need to relook, as the entire page is breaking due to parser */
-  // return prettier.format(dom.serialize(), { parser: 'html' });
+  /* FIXME: Page breaking - docs/authoring-guide-exl/using/markdown/syntax-style-guide
+  return prettier.format(dom.serialize(), {
+    parser: 'html',
+    plugins: [prettierPluginHTML],
+  }); */
   return dom.serialize();
 }
 
