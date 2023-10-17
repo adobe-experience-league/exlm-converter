@@ -17,9 +17,11 @@ export default function createBadge(document) {
       a.textContent = spBadge.textContent;
 
       if (target) {
-        a.setAttribute('target', target);
+        const newHref = `${href}#${target}`;
+        a.setAttribute('href', newHref);
+      } else {
+        a.setAttribute('href', href);
       }
-      a.setAttribute('href', href);
       p.append(a);
       div1.append(p);
 
