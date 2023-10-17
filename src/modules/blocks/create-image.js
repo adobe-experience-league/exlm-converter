@@ -4,7 +4,7 @@ export default function createImage(document) {
   const imageElements = Array.from(document.querySelectorAll('img'));
   if (imageElements.length) {
     imageElements.forEach((imageElement) => {
-      const src = imageElement.getAttribute('src');
+      const src = imageElement ? imageElement.src : '';
       const div = document.createElement('div');
       div.innerHTML = imageElement.outerHTML;
       div.append(src);
