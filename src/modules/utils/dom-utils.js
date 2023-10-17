@@ -109,3 +109,25 @@ export const createSections = (document) => {
     main.appendChild($div);
   });
 };
+
+/**
+ * Creates and appends meta elements to the document's head based on the provided meta string.
+ *
+ * @param {Document} document - The Document object representing the web page.
+ * @param {string} meta - The string containing key-value pairs to be converted into meta elements.
+ * @returns {void}
+ */
+export const createMetaData = (document, meta) => {
+  const lines = meta.split('\n');
+  const fragment = document.createDocumentFragment();
+
+  lines.forEach((line) => {
+    const [key, value] = line.split(': ');
+    const metaEl = document.createElement('meta');
+    metaEl.setAttribute('name', key);
+    metaEl.setAttribute('content', value);
+    fragment.appendChild(metaEl);
+  });
+
+  document.head.appendChild(fragment);
+};
