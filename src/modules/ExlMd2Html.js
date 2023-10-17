@@ -19,6 +19,7 @@ import createTables from './blocks/create-tables.js';
 // import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
+import createImage from './blocks/create-image.js';
 
 async function converter(mdString) {
   const convertedHtml = markdownit({
@@ -63,6 +64,7 @@ async function converter(mdString) {
   createTables(document);
   createShadeBox(document);
   createCodeBlock(document);
+  createImage(document);
 
   /* FIXME: Page breaking - docs/authoring-guide-exl/using/markdown/syntax-style-guide
   return prettier.format(dom.serialize(), {
