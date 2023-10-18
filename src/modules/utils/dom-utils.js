@@ -29,7 +29,7 @@ const append = (parent, children) => {
  * @returns {HTMLDivElement} the block element (and subtree)
  */
 export const toBlock = (className, rows, document) => {
-  const parent = div(document, className);
+  const parent = div(document, className.toLowerCase());
   rows.forEach((row) => {
     const rowDiv = div(document);
     row.forEach((cell) => {
@@ -40,6 +40,84 @@ export const toBlock = (className, rows, document) => {
     parent.appendChild(rowDiv);
   });
   return parent;
+};
+
+/**
+ *
+ * @param {HTMLElement} element
+ * @returns {boolean} true if element is a div
+ */
+export const isDiv = (element) =>
+  element && element.tagName.toLowerCase() === 'div';
+
+/**
+ *
+ * @param {HTMLDivElement} block
+ * @returns
+ */
+export const isValidBlock = (block) => {
+  if (!block) throw new Error(`block is required`);
+  if (!isDiv(block)) throw new Error(`block must be a div`);
+  if (!block.classList.length > 0)
+    throw new Error(`block must have at least one class`);
+
+  // all rows must be divs
+  const rows = Array.from(block.children);
+
+  rows.forEach((row, index) => {
+    if (!isDiv(row)) throw new Error(`Row ${index} is not a div`);
+    const cells = Array.from(row.children);
+    if (!cells.every(isDiv))
+      throw new Error(`At least one cell in row ${index} is not a div`);
+  });
+
+  return true;
+};
+
+/**
+ *
+ * @param {HTMLDivElement} block
+ * @param {Document} document
+ * @returns
+ */
+export const blockToTable = (block, document) => {
+  let valid = false;
+  try {
+    valid = isValidBlock(block);
+  } catch (e) {
+    console.error(e);
+  }
+
+  if (valid) {
+    // create table header, first header row is the block's class names
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    const headerCell = document.createElement('th');
+    headerCell.textContent = block.getAttribute('class');
+    headerRow.appendChild(headerCell);
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // create table body
+    const tbody = document.createElement('tbody');
+    [...block.children].forEach((row) => {
+      const tr = document.createElement('tr');
+      const cells = Array.from(row.children);
+      cells.forEach((cell) => {
+        const td = document.createElement('td');
+        td.append(...Array.from(cell.childNodes));
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    return table;
+  }
+
+  // all else fails
+  return block;
 };
 
 /**
@@ -68,7 +146,6 @@ const getHeadingLevel = (element) => {
  * @param {Document} document
  */
 export const createSections = (document) => {
-  console.log(`create sections`);
   const main = document.body.querySelector('main');
   if (!main) return;
   const sections = [];
@@ -108,4 +185,26 @@ export const createSections = (document) => {
     });
     main.appendChild($div);
   });
+};
+
+/**
+ * Creates and appends meta elements to the document's head based on the provided meta string.
+ *
+ * @param {Document} document - The Document object representing the web page.
+ * @param {string} meta - The string containing key-value pairs to be converted into meta elements.
+ * @returns {void}
+ */
+export const createMetaData = (document, meta) => {
+  const lines = meta.split('\n');
+  const fragment = document.createDocumentFragment();
+
+  lines.forEach((line) => {
+    const [key, value] = line.split(': ');
+    const metaEl = document.createElement('meta');
+    metaEl.setAttribute('name', key);
+    metaEl.setAttribute('content', value);
+    fragment.appendChild(metaEl);
+  });
+
+  document.head.appendChild(fragment);
 };

@@ -43,8 +43,13 @@ const renderDoc = async function renderDocs(path) {
     // ExL API does not provide a way to lookup by path, so for now, we hard code it.
     const response = await exlClient.getArticle(id);
     const md = response.data.FullBody;
-    const html = await md2html(md);
-    return { md, html };
+    const meta = response.data.FullMeta;
+    const { convertedHtml, originalHtml } = await md2html(md, meta);
+    return {
+      md,
+      html: convertedHtml,
+      original: originalHtml,
+    };
   }
   return {
     error: new Error(
