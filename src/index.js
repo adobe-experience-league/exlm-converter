@@ -11,15 +11,11 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
-// import { readFileSync } from 'fs';
-// import { load } from 'js-yaml';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
 import fragmentsSource from './fragments-source.js';
 
-// const converterCfg = load(readFileSync('./converter.yaml', 'utf-8'));
-// console.log('Url:', converterCfg.env.githubURL);
 const aioLogger = Logger('App');
 
 const exlClient = new ExlClient();
@@ -29,6 +25,16 @@ const removeExtension = (path) => {
   if (parts.length === 1) return parts[0];
 
   return parts.slice(0, -1).join('.');
+};
+
+const addHTMLExtension = (path) => {
+  let contentPath = path;
+  // Handle case when .html is not appended to fragments path
+  const parts = path.split('.');
+  if (parts.length === 1) {
+    contentPath = `${path}.html`;
+  }
+  return contentPath;
 };
 
 const lookupId = (path) => {
@@ -48,13 +54,8 @@ const renderDoc = async function renderDocs(path) {
     // ExL API does not provide a way to lookup by path, so for now, we hard code it.
     const response = await exlClient.getArticle(id);
     const md = response.data.FullBody;
-    const meta = response.data.FullMeta;
-    const { convertedHtml, originalHtml } = await md2html(md, meta);
-    return {
-      md,
-      html: convertedHtml,
-      original: originalHtml,
-    };
+    const html = await md2html(md);
+    return { md, html };
   }
   return {
     error: new Error(
@@ -65,19 +66,13 @@ const renderDoc = async function renderDocs(path) {
 
 const renderFragment = async function renderFragments(path) {
   if (path) {
-    let contentPath = path;
-    // Handle case when .html is not appended to fragments path
-    const parts = path.split('.');
-    if (parts.length === 1) {
-      contentPath = `${path}.html`;
-    }
+    const fragmentPath = addHTMLExtension(path);
     // Get header and footer static content from Github
-    const url = `${fragmentsSource.path}${contentPath}`;
+    const url = `${fragmentsSource.path}${fragmentPath}`;
     const response = await fetch(url, {
       headers: { Accept: 'text/html' },
     });
-    const responseText = await response.text();
-    const html = responseText;
+    const html = await response.text();
     return { html };
   }
   return {
