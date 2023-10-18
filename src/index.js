@@ -44,8 +44,12 @@ const renderDoc = async function renderDocs(path) {
     const response = await exlClient.getArticle(id);
     const md = response.data.FullBody;
     const meta = response.data.FullMeta;
-    const html = await md2html(md, meta);
-    return { md, html };
+    const { convertedHtml, originalHtml } = await md2html(md, meta);
+    return {
+      md,
+      html: convertedHtml,
+      original: originalHtml,
+    };
   }
   return {
     error: new Error(
