@@ -21,7 +21,7 @@ const handler = (req, res) => {
     ...query,
   };
 
-  render(path, params).then(({ html, md, error }) => {
+  render(path, params).then(({ html, md, original, error }) => {
     if (error) {
       res.status(error.code || 503);
       res.send(error.message);
@@ -31,8 +31,11 @@ const handler = (req, res) => {
     if (path.endsWith('.md')) {
       res.setHeader('Content-Type', 'text/plain');
       res.send(md);
+    } else if (path.endsWith('.original')) {
+      res.send(original);
+    } else {
+      res.send(html);
     }
-    res.send(html);
   });
 };
 
