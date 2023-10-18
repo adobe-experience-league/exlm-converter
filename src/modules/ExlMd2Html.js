@@ -20,6 +20,7 @@ import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
+import createList from './blocks/create-list.js';
 
 async function converter(mdString, meta) {
   const convertedHtml = markdownit({
@@ -66,7 +67,7 @@ async function converter(mdString, meta) {
   createShadeBox(document);
   createCodeBlock(document);
   createVideoTranscript(document);
-
+  createList(document);
   // leave this at the end
   handleNestedBlocks(document);
 
