@@ -45,7 +45,7 @@ export default function createVideoTranscript(document) {
         }
       }
 
-      const block = toBlock(`Video Transcript`, cells, document);
+      const block = toBlock(`video-transcript`, cells, document);
       element.parentNode.insertBefore(block, element.nextSibling);
     });
   }
