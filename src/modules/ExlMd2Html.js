@@ -8,6 +8,7 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
+import { createMetaData } from './utils/dom-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
@@ -19,7 +20,7 @@ import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 
-async function converter(mdString) {
+async function converter(mdString, meta) {
   const convertedHtml = markdownit({
     html: true,
     breaks: true,
@@ -54,6 +55,7 @@ async function converter(mdString) {
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
   // createSections(document);
+  createMetaData(document, meta);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
@@ -72,6 +74,6 @@ async function converter(mdString) {
   };
 }
 
-export default async function md2html(mdString) {
-  return converter(afm(mdString, 'extension'));
+export default async function md2html(mdString, meta) {
+  return converter(afm(mdString, 'extension'), meta);
 }
