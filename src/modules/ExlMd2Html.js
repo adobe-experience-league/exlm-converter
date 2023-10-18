@@ -18,6 +18,7 @@ import createTables from './blocks/create-tables.js';
 // import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
+import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 
 async function converter(mdString, meta) {
@@ -64,6 +65,7 @@ async function converter(mdString, meta) {
   createTables(document);
   createShadeBox(document);
   createCodeBlock(document);
+  createVideoTranscript(document);
 
   // leave this at the end
   handleNestedBlocks(document);
