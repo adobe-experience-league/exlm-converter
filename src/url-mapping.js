@@ -44,6 +44,10 @@ export default [
     id: 'recSsOSKBiv9XioJA',
   },
   {
+    path: '/docs/journey-optimizer-learn/tutorials/introduction-to-journey-optimizer/mobile-capabilities-for-developers',
+    id: 'recGseE0j7HEteLlx',
+  }, 
+  {
     path: '/docs/target-learn/tutorials/activities/create-ab-tests',
     id: 'recCgLaXS1llwMbvb',
   },
