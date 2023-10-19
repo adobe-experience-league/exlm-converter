@@ -21,8 +21,9 @@ import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
+import createArticleMetaData from './blocks/create-article-metadata.js';
 
-async function converter(mdString, meta) {
+async function converter(mdString, meta , lastUpdated, level) {
   const convertedHtml = markdownit({
     html: true,
     breaks: true,
@@ -64,6 +65,7 @@ async function converter(mdString, meta) {
   const { document } = dom.window;
   // createSections(document);
   createMetaData(document, meta);
+  createArticleMetaData(document,meta,lastUpdated,level);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
@@ -83,6 +85,6 @@ async function converter(mdString, meta) {
   };
 }
 
-export default async function md2html(mdString, meta) {
-  return converter(afm(mdString, 'extension'), meta);
+export default async function md2html(mdString, meta, lastUpdated, level) {
+  return converter(afm(mdString, 'extension'),meta , lastUpdated, level);
 }
