@@ -77,6 +77,7 @@ const renderFragment = async function renderFragments(path) {
     const response = await fetch(url, {
       headers: { Accept: 'text/html' },
     });
+
     const html = await response.text();
     return { html };
   }
