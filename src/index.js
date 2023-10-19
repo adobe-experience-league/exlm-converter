@@ -27,7 +27,7 @@ const removeExtension = (path) => {
   return parts.slice(0, -1).join('.');
 };
 
-const addHTMLExtension = (path) => {
+const addExtension = (path) => {
   let contentPath = path;
   // Handle case when .html is not appended to fragments path
   const parts = path.split('.');
@@ -69,9 +69,9 @@ const renderDoc = async function renderDocs(path) {
   };
 };
 
-const renderFragment = async function renderFragments(path) {
+const renderFragment = async function renderHTMLFragments(path) {
   if (path) {
-    const fragmentPath = addHTMLExtension(path);
+    const fragmentPath = addExtension(path);
     // Get header and footer static content from Github
     const url = `${fragmentsSource.path}${fragmentPath}`;
     const response = await fetch(url, {
