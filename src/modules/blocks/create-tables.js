@@ -9,6 +9,9 @@ export default function createTables(document) {
 
   if (tables.length) {
     tables.forEach((table) => {
+      const variations = [];
+      if (table.style.tableLayout)
+        variations.push(`layout-${table.style.tableLayout}`);
       const $rows = [];
       Array.from(table.children).forEach((child) => {
         if (
@@ -23,7 +26,10 @@ export default function createTables(document) {
         Array.from(row.children).map((child) => Array.from(child.childNodes)),
       );
 
-      replaceElement(table, toBlock('table', result, document));
+      replaceElement(
+        table,
+        toBlock(`table ${variations.join(' ')}`, result, document),
+      );
     });
   }
 }
