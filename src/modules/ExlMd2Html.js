@@ -21,6 +21,7 @@ import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
+import createMiniTOC from './blocks/create-mini-toc.js';
 
 async function converter(mdString, meta) {
   const convertedHtml = markdownit({
@@ -68,6 +69,7 @@ async function converter(mdString, meta) {
   createCodeBlock(document);
   createVideoTranscript(document);
   createList(document);
+  createMiniTOC(document);
   // leave this at the end
   handleNestedBlocks(document);
 
