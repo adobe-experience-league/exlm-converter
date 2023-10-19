@@ -47,4 +47,8 @@ export default [
     path: '/docs/target-learn/tutorials/activities/create-ab-tests',
     id: 'recCgLaXS1llwMbvb',
   },
+  {
+    path: '/docs/authoring-guide-exl/using/authoring/tables',
+    id: 'recSamvuJkILYVR1q  ',
+  },
 ];
