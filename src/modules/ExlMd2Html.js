@@ -1,6 +1,3 @@
-import markdownit from 'markdown-it';
-import markdownItAttrs from 'markdown-it-attrs';
-import markdownItAnchor from 'markdown-it-anchor';
 import { afm } from 'adobe-afm-transform';
 import { fromHtml } from 'hast-util-from-html';
 import { h } from 'hastscript';
@@ -21,16 +18,10 @@ import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
+import markdownItToHtml from './MarkdownIt.js';
 
 async function converter(mdString, meta) {
-  const convertedHtml = markdownit({
-    html: true,
-    breaks: true,
-    typographer: true,
-  })
-    .use(markdownItAttrs, { allowedAttributes: ['id', 'class'] })
-    .use(markdownItAnchor, { level: [1, 2, 3, 4, 5, 6] })
-    .render(mdString);
+  const convertedHtml = markdownItToHtml(mdString);
 
   const main = fromHtml(convertedHtml, { fragment: true });
 
