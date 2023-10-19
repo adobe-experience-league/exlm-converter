@@ -1,6 +1,3 @@
-import markdownit from 'markdown-it';
-import markdownItAttrs from 'markdown-it-attrs';
-import markdownItAnchor from 'markdown-it-anchor';
 import { afm } from 'adobe-afm-transform';
 import { fromHtml } from 'hast-util-from-html';
 import { h } from 'hastscript';
@@ -22,16 +19,10 @@ import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
 import createArticleMetaData from './blocks/create-article-metadata.js';
+import markdownItToHtml from './MarkdownIt.js';
 
-async function converter(mdString, meta , lastUpdated, level) {
-  const convertedHtml = markdownit({
-    html: true,
-    breaks: true,
-    typographer: true,
-  })
-    .use(markdownItAttrs, { allowedAttributes: ['id', 'class'] })
-    .use(markdownItAnchor, { level: [1, 2, 3, 4, 5, 6] })
-    .render(mdString);
+async function converter(mdString, meta, lastUpdated, level) {
+  const convertedHtml = markdownItToHtml(mdString);
 
   const main = fromHtml(convertedHtml, { fragment: true });
 
@@ -44,14 +35,13 @@ async function converter(mdString, meta , lastUpdated, level) {
     h('body', [
       h('header', []),
       h('main', [
-        h('div', "Placeholder Content for Left Rail"),// Left Rail Block
+        h('div', 'Placeholder Content for Left Rail'), // Left Rail Block
         h('div', content.hast), // Base Content
-        h('div', "Placeholder Content for Right Rail"),// Right Rail Block
+        h('div', 'Placeholder Content for Right Rail'), // Right Rail Block
       ]),
       h('footer', []),
     ]),
   ]);
-
 
   raw(hast);
   rehypeFormat()(hast);
@@ -65,7 +55,7 @@ async function converter(mdString, meta , lastUpdated, level) {
   const { document } = dom.window;
   // createSections(document);
   createMetaData(document, meta);
-  createArticleMetaData(document,meta,lastUpdated,level);
+  createArticleMetaData(document, meta, lastUpdated, level);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
@@ -86,5 +76,5 @@ async function converter(mdString, meta , lastUpdated, level) {
 }
 
 export default async function md2html(mdString, meta, lastUpdated, level) {
-  return converter(afm(mdString, 'extension'),meta , lastUpdated, level);
+  return converter(afm(mdString, 'extension'), meta, lastUpdated, level);
 }

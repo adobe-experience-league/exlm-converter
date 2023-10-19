@@ -14,6 +14,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
+import fragmentsSource from './fragments-source.js';
 
 const aioLogger = Logger('App');
 
@@ -24,6 +25,16 @@ const removeExtension = (path) => {
   if (parts.length === 1) return parts[0];
 
   return parts.slice(0, -1).join('.');
+};
+
+const addExtension = (path) => {
+  let contentPath = path;
+  // Handle case when .html is not appended to fragments path
+  const parts = path.split('.');
+  if (parts.length === 1) {
+    contentPath = `${path}.html`;
+  }
+  return contentPath;
 };
 
 const lookupId = (path) => {
@@ -46,7 +57,12 @@ const renderDoc = async function renderDocs(path) {
     const meta = response.data.FullMeta;
     const lastUpdated = response.data.UpdatedUTC;
     const level = response.data.Level;
-    const { convertedHtml, originalHtml } = await md2html(md, meta, lastUpdated, level);
+    const { convertedHtml, originalHtml } = await md2html(
+      md,
+      meta,
+      lastUpdated,
+      level,
+    );
     return {
       md,
       html: convertedHtml,
@@ -60,9 +76,30 @@ const renderDoc = async function renderDocs(path) {
   };
 };
 
+const renderFragment = async function renderHTMLFragments(path) {
+  if (path) {
+    const fragmentPath = addExtension(path);
+    // Get header and footer static content from Github
+    const url = `${fragmentsSource.path}${fragmentPath}`;
+    const response = await fetch(url, {
+      headers: { Accept: 'text/html' },
+    });
+
+    const html = await response.text();
+    return { html };
+  }
+  return {
+    error: new Error(`Fragment: ${path} not found`),
+  };
+};
+
 export const render = async function render(path) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
+  }
+  // Handle header and footer fragments with static content
+  if (path.startsWith('/fragments')) {
+    return renderFragment(path);
   }
   // handle other things that are not docs
   return { error: new Error(`Path not supported: ${path}`) };
