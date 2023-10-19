@@ -39,7 +39,7 @@ export default function createArticleMetaData(
         a.textContent = tags;
         items.push(a);
       });
-      articleMetaDivTag.append(newHtmlList({ tag: 'ul', items }));
+      articleMetaDivTag.append(newHtmlList(document, { tag: 'ul', items }));
     }
   });
 
@@ -51,7 +51,7 @@ export default function createArticleMetaData(
       tagElementTag.innerHTML = tags;
       items.push(tagElementTag);
     });
-    articleMetaDivTag.append(newHtmlList({ tag: 'ul', items }));
+    articleMetaDivTag.append(newHtmlList(document, { tag: 'ul', items }));
   }
 
   const cells = [[articleMetaDivTag]];

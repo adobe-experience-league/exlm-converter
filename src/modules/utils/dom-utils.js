@@ -215,9 +215,10 @@ export const createMetaData = (document, meta) => {
  * @property {Array<HTMLElement>} items - elements
  *
  * @param {ListOptions} options
+ * @param {Document} document
  * @returns
  */
-export const newHtmlList = ({ tag = 'ul', items = [] }) => {
+export const newHtmlList = (document, { tag = 'ul', items = [] }) => {
   const list = document.createElement(tag);
   items.forEach((item) => {
     const li = document.createElement('li');
