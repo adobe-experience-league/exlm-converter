@@ -38,13 +38,19 @@ async function converter(mdString, meta) {
     hast: main,
   };
 
+  // Add the Left and Right Rail content as part of their respective Placeholders
   const hast = h('html', [
     h('body', [
       h('header', []),
-      h('main', [h('div', content.hast)]),
+      h('main', [
+        h('div', "Placeholder Content for Left Rail"),// Left Rail Block
+        h('div', content.hast), // Base Content
+        h('div', "Placeholder Content for Right Rail"),// Right Rail Block
+      ]),
       h('footer', []),
     ]),
   ]);
+
 
   raw(hast);
   rehypeFormat()(hast);
