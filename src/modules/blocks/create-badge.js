@@ -58,7 +58,7 @@ export default function createBadge(document) {
         cells = [[div1], [div2]];
       }
 
-      const block = toBlock(`badge (${variant})`, cells, document);
+      const block = toBlock(`badge ${variant}`, cells, document);
       replaceElement(element, block);
     }
   });
