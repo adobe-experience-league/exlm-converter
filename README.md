@@ -27,3 +27,23 @@ If you want to test this action on your own runtime application, it is recommend
 ```
 aio app deploy
 ```
+
+## Debugging common issues
+
+### Response is not valid 'message/http'
+if your converter returns a result such as:
+
+```
+{
+  "code": "Ir5gfWfUoG33dvMb7nPAu2c6ckH7ocQg",
+  "error": "Response is not valid 'message/http'."
+}
+```
+The action activation likely failed, to debug, you need to run your action with header: `X-OW-EXTRA-LOGGING: on`.
+
+See: https://developer.adobe.com/runtime/docs/guides/using/logging_monitoring#retrieving-activations-for-blocking-successful-calls
+
+To get activation/application logs, you can run:
+- `aio runtime activation log --last` - logs the last activation log
+- `aio runtime activation result --last` - logs last activation result
+- `aio app logs` - application logs

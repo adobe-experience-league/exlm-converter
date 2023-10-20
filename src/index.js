@@ -11,32 +11,30 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import { join, dirname } from 'path';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
-import fragmentsSource from './fragments-source.js';
+import { addExtension, removeExtension } from './modules/utils/path-utils.js';
+
+// need this to work with both esm and commonjs
+let dir;
+try {
+  dir = __dirname; // if commonjs, this will get current directory
+} catch (e) {
+  dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
+}
 
 const aioLogger = Logger('App');
 
 const exlClient = new ExlClient();
 
-const removeExtension = (path) => {
-  const parts = path.split('.');
-  if (parts.length === 1) return parts[0];
-
-  return parts.slice(0, -1).join('.');
-};
-
-const addExtension = (path) => {
-  let contentPath = path;
-  // Handle case when .html is not appended to fragments path
-  const parts = path.split('.');
-  if (parts.length === 1) {
-    contentPath = `${path}.html`;
-  }
-  return contentPath;
-};
-
+/**
+ * lookup the id of a document by path from the maintained list.
+ * This is temporary.
+ */
 const lookupId = (path) => {
   const noExtension = removeExtension(path);
   const mapping = mappings.find(
@@ -45,6 +43,9 @@ const lookupId = (path) => {
   return mapping?.id;
 };
 
+/**
+ * handles a markdown doc path
+ */
 const renderDoc = async function renderDocs(path) {
   const id = lookupId(path);
   if (id) {
@@ -69,17 +70,21 @@ const renderDoc = async function renderDocs(path) {
   };
 };
 
-const renderFragment = async function renderHTMLFragments(path) {
+/**
+ * Renders fragment from filesystem at given path
+ */
+const renderFragment = async (path) => {
   if (path) {
-    const fragmentPath = addExtension(path);
+    const fragmentPath = join(dir, addExtension(path, '.html'));
     // Get header and footer static content from Github
-    const url = `${fragmentsSource.path}${fragmentPath}`;
-    const response = await fetch(url, {
-      headers: { Accept: 'text/html' },
-    });
-
-    const html = await response.text();
-    return { html };
+    if (fs.existsSync(fragmentPath)) {
+      return {
+        html: fs.readFileSync(fragmentPath, 'utf-8'),
+      };
+    }
+    return {
+      error: new Error(`Fragment: ${path} not found`),
+    };
   }
   return {
     error: new Error(`Fragment: ${path} not found`),
@@ -90,11 +95,11 @@ export const render = async function render(path) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
   }
-  // Handle header and footer fragments with static content
+  // Handle fragments as static content (eg: header, footer ...etc.)
   if (path.startsWith('/fragments')) {
     return renderFragment(path);
   }
-  // handle other things that are not docs
+  // error if all else fails
   return { error: new Error(`Path not supported: ${path}`) };
 };
 
@@ -107,7 +112,7 @@ export const main = async function main(params) {
     return {
       statusCode: 200,
       headers: {
-        'x-html2md-img-src': 'https://experienceleague.adobe.com',
+        'x-html2md-img-src': 'https://experienceleague.adobe.com', // tells franklin services to index images starting with this
       },
       body: html,
     };
