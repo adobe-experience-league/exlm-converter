@@ -10,9 +10,6 @@ export default function createArticleMetaData(
   // Article Metadata Title
   const headerElements = document.querySelector('h1');
   const articleMetaDivTag = document.createElement('div');
-  const headerElementTag = document.createElement('h1');
-  headerElementTag.textContent = headerElements.innerHTML;
-  articleMetaDivTag.append(headerElementTag);
 
   // Article Metadata Last Updated
   if (lastUpdated.length !== 0) {
@@ -51,5 +48,5 @@ export default function createArticleMetaData(
 
   const cells = [[articleMetaDivTag]];
   const block = toBlock('article-metadata', cells, document);
-  replaceElement(headerElements, block);
+  headerElements.parentNode.insertBefore(block, headerElements.nextSibling);
 }
