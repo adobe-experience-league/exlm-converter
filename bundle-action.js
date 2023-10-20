@@ -19,8 +19,8 @@ const esbuildOptions = {
   bundle: true,
   outfile: DIST_ACTION_INDEX,
   platform: 'node',
-  format: 'cjs',
-  target: 'node18',
+  format: 'cjs', // needs to be cjs to support  __dirname and __filename for fragment serving
+  target: 'node18', // this is the version in app.config.yaml
   external: ['canvas', 'bufferutil', 'utf-8-validate'],
   plugins: [jsdomPatch],
   logLevel: 'info',

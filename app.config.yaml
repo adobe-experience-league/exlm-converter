@@ -7,7 +7,7 @@ application:
         license: Apache-2.0
         actions:
           convert:
-            function: dist/static
+            function: dist/static # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:
