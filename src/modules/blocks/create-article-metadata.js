@@ -38,7 +38,7 @@ export default function createArticleMetaData(
   // Article Metadata Created For
   if(fullMetadata.hasOwnProperty("level") && fullMetadata["level"].trim() !== ""){
     const levels = fullMetadata["level"];
-    const level = levels.split(', ').map(item => item.trim());
+    const level = levels.split(',').map(item => item.trim());
     const items = ['Created for:'];
     level.forEach((tags) => {
       items.push(tags);
