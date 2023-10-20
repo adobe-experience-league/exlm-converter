@@ -11,31 +11,19 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import { join, dirname } from 'path';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
-import fragmentsSource from './fragments-source.js';
+import { addExtension, removeExtension } from './modules/utils/path-utils.js';
+
+const currentDir = dirname(fileURLToPath(import.meta.url));
 
 const aioLogger = Logger('App');
 
 const exlClient = new ExlClient();
-
-const removeExtension = (path) => {
-  const parts = path.split('.');
-  if (parts.length === 1) return parts[0];
-
-  return parts.slice(0, -1).join('.');
-};
-
-const addExtension = (path) => {
-  let contentPath = path;
-  // Handle case when .html is not appended to fragments path
-  const parts = path.split('.');
-  if (parts.length === 1) {
-    contentPath = `${path}.html`;
-  }
-  return contentPath;
-};
 
 const lookupId = (path) => {
   const noExtension = removeExtension(path);
@@ -69,17 +57,19 @@ const renderDoc = async function renderDocs(path) {
   };
 };
 
-const renderFragment = async function renderHTMLFragments(path) {
+const renderFragment = async (path) => {
   if (path) {
-    const fragmentPath = addExtension(path);
+    const fragmentPath = join(currentDir, addExtension(path, '.html'));
+    console.log({ fragmentPath });
     // Get header and footer static content from Github
-    const url = `${fragmentsSource.path}${fragmentPath}`;
-    const response = await fetch(url, {
-      headers: { Accept: 'text/html' },
-    });
-
-    const html = await response.text();
-    return { html };
+    if (fs.existsSync(fragmentPath)) {
+      return {
+        html: fs.readFileSync(fragmentPath, 'utf-8'),
+      };
+    }
+    return {
+      error: new Error(`Fragment: ${path} not found`),
+    };
   }
   return {
     error: new Error(`Fragment: ${path} not found`),

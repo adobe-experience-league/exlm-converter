@@ -1,10 +1,21 @@
 import * as esbuild from 'esbuild';
+import fs from 'fs';
 import { jsdomPatch } from './esbuild-plugins/jsdomPatch.cjs';
 
+const DIST_ACTION_FOLDER = 'dist/static';
+const DIST_ACTION_FILE_NAME = 'index.js';
+const DIST_ACTION_INDEX = `${DIST_ACTION_FOLDER}/${DIST_ACTION_FILE_NAME}`;
+const BUNDLE_ENTRY = `src/${DIST_ACTION_FILE_NAME}`;
+const COPY_FOLDERS = [['src/fragments', `${DIST_ACTION_FOLDER}/fragments`]];
+
+const ACTION_PACKAGE_JSON = {
+  main: DIST_ACTION_FILE_NAME,
+};
+
 const esbuildOptions = {
-  entryPoints: ['src/index.js'],
+  entryPoints: [BUNDLE_ENTRY],
   bundle: true,
-  outfile: 'dist/index.js',
+  outfile: DIST_ACTION_INDEX,
   platform: 'node',
   format: 'esm',
   target: 'node18',
@@ -15,6 +26,12 @@ const esbuildOptions = {
 
 export const buildAction = async () => esbuild.build(esbuildOptions);
 
+/**
+ * watch and rebuild the action if source changes
+ * @param {Function} onFirstBuild runs on first time build
+ * @param {Function} onSubsequentBuilds runs on subsequent builds
+ * @returns
+ */
 export const watchAction = async (onFirstBuild, onSubsequentBuilds) => {
   const context = await esbuild.context({
     ...esbuildOptions,
@@ -37,5 +54,39 @@ export const watchAction = async (onFirstBuild, onSubsequentBuilds) => {
   return context.watch();
 };
 
-// by default, build the actio.
-await buildAction();
+/**
+ * Ensure provided directory exists
+ */
+const ensureDir = (dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+
+/**
+ * Copy folders from src to dist
+ * @param {Array<Array<string>>} folders
+ */
+const copyFolders = (folders) => {
+  folders.forEach(([src, dest]) => {
+    ensureDir(dest);
+    fs.cpSync(src, dest, { recursive: true });
+  });
+};
+
+/**
+ * Build the action into a folder to include static files/assets
+ */
+export const buildActionFolder = async () => {
+  // create directory ./dist/static if it does not exist
+  ensureDir(DIST_ACTION_FOLDER);
+  copyFolders(COPY_FOLDERS);
+  fs.writeFileSync(
+    `${DIST_ACTION_FOLDER}/package.json`,
+    JSON.stringify(ACTION_PACKAGE_JSON, null, 2),
+  );
+  // by default, build the actio.
+  await buildAction();
+};
+
+await buildActionFolder();
