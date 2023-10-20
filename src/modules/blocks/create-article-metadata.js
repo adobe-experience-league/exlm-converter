@@ -1,3 +1,4 @@
+import yaml from 'js-yaml';
 import { toBlock, replaceElement, newHtmlList } from '../utils/dom-utils.js';
 
 export default function createArticleMetaData(
@@ -24,32 +25,26 @@ export default function createArticleMetaData(
     articleMetaDivTag.append(lastUpdatedElementTag);
   }
 
-  // Article Metadata Topics
-  const fullMetadata = meta.split('\n');
-  fullMetadata.forEach((line) => {
-    const [key, value] = line.split(': ');
-
-    if (key === 'feature') {
-      const topics = value;
-      const topicMetadata = topics.split(',');
-      const items = ['Topics:'];
-      topicMetadata.forEach((tags) => {
-        const a = document.createElement('a');
-        a.setAttribute('href', '#');
-        a.textContent = tags;
-        items.push(a);
-      });
-      articleMetaDivTag.append(newHtmlList(document, { tag: 'ul', items }));
+   //Article Metadata Topics
+   const fullMetadata = yaml.load(meta);
+   if(fullMetadata.hasOwnProperty("feature") && fullMetadata["feature"].trim() !== ""){
+     const feature = fullMetadata["feature"];
+     const topicMetadata = feature.split(', ').map(item => item.trim());
+     const items = ['Topics:'];
+     topicMetadata.forEach((tags) => {
+      const a = document.createElement('a');
+      a.setAttribute('href', '#');
+      a.textContent = tags;
+      items.push(a);
+    });
+    articleMetaDivTag.append(newHtmlList(document, { tag: 'ul', items }));
     }
-  });
 
   // Article Metadata Created For
   if (level.length !== 0) {
     const items = ['Created for:'];
     level.forEach((tags) => {
-      const tagElementTag = document.createElement('li');
-      tagElementTag.innerHTML = tags;
-      items.push(tagElementTag);
+      items.push(tags);
     });
     articleMetaDivTag.append(newHtmlList(document, { tag: 'ul', items }));
   }
