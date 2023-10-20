@@ -66,7 +66,6 @@ const renderDoc = async function renderDocs(path) {
 const renderFragment = async (path) => {
   if (path) {
     const fragmentPath = join(dir, addExtension(path, '.html'));
-    console.log({ fragmentPath });
     // Get header and footer static content from Github
     if (fs.existsSync(fragmentPath)) {
       return {
