@@ -55,13 +55,9 @@ const renderDoc = async function renderDocs(path) {
     const response = await exlClient.getArticle(id);
     const md = response.data.FullBody;
     const meta = response.data.FullMeta;
-    const lastUpdated = response.data.UpdatedUTC;
-    const level = response.data.Level;
     const { convertedHtml, originalHtml } = await md2html(
       md,
       meta,
-      lastUpdated,
-      level,
     );
     return {
       md,
