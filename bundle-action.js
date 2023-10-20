@@ -85,13 +85,17 @@ const copyFolders = (folders) => {
 export const buildActionFolder = async () => {
   // create directory ./dist/static if it does not exist
   ensureDir(DIST_ACTION_FOLDER);
+  // copy static folders to dist
   copyFolders(COPY_FOLDERS);
+  // write package.json file to dist. it contains the main entry point for the action
   fs.writeFileSync(
     `${DIST_ACTION_FOLDER}/package.json`,
     JSON.stringify(ACTION_PACKAGE_JSON, null, 2),
   );
-  // by default, build the actio.
+
+  // bundle the action
   await buildAction();
 };
 
+// by default, when this file is run, build the action.
 await buildActionFolder();
