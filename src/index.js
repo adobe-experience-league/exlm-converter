@@ -19,7 +19,13 @@ import ExlClient from './modules/ExlClient.js';
 import mappings from './url-mapping.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
+// need this to work with both esm and commonjs
+let dir;
+try {
+  dir = __dirname; // if commonjs, this will get current directory
+} catch (e) {
+  dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
+}
 
 const aioLogger = Logger('App');
 
@@ -59,7 +65,7 @@ const renderDoc = async function renderDocs(path) {
 
 const renderFragment = async (path) => {
   if (path) {
-    const fragmentPath = join(currentDir, addExtension(path, '.html'));
+    const fragmentPath = join(dir, addExtension(path, '.html'));
     console.log({ fragmentPath });
     // Get header and footer static content from Github
     if (fs.existsSync(fragmentPath)) {

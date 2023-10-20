@@ -10,6 +10,8 @@ const COPY_FOLDERS = [['src/fragments', `${DIST_ACTION_FOLDER}/fragments`]];
 
 const ACTION_PACKAGE_JSON = {
   main: DIST_ACTION_FILE_NAME,
+  // name: "xwalk-converter",
+  // version: "1.0.0",
 };
 
 const esbuildOptions = {
@@ -17,11 +19,14 @@ const esbuildOptions = {
   bundle: true,
   outfile: DIST_ACTION_INDEX,
   platform: 'node',
-  format: 'esm',
+  format: 'cjs',
   target: 'node18',
   external: ['canvas', 'bufferutil', 'utf-8-validate'],
   plugins: [jsdomPatch],
   logLevel: 'info',
+  logOverride: {
+    'empty-import-meta': 'debug', // sets the logging level for a specific message: "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+  },
 };
 
 export const buildAction = async () => esbuild.build(esbuildOptions);
