@@ -10,6 +10,7 @@ import ins from 'markdown-it-ins';
 import mark from 'markdown-it-mark';
 import sub from 'markdown-it-sub';
 import sup from 'markdown-it-sup';
+import markdownStyle from 'markdown-it-style';
 
 export default function markdownItToHtml(mdString) {
   return markdownit({
@@ -30,5 +31,6 @@ export default function markdownItToHtml(mdString) {
     .use(mark)
     .use(sub)
     .use(sup)
+    .use(markdownStyle)
     .render(mdString);
 }
