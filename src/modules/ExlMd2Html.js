@@ -21,7 +21,7 @@ import createList from './blocks/create-list.js';
 import createArticleMetaData from './blocks/create-article-metadata.js';
 import markdownItToHtml from './MarkdownIt.js';
 
-async function converter(mdString, meta, lastUpdated, level) {
+async function converter(mdString, meta) {
   const convertedHtml = markdownItToHtml(mdString);
 
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -55,7 +55,7 @@ async function converter(mdString, meta, lastUpdated, level) {
   const { document } = dom.window;
   // createSections(document);
   createMetaData(document, meta);
-  createArticleMetaData(document, meta, lastUpdated, level);
+  createArticleMetaData(document, meta);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
@@ -75,6 +75,6 @@ async function converter(mdString, meta, lastUpdated, level) {
   };
 }
 
-export default async function md2html(mdString, meta, lastUpdated, level) {
-  return converter(afm(mdString, 'extension'), meta, lastUpdated, level);
+export default async function md2html(mdString, meta) {
+  return converter(afm(mdString, 'extension'), meta);
 }
