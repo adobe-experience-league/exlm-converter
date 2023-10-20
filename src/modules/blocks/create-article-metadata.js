@@ -4,17 +4,16 @@ import { toBlock, replaceElement, newHtmlList } from '../utils/dom-utils.js';
 export default function createArticleMetaData(
   document,
   meta,
-  lastUpdated,
-  level,
 ) {
   // Article Metadata Title
-  const headerElements = document.querySelector('h1');
+  const headerElement = document.querySelector('h1');
   const articleMetaDivTag = document.createElement('div');
+  const fullMetadata = yaml.load(meta);
 
   // Article Metadata Last Updated
-  if (lastUpdated.length !== 0) {
+  if (fullMetadata.hasOwnProperty("last-update")) {
     const lastUpdatedElementTag = document.createElement('div');
-    const isodate = new Date(lastUpdated);
+    const isodate = new Date(fullMetadata["last-update"]);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = isodate.toLocaleDateString('en-US', options);
     const localeDateString = `Last update: ${formattedDate}`;
@@ -23,7 +22,6 @@ export default function createArticleMetaData(
   }
 
    //Article Metadata Topics
-   const fullMetadata = yaml.load(meta);
    if(fullMetadata.hasOwnProperty("feature") && fullMetadata["feature"].trim() !== ""){
      const feature = fullMetadata["feature"];
      const topicMetadata = feature.split(', ').map(item => item.trim());
@@ -38,7 +36,9 @@ export default function createArticleMetaData(
     }
 
   // Article Metadata Created For
-  if (level.length !== 0) {
+  if(fullMetadata.hasOwnProperty("level") && fullMetadata["level"].trim() !== ""){
+    const levels = fullMetadata["level"];
+    const level = levels.split(', ').map(item => item.trim());
     const items = ['Created for:'];
     level.forEach((tags) => {
       items.push(tags);
@@ -48,5 +48,5 @@ export default function createArticleMetaData(
 
   const cells = [[articleMetaDivTag]];
   const block = toBlock('article-metadata', cells, document);
-  headerElements.parentNode.insertBefore(block, headerElements.nextSibling);
+  headerElement.parentNode.insertBefore(block, headerElement.nextSibling);
 }
