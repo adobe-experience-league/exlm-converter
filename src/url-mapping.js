@@ -51,4 +51,8 @@ export default [
     path: '/docs/authoring-guide-exl/using/authoring/tables',
     id: 'recSamvuJkILYVR1q  ',
   },
+  {
+    path: '/docs/experience-manager-cloud-service/content/migration-journey/getting-started-partners',
+    id: 'rec9rN1MgLgR562Vh',
+  },
 ];
