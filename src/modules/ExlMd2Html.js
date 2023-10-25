@@ -5,7 +5,7 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import { createMetaData } from './utils/dom-utils.js';
+import { createMetaData, setTargetBlankToUrl } from './utils/dom-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
@@ -70,6 +70,7 @@ async function converter(mdString, meta) {
   createList(document);
   createArticleMetaDataCreatedBy(document, meta);
   createArticleMetaDataTopics(document, meta);
+  setTargetBlankToUrl(document);
   // leave this at the end
   handleNestedBlocks(document);
 

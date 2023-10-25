@@ -227,3 +227,21 @@ export const newHtmlList = (document, { tag = 'ul', items = [] }) => {
   });
   return list;
 };
+
+/**
+ * Modifies the href attribute of anchor elements with target="_blank" to include "#_blank" in the URL.
+ *
+ * @param {Document} document - The document object to search for anchor elements.
+ */
+export const setTargetBlankToUrl = (document) => {
+  const anchorElements = document.querySelectorAll('a');
+  if (!anchorElements) return;
+
+  anchorElements.forEach((anchor) => {
+    const targetAttribute = anchor.getAttribute('target');
+    if (targetAttribute && targetAttribute === '_blank') {
+      const currentHref = anchor.getAttribute('href');
+      anchor.setAttribute('href', `${currentHref}#_blank`);
+    }
+  });
+};
