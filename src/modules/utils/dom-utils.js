@@ -233,7 +233,7 @@ export const newHtmlList = (document, { tag = 'ul', items = [] }) => {
  *
  * @param {Document} document - The document object to search for anchor elements.
  */
-export const setTargetBlankToUrl = (document) => {
+export const handleExternalUrl = (document) => {
   const anchorElements = document.querySelectorAll('a');
   if (!anchorElements) return;
 
