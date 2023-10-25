@@ -22,6 +22,7 @@ import createArticleMetaData from './blocks/create-article-metadata.js';
 import createArticleMetaDataTopics from './blocks/create-article-metadata-topics.js';
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
+import createMiniTOC from './blocks/create-mini-toc.js';
 
 async function converter(mdString, meta) {
   const convertedHtml = markdownItToHtml(mdString);
@@ -71,6 +72,7 @@ async function converter(mdString, meta) {
   createArticleMetaDataCreatedBy(document, meta);
   createArticleMetaDataTopics(document, meta);
   handleExternalUrl(document);
+  createMiniTOC(document);
   // leave this at the end
   handleNestedBlocks(document);
 
