@@ -5,7 +5,10 @@ export default function createVideoTranscript(document) {
 
   if (videoTranscriptElements.length) {
     videoTranscriptElements.forEach((element) => {
-      if (element.previousElementSibling.classList[0] === 'embed') {
+      if (
+        element.previousElementSibling &&
+        element.previousElementSibling.classList[0] === 'embed'
+      ) {
         const cells = [];
 
         Array.from(element.children).forEach((el) => {
