@@ -46,7 +46,7 @@ export default [
   {
     path: '/docs/journey-optimizer-learn/tutorials/introduction-to-journey-optimizer/mobile-capabilities-for-developers',
     id: 'recGseE0j7HEteLlx',
-  }, 
+  },
   {
     path: '/docs/target-learn/tutorials/activities/create-ab-tests',
     id: 'recCgLaXS1llwMbvb',
@@ -58,5 +58,29 @@ export default [
   {
     path: '/docs/experience-manager-cloud-service/content/migration-journey/getting-started-partners',
     id: 'rec9rN1MgLgR562Vh',
+  },
+  {
+    path: '/docs/creative-cloud-enterprise-learn/cce-learning-hub/cceoverview/overview-cce',
+    id: 'recUYHeFeLdTLak8z',
+  },
+  {
+    path: '/docs/creative-cloud-enterprise-learn/cce-learning-hub/cceoverview/ccerefguides/overview-ref',
+    id: 'rec7ajLazYrkI06nk',
+  },
+  {
+    path: '/docs/creative-cloud-enterprise-learn/cce-learning-hub/videooverview/overview-dva',
+    id: 'recLXJKP3A0JPghmz',
+  },
+  {
+    path: '/docs/integrations-learn/experience-cloud/solution-categories/content-management',
+    id: 'recrWO51UB125Pd29',
+  },
+  {
+    path: '/docs/marketo/using/release-notes/previous-releases/2023/release-notes-sep-23',
+    id: 'rec1MHITzwBDe6dsf',
+  },
+  {
+    path: '/docs/marketo/using/product-docs/demand-generation/dynamic-chat/automated-chat/stream-designer',
+    id: 'recUQH1McIQ3uqRil',
   },
 ];
