@@ -19,6 +19,8 @@ import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
 import createArticleMetaData from './blocks/create-article-metadata.js';
+import createArticleMetaDataTopics from './blocks/create-article-metadata-topics.js';
+import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
 
 async function converter(mdString, meta) {
@@ -66,6 +68,8 @@ async function converter(mdString, meta) {
   createCodeBlock(document);
   createVideoTranscript(document);
   createList(document);
+  createArticleMetaDataTopics(document, meta);
+  createArticleMetaDataCreatedBy(document, meta);
   // leave this at the end
   handleNestedBlocks(document);
 
