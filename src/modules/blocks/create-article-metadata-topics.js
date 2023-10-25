@@ -23,5 +23,6 @@ export default function createArticleMetaDataTopics(
      featureDivTag.append(newHtmlList(document, { tag: 'ul', items }));
      const cells = [[featureDivTag]];
      const block = toBlock('article-metadata-topics', cells, document);
+     metaElement.insertAdjacentElement('afterend', block);
     }
 }
