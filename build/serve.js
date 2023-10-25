@@ -32,7 +32,13 @@ const execute = async (command, desc) =>
 
 // watch for change in action, bundle it, then restart express server
 watchAction(() => {
-  const nodeMon = join(currentDirectory, 'node_modules', '.bin', 'nodemon');
+  const nodeMon = join(
+    currentDirectory,
+    '..',
+    'node_modules',
+    '.bin',
+    'nodemon',
+  );
   const express = join(currentDirectory, 'express.js');
   const dist = join(currentDirectory, 'dist');
   const distBundle = join(currentDirectory, 'dist', 'index.js');
