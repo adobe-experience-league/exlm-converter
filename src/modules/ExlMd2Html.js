@@ -18,6 +18,9 @@ import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
+import createArticleMetaData from './blocks/create-article-metadata.js';
+import createArticleMetaDataTopics from './blocks/create-article-metadata-topics.js';
+import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
 
 async function converter(mdString, meta) {
@@ -29,10 +32,15 @@ async function converter(mdString, meta) {
     hast: main,
   };
 
+  // Add the Left and Right Rail content as part of their respective Placeholders
   const hast = h('html', [
     h('body', [
       h('header', []),
-      h('main', [h('div', content.hast)]),
+      h('main', [
+        h('div', 'Placeholder Content for Left Rail'), // Left Rail Block
+        h('div', content.hast), // Base Content
+        h('div', 'Placeholder Content for Right Rail'), // Right Rail Block
+      ]),
       h('footer', []),
     ]),
   ]);
@@ -49,6 +57,7 @@ async function converter(mdString, meta) {
   const { document } = dom.window;
   // createSections(document);
   createMetaData(document, meta);
+  createArticleMetaData(document, meta);
   createVideo(document);
   createBadge(document);
   createRelatedArticles(document);
@@ -59,6 +68,8 @@ async function converter(mdString, meta) {
   createCodeBlock(document);
   createVideoTranscript(document);
   createList(document);
+  createArticleMetaDataCreatedBy(document, meta);
+  createArticleMetaDataTopics(document, meta);
   // leave this at the end
   handleNestedBlocks(document);
 

@@ -56,7 +56,10 @@ const renderDoc = async function renderDocs(path) {
     const response = await exlClient.getArticle(id);
     const md = response.data.FullBody;
     const meta = response.data.FullMeta;
-    const { convertedHtml, originalHtml } = await md2html(md, meta);
+    const { convertedHtml, originalHtml } = await md2html(
+      md,
+      meta,
+    );
     return {
       md,
       html: convertedHtml,

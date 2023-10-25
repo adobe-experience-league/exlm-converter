@@ -208,3 +208,22 @@ export const createMetaData = (document, meta) => {
 
   document.head.appendChild(fragment);
 };
+
+/**
+ * @typedef {Object} ListOptions
+ * @property {string} tag - either ul or ol
+ * @property {Array<HTMLElement>} items - elements
+ *
+ * @param {ListOptions} options
+ * @param {Document} document
+ * @returns
+ */
+export const newHtmlList = (document, { tag = 'ul', items = [] }) => {
+  const list = document.createElement(tag);
+  items.forEach((item) => {
+    const li = document.createElement('li');
+    append(li, item);
+    list.appendChild(li);
+  });
+  return list;
+};
