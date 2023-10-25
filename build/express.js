@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import express from 'express';
-import { render } from './src/index.js';
+import { render } from '../src/index.js';
 
 const app = express();
 const port = 3030;

@@ -6,8 +6,9 @@
   "scripts": {
     "lint:js": "eslint .",
     "format:js": "prettier . --write",
-    "serve": "node ./serve.js",
-    "build": "node ./bundle-action.js",
+    "serve": "node ./build/serve.js",
+    "build": "node ./build/bundle-action.js",
+    "publish:fragments": "node ./publish-fragments.js",
     "test": "instant-mocha",
     "prepare": "husky install"
   },
