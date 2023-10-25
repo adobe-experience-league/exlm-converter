@@ -68,8 +68,8 @@ async function converter(mdString, meta) {
   createCodeBlock(document);
   createVideoTranscript(document);
   createList(document);
-  createArticleMetaDataTopics(document, meta);
   createArticleMetaDataCreatedBy(document, meta);
+  createArticleMetaDataTopics(document, meta);
   // leave this at the end
   handleNestedBlocks(document);
 
