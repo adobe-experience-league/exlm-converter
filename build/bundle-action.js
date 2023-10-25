@@ -1,6 +1,6 @@
 import * as esbuild from 'esbuild';
 import fs from 'fs';
-import { jsdomPatch } from '../esbuild-plugins/jsdomPatch.cjs';
+import { jsdomPatch } from './esbuild-plugins/jsdomPatch.cjs';
 
 const DIST_ACTION_FOLDER = 'dist/static';
 const DIST_ACTION_FILE_NAME = 'index.js';
