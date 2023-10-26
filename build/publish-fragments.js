@@ -17,10 +17,8 @@ const branch = BRANCH || GITHUB_REF_NAME;
 
 // Validate environment variables
 if (!owner || !repo || !branch) {
-  if (!owner)
-    console.error('Missing OWNER or GITHUB_REPOSITORY environment variable');
-  if (!repo)
-    console.error('Missing REPO or GITHUB_REPOSITORY environment variable');
+  if (!owner) console.error('Missing OWNER environment variable');
+  if (!repo) console.error('Missing REPO environment variable');
   if (!branch)
     console.error('Missing BRANCH or GITHUB_REF_NAME environment variable');
   process.exit(1);
