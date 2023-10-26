@@ -1,4 +1,8 @@
-import { toBlock, replaceElement } from '../utils/dom-utils.js';
+import {
+  toBlock,
+  replaceElement,
+  groupWithParagraphs,
+} from '../utils/dom-utils.js';
 
 /**
  * @param {Document} document
@@ -12,6 +16,7 @@ export default function createTables(document) {
       const variations = [];
       if (table.style.tableLayout)
         variations.push(`layout-${table.style.tableLayout}`);
+      /** @type {HTMLElement[]} */
       const $rows = [];
       Array.from(table.children).forEach((child) => {
         if (
@@ -23,7 +28,10 @@ export default function createTables(document) {
       });
 
       result = $rows.map((row) =>
-        Array.from(row.children).map((child) => Array.from(child.childNodes)),
+        Array.from(row.children).map((cell) => {
+          const cellChildren = Array.from(cell.childNodes);
+          return groupWithParagraphs(document, cellChildren);
+        }),
       );
 
       replaceElement(
