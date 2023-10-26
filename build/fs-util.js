@@ -8,7 +8,6 @@ import path from 'path';
 export default async function readdirRecursive(dir, files = []) {
   console.debug(`Reading directory: ${dir}`);
   const currentFiles = await fs.readdir(dir, {
-    recursive: true,
     withFileTypes: true,
   });
   // eslint-disable-next-line no-restricted-syntax
