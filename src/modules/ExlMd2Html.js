@@ -23,6 +23,7 @@ import createArticleMetaDataTopics from './blocks/create-article-metadata-topics
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
+import createTOC from './blocks/create-toc.js';
 
 async function converter(mdString, meta) {
   const convertedHtml = markdownItToHtml(mdString);
@@ -38,7 +39,7 @@ async function converter(mdString, meta) {
     h('body', [
       h('header', []),
       h('main', [
-        h('div', 'TOC'), // Left Rail Block
+        h('div'), // Left Rail Block
         h('div', content.hast), // Base Content
         h('div'), // Right Rail Block
       ]),
@@ -73,6 +74,7 @@ async function converter(mdString, meta) {
   createArticleMetaDataTopics(document, meta);
   handleExternalUrl(document);
   createMiniTOC(document);
+  createTOC(document);
   // leave this at the end
   handleNestedBlocks(document);
 
