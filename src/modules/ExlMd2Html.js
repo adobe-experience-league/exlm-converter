@@ -24,8 +24,9 @@ import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-cre
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
 
-async function converter(mdString, meta) {
-  const convertedHtml = markdownItToHtml(mdString);
+export default async function md2html(mdString, meta) {
+  const amfProcessed = afm(mdString, 'extension');
+  const convertedHtml = markdownItToHtml(amfProcessed);
 
   const main = fromHtml(convertedHtml, { fragment: true });
 
@@ -80,8 +81,4 @@ async function converter(mdString, meta) {
     convertedHtml: dom.serialize(),
     originalHtml: html,
   };
-}
-
-export default async function md2html(mdString, meta) {
-  return converter(afm(mdString, 'extension'), meta);
 }

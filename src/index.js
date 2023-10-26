@@ -16,7 +16,6 @@ import fs from 'fs';
 import { join, dirname } from 'path';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
-import mappings from './url-mapping.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 
 // need this to work with both esm and commonjs
@@ -29,37 +28,19 @@ try {
 
 const aioLogger = Logger('App');
 
-const exlClient = new ExlClient();
-
-/**
- * lookup the id of a document by path from the maintained list.
- * This is temporary.
- */
-const lookupId = (path) => {
-  const noExtension = removeExtension(path);
-  const mapping = mappings.find(
-    (map) => map.path.trim() === noExtension.trim(),
-  );
-  return mapping?.id;
-};
+const exlClient = new ExlClient({
+  domain: 'https://experienceleague.adobe.com',
+});
 
 /**
  * handles a markdown doc path
  */
 const renderDoc = async function renderDocs(path) {
-  const id = lookupId(path);
-  if (id) {
-    // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
-    // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
-    // has:  <meta name="id" content="recXh9qG5sL543CUD">
-    // ExL API does not provide a way to lookup by path, so for now, we hard code it.
-    const response = await exlClient.getArticle(id);
-    const md = response.data.FullBody;
-    const meta = response.data.FullMeta;
-    const { convertedHtml, originalHtml } = await md2html(
-      md,
-      meta,
-    );
+  const response = await exlClient.getArticleByPath(removeExtension(path));
+  if (response.data.length > 0) {
+    const md = response.data[0].FullBody;
+    const meta = response.data[0].FullMeta;
+    const { convertedHtml, originalHtml } = await md2html(md, meta);
     return {
       md,
       html: convertedHtml,
@@ -67,9 +48,7 @@ const renderDoc = async function renderDocs(path) {
     };
   }
   return {
-    error: new Error(
-      `No ID found for path: ${path}, see the url-mapping file for a list of available paths`,
-    ),
+    error: new Error(`No Page found for: ${path}`),
   };
 };
 

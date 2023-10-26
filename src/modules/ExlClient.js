@@ -1,3 +1,6 @@
+import { addExtension, removeExtension } from './utils/path-utils.js';
+import mappings from '../url-mapping.js';
+
 /**
  * @typedef {object} ExlArticle
  * @property {string} ID
@@ -34,6 +37,28 @@
  * @property {Number} status
  */
 
+/**
+ * @typedef {Object} ExlArticlesResponse
+ * @property {ExlArticle[]} data
+ * @property {string|null} error
+ * @property {Array} links
+ * @property {Number} status
+ */
+
+const isInternal = (path) => path.startsWith('/docs/authoring-guide-exl');
+
+/**
+ * lookup the id of a document by path from the maintained list.
+ * This is temporary.
+ */
+const lookupId = (path) => {
+  const noExtension = removeExtension(path);
+  const mapping = mappings.find(
+    (map) => map.path.trim() === noExtension.trim(),
+  );
+  return mapping?.id;
+};
+
 export default class ExlClient {
   constructor({ domain = 'https://experienceleague.adobe.com' } = {}) {
     this.domain = domain;
@@ -45,9 +70,40 @@ export default class ExlClient {
    * @param {string} lang
    * @returns {ExlArticleResponse}
    */
-  async getArticle(id, lang = 'en') {
+  async getArticleById(id, lang = 'en') {
     const path = `api/articles/${id}?lang=${lang}`;
     const response = await this.doFetch(path);
+
+    if (response.error) {
+      throw new Error(response.error);
+    } else {
+      return this.removeSpacesFromKeysRecursively(response);
+    }
+  }
+
+  /**
+   * Get an article by path
+   * @param {string} path
+   * @param {string} lang
+   * @returns {ExlArticlesResponse}
+   */
+  async getArticleByPath(path, lang = 'en') {
+    // handle internal paths
+    if (isInternal(path)) {
+      const id = lookupId(path);
+      const articleResponse = await this.getArticleById(id, lang);
+      // make it match the response from the API
+      return {
+        ...articleResponse,
+        data: [articleResponse.data],
+      };
+    }
+    const finalPath = addExtension(path, '.html');
+    let url = new URL(finalPath, this.domain);
+    url.searchParams.set('lang', lang);
+    url = encodeURIComponent(url.toString());
+    const apiPath = `api/articles?URL=${url}&lang=${lang}`;
+    const response = await this.doFetch(apiPath);
 
     if (response.error) {
       throw new Error(response.error);
