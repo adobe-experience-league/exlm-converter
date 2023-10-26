@@ -27,6 +27,6 @@ jobs:
       - name: Publish Fragments
         run: npm run publish-fragments
         env:
-          OWNER: ${{ env.OWNER }}
-          REPO: ${{ env.REPO }}
+          OWNER: ${{ vars.OWNER }}
+          REPO: ${{ vars.REPO }}
           BRANCH: ${{ env.GITHUB_REF_NAME }}
