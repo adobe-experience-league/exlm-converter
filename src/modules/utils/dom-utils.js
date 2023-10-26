@@ -1,3 +1,7 @@
+import jsdom from 'jsdom';
+
+global.Node = new jsdom.JSDOM().window.Node;
+
 /**
  * @param {string} className
  * @param {Document} document
@@ -244,4 +248,48 @@ export const handleExternalUrl = (document) => {
       anchor.setAttribute('href', `${currentHref}#_blank`);
     }
   });
+};
+
+// see: https://www.w3schools.com/html/html_blocks.asp
+const INLINE_ELEMENTS = new Set(
+  'a|abbr|acronym|b|bdo|big|br|button|cite|code|dfn|em|i|img|input|kbd|label|map|object|output|q|samp|script|select|small|span|strong|sub|sup|textarea|time|tt|var'.split(
+    '|',
+  ),
+);
+
+const isInlineElement = (element) =>
+  INLINE_ELEMENTS.has(element.tagName.toLowerCase());
+
+/**
+ * Groups adjacent inline elements into paragraphs (leaves block level elements as they are)
+ * see INLINE_ELEMENTS above for a full list of inline elements that will be grouped within paragraphs.
+ * @param {Document} document
+ * @param {ChildNode[]} nodes
+ * @returns {HTMLElement[]}
+ */
+export const groupWithParagraphs = (document, nodes) => {
+  const result = [];
+  let currentParagraph = document.createElement('p');
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    // encountered a block level element
+    if (node.nodeType === Node.ELEMENT_NODE && !isInlineElement(node)) {
+      if (currentParagraph.childNodes.length > 0) {
+        // close current paragraph, start new one
+        result.push(currentParagraph);
+        currentParagraph = document.createElement('p');
+      }
+      // push block level element to result
+      result.push(node);
+    } else {
+      // encountered inline level element, add to parapgraph
+      currentParagraph.appendChild(node);
+    }
+  }
+  // push last paragraph
+  if (currentParagraph.childNodes.length > 0) {
+    result.push(currentParagraph);
+  }
+  return result;
 };
