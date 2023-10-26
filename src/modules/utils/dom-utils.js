@@ -1,6 +1,6 @@
 import jsdom from 'jsdom';
 
-global.HTMLElement = new jsdom.JSDOM().window.HTMLElement;
+global.Node = new jsdom.JSDOM().window.Node;
 
 /**
  * @param {string} className
@@ -256,6 +256,7 @@ const INLINE_ELEMENTS = new Set(
     '|',
   ),
 );
+
 const isInlineElement = (element) =>
   INLINE_ELEMENTS.has(element.tagName.toLowerCase());
 
@@ -269,12 +270,11 @@ const isInlineElement = (element) =>
 export const groupWithParagraphs = (document, nodes) => {
   const result = [];
   let currentParagraph = document.createElement('p');
-
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
     // encountered a block level element
-    if (node instanceof HTMLElement && !isInlineElement(node)) {
+    if (node.nodeType === Node.ELEMENT_NODE && !isInlineElement(node)) {
       if (currentParagraph.childNodes.length > 0) {
         // close current paragraph, start new one
         result.push(currentParagraph);
