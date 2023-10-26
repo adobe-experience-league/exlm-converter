@@ -26,3 +26,7 @@ jobs:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
       - name: Publish Fragments
         run: npm run publish-fragments
+        env:
+          OWNER: ${{ env.OWNER }}
+          REPO: ${{ env.REPO }}
+          BRANCH: ${{ env.GITHUB_REF_NAME }}
