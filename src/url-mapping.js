@@ -83,4 +83,16 @@ export default [
     path: '/docs/marketo/using/product-docs/demand-generation/dynamic-chat/automated-chat/stream-designer',
     id: 'recUQH1McIQ3uqRil',
   },
+  {
+    path: '/docs/analytics/components/segmentation/seg-containers',
+    id: 'recsIiOJagHPjA6o5',
+  },
+  {
+    path: '/docs/experience-manager-guides-learn/tutorials/user-guide/manage-content/authoring-file-management',
+    id: 'recfxewptHHfJR6xn',
+  },
+  {
+    path: '/docs/blueprints-learn/architecture/customer-journeys/journey-optimizer/journey-optimizer',
+    id: 'recFhzRw6szJBc7Cq',
+  },
 ];
