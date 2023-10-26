@@ -38,9 +38,9 @@ async function converter(mdString, meta) {
     h('body', [
       h('header', []),
       h('main', [
-        h('div', 'Placeholder Content for Left Rail'), // Left Rail Block
+        h('div', 'TOC'), // Left Rail Block
         h('div', content.hast), // Base Content
-        h('div', 'Placeholder Content for Right Rail'), // Right Rail Block
+        h('div'), // Right Rail Block
       ]),
       h('footer', []),
     ]),
