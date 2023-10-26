@@ -8,7 +8,7 @@
     "format:js": "prettier . --write",
     "serve": "node ./build/serve.js",
     "build": "node ./build/bundle-action.js",
-    "publish:fragments": "node ./publish-fragments.js",
+    "publish-fragments": "node ./build/publish-fragments.js",
     "test": "instant-mocha",
     "prepare": "husky install"
   },

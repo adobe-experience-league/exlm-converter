@@ -24,3 +24,5 @@ jobs:
         env:
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
+      - name: Publish Fragments
+        run: npm run publish-fragments
