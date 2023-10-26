@@ -8,10 +8,11 @@ const currentDirectory = dirname(filename);
 const SRC_PATH = join(currentDirectory, '../src');
 const FRAGMENTS_PATH = join(SRC_PATH, '/fragments');
 
-const { OWNER, REPO, BRANCH, GITHUB_REPOSITORY, GITHUB_REF_NAME } = process.env;
+// These variables can be set in the github action env variables in repo settings
+const { OWNER, REPO, BRANCH, GITHUB_REF_NAME } = process.env;
 
-const owner = OWNER || GITHUB_REPOSITORY?.split('/')[0];
-const repo = REPO || GITHUB_REPOSITORY?.split('/')[1];
+const owner = OWNER;
+const repo = REPO;
 const branch = BRANCH || GITHUB_REF_NAME;
 
 // Validate environment variables
