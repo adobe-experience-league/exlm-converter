@@ -56,11 +56,16 @@ const previewThenPublish = async (path) => {
   await publishPath(path, 'preview');
   await publishPath(path, 'live');
 };
-const files = await readdirRecursive(FRAGMENTS_PATH);
-// Publish all fragments asynchronously
-await Promise.all(
-  files.map((file) => {
-    const path = relative(SRC_PATH, file);
-    return previewThenPublish(path);
-  }),
-);
+
+try {
+  const files = await readdirRecursive(FRAGMENTS_PATH);
+  // Publish all fragments asynchronously
+  await Promise.all(
+    files.map((file) => {
+      const path = relative(SRC_PATH, file);
+      return previewThenPublish(path);
+    }),
+  );
+} catch (err) {
+  console.trace(err);
+}
