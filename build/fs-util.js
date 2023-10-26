@@ -6,6 +6,7 @@ import path from 'path';
  * @param {string} dir
  */
 export default async function readdirRecursive(dir, files = []) {
+  console.debug(`Reading directory: ${dir}`);
   const currentFiles = await fs.readdir(dir, {
     recursive: true,
     withFileTypes: true,
