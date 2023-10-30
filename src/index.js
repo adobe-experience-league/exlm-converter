@@ -76,16 +76,19 @@ const renderFragment = async (path) => {
 };
 
 /**
- * Renders pages from AEM
+ * Renders content from AEM UE pages
  */
-const renderAEMPages = async (path, params) => {
-  const { authorization, wcmmode } = params;
-  const aemURL = `${aemConfig.aemEnv}${path}.html`;
+const renderContent = async (path, params) => {
+  const { authorization } = params;
+
+  /**
+   * FIXME: Page extension to be handled dynamically. Revisit this implementation and identify a proper
+   * fix.
+   * */
+
+  const aemURL = `${aemConfig.aemEnv}${path}.html?wcmmode=disabled`;
   // console.log(aemURL);
   const url = new URL(aemURL);
-  if (wcmmode) {
-    url.searchParams.set('wcmmode', wcmmode);
-  }
 
   const fetchHeaders = { 'cache-control': 'no-cache' };
   if (authorization) {
@@ -125,7 +128,7 @@ export const render = async function render(path) {
   }
   // Handle AEM UE Pages
   if (path.startsWith('/content')) {
-    return renderAEMPages(path);
+    return renderContent(path);
   }
   // error if all else fails
   return { error: new Error(`Path not supported: ${path}`) };
