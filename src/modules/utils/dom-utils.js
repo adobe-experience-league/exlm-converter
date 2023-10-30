@@ -349,5 +349,4 @@ function updateLink(document, selector, attribute) {
  */
 export const handleAbsoluteUrl = (document) => {
   updateLink(document, 'a', 'href');
-  updateLink(document, 'img', 'src');
 };
