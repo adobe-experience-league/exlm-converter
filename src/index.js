@@ -81,13 +81,7 @@ const renderFragment = async (path) => {
 const renderContent = async (path, params) => {
   const { authorization } = params;
 
-  /**
-   * FIXME: Page extension to be handled dynamically. Revisit this implementation and identify a proper
-   * fix.
-   * */
-
-  const aemURL = `${aemConfig.aemEnv}${path}.html?wcmmode=disabled`;
-  // console.log(aemURL);
+  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${path}?wcmmode=disabled`;
   const url = new URL(aemURL);
 
   const fetchHeaders = { 'cache-control': 'no-cache' };
@@ -114,7 +108,6 @@ const renderContent = async (path, params) => {
   }
 
   const html = await resp.text();
-  // console.log(html);
   return { html };
 };
 
@@ -127,7 +120,7 @@ export const render = async function render(path) {
     return renderFragment(path);
   }
   // Handle AEM UE Pages
-  if (path.startsWith('/content')) {
+  if (!path.startsWith('/docs') && !path.startsWith('/fragments')) {
     return renderContent(path);
   }
   // error if all else fails
