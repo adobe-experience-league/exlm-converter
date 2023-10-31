@@ -23,6 +23,7 @@ import createArticleMetaDataTopics from './blocks/create-article-metadata-topics
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
+import createAccordion from './blocks/create-accordion.js';
 
 export default async function md2html(mdString, meta) {
   const amfProcessed = afm(mdString, 'extension');
@@ -74,6 +75,7 @@ export default async function md2html(mdString, meta) {
   createArticleMetaDataTopics(document, meta);
   handleExternalUrl(document);
   createMiniTOC(document);
+  createAccordion(document);
   // leave this at the end
   handleNestedBlocks(document);
 
