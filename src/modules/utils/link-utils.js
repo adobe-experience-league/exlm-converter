@@ -10,6 +10,24 @@ function isAbsoluteURL(url) {
 }
 
 /**
+ * Removes the ".html" extension from the last segment of a URL's path.
+ *
+ * @param {string} inputURL - The input URL that you want to modify.
+ * @returns {string} The modified URL with the ".html" extension removed from the last path segment.
+ */
+function removeHtmlExtensionFromURL(inputURL) {
+  const url = new URL(inputURL);
+  const pathSegments = url.pathname.split('/');
+
+  pathSegments[pathSegments.length - 1] = pathSegments[
+    pathSegments.length - 1
+  ].replace(/\.html$/, '');
+  url.pathname = pathSegments.join('/');
+
+  return url.toString();
+}
+
+/**
  * Converts an absolute URL to a relative URL within the context of a base URL.
  *
  * @param {string} url - The absolute URL to be converted.
@@ -22,7 +40,8 @@ function absoluteToRelative(url, baseUrl) {
 
   if (absolute.origin !== base.origin) return url;
 
-  const relativeUrl = url.split(baseUrl).pop();
+  const urlWithoutExtension = removeHtmlExtensionFromURL(url);
+  const relativeUrl = urlWithoutExtension.split(baseUrl).pop();
   return relativeUrl;
 }
 
