@@ -17,6 +17,8 @@ import { join, dirname } from 'path';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
+import isBinary from './modules/utils/media-utils.js';
+import aemConfig from './aem-config.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -73,6 +75,42 @@ const renderFragment = async (path) => {
   };
 };
 
+/**
+ * Renders content from AEM UE pages
+ */
+const renderContent = async (path, params) => {
+  const { authorization } = params;
+
+  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${path}?wcmmode=disabled`;
+  const url = new URL(aemURL);
+
+  const fetchHeaders = { 'cache-control': 'no-cache' };
+  if (authorization) {
+    fetchHeaders.authorization = authorization;
+  }
+
+  const resp = await fetch(url, { headers: fetchHeaders });
+
+  if (!resp.ok) {
+    return { error: { code: resp.status, message: resp.statusText } };
+  }
+
+  let contentType = resp.headers.get('content-type') || 'text/html';
+  [contentType] = contentType.split(';');
+
+  const respHeaders = {
+    'content-type': contentType,
+  };
+
+  if (isBinary(contentType)) {
+    const data = Buffer.from(await resp.arrayBuffer());
+    return { data, respHeaders };
+  }
+
+  const html = await resp.text();
+  return { html };
+};
+
 export const render = async function render(path) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
@@ -80,6 +118,10 @@ export const render = async function render(path) {
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (path.startsWith('/fragments')) {
     return renderFragment(path);
+  }
+  // Handle AEM UE Pages
+  if (!path.startsWith('/docs') && !path.startsWith('/fragments')) {
+    return renderContent(path);
   }
   // error if all else fails
   return { error: new Error(`Path not supported: ${path}`) };
@@ -89,7 +131,11 @@ export const main = async function main(params) {
   aioLogger.info({ params });
   /* eslint-disable-next-line no-underscore-dangle */
   const path = params.__ow_path ? params.__ow_path : '';
-  const { html, error } = await render(path, { ...params });
+  /* eslint-disable-next-line no-underscore-dangle */
+  const authorization = params.__ow_headers
+    ? params.__ow_headers.authorization
+    : '';
+  const { html, error } = await render(path, { ...params, authorization });
   if (!error) {
     return {
       statusCode: 200,
