@@ -28,9 +28,9 @@ const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
   // it assumes ALL backticks are the start/end of a code block.
   // in some doc markdowns, we saw a few ``` in the middle of a sentence.
-  // code below fixes that by encoding the backticks that are not preceeded with a new line
+  // code below fixes that by encoding the backticks that are not preceded with a new line
   // before passing to AMF, and then decoding them after.
-  // this: `(?<!\n)` means not preceeded by a new line
+  // this: `(?<!\n)` means not preceded by a new line
   const backTickEncoded = md.replace(/(?<!\n)```/g, '&grave;&grave;&grave;');
   const amfProcessed = afm(backTickEncoded, 'extension');
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
