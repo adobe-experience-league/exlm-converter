@@ -111,7 +111,7 @@ const renderContent = async (path, params) => {
   return { html };
 };
 
-export const render = async function render(path) {
+export const render = async function render(path, params) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
   }
@@ -121,7 +121,7 @@ export const render = async function render(path) {
   }
   // Handle AEM UE Pages
   if (!path.startsWith('/docs') && !path.startsWith('/fragments')) {
-    return renderContent(path);
+    return renderContent(path, params);
   }
   // error if all else fails
   return { error: new Error(`Path not supported: ${path}`) };
