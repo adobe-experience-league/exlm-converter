@@ -14,8 +14,21 @@ export default function createTables(document) {
   if (tables.length) {
     tables.forEach((table) => {
       const variations = [];
+
+      // Auto or Fixed variation
       if (table.style.tableLayout)
         variations.push(`layout-${table.style.tableLayout}`);
+
+      // HTML authored variation
+      if (table.children[0].tagName !== 'THEAD') {
+        variations.push('html-authored');
+
+        // Without header variation
+        if (!table.querySelector('th')) {
+          variations.push('no-header');
+        }
+      }
+
       /** @type {HTMLElement[]} */
       const $rows = [];
       Array.from(table.children).forEach((child) => {
