@@ -5,11 +5,8 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import {
-  createMetaData,
-  handleAbsoluteUrl,
-  handleExternalUrl,
-} from './utils/dom-utils.js';
+import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
+import handleAbsoluteUrl from './utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
