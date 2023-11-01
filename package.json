@@ -10,7 +10,8 @@
     "build": "node ./build/bundle-action.js",
     "publish-fragments": "node ./build/publish-fragments.js",
     "test": "instant-mocha",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "preview": "node ./build/preview.js"
   },
   "mocha": {
     "spec": "test/**/*.test.js",
@@ -40,6 +41,7 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "mdast-util-to-hast": "12.3.0",
+    "open": "^9.1.0",
     "rehype-format": "4.0.1",
     "unist-util-visit": "5.0.0"
   },
