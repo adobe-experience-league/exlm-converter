@@ -40,4 +40,8 @@ export default [
     path: '/docs/authoring-guide-exl/using/authoring/courses',
     id: 'rec6E43FbKY1GDdeb',
   },
+  {
+    path: '/docs/authoring-guide-exl/test/collapsible-content',
+    id: 'recgMk4GOsep4yCep',
+  },  
 ];
