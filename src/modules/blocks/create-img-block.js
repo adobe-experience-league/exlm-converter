@@ -3,10 +3,13 @@ import { toBlock } from '../utils/dom-utils.js';
 const getDecorateImgConfig = (img) => {
   let className = '';
   if (img?.align) {
-    className = `${img.align}-align`;
+    className += ` ${img.align}-align`;
   }
   if (img?.width) {
-    className = `w-${img.width}`;
+    className += ` w-${img.width}`;
+  }
+  if (img?.className?.includes('modal-image')) {
+    className += ` modal-image`;
   }
   return {
     canDecorate: !!className,
@@ -24,7 +27,7 @@ export default function createImgBlock(document) {
         const existingClassNames = imgElement.className.split(' ');
         img.classList.add(...existingClassNames);
       }
-      img.classList.add(className);
+      img.classList.add(...className.trim().split(' '));
       img.src = imgElement.src;
       img.title = imgElement.title;
       img.alt = imgElement.alt;
