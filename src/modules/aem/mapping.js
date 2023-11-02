@@ -12,8 +12,7 @@
 /* eslint-disable import/no-relative-packages */
 /* eslint-disable no-param-reassign */
 
-export function mapOutbound(path, cfg) {
-  console.log(cfg.mappings);
+export default function mapOutbound(path, cfg) {
   if (cfg.mappings) {
     // remove .html extension, if any;
     if (path.endsWith('.html')) {
@@ -51,9 +50,6 @@ export function mapOutbound(path, cfg) {
 }
 
 export function mapInbound(path, cfg) {
-  console.log(`-----`);
-
-  console.log(cfg);
   if (cfg.mappings) {
     let extension = '';
     // remove .html extension;

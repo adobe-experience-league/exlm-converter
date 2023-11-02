@@ -15,12 +15,14 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { join, dirname } from 'path';
 import yaml from 'js-yaml';
+import jsdom from 'jsdom';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 import isBinary from './modules/utils/media-utils.js';
 import aemConfig from './aem-config.js';
 import { mapInbound } from './modules/aem/mapping.js';
+import rewriteUrls from './modules/aem/rewrite-urls.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -134,7 +136,12 @@ const renderContent = async (path, params) => {
   }
 
   const html = await resp.text();
-  return { html };
+
+  // Rewrite outbound URLs in the markup
+  const dom = new jsdom.JSDOM(html);
+  const { document } = dom.window;
+  rewriteUrls(document, pathsCgf);
+  return { html: dom.serialize() };
 };
 
 export const render = async function render(path, params) {
