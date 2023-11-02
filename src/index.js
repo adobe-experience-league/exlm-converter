@@ -44,7 +44,8 @@ const renderDoc = async function renderDocs(path) {
   if (response.data.length > 0) {
     const md = response.data[0].FullBody;
     const meta = response.data[0].FullMeta;
-    const { convertedHtml, originalHtml } = await md2html(md, meta);
+    const data = response.data[0];
+    const { convertedHtml, originalHtml } = await md2html(md, meta, data);
     return {
       md,
       html: convertedHtml,

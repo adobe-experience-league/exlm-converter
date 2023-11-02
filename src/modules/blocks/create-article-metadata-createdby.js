@@ -1,25 +1,38 @@
 import yaml from 'js-yaml';
-import { toBlock,newHtmlList } from '../utils/dom-utils.js';
+import {
+	toBlock,
+	newHtmlList
+} from '../utils/dom-utils.js';
 
 export default function createArticleMetaDataCreatedBy(
-  document,
-  meta,
+	document,
+	data,
 ) {
-  const fullMetadata = yaml.load(meta);
-  const metaElement = document.querySelector('.article-metadata');
-
-    // Article Metadata Created For
-    if(fullMetadata.hasOwnProperty("level") && fullMetadata["level"].trim() !== ""){
-      const levels = fullMetadata["level"];
-      const level = levels.split(',').map(item => item.trim());
-      const levelDivTag = document.createElement('div');
-      const items = ['Created for:'];
-      level.forEach((tags) => {
-        items.push(tags);
-      });
-      levelDivTag.append(newHtmlList(document, { tag: 'ul', items }));
-      const cells = [[levelDivTag]];
-      const block = toBlock('article-metadata-createdby', cells, document);
-      metaElement.insertAdjacentElement('afterend', block);
-    }
-  }
+	// Article Metadata Created For
+	if (data.Level || data.Role) {
+		const metaElement = document.querySelector('.article-metadata');
+		const levelDivTag = document.createElement('div');
+		const items = ['Created for:'];
+		if (data.Level) {
+			const levels = data.Level;
+			levels.forEach((tags) => {
+				items.push(tags);
+			});
+		}
+		if (data.Role) {
+			const roles = data.Role;
+			roles.forEach((role) => {
+				items.push(role);
+			});
+		}
+		levelDivTag.append(newHtmlList(document, {
+			tag: 'ul',
+			items
+		}));
+		const cells = [
+			[levelDivTag]
+		];
+		const block = toBlock('article-metadata-createdby', cells, document);
+		metaElement.insertAdjacentElement('afterend', block);
+	}
+}
