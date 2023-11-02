@@ -12,7 +12,7 @@
 /* eslint-disable import/no-relative-packages */
 /* eslint-disable no-param-reassign */
 
-export default function mapOutbound(path, cfg) {
+export function mapOutbound(path, cfg) {
   if (cfg.mappings) {
     // remove .html extension, if any;
     if (path.endsWith('.html')) {
