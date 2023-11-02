@@ -106,10 +106,9 @@ const renderContent = async (path, params) => {
 
   // Get the path based on mapping in paths.yaml
   const mappedPath = mapInbound(path, pathsCgf);
-  console.log(mappedPath);
 
   // Hitting AEM for Content
-  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${mappedPath}?wcmmode=disabled`;
+  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${mappedPath}.html?wcmmode=disabled`;
 
   const fetchHeaders = { 'cache-control': 'no-cache' };
   if (authorization) {
@@ -160,7 +159,8 @@ export const main = async function main(params) {
   const path = params.__ow_path ? params.__ow_path : '';
   /* eslint-disable-next-line no-underscore-dangle */
   const authorization = params.__ow_headers
-    ? params.__ow_headers.authorization
+    ? // eslint-disable-next-line no-underscore-dangle
+      params.__ow_headers.authorization
     : '';
   const { html, error } = await render(path, { ...params, authorization });
   if (!error) {
