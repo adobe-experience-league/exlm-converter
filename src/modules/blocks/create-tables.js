@@ -4,21 +4,21 @@ import {
   groupWithParagraphs,
 } from '../utils/dom-utils.js';
 
-function rgbaToHex(rgba) {
-  let hex = '';
-  const match = rgba.match(
-    /^rgba?\((\d+),\s*(\d+),\s*(\d+),?\s*(\d*\.\d+|\d+)\)$/,
-  );
-  if (!match) {
-    return null;
-  }
-  for (let i = 1; i <= 3; i += 1) {
-    const component = parseInt(match[i], 10).toString(16);
-    hex += component.length === 1 ? `0${component}` : component;
-  }
-  const alpha = Math.round(parseFloat(match[4]) * 255).toString(16);
-  hex += alpha.length === 1 ? `0${alpha}` : alpha;
-  return hex;
+function rgbToHex(rgbString) {
+  // Choose correct separator
+  const sep = rgbString.indexOf(',') > -1 ? ',' : ' ';
+  // Turn "rgb(r,g,b)" into [r,g,b]
+  const rgb = rgbString.substr(4).split(')')[0].split(sep);
+
+  let r = (+rgb[0]).toString(16);
+  let g = (+rgb[1]).toString(16);
+  let b = (+rgb[2]).toString(16);
+
+  if (r.length === 1) r = `0${r}`;
+  if (g.length === 1) g = `0${g}`;
+  if (b.length === 1) b = `0${b}`;
+
+  return r + g + b;
 }
 
 /**
@@ -63,7 +63,7 @@ export default function createTables(document) {
         // background colour variation
         if (cell.style.backgroundColor) {
           variations.push(
-            `${i}-bgcolor-${rgbaToHex(cell.style.backgroundColor)}`,
+            `${i}-bgcolor-${rgbToHex(cell.style.backgroundColor)}`,
           );
         }
 
