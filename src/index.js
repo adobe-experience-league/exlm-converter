@@ -22,7 +22,7 @@ import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 import isBinary from './modules/utils/media-utils.js';
 import aemConfig from './aem-config.js';
 import { mapInbound } from './modules/aem/mapping.js';
-import rewriteUrls from './modules/aem/rewrite-urls.js';
+// import rewriteUrls from './modules/aem/rewrite-urls.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -139,8 +139,8 @@ const renderContent = async (path, params) => {
 
   // Rewrite outbound URLs in the markup
   const dom = new jsdom.JSDOM(html);
-  const { document } = dom.window;
-  rewriteUrls(document, pathsCgf);
+  // const { document } = dom.window;
+  // rewriteUrls(document, pathsCgf);
   return { html: dom.serialize() };
 };
 
