@@ -38,7 +38,7 @@ const doAmf = (md) => {
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
 };
 
-export default async function md2html(mdString, meta) {
+export default async function md2html(mdString, meta, data) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -84,7 +84,7 @@ export default async function md2html(mdString, meta) {
   createCodeBlock(document);
   createVideoTranscript(document);
   createList(document);
-  createArticleMetaDataCreatedBy(document, meta);
+  createArticleMetaDataCreatedBy(document, data);
   createArticleMetaDataTopics(document, meta);
   handleExternalUrl(document);
   createMiniTOC(document);
