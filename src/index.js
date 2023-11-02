@@ -21,7 +21,7 @@ import ExlClient from './modules/ExlClient.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 import isBinary from './modules/utils/media-utils.js';
 import aemConfig from './aem-config.js';
-import { mapInbound } from './modules/aem/mapping.js';
+import { mapInbound } from './modules/aem-path-mapping.js';
 
 // need this to work with both esm and commonjs
 let dir;
