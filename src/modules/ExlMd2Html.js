@@ -70,7 +70,6 @@ export default async function md2html(mdString, meta) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  console.log('111111 --- ', document);
   // createSections(document);
   handleAbsoluteUrl(document);
   createMetaData(document, meta);
