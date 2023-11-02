@@ -15,7 +15,6 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { join, dirname } from 'path';
 import yaml from 'js-yaml';
-import jsdom from 'jsdom';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
@@ -135,8 +134,7 @@ const renderContent = async (path, params) => {
   }
 
   const html = await resp.text();
-  const dom = new jsdom.JSDOM(html);
-  return { html: dom.serialize() };
+  return { html };
 };
 
 export const render = async function render(path, params) {
