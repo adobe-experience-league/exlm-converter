@@ -82,7 +82,5 @@ export default function handleAbsoluteUrl(document) {
  * @returns {string} Returns the absolute URL.
  */
 export function relativeToAbsolute(path, baseUrl) {
-  const url = new URL(baseUrl);
-  url.pathname = `${url.pathname}/${path}`;
-  return url.href;
+  return new URL(path, baseUrl).href;
 }
