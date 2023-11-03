@@ -12,6 +12,11 @@ application:
             runtime: 'nodejs:18'
             inputs:
               LOG_LEVEL: debug
+              aemAuthorUrl: $AEM_AUTHOR_URL
+              aemOwner: $OWNER
+              aemRepo: $REPO
+              aemBranch: $BRANCH
+
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

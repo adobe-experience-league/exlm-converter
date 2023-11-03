@@ -8,11 +8,10 @@ import isBinary from '../modules/utils/media-utils.js';
 /**
  * Renders content from AEM UE pages
  */
-export default async function renderAem(path, params, config) {
-  const { authorization } = params;
-  const { aemEnv, owner, repo, ref } = config;
+export default async function renderAem(path, params) {
+  const { aemAuthorUrl, aemOwner, aemRepo, aemBranch, authorization } = params;
 
-  const aemURL = `${aemEnv}/bin/franklin.delivery/${owner}/${repo}/${ref}${path}?wcmmode=disabled`;
+  const aemURL = `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${path}?wcmmode=disabled`;
   const url = new URL(aemURL);
 
   const fetchHeaders = { 'cache-control': 'no-cache' };
@@ -46,7 +45,7 @@ export default async function renderAem(path, params, config) {
   const elements = document.querySelectorAll('img');
   elements.forEach((el) => {
     const uri = el.getAttribute('src');
-    if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemEnv);
+    if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemAuthorUrl);
   });
   return { html: dom.serialize() };
 }

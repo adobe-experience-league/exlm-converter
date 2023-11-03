@@ -16,6 +16,36 @@ That will build the action code inside an express app, with [src/express.js](src
 
 The express app listens on port 3030 and handles incoming requests for _.html and _.md files, applying the html transformations.
 
+### Serving AEM Pages Locally
+
+> This simulates an authenticated request, coming from Edge Delivery Services intended to render from AEM.
+
+1. get your local development access token from Cloud Manager Developer Console (see docs below)
+2. Add file `build/.local.env` that should have the contents below (replace `<token>` with your token and `<aem author>` with the author url)
+```
+AEM_AUTHOR_URL=<aem author>
+OWNER=adobe-experience-league
+REPO=exlm
+BRANCH=main
+# get your local development access token from Cloud Manager Developer Console
+ACCESS_TOKEN=<token>
+```
+
+#### Getting an AEM Developer Access Token
+
+> [see cloud manager documentation on Developer Console and access](https://experienceleague.adobe.com/docs/experience-manager-learn/cloud-service/debugging/debugging-aem-as-a-cloud-service/developer-console.html?lang=en)
+
+1. Navigate to Cloud Manager (If you dont have access to Cloud Manager, contact your program Admin)
+2. Find your Program (again, contact your admin for program Name)
+3. Find your environment
+4. Navigate to the Developer Console for that environment
+5. Click on `integration` Tab
+6. Click on `Get Local Development Token`
+
+> Developer tokens are short lived and should only be used for local testing/debugging.
+
+
+
 ## Deployment
 
 The action is built and deployed by a [github workflow](../../.github/workflows/deploy-action.yaml). 
@@ -27,6 +57,19 @@ If you want to test this action on your own runtime application, it is recommend
 ```
 aio app deploy
 ```
+
+### Github Deployment Action
+The action requires the follwoing environment variables/secrets to be set:
+> see github docs for how to add those: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
+
+| Name                    | Type   |
+|-------------------------|--------|
+| `AIO_RUNTIME_AUTH`      | secret |
+| `AIO_RUNTIME_NAMESPACE` | secret |
+| `OWNER`                 | var    |
+| `REPO`                  | var    |
+| `AEM_AUTHOR_URL`        | var    |
+
 
 ## Debugging common issues
 

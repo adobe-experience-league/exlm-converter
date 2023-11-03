@@ -11,7 +11,6 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
-import aemConfig from './aem-config.js';
 import renderDoc from './renderers/render-doc.js';
 import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
@@ -23,6 +22,13 @@ const aioLogger = Logger('App');
  * @property {string} __ow_path - path of the request
  * @property {Object} __ow_headers - headers of the request
  * @property {authorization} authorization - authorization header
+ * @property {string} aemAuthorUrl - AEM Author URL
+ * @property {string} aemOwner - AEM Owner
+ * @property {string} aemRepo - AEM Repo
+ * @property {string} aemBranch - AEM Branch
+ */
+
+/**
  *
  * @param {string} path
  * @param {Params} params
@@ -37,13 +43,13 @@ export const render = async function render(path, params) {
     return renderFragment(path);
   }
   // Handle AEM UE Pages by default
-  return renderAem(path, params, aemConfig);
+  return renderAem(path, params);
 };
 
 export const main = async function main(params) {
   aioLogger.info({ params });
   // eslint-disable-next-line camelcase
-  const { __ow_path, __ow_headers } = params;
+  const { __ow_path, __ow_headers, aemAuthorUrl } = params;
   // eslint-disable-next-line camelcase
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
@@ -53,7 +59,7 @@ export const main = async function main(params) {
     return {
       statusCode: 200,
       headers: {
-        'x-html2md-img-src': aemConfig.aemEnv, // tells franklin services to index images starting with this and use auth with it.
+        'x-html2md-img-src': aemAuthorUrl, // tells franklin services to index images starting with this and use auth with it.
       },
       body: html,
     };

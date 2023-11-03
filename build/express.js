@@ -10,33 +10,55 @@
  * governing permissions and limitations under the License.
  */
 import express from 'express';
+import dotenv from 'dotenv';
 import { render } from '../src/index.js';
+
+const dotEnvFile = 'build/.local.env';
+dotenv.config({ path: dotEnvFile });
+const { AEM_AUTHOR_URL, OWNER, REPO, BRANCH, ACCESS_TOKEN } = process.env;
+
+// show warning if any of the required variables for AEM are not set
+const requireMember = (name, obj) => {
+  if (!obj[name]) {
+    console.warn(
+      `[WARNING] ${name} variable not set in ${dotEnvFile}. AEM Pages will not work.`,
+    );
+  }
+};
+['AEM_AUTHOR_URL', 'OWNER', 'REPO', 'BRANCH', 'ACCESS_TOKEN'].forEach((name) =>
+  requireMember(name, process.env),
+);
 
 const app = express();
 const port = 3030;
 
-const handler = (req, res) => {
+const handler = async (req, res) => {
   const { path, query } = req;
+
   const params = {
     ...query,
+    aemAuthorUrl: AEM_AUTHOR_URL,
+    aemOwner: OWNER,
+    aemRepo: REPO,
+    aemBranch: BRANCH,
+    authorization: `Bearer ${ACCESS_TOKEN}`,
   };
 
-  render(path, params).then(({ html, md, original, error }) => {
-    if (error) {
-      res.status(error.code || 503);
-      res.send(error.message);
-      return;
-    }
-    res.status(200);
-    if (path.endsWith('.md')) {
-      res.setHeader('Content-Type', 'text/plain');
-      res.send(md);
-    } else if (path.endsWith('.original')) {
-      res.send(original);
-    } else {
-      res.send(html);
-    }
-  });
+  const { html, md, original, error } = await render(path, params);
+  if (error) {
+    res.status(error.code || 503);
+    res.send(error.message);
+    return;
+  }
+  res.status(200);
+  if (path.endsWith('.md')) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(md);
+  } else if (path.endsWith('.original')) {
+    res.send(original);
+  } else {
+    res.send(html);
+  }
 };
 
 app.get('/**', handler);
