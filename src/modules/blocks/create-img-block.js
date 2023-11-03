@@ -28,7 +28,6 @@ export default function createImgBlock(document) {
         img.classList.add(...existingClassNames);
       }
       const newClassNamesList = className.trim().split(' ');
-      //   img.classList.add(...newClassNamesList);
       img.src = imgElement.src;
       img.title = imgElement.title;
       img.alt = imgElement.alt;
