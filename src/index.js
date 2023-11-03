@@ -11,121 +11,23 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-import jsdom from 'jsdom';
-import { join, dirname } from 'path';
-import md2html from './modules/ExlMd2Html.js';
-import ExlClient from './modules/ExlClient.js';
-import { addExtension, removeExtension } from './modules/utils/path-utils.js';
-import isBinary from './modules/utils/media-utils.js';
 import aemConfig from './aem-config.js';
-import {
-  isAbsoluteURL,
-  relativeToAbsolute,
-} from './modules/utils/link-utils.js';
-
-// need this to work with both esm and commonjs
-let dir;
-try {
-  dir = __dirname; // if commonjs, this will get current directory
-} catch (e) {
-  dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
-}
+import renderDoc from './renderers/render-doc.js';
+import renderFragment from './renderers/render-fragment.js';
+import renderAem from './renderers/render-aem.js';
 
 const aioLogger = Logger('App');
 
-const exlClient = new ExlClient({
-  domain: 'https://experienceleague.adobe.com',
-});
-
 /**
- * handles a markdown doc path
+ * @typedef {Object} Params
+ * @property {string} __ow_path - path of the request
+ * @property {Object} __ow_headers - headers of the request
+ * @property {authorization} authorization - authorization header
+ *
+ * @param {string} path
+ * @param {Params} params
+ * @returns
  */
-const renderDoc = async function renderDocs(path) {
-  const response = await exlClient.getArticleByPath(removeExtension(path));
-  if (response.data.length > 0) {
-    const md = response.data[0].FullBody;
-    const meta = response.data[0].FullMeta;
-    const data = response.data[0];
-    const { convertedHtml, originalHtml } = await md2html(md, meta, data);
-    return {
-      md,
-      html: convertedHtml,
-      original: originalHtml,
-    };
-  }
-  return {
-    error: new Error(`No Page found for: ${path}`),
-  };
-};
-
-/**
- * Renders fragment from filesystem at given path
- */
-const renderFragment = async (path) => {
-  if (path) {
-    const fragmentPath = join(dir, addExtension(path, '.html'));
-    // Get header and footer static content from Github
-    if (fs.existsSync(fragmentPath)) {
-      return {
-        html: fs.readFileSync(fragmentPath, 'utf-8'),
-      };
-    }
-    return {
-      error: new Error(`Fragment: ${path} not found`),
-    };
-  }
-  return {
-    error: new Error(`Fragment: ${path} not found`),
-  };
-};
-
-/**
- * Renders content from AEM UE pages
- */
-const renderContent = async (path, params) => {
-  const { authorization } = params;
-
-  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${path}?wcmmode=disabled`;
-  const url = new URL(aemURL);
-
-  const fetchHeaders = { 'cache-control': 'no-cache' };
-  if (authorization) {
-    fetchHeaders.authorization = authorization;
-  }
-
-  const resp = await fetch(url, { headers: fetchHeaders });
-
-  if (!resp.ok) {
-    return { error: { code: resp.status, message: resp.statusText } };
-  }
-
-  let contentType = resp.headers.get('content-type') || 'text/html';
-  [contentType] = contentType.split(';');
-
-  const respHeaders = {
-    'content-type': contentType,
-  };
-
-  if (isBinary(contentType)) {
-    const data = Buffer.from(await resp.arrayBuffer());
-    return { data, respHeaders };
-  }
-
-  const html = await resp.text();
-
-  // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
-  const dom = new jsdom.JSDOM(html);
-  const { document } = dom.window;
-  const elements = document.querySelectorAll('img');
-  elements.forEach((el) => {
-    const uri = el.getAttribute('src');
-    if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemConfig.aemEnv);
-  });
-  return { html: dom.serialize() };
-};
-
 export const render = async function render(path, params) {
   if (path.startsWith('/docs')) {
     return renderDoc(path);
@@ -134,29 +36,24 @@ export const render = async function render(path, params) {
   if (path.startsWith('/fragments')) {
     return renderFragment(path);
   }
-  // Handle AEM UE Pages
-  if (!path.startsWith('/docs') && !path.startsWith('/fragments')) {
-    return renderContent(path, params);
-  }
-  // error if all else fails
-  return { error: new Error(`Path not supported: ${path}`) };
+  // Handle AEM UE Pages by default
+  return renderAem(path, params, aemConfig);
 };
 
 export const main = async function main(params) {
   aioLogger.info({ params });
-  /* eslint-disable-next-line no-underscore-dangle */
-  const path = params.__ow_path ? params.__ow_path : '';
-  /* eslint-disable-next-line no-underscore-dangle */
-  const authorization = params.__ow_headers
-    ? /* eslint-disable-next-line no-underscore-dangle */
-      params.__ow_headers.authorization
-    : '';
+  // eslint-disable-next-line camelcase
+  const { __ow_path, __ow_headers } = params;
+  // eslint-disable-next-line camelcase
+  const path = __ow_path || '';
+  // eslint-disable-next-line camelcase
+  const authorization = __ow_headers?.authorization || '';
   const { html, error } = await render(path, { ...params, authorization });
   if (!error) {
     return {
       statusCode: 200,
       headers: {
-        'x-html2md-img-src': aemConfig.aemEnv, // tells franklin services to index images starting with this
+        'x-html2md-img-src': aemConfig.aemEnv, // tells franklin services to index images starting with this and use auth with it.
       },
       body: html,
     };
