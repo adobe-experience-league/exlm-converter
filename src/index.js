@@ -13,6 +13,7 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import jsdom from 'jsdom';
 import { join, dirname } from 'path';
 import yaml from 'js-yaml';
 import md2html from './modules/ExlMd2Html.js';
@@ -21,6 +22,10 @@ import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 import isBinary from './modules/utils/media-utils.js';
 import aemConfig from './aem-config.js';
 import { mapInbound } from './modules/aem-path-mapping.js';
+import {
+  isAbsoluteURL,
+  relativeToAbsolute,
+} from './modules/utils/link-utils.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -135,7 +140,15 @@ const renderContent = async (path, params) => {
   }
 
   const html = await resp.text();
-  return { html };
+
+  // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
+  const dom = new jsdom.JSDOM(html);
+  const elements = dom.window.querySelectorAll('img');
+  elements.forEach((el) => {
+    const uri = el.getAttribute('src');
+    if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemConfig.aemEnv);
+  });
+  return { html: dom.serialize() };
 };
 
 export const render = async function render(path, params) {

@@ -4,7 +4,7 @@
  * @param {string} url - The URL to be checked.
  * @returns {boolean} Returns true if the URL is an absolute URL, false otherwise.
  */
-function isAbsoluteURL(url) {
+export function isAbsoluteURL(url) {
   const absoluteRegex = /^(https?|ftp|file):\/\/.*/i;
   return absoluteRegex.test(url);
 }
@@ -72,4 +72,17 @@ function updateLink(document, selector, attribute) {
  */
 export default function handleAbsoluteUrl(document) {
   updateLink(document, 'a', 'href');
+}
+
+/**
+ * Converts an relative path to an absolute URL within the context of a base URL.
+ *
+ * @param {string} path - Path to be appended.
+ * @param {string} baseUrl - The base URL to prepend the path to.
+ * @returns {string} Returns the absolute URL.
+ */
+export function relativeToAbsolute(path, baseUrl) {
+  const url = new URL(baseUrl);
+  url.pathname = `${url.pathname}/${path}`;
+  return url.href;
 }
