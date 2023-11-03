@@ -26,6 +26,21 @@ const append = (parent, children) => {
 };
 
 /**
+ * Appends "-md" to the first class in a space-separated class string if it doesn't already end with "-md".
+ *
+ * @param {string} className - The space-separated class names to modify.
+ * @returns {string} - The modified class names with "-md" appended to the first class if necessary.
+ */
+const modifyClassName = (className) => {
+  let firstClass = className.split(' ')[0];
+  firstClass =
+    firstClass.split('-md').length > 1 ? firstClass : `${firstClass}-md`;
+
+  const klassName = `${firstClass} ${className.split(' ').slice(1).join(' ')}`;
+  return klassName;
+};
+
+/**
  *
  * @param {string} className The class name of the block
  * @param {Array<Array<string|HTMLElement|Array<HTMLElement>>>} rows
@@ -33,7 +48,9 @@ const append = (parent, children) => {
  * @returns {HTMLDivElement} the block element (and subtree)
  */
 export const toBlock = (className, rows, document) => {
-  const parent = div(document, className.toLowerCase());
+  const klassName = modifyClassName(className);
+  const parent = div(document, klassName.trim().toLowerCase());
+
   rows.forEach((row) => {
     const rowDiv = div(document);
     row.forEach((cell) => {
