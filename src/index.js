@@ -14,13 +14,11 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { join, dirname } from 'path';
-import yaml from 'js-yaml';
 import md2html from './modules/ExlMd2Html.js';
 import ExlClient from './modules/ExlClient.js';
 import { addExtension, removeExtension } from './modules/utils/path-utils.js';
 import isBinary from './modules/utils/media-utils.js';
 import aemConfig from './aem-config.js';
-import { mapInbound } from './modules/aem-path-mapping.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -84,39 +82,15 @@ const renderFragment = async (path) => {
 const renderContent = async (path, params) => {
   const { authorization } = params;
 
-  // fetch paths.yaml from franklin repo to avoid duplicate
-  // TBD: Is this the right way of accessing another repo config?
-  // Example url - https://raw.githubusercontent.com/adobe-experience-league/exlm/main/paths.yaml
-  const ghUrl = new URL(
-    `https://raw.githubusercontent.com/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}/paths.yaml`,
-  );
-
-  let pathsCgf;
-  await fetch(ghUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(
-          `Unable to fetch paths.yaml from Franklin repo. Status: ${response.status}`,
-        );
-      }
-      return response.text();
-    })
-    .then((yamlData) => {
-      pathsCgf = yaml.load(yamlData);
-    });
-
-  // Get the path based on mapping in paths.yaml
-  const mappedPath = mapInbound(path, pathsCgf);
-
-  // Hitting AEM for Content
-  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${mappedPath}.html?wcmmode=disabled`;
+  const aemURL = `${aemConfig.aemEnv}/bin/franklin.delivery/${aemConfig.owner}/${aemConfig.repo}/${aemConfig.ref}${path}?wcmmode=disabled`;
+  const url = new URL(aemURL);
 
   const fetchHeaders = { 'cache-control': 'no-cache' };
   if (authorization) {
     fetchHeaders.authorization = authorization;
   }
 
-  const resp = await fetch(new URL(aemURL), { headers: fetchHeaders });
+  const resp = await fetch(url, { headers: fetchHeaders });
 
   if (!resp.ok) {
     return { error: { code: resp.status, message: resp.statusText } };
@@ -160,8 +134,7 @@ export const main = async function main(params) {
   const path = params.__ow_path ? params.__ow_path : '';
   /* eslint-disable-next-line no-underscore-dangle */
   const authorization = params.__ow_headers
-    ? // eslint-disable-next-line no-underscore-dangle
-      params.__ow_headers.authorization
+    ? params.__ow_headers.authorization
     : '';
   const { html, error } = await render(path, { ...params, authorization });
   if (!error) {
