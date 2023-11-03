@@ -117,7 +117,8 @@ const renderContent = async (path, params) => {
 
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(html);
-  const elements = dom.window.querySelectorAll('img');
+  const { document } = dom.window;
+  const elements = document.querySelectorAll('img');
   elements.forEach((el) => {
     const uri = el.getAttribute('src');
     if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemConfig.aemEnv);
@@ -155,7 +156,7 @@ export const main = async function main(params) {
     return {
       statusCode: 200,
       headers: {
-        'x-html2md-img-src': 'https://experienceleague.adobe.com', // tells franklin services to index images starting with this
+        'x-html2md-img-src': aemConfig.aemEnv, // tells franklin services to index images starting with this
       },
       body: html,
     };
