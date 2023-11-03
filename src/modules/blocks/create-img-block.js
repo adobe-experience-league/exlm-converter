@@ -27,12 +27,16 @@ export default function createImgBlock(document) {
         const existingClassNames = imgElement.className.split(' ');
         img.classList.add(...existingClassNames);
       }
-      img.classList.add(...className.trim().split(' '));
+      const newClassNamesList = className.trim().split(' ');
       img.src = imgElement.src;
       img.title = imgElement.title;
       img.alt = imgElement.alt;
       const cells = [[img]];
-      const block = toBlock(`img`, cells, document);
+      const block = toBlock(
+        `img ${newClassNamesList.join(' ')}`,
+        cells,
+        document,
+      );
       imgElement.parentElement.replaceChild(block, imgElement);
     }
   });
