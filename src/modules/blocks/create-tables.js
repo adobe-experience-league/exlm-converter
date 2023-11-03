@@ -38,7 +38,7 @@ export default function createTables(document) {
         variations.push(`${i}-row-${cell.children.length}`);
       });
 
-      cells = table.querySelectorAll('th, td');
+      cells = table.querySelectorAll('tr, th, td');
       cells.forEach((cell, i) => {
         // colspan variation
         if (cell.getAttribute('colspan')) {
