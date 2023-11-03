@@ -30,3 +30,4 @@ jobs:
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
           BRANCH: ${{ vars.GITHUB_REF_NAME }}
+          AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
