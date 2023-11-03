@@ -25,6 +25,7 @@ import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-cre
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
 import createImgBlock from './blocks/create-img-block.js';
+import createAccordion from './blocks/create-accordion.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -89,6 +90,7 @@ export default async function md2html(mdString, meta, data) {
   handleExternalUrl(document);
   createMiniTOC(document);
   createImgBlock(document);
+  createAccordion(document);
   // leave this at the end
   handleNestedBlocks(document);
 
