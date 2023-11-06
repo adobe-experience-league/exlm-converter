@@ -21,6 +21,14 @@ function transformHTML(htmlString, aemAuthorUrl) {
 }
 
 /**
+ * @param {ArrayBuffer} arrayBuffer
+ */
+function toBase64String(arrayBuffer) {
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer.toString('base64');
+}
+
+/**
  * Renders content from AEM UE pages
  */
 export default async function renderAem(path, params) {
@@ -45,7 +53,7 @@ export default async function renderAem(path, params) {
 
   let body;
   if (isBinary(contentType)) {
-    body = Buffer.from(await resp.arrayBuffer());
+    body = toBase64String(await resp.arrayBuffer()); // convert to base64 string, see: https://github.com/apache/openwhisk/blob/master/docs/webactions.md
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl);
   } else {
