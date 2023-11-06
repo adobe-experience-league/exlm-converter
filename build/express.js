@@ -64,7 +64,6 @@ const handler = async (req, res) => {
   }
   // set headers as they are.
   Object.entries(headers).forEach(([key, value]) => res.setHeader(key, value));
-  console.log('headers', headers);
   res.status(200);
   if (path.endsWith('.md')) {
     res.setHeader('Content-Type', 'text/plain');
