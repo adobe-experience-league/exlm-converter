@@ -24,9 +24,14 @@ jobs:
         env:
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
+          AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
-          BRANCH: ${{ vars.GITHUB_REF_NAME }}
-          AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
+          BRANCH: ${{ github.ref_name }}
       - name: Publish Fragments
         run: npm run publish-fragments
+        env:
+          OWNER: ${{ vars.OWNER }}
+          REPO: ${{ vars.REPO }}
+          BRANCH: ${{ github.ref_name }}
+
