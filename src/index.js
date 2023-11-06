@@ -11,9 +11,19 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import renderDoc from './renderers/render-doc.js';
 import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
+
+// need this to work with both esm and commonjs
+let dir;
+try {
+  dir = __dirname; // if commonjs, this will get current directory
+} catch (e) {
+  dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
+}
 
 const aioLogger = Logger('App');
 
@@ -40,7 +50,7 @@ export const render = async function render(path, params) {
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (path.startsWith('/fragments')) {
-    return renderFragment(path);
+    return renderFragment(path, dir);
   }
   // Handle AEM UE Pages by default
   return renderAem(path, params);
