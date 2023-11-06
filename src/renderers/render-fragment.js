@@ -1,22 +1,15 @@
-import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { addExtension } from '../modules/utils/path-utils.js';
-
-// need this to work with both esm and commonjs
-let dir;
-try {
-  dir = __dirname; // if commonjs, this will get current directory
-} catch (e) {
-  dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
-}
 
 /**
  * Renders fragment from filesystem at given path
+ * @param {string} path - path to fragment from 'src'
+ * @param {string} parentFolderPath - path to parent folder of `fragments`
  */
-export default function renderFragment(path) {
+export default function renderFragment(path, parentFolderPath) {
+  const fragmentPath = join(parentFolderPath, addExtension(path, '.html'));
   if (path) {
-    const fragmentPath = join(dir, '..', addExtension(path, '.html'));
     // Get header and footer static content from Github
     if (fs.existsSync(fragmentPath)) {
       const html = fs.readFileSync(fragmentPath, 'utf-8');
@@ -25,7 +18,7 @@ export default function renderFragment(path) {
       };
     }
     return {
-      error: new Error(`Fragment: ${path} not found`),
+      error: new Error(`Fragment: ${fragmentPath} not found`),
     };
   }
   return {

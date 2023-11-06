@@ -19,4 +19,6 @@ export function ensureExpressEnv() {
 }
 
 // by default error if env vars are not set
-ensureBuildEnv();
+if (import.meta.main) {
+  ensureBuildEnv();
+}
