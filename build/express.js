@@ -17,17 +17,8 @@ const dotEnvFile = 'build/.local.env';
 dotenv.config({ path: dotEnvFile });
 const { AEM_AUTHOR_URL, OWNER, REPO, BRANCH, ACCESS_TOKEN } = process.env;
 
-// show warning if any of the required variables for AEM are not set
-const requireMember = (name, obj) => {
-  if (!obj[name]) {
-    console.warn(
-      `[WARNING] ${name} variable not set in ${dotEnvFile}. AEM Pages will not work.`,
-    );
-  }
-};
-['AEM_AUTHOR_URL', 'OWNER', 'REPO', 'BRANCH', 'ACCESS_TOKEN'].forEach((name) =>
-  requireMember(name, process.env),
-);
+// ensure env variables are set
+import('./ensure-env.js');
 
 const app = express();
 const port = 3030;

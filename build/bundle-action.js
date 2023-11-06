@@ -10,8 +10,6 @@ const COPY_FOLDERS = [['src/fragments', `${DIST_ACTION_FOLDER}/fragments`]];
 
 const ACTION_PACKAGE_JSON = {
   main: DIST_ACTION_FILE_NAME,
-  // name: "xwalk-converter",
-  // version: "1.0.0",
 };
 
 const esbuildOptions = {
