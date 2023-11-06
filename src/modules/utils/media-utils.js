@@ -11,14 +11,14 @@
  */
 const mediaTypes = {
   'application/atom+xml': false,
-  'application/base64': true,
+  'application/base64': false,
   'application/excel': true,
   'application/font-woff': true,
   'application/gnutar': true,
   'application/java-archive': true,
   'application/javascript': false,
-  'application/json': true, // we treat JSON as binary, since its encoding is not variable but defined by RFC4627
-  'application/json-patch+json': true, // we treat JSON as binary, since its encoding is not variable but defined by RFC4627
+  'application/json': false, // we dont treat JSON as binary, we want it as is.
+  'application/json-patch+json': true, // we dont treat JSON as binary, we want it as is.
   'application/lha': true,
   'application/lzx': true,
   'application/mspowerpoint': true,
@@ -28,7 +28,7 @@ const mediaTypes = {
   'application/postscript': true,
   'application/rss+xml': false,
   'application/soap+xml': false,
-  'application/vnd.api+json': true, // we treat JSON as binary, since its encoding is not variable but defined by RFC4627
+  'application/vnd.api+json': false, // we dont treat JSON as binary, we want it as is.
   'application/vnd.google-earth.kml+xml': false,
   'application/vnd.google-earth.kmz': true,
   'application/vnd.ms-fontobject': true,
