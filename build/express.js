@@ -19,7 +19,13 @@ dotenv.config({ path: dotEnvFile });
 const { AEM_AUTHOR_URL, OWNER, REPO, BRANCH, ACCESS_TOKEN } = process.env;
 
 // ensure env variables are set
-ensureExpressEnv();
+try {
+  ensureExpressEnv();
+} catch (e) {
+  // this is used for local development, logging an error instead of throwing is sufficient
+  // so devs can use this locally if they dont need working AEM pages.
+  console.error(e.message);
+}
 
 const app = express();
 const port = 3030;
