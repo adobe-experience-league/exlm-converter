@@ -16,7 +16,8 @@ const OneMB = 1024 * 1024 - 1024; // -1024 for good measure :)
 
 const writeFileAndGetPresignedURL = async (filePath, arrayBuffer) => {
   const filesSdk = await Files.init();
-  await filesSdk.write(filePath, arrayBuffer);
+
+  await filesSdk.write(filePath, Buffer.from(arrayBuffer));
   return filesSdk.generatePresignURL(filePath, {
     expiryInSeconds: PRESIGNURL_EXPIRY,
     permissions: 'r',
