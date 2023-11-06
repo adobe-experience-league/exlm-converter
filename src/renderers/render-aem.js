@@ -52,14 +52,17 @@ export default async function renderAem(path, params) {
   const contentType = resp.headers.get('Content-Type');
 
   let body;
+  let headers = { 'Content-Type': contentType };
   if (isBinary(contentType)) {
     body = toBase64String(await resp.arrayBuffer()); // convert to base64 string, see: https://github.com/apache/openwhisk/blob/master/docs/webactions.md
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl);
+    // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
+    headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
     body = await resp.text();
   }
 
   // passthrough the same content type from AEM.
-  return { body, headers: { 'Content-Type': contentType } };
+  return { body, headers };
 }
