@@ -4,6 +4,7 @@ import {
   relativeToAbsolute,
 } from '../modules/utils/link-utils.js';
 import { isBinary, isHTML } from '../modules/utils/media-utils.js';
+import renderAemAsset from './render-aem-asset.js';
 
 /**
  * @param {string} htmlString
@@ -18,14 +19,6 @@ function transformHTML(htmlString, aemAuthorUrl) {
     if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemAuthorUrl);
   });
   return dom.serialize();
-}
-
-/**
- * @param {ArrayBuffer} arrayBuffer
- */
-function toBase64String(arrayBuffer) {
-  const buffer = Buffer.from(arrayBuffer);
-  return buffer.toString('base64');
 }
 
 /**
@@ -53,8 +46,13 @@ export default async function renderAem(path, params) {
 
   let body;
   let headers = { 'Content-Type': contentType };
+  let statusCode = resp.status;
   if (isBinary(contentType)) {
-    body = toBase64String(await resp.arrayBuffer()); // convert to base64 string, see: https://github.com/apache/openwhisk/blob/master/docs/webactions.md
+    const { assetBody, assetHeaders, assetStatusCode } =
+      await renderAemAsset(resp);
+    body = assetBody; // convert to base64 string, see: https://github.com/apache/openwhisk/blob/master/docs/webactions.md
+    headers = { ...headers, ...assetHeaders };
+    statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
@@ -64,5 +62,5 @@ export default async function renderAem(path, params) {
   }
 
   // passthrough the same content type from AEM.
-  return { body, headers };
+  return { body, headers, statusCode };
 }

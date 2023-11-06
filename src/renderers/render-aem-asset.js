@@ -1,0 +1,70 @@
+import Files from '@adobe/aio-lib-files';
+import { AioCoreSDKError } from '@adobe/aio-lib-core-errors';
+
+const FOLDER_PATH = 'tmp';
+const PRESIGNURL_EXPIRY = 600;
+
+/**
+ * @param {ArrayBuffer} arrayBuffer
+ */
+function toBase64String(arrayBuffer) {
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer.toString('base64');
+}
+
+const OneMB = 1024 * 1024 - 1024; // -1024 for good measure :)
+
+const writeFileAndGetPresignedURL = async (filePath, arrayBuffer) => {
+  const filesSdk = await Files.init();
+  await filesSdk.write(filePath, arrayBuffer);
+  return filesSdk.generatePresignURL(filePath, {
+    expiryInSeconds: PRESIGNURL_EXPIRY,
+    permissions: 'r',
+  });
+};
+
+/**
+ *
+ * @param {Response} response
+ * @param {string} contentType
+ */
+export default async function renderAemAsset(response) {
+  const contentLength = response.headers.get('Content-Length');
+  const contentLengthNum = parseInt(contentLength, 10);
+
+  const isLarge = contentLengthNum > OneMB;
+
+  let assetBody;
+  let assetHeaders = {};
+  let assetStatusCode = response.status;
+
+  if (!isLarge) {
+    // in Adobe Runtime Actions, we have to return binaries as base64 strings.
+    assetBody = toBase64String(await response.arrayBuffer());
+  } else {
+    // Adobe runtime actions have a response limit of 1MB.
+    // so if the asset is larger, write to AIO Files and return a redirect to the presigned URL
+    const originalUrl = new URL(response.url);
+    const filePath = `${FOLDER_PATH}/${originalUrl.pathname}`;
+    try {
+      const location = await writeFileAndGetPresignedURL(
+        filePath,
+        await response.arrayBuffer(),
+      );
+      assetHeaders = {
+        location,
+      };
+      assetStatusCode = 302;
+    } catch (e) {
+      if (e instanceof AioCoreSDKError) {
+        assetBody =
+          'Cannot serve this asset in this environment, it must be served from adobe IO Action';
+        assetHeaders = { 'Content-Type': 'text/plain' };
+        assetStatusCode = 500;
+      } else {
+        throw e;
+      }
+    }
+  }
+  return { assetBody, assetHeaders, assetStatusCode };
+}
