@@ -61,6 +61,8 @@ export default async function renderAemAsset(response) {
           'Cannot serve this asset in this environment, it must be served from adobe IO Action';
         assetHeaders = { 'Content-Type': 'text/plain' };
         assetStatusCode = 500;
+        // log it for good measure
+        console.error(e);
       } else {
         throw e;
       }
