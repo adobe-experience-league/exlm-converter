@@ -9,18 +9,17 @@ const SRC_PATH = join(currentDirectory, '../src');
 const FRAGMENTS_PATH = join(SRC_PATH, '/fragments');
 
 // These variables can be set in the github action env variables in repo settings
-const { OWNER, REPO, BRANCH, GITHUB_REF_NAME } = process.env;
+const { OWNER, REPO, BRANCH } = process.env;
 
 const owner = OWNER;
 const repo = REPO;
-const branch = BRANCH || GITHUB_REF_NAME;
+const branch = BRANCH;
 
 // Validate environment variables
 if (!owner || !repo || !branch) {
   if (!owner) console.error('Missing OWNER environment variable');
   if (!repo) console.error('Missing REPO environment variable');
-  if (!branch)
-    console.error('Missing BRANCH or GITHUB_REF_NAME environment variable');
+  if (!branch) console.error('Missing BRANCH environment variable');
   process.exit(1);
 }
 

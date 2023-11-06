@@ -12,13 +12,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { render } from '../src/index.js';
+import { ensureExpressEnv } from './ensure-env.js';
 
 const dotEnvFile = 'build/.local.env';
 dotenv.config({ path: dotEnvFile });
 const { AEM_AUTHOR_URL, OWNER, REPO, BRANCH, ACCESS_TOKEN } = process.env;
 
 // ensure env variables are set
-import('./ensure-env.js');
+ensureExpressEnv();
 
 const app = express();
 const port = 3030;

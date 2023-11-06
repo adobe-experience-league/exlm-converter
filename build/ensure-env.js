@@ -6,12 +6,17 @@ const requireMember = (name, obj) => {
   }
 };
 
-export default function ensureEnv() {
+const COMMON = ['AEM_AUTHOR_URL', 'OWNER', 'REPO', 'BRANCH'];
+const EXPRESS = ['ACCESS_TOKEN'];
+
+export function ensureBuildEnv() {
   // ensure env variables are set
-  ['AEM_AUTHOR_URL', 'OWNER', 'REPO', 'BRANCH', 'ACCESS_TOKEN'].forEach(
-    (name) => requireMember(name, process.env),
-  );
+  COMMON.forEach((name) => requireMember(name, process.env));
+}
+
+export function ensureExpressEnv() {
+  [...COMMON, ...EXPRESS].forEach((name) => requireMember(name, process.env));
 }
 
 // by default error if env vars are not set
-ensureEnv();
+ensureBuildEnv();
