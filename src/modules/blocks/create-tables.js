@@ -83,7 +83,7 @@ export default function createTables(document) {
         variations.push(`layout-${table.style.tableLayout}`);
 
       // HTML authored variation
-      if (table.children[0].tagName !== 'THEAD') {
+      if (!table.querySelector('thead')) {
         variations.push('html-authored');
 
         // Without header variation
