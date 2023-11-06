@@ -16,8 +16,11 @@ export default async function renderDoc(path) {
     const data = response.data[0];
     const { convertedHtml, originalHtml } = await md2html(md, meta, data);
     return {
+      body: convertedHtml,
+      headers: {
+        'Content-Type': 'text/html',
+      },
       md,
-      html: convertedHtml,
       original: originalHtml,
     };
   }

@@ -3,7 +3,22 @@ import {
   isAbsoluteURL,
   relativeToAbsolute,
 } from '../modules/utils/link-utils.js';
-import isBinary from '../modules/utils/media-utils.js';
+import { isBinary, isHTML } from '../modules/utils/media-utils.js';
+
+/**
+ * @param {string} htmlString
+ */
+function transformHTML(htmlString, aemAuthorUrl) {
+  // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
+  const dom = new jsdom.JSDOM(htmlString);
+  const { document } = dom.window;
+  const elements = document.querySelectorAll('img');
+  elements.forEach((el) => {
+    const uri = el.getAttribute('src');
+    if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemAuthorUrl);
+  });
+  return dom.serialize();
+}
 
 /**
  * Renders content from AEM UE pages
@@ -25,27 +40,18 @@ export default async function renderAem(path, params) {
     return { error: { code: resp.status, message: resp.statusText } };
   }
 
-  let contentType = resp.headers.get('content-type') || 'text/html';
-  [contentType] = contentType.split(';');
+  // note that this can contain charset, example 'text/html; charset=utf-8'
+  const contentType = resp.headers.get('Content-Type');
 
-  const respHeaders = {
-    'content-type': contentType,
-  };
-
+  let body;
   if (isBinary(contentType)) {
-    const data = Buffer.from(await resp.arrayBuffer());
-    return { data, respHeaders };
+    body = Buffer.from(await resp.arrayBuffer());
+  } else if (isHTML(contentType)) {
+    body = transformHTML(await resp.text(), aemAuthorUrl);
+  } else {
+    body = await resp.text();
   }
 
-  const html = await resp.text();
-
-  // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
-  const dom = new jsdom.JSDOM(html);
-  const { document } = dom.window;
-  const elements = document.querySelectorAll('img');
-  elements.forEach((el) => {
-    const uri = el.getAttribute('src');
-    if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemAuthorUrl);
-  });
-  return { html: dom.serialize() };
+  // passthrough the same content type from AEM.
+  return { body, headers: { 'Content-Type': contentType } };
 }
