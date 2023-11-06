@@ -22,6 +22,7 @@ const esbuildOptions = {
   external: ['canvas', 'bufferutil', 'utf-8-validate'],
   plugins: [jsdomPatch],
   logLevel: 'info',
+  keepNames: true, // needed because of: https://github.com/node-fetch/node-fetch/issues/784#issuecomment-1014768204
   logOverride: {
     'empty-import-meta': 'debug', // sets the logging level for a specific message: "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
   },
