@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@adobe/aio-lib-core-logging": "^2.0.1",
+    "@adobe/aio-lib-files": "^3.0.1",
     "@babel/eslint-parser": "^7.22.15",
     "adobe-afm-transform": "^1.2.24",
     "dotenv": "^16.3.1",

@@ -18,6 +18,13 @@ const dotEnvFile = 'build/.local.env';
 dotenv.config({ path: dotEnvFile });
 const { AEM_AUTHOR_URL, OWNER, REPO, BRANCH, ACCESS_TOKEN } = process.env;
 
+// https://stackoverflow.com/a/75916716
+const isBase64 = (str) => {
+  const base64RegExp =
+    /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/;
+  return base64RegExp.test(str);
+};
+
 // ensure env variables are set
 try {
   ensureExpressEnv();
@@ -57,13 +64,16 @@ const handler = async (req, res) => {
   }
   // set headers as they are.
   Object.entries(headers).forEach(([key, value]) => res.setHeader(key, value));
-
+  console.log('headers', headers);
   res.status(200);
   if (path.endsWith('.md')) {
     res.setHeader('Content-Type', 'text/plain');
     res.send(md);
   } else if (path.endsWith('.original')) {
     res.send(original);
+  } else if (isBase64(body)) {
+    // action can return base64, in AIO this is handled automatically, but not in express, so we handle it here for local dev.
+    res.send(Buffer.from(body, 'base64'));
   } else {
     res.send(body);
   }

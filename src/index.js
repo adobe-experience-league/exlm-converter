@@ -64,13 +64,14 @@ export const main = async function main(params) {
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
   const authorization = __ow_headers?.authorization || '';
-  const { body, headers, error } = await render(path, {
+  const { body, headers, statusCode, error } = await render(path, {
     ...params,
     authorization,
   });
+
   if (!error) {
     return {
-      statusCode: 200,
+      statusCode: statusCode || 200,
       headers,
       body,
     };
