@@ -30,6 +30,12 @@ try {
 const app = express();
 const port = 3030;
 
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns
+ */
 const handler = async (req, res) => {
   const { path, query } = req;
 
@@ -42,12 +48,16 @@ const handler = async (req, res) => {
     authorization: `Bearer ${ACCESS_TOKEN}`,
   };
 
-  const { html, md, original, error } = await render(path, params);
+  const { body, headers, md, original, error } = await render(path, params);
+
   if (error) {
     res.status(error.code || 503);
     res.send(error.message);
     return;
   }
+  // set headers as they are.
+  Object.entries(headers).forEach(([key, value]) => res.setHeader(key, value));
+
   res.status(200);
   if (path.endsWith('.md')) {
     res.setHeader('Content-Type', 'text/plain');
@@ -55,7 +65,7 @@ const handler = async (req, res) => {
   } else if (path.endsWith('.original')) {
     res.send(original);
   } else {
-    res.send(html);
+    res.send(body);
   }
 };
 

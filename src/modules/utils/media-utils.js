@@ -82,7 +82,17 @@ const mediaTypes = {
   'application/zip': true,
 };
 
-export default function isBinary(contentType) {
+/**
+ * @param {string} contentType
+ */
+export function isBinary(contentType) {
+  if (!contentType) return false;
+
+  // eslint-disable-next-line no-param-reassign
+  contentType = contentType.includes(';')
+    ? contentType.split(';')[0]
+    : contentType;
+
   if (contentType.startsWith('text/') || contentType.startsWith('message/')) {
     return false;
   }
@@ -94,4 +104,11 @@ export default function isBinary(contentType) {
     return true;
   }
   return mediaTypes[contentType];
+}
+
+/**
+ * @param {string} contentType
+ */
+export function isHTML(contentType) {
+  return contentType?.toLocaleLowerCase()?.startsWith('text/html');
 }

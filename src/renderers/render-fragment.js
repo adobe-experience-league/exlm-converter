@@ -12,9 +12,12 @@ export default function renderFragment(path, parentFolderPath) {
   if (path) {
     // Get header and footer static content from Github
     if (fs.existsSync(fragmentPath)) {
-      const html = fs.readFileSync(fragmentPath, 'utf-8');
+      const body = fs.readFileSync(fragmentPath, 'utf-8');
       return {
-        html,
+        body,
+        headers: {
+          'Content-Type': 'text/html',
+        },
       };
     }
     return {

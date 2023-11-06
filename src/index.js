@@ -59,19 +59,20 @@ export const render = async function render(path, params) {
 export const main = async function main(params) {
   aioLogger.info({ params });
   // eslint-disable-next-line camelcase
-  const { __ow_path, __ow_headers, aemAuthorUrl } = params;
+  const { __ow_path, __ow_headers } = params;
   // eslint-disable-next-line camelcase
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
   const authorization = __ow_headers?.authorization || '';
-  const { html, error } = await render(path, { ...params, authorization });
+  const { body, headers, error } = await render(path, {
+    ...params,
+    authorization,
+  });
   if (!error) {
     return {
       statusCode: 200,
-      headers: {
-        'x-html2md-img-src': aemAuthorUrl, // tells franklin services to index images starting with this and use auth with it.
-      },
-      body: html,
+      headers,
+      body,
     };
   }
 
