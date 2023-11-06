@@ -48,8 +48,10 @@ export default async function renderAem(path, params) {
   let headers = { 'Content-Type': contentType };
   let statusCode = resp.status;
   if (isBinary(contentType)) {
-    const { assetBody, assetHeaders, assetStatusCode } =
-      await renderAemAsset(resp);
+    const { assetBody, assetHeaders, assetStatusCode } = await renderAemAsset(
+      path,
+      resp,
+    );
     body = assetBody; // convert to base64 string, see: https://github.com/apache/openwhisk/blob/master/docs/webactions.md
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
