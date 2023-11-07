@@ -26,6 +26,7 @@ import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
 import createImgBlock from './blocks/create-img-block.js';
 import createAccordion from './blocks/create-accordion.js';
+import createTOC from './blocks/create-toc.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -53,9 +54,9 @@ export default async function md2html(mdString, meta, data) {
     h('body', [
       h('header', []),
       h('main', [
-        h('div', 'TOC'), // Left Rail Block
-        h('div', content.hast), // Base Content
-        h('div'), // Right Rail Block
+        h('div', content.hast), // Base Content - Must be first child for proper rendering
+        h('div', []), // Left Rail Block - TOC - Must be second child for proper rendering
+        h('div', []), // Right Rail Block - mini TOC - Must be third child for proper rendering
       ]),
       h('footer', []),
     ]),
@@ -89,6 +90,7 @@ export default async function md2html(mdString, meta, data) {
   createArticleMetaDataTopics(document, meta);
   handleExternalUrl(document);
   createMiniTOC(document);
+  createTOC(document);
   createImgBlock(document);
   createAccordion(document);
   // leave this at the end
