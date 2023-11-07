@@ -55,8 +55,8 @@ export default async function md2html(mdString, meta, data) {
       h('header', []),
       h('main', [
         h('div', content.hast), // Base Content - Must be first child for proper rendering
-        h('div'), // Left Rail Block - TOC - Must be second child for proper rendering
-        h('div'), // Right Rail Block - mini TOC - Must be third child for proper rendering
+        h('div', []), // Left Rail Block - TOC - Must be second child for proper rendering
+        h('div', []), // Right Rail Block - mini TOC - Must be third child for proper rendering
       ]),
       h('footer', []),
     ]),
