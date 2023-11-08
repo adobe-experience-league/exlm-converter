@@ -22,6 +22,7 @@ The express app listens on port 3030 and handles incoming requests for _.html an
 
 1. get your local development access token from Cloud Manager Developer Console (see docs below)
 2. Add file `build/.local.env` that should have the contents below (replace `<token>` with your token and `<aem author>` with the author url)
+
 ```
 AEM_AUTHOR_URL=<aem author>
 OWNER=adobe-experience-league
@@ -44,11 +45,9 @@ ACCESS_TOKEN=<token>
 
 > Developer tokens are short lived and should only be used for local testing/debugging.
 
-
-
 ## Deployment
 
-The action is built and deployed by a [github workflow](../../.github/workflows/deploy-action.yaml). 
+The action is built and deployed by a [github workflow](../../.github/workflows/deploy-action.yaml).
 
 To deploy the action manually use the App Builder CLI. The [Getting Started guide for AIO Runtime](https://developer.adobe.com/runtime/docs/guides/getting-started/setup/#creating-a-namespace-and-retrieving-the-credentials) provides detailed steps to setup a local environment.
 
@@ -59,21 +58,23 @@ aio app deploy
 ```
 
 ### Github Deployment Action
+
 The action requires the follwoing environment variables/secrets to be set:
+
 > see github docs for how to add those: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
 
 | Name                    | Type   |
-|-------------------------|--------|
+| ----------------------- | ------ |
 | `AIO_RUNTIME_AUTH`      | secret |
 | `AIO_RUNTIME_NAMESPACE` | secret |
 | `OWNER`                 | var    |
 | `REPO`                  | var    |
 | `AEM_AUTHOR_URL`        | var    |
 
-
 ## Debugging common issues
 
 ### Response is not valid 'message/http'
+
 if your converter returns a result such as:
 
 ```
@@ -82,11 +83,13 @@ if your converter returns a result such as:
   "error": "Response is not valid 'message/http'."
 }
 ```
+
 The action activation likely failed, to debug, you need to run your action with header: `X-OW-EXTRA-LOGGING: on`.
 
 See: https://developer.adobe.com/runtime/docs/guides/using/logging_monitoring#retrieving-activations-for-blocking-successful-calls
 
 To get activation/application logs, you can run:
+
 - `aio runtime activation log --last` - logs the last activation log
 - `aio runtime activation result --last` - logs last activation result
 - `aio app logs` - application logs

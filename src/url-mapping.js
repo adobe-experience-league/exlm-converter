@@ -43,5 +43,5 @@ export default [
   {
     path: '/docs/authoring-guide-exl/test/collapsible-content',
     id: 'recgMk4GOsep4yCep',
-  },  
+  },
 ];

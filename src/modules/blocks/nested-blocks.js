@@ -17,7 +17,7 @@ export default function handleNestedBlocks(document) {
     'related-articles',
     'Badge',
     'embed',
-    'accordion',    
+    'accordion',
   ];
 
   // top level blocks (container blocks) blocks have the strict structure body > main > div > div
