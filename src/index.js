@@ -76,6 +76,6 @@ export const main = async function main(params) {
       body,
     };
   }
-
-  return { statusCode: 404, body: error.message };
+  // this is a lint and format issue
+  return {    statusCode: 404, body: error.message };
 };
