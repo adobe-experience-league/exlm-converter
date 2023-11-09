@@ -5,7 +5,7 @@ const getDecorateImgConfig = (img) => {
   if (img?.align) {
     className += ` ${img.align}-align`;
   }
-  if (img.parentNode.tagName.toLowerCase() === 'center') {
+  if (img?.parentNode?.tagName?.trim()?.toLowerCase() === 'center') {
     className += `center-align`;
   }
   if (img?.width) {
