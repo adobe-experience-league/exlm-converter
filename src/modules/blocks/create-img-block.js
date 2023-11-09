@@ -5,6 +5,9 @@ const getDecorateImgConfig = (img) => {
   if (img?.align) {
     className += ` ${img.align}-align`;
   }
+  if (img.parentNode.tagName.toLowerCase() === 'center') {
+    className += `center-align`;
+  }
   if (img?.width) {
     className += ` w-${img.width}`;
   }
@@ -31,12 +34,8 @@ export default function createImgBlock(document) {
       img.src = imgElement.src;
       img.title = imgElement.title;
       img.alt = imgElement.alt;
-      const cells = [[img]];
-      const block = toBlock(
-        `img ${newClassNamesList.join(' ')}`,
-        cells,
-        document,
-      );
+      const cells = [[`${newClassNamesList.join(' ')}`], [img]];
+      const block = toBlock(`img-md`, cells, document);
       imgElement.parentElement.replaceChild(block, imgElement);
     }
   });
