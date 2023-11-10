@@ -17,24 +17,18 @@
         <!-- sign up button -->
         <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
         <!-- Search -->
-        <%-
-          block("search", [
-            [`<p>${header.search.placeholder}</p>`],
-            [`<ul>${header.search.filters.map(f => `<li>${f}</li>`).join('')}</ul>`]
-          ])
-        %>
+        <%- block( "search", [[`<p>${header.search.placeholder}</p>`], [ renderUl(header.search.filters)] ] ) %>
         <!-- Language Selector -->
         <%- block("language-selector", [[`<a href="">Change language</a>`]]) %>
         <!-- Language Selector -->
         <%- block("sign-up", [[`<a href="#">${header.signIn}</a>`]]) %>
         <!-- Adobe logo -->
         <%- 
-          block("adobe-logo", [
-            [
-              `<a href="//business.adobe.com" class="navbar-link is-arrowless no-bg" target="_blank">
-                <img src="/assets/img/adobe-red-logo.svg" loading="lazy" alt="Adobe">
-              </a>`
-          ]])
+        block("adobe-logo", [[ `
+          <a href="//business.adobe.com">
+            <img src="/assets/img/adobe-red-logo.svg" alt="Adobe" />
+          </a>`
+        ]])
         %>
       </div>
     </main>

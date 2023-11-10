@@ -11,12 +11,10 @@
  * @param {NavItem[]} navItems
  * @returns
  */
-function renderNav(navItems) {
+const renderNav = (navItems) => {
   let html = '<ul>';
-
   navItems?.forEach((item) => {
     html += '<li>';
-
     if (item.url) {
       // item has a url, render as <a>
       html += `<a href="${item.url}">${item.title}</a>`;
@@ -34,14 +32,12 @@ function renderNav(navItems) {
     if (item.items) {
       html += renderNav(item.items);
     }
-
     html += '</li>';
   });
 
   html += '</ul>';
-
   return html;
-}
+};
 
 const cell = (content) => `<div>${content}</div>`;
 
@@ -51,7 +47,16 @@ const block = (clazz, rows) => `<div class="${clazz}">
   ${rows.map((r) => row(r)).join('\n')}
   </div>`;
 
+/**
+ * render HTML <ul> and <li> from array of strings
+ * @param {string[]} items
+ * @returns
+ */
+const renderUl = (items) =>
+  `<ul>${items.map((i) => `<li>${i}</li>`).join('\n')}</ul>`;
+
 export default {
   renderNav,
   block,
+  renderUl,
 };
