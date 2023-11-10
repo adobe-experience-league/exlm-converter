@@ -26,6 +26,7 @@
     "@babel/eslint-parser": "^7.22.15",
     "adobe-afm-transform": "^1.2.24",
     "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
     "hast-util-from-html": "^2.0.1",
     "hast-util-raw": "8.0.0",
     "hast-util-to-html": "8.0.4",

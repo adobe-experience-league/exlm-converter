@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <header></header>
+    <main>
+      <div>
+        <!-- 
+          This is an ejs template, see: https://ejs.co/#docs and the function reading this file for available optiopns
+          You'll notice each part of the header is rendered as a "block". Weather or not it is handled as a block on
+          the frontend is a separate matter. But this ensures an expected order of items/parts in the header.
+        -->
+        <!-- Logo -->
+        <%- block("logo", [['<a href="/">Experience League</a>']])%>
+        <!-- Navigation Items -->
+        <%- block("nav", [[renderNav(header.nav)]])%>
+        <!-- sign up button -->
+        <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
+        <!-- Search -->
+        <%-
+          block("search", [
+            [`<p>${header.search.placeholder}</p>`],
+            [`<ul>${header.search.filters.map(f => `<li>${f}</li>`).join('')}</ul>`]
+          ])
+        %>
+        <!-- Language Selector -->
+        <%- block("language-selector", [[`<a href="">Change language</a>`]]) %>
+        <!-- Language Selector -->
+        <%- block("sign-up", [[`<a href="#">${header.signIn}</a>`]]) %>
+        <!-- Adobe logo -->
+        <%- 
+          block("adobe-logo", [
+            [
+              `<a href="//business.adobe.com" class="navbar-link is-arrowless no-bg" target="_blank">
+                <img src="/assets/img/adobe-red-logo.svg" loading="lazy" alt="Adobe">
+              </a>`
+          ]])
+        %>
+      </div>
+    </main>
+    <footer></footer>
+  </body>
+</html>
