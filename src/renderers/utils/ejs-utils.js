@@ -11,7 +11,7 @@
  * @param {NavItem[]} navItems
  * @returns
  */
-const renderNav = (navItems) => {
+const nav = (navItems) => {
   let html = '<ul>';
   navItems?.forEach((item) => {
     html += '<li>';
@@ -30,7 +30,7 @@ const renderNav = (navItems) => {
 
     // render sub items
     if (item.items) {
-      html += renderNav(item.items);
+      html += nav(item.items);
     }
     html += '</li>';
   });
@@ -52,11 +52,11 @@ const block = (clazz, rows) => `<div class="${clazz}">
  * @param {string[]} items
  * @returns
  */
-const renderUl = (items) =>
+const ul = (items) =>
   `<ul>${items.map((i) => `<li>${i}</li>`).join('\n')}</ul>`;
 
 export default {
-  renderNav,
+  nav,
   block,
-  renderUl,
+  ul,
 };

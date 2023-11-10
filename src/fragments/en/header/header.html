@@ -13,11 +13,11 @@
         <!-- Logo -->
         <%- block("logo", [['<a href="/">Experience League</a>']])%>
         <!-- Navigation Items -->
-        <%- block("nav", [[renderNav(header.nav)]])%>
+        <%- block("nav", [[nav(header.nav)]])%>
         <!-- sign up button -->
         <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
         <!-- Search -->
-        <%- block( "search", [[`<p>${header.search.placeholder}</p>`], [ renderUl(header.search.filters)] ] ) %>
+        <%- block( "search", [[`<p>${header.search.placeholder}</p>`], [ ul(header.search.filters)] ] ) %>
         <!-- Language Selector -->
         <%- block("language-selector", [[`<a href="">Change language</a>`]]) %>
         <!-- Language Selector -->
