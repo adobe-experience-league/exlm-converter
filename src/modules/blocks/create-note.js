@@ -28,9 +28,9 @@ export default function createNote(document) {
         cells.push([div]);
       } else {
         // Add rows for multiple paragraphs
-        Array.from(innerDiv.children).forEach((innerP) => {
+        Array.from(innerDiv.children).forEach((innerElement) => {
           const div = document.createElement('div');
-          div.innerHTML = `<p>${innerP.textContent}</p>`;
+          div.append(innerElement);
           cells.push([div]);
         });
       }
