@@ -11,7 +11,7 @@
           // the frontend is a separate matter. But this ensures an expected order of items/parts in the header.
         %>
         <!-- Logo -->
-        <%- block("brand", [['<a href="/">Experience League</a>']])%>
+        <%- block("brand", [['<a href="/">Experience League :adobe-red-logo:</a>']])%>
         <!-- Navigation Items -->
         <%- block("nav", [[nav(header.nav)]])%>
         <!-- sign up button -->
@@ -20,16 +20,10 @@
         <%- block( "search", [[`<p>${header.search.placeholder}</p>`], [ ul(header.search.filters)] ] ) %>
         <!-- Language Selector -->
         <%- block("language-selector", [[`<a href="">Change language</a>`]]) %>
-        <!-- Language Selector -->
-        <%- block("sign-up", [[`<a href="#">${header.signIn}</a>`]]) %>
+        <!-- sign in -->
+        <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
         <!-- Adobe logo -->
-        <%- 
-        block("adobe-logo", [[ `
-          <a href="//business.adobe.com">
-            <img src="/assets/img/adobe-red-logo.svg" alt="Adobe" />
-          </a>`
-        ]])
-        %>
+        <%- block("adobe-logo", [[`<a href="//business.adobe.com">:adobe-red-logo:</a>`]]) %>
       </div>
     </main>
     <footer></footer>
