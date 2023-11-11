@@ -4,6 +4,7 @@ import ejs from 'ejs';
 import yaml from 'js-yaml';
 import { addExtension } from '../modules/utils/path-utils.js';
 import ejsUtils from './utils/ejs-utils.js';
+import { formatHtml } from '../modules/utils/prettier-utils.js';
 
 /**
  * Parse all YAML files in the given directory and return an object where each entry is the yaml file name and the value is the parsed yaml
@@ -30,7 +31,7 @@ function getOptionsInDirectory(directory) {
  * @param {string} path - path to fragment from 'src'
  * @param {string} parentFolderPath - path to parent folder of `fragments`
  */
-export default function renderFragment(path, parentFolderPath) {
+export default async function renderFragment(path, parentFolderPath) {
   const fragmentPath = join(parentFolderPath, addExtension(path, '.html'));
   if (path) {
     // Get header and footer static content from Github
@@ -46,6 +47,7 @@ export default function renderFragment(path, parentFolderPath) {
 
         // see: https://ejs.co/#docs
         body = ejs.render(fs.readFileSync(fragmentPath, 'utf-8'), ejsData);
+        body = await formatHtml(body);
       } catch (error) {
         console.error(error);
       }
