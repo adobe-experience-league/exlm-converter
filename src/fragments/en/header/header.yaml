@@ -14,7 +14,7 @@ search:
 nav:
   - title: Learn
     items:
-      - title: FEATURED PRODUCTS
+      - title: Featured Products
         url: \#
         items:
           - title: Analytis
@@ -39,7 +39,7 @@ nav:
             url: \#
           - title: Workfront
             url: \#
-      - title: CONTENT TYPES
+      - title: Content Types
         items:
           - title: Courses
             subtitle: Expertly curated collections of lessons
@@ -62,7 +62,7 @@ nav:
 
   - title: Community
     items:
-      - title: QUICK LINKS
+      - title: Quick Links
         items:
           - title: Experience Cloud Advocates
             subtitle: Meet our community of customer advocates
@@ -76,7 +76,7 @@ nav:
           - title: Experience League Showcase
             subtitle: Read real-world use cases of Experience Cloud products written by your peers
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
-      - title: COMMUNITIES BY PRODUCT
+      - title: Communities BY Product
         items:
           - title: Community home
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
