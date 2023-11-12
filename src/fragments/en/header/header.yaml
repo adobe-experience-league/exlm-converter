@@ -11,6 +11,8 @@ search:
     - Documentation
     - Events
     - Tutorials
+languageSelector:
+  title: Change language
 nav:
   - title: Learn
     items:
