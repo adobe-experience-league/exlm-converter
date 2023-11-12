@@ -13,6 +13,19 @@ search:
     - Tutorials
 languageSelector:
   title: Change language
+  languages: 
+    - Deutsch
+    - English
+    - Español
+    - Français
+    - Italiano
+    - Nederlands
+    - Português
+    - Svenska
+    - 中文 (简体)
+    - 中文 (繁體)
+    - 日本語
+    - 한국어
 nav:
   - title: Learn
     items:

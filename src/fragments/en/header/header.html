@@ -17,9 +17,9 @@
         <!-- sign up button -->
         <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
         <!-- Search -->
-        <%- block( "search", [[`<p>${header.search.placeholder}</p>`], [ ul(header.search.filters)] ] ) %>
+        <%- block( "search", [[`<p>${header.search.placeholder}</p>`, ul(header.search.filters)]] ) %>
         <!-- Language Selector -->
-        <%- block("language-selector", [[`<p>${header.languageSelector.title}</p>`]]) %>
+        <%- block("language-selector", [[`<p>${header.languageSelector.title}</p>`, ul(header.languageSelector.languages)]]) %>
         <!-- sign in -->
         <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
         <!-- Adobe logo -->

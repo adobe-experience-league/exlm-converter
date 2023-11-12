@@ -39,7 +39,8 @@ const nav = (navItems) => {
   return html;
 };
 
-const cell = (content) => `<div>${content}</div>`;
+const cell = (content) =>
+  `<div>${content.join ? content.join('') : content}</div>`;
 
 const row = (cells) => `<div>${cells.map((c) => cell(c)).join('')}</div>`;
 
