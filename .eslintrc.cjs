@@ -22,6 +22,6 @@ module.exports = {
     ],
     'import/no-extraneous-dependencies': 'off', // this is a ndoejs apploication, using dev dependecies is OK.
     'no-console': 'off', // this is a nodejs application, console is OK here.
-    'import/prefer-default-export': 'off'
+    'import/prefer-default-export': 'off',
   },
 };

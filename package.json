@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "lint:js": "eslint .",
-    "format": "prettier . --write",
+    "format": "prettier --write .",
     "format:check": "prettier --check .",
     "serve": "node ./build/serve.js",
     "build": "node ./build/ensure-env.js && node ./build/bundle-action.js",
