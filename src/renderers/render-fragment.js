@@ -47,6 +47,18 @@ export default async function renderFragment(path, parentFolderPath) {
 
         // see: https://ejs.co/#docs
         body = ejs.render(fs.readFileSync(fragmentPath, 'utf-8'), ejsData);
+        body = `
+        <!doctype html>
+        <html>
+          <head></head>
+          <body>
+            <header></header>
+            <main>
+            ${body}
+            </main>
+            <footer></footer>
+          </body>
+        </html>`;
         body = await formatHtml(body);
       } catch (error) {
         console.error(error);
