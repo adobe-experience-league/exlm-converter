@@ -6,6 +6,25 @@
  * @property {NavItem[] | undefined} items
  */
 
+const urlWithOptions = (url, options) => {
+  try {
+    const defaultBase = 'https://invalid.adobe.com';
+    const u = new URL(url, defaultBase);
+    if (options) {
+      u.hash = `${url.hash || ''}${JSON.stringify(options)}`;
+      console.log('url with options', u.toString());
+    }
+    if (u.origin === defaultBase) {
+      // the url is relative, remove base
+      return u.toString().replace(defaultBase, '');
+    }
+    return u.toString();
+  } catch (e) {
+    console.log('error parsing url', e);
+    return url;
+  }
+};
+
 /**
  * render nav items to HTML as <ul>
  * @param {NavItem[]} navItems
@@ -16,8 +35,9 @@ const nav = (navItems) => {
   navItems?.forEach((item) => {
     html += '<li>';
     if (item.url) {
+      const url = urlWithOptions(item.url, item.urlOptions);
       // item has a url, render as <a>
-      html += `<a href="${item.url}">${item.title}</a>`;
+      html += `<a href="${url}">${item.title}</a>`;
     } else {
       // item has no url, render as <p>
       html += `<p>${item.title}</p>`;
