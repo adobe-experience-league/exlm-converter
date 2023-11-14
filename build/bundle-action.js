@@ -70,9 +70,11 @@ const ensureDir = (dir) => {
 /**
  * Copy folders from src to dist
  * @param {Array<Array<string>>} folders
+ * @param {boolean} override
  */
-const copyFolders = (folders) => {
+const copyFolders = (folders, { override }) => {
   folders.forEach(([src, dest]) => {
+    if (override) fs.rmSync(dest, { recursive: true, force: true });
     ensureDir(dest);
     fs.cpSync(src, dest, { recursive: true });
   });
@@ -85,7 +87,7 @@ export const buildActionFolder = async () => {
   // create directory ./dist/static if it does not exist
   ensureDir(DIST_ACTION_FOLDER);
   // copy static folders to dist
-  copyFolders(COPY_FOLDERS);
+  copyFolders(COPY_FOLDERS, { override: true });
   // write package.json file to dist. it contains the main entry point for the action
   fs.writeFileSync(
     `${DIST_ACTION_FOLDER}/package.json`,

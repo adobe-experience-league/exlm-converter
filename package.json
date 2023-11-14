@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "lint:js": "eslint .",
-    "format": "prettier . --write",
+    "format": "prettier --write .",
     "format:check": "prettier --check .",
     "serve": "node ./build/serve.js",
     "build": "node ./build/ensure-env.js && node ./build/bundle-action.js",
@@ -26,6 +26,7 @@
     "@babel/eslint-parser": "^7.22.15",
     "adobe-afm-transform": "^1.2.24",
     "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
     "hast-util-from-html": "^2.0.1",
     "hast-util-raw": "8.0.0",
     "hast-util-to-html": "8.0.4",
@@ -61,11 +62,15 @@
     "nodemon": "^3.0.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.3",
+    "prettier-plugin-ejs": "^0.0.18",
     "rimraf": "^3.0.2"
   },
   "lint-staged": {
     "*.js": [
       "eslint --fix ",
+      "prettier --write"
+    ],
+    "*.yaml": [
       "prettier --write"
     ]
   }
