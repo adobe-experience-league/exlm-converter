@@ -52,6 +52,12 @@ const nav = (navItems) => {
     if (item.items) {
       html += nav(item.items);
     }
+
+    // secondary items (like browse all)
+    if (item.secondaryItems) {
+      html += nav(item.secondaryItems);
+    }
+
     html += '</li>';
   });
 
