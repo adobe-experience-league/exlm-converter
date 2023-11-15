@@ -4,6 +4,9 @@
     // You'll notice each part of the header is rendered as a "block". Weather or not it is handled as a block on
     // the frontend is a separate matter. But this ensures an expected order of items/parts in the header.
   %>
+  <!-- Adobe logo -->
+  <%- block("adobe-logo", [[`<a href="//business.adobe.com">:adobe-red-logo:</a
+    >`]]) %>
   <!-- Logo -->
   <%- block("brand", [[`<a href="/">Experience League</a>`]])%>
   <!-- Navigation Items -->
@@ -22,7 +25,4 @@
   `, ]]) %>
   <!-- sign in -->
   <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
-  <!-- Adobe logo -->
-  <%- block("adobe-logo", [[`<a href="//business.adobe.com">:adobe-red-logo:</a
-  >`]]) %>
 </div>
