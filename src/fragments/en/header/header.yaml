@@ -2,7 +2,9 @@
 signUp: 'Sign up'
 signIn: 'Sign in'
 search:
+  title: Search
   placeholder: 'Search Experience League'
+  url: /search.html
   filters:
     - All
     - Certification
@@ -12,7 +14,7 @@ search:
     - Events
     - Tutorials
 languageSelector:
-  title: Change language
+  title: Change Region
 nav:
   - title: Learn
     items:
