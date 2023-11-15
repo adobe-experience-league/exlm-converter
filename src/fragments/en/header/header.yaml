@@ -70,6 +70,8 @@ nav:
     items:
       - title: Quick Links
         items:
+          - title: Community home
+            url: https://experienceleaguecommunities.adobe.com/?profile.language=en
           - title: Experience Cloud Advocates
             subtitle: Meet our community of customer advocates
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
@@ -82,11 +84,12 @@ nav:
           - title: Experience League Showcase
             subtitle: Read real-world use cases of Experience Cloud products written by your peers
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
+          - title: Adobe Feedback Program
+            subtitle: Influence Adobe product development
+            url: '#'
       - title: Communities By Product
         items:
-          - title: Community home
-            url: https://experienceleaguecommunities.adobe.com/?profile.language=en
-          - title: Advertising
+          - title: Advertising Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
           - title: Analytics
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
@@ -114,12 +117,20 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
           - title: Creative Cloud
             url: https://community.adobe.com/#_blank
+            urlOptions:
+              target: _blank
           - title: Document Cloud
             url: https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank
+            urlOptions:
+              target: _blank
           - title: Commerce
             url: https://community.magento.com/#_blank
+            urlOptions:
+              target: _blank
           - title: Marketo Engage
             url: https://nation.marketo.com/#_blank
+            urlOptions:
+              target: _blank
 
   - title: Support
     url: https://experienceleague.adobe.com/#support
