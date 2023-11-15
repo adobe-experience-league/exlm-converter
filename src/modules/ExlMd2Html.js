@@ -74,7 +74,7 @@ export default async function md2html(mdString, meta, data) {
   const { document } = dom.window;
   // createSections(document);
   handleAbsoluteUrl(document);
-  createMetaData(document, meta);
+  createMetaData(document, meta, data);
   createArticleMetaData(document, meta);
   createVideo(document);
   createBadge(document);
