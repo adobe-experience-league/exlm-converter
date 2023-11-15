@@ -1,4 +1,5 @@
 import jsdom from 'jsdom';
+import yaml from 'js-yaml';
 
 global.Node = new jsdom.JSDOM().window.Node;
 
@@ -202,7 +203,7 @@ export const createMetaData = (document, meta, data) => {
   const fragment = document.createDocumentFragment();
   const fullMetadata = yaml.load(meta);
 
-  //Metadata from data key API Response
+  // Metadata from data key API Response
   const metaProperties = [
     { name: 'id', content: data.id },
     { name: 'keywords', content: data.Keywords || '' },
