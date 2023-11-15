@@ -198,16 +198,29 @@ export const createSections = (document) => {
  * @param {string} meta - The string containing key-value pairs to be converted into meta elements.
  * @returns {void}
  */
-export const createMetaData = (document, meta) => {
-  const lines = meta.split('\n');
+export const createMetaData = (document, meta, data) => {
   const fragment = document.createDocumentFragment();
+  const fullMetadata = yaml.load(meta);
 
-  lines.forEach((line) => {
-    const [key, value] = line.split(': ');
-    const metaEl = document.createElement('meta');
-    metaEl.setAttribute('name', key);
-    metaEl.setAttribute('content', value);
-    fragment.appendChild(metaEl);
+  //Metadata from data key API Response
+  const metaProperties = [
+    { name: 'id', content: data.id },
+    { name: 'keywords', content: data.Keywords || '' },
+  ];
+  metaProperties.forEach((property) => {
+    const metaTag = document.createElement('meta');
+    Object.entries(property).forEach(([key, value]) => {
+      metaTag.setAttribute(key, value);
+    });
+    document.head.appendChild(metaTag);
+  });
+
+  // Dynamic Metadata from API
+  Object.entries(fullMetadata).forEach(([key, value]) => {
+    const metaTag = document.createElement('meta');
+    metaTag.setAttribute('name', key);
+    metaTag.setAttribute('content', value);
+    fragment.appendChild(metaTag);
   });
 
   document.head.appendChild(fragment);

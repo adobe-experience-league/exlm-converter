@@ -27,6 +27,7 @@ import mappings from '../url-mapping.js';
  * @property {number} timestamp
  * @property {boolean} Hide
  * @property {string} id
+ * @property {string} Keywords
  */
 
 /**
