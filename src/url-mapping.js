@@ -44,4 +44,8 @@ export default [
     path: '/docs/authoring-guide-exl/test/collapsible-content',
     id: 'recTousPhoaYRkKQc',
   },
+  {
+    path: '/docs/authoring-guide-exl/test/image-funk',
+    id: 'recaNoCyEKjRK8icE',
+  },
 ];
