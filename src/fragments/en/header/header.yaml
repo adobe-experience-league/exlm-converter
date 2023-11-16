@@ -17,11 +17,14 @@ languageSelector:
   title: Change Region
 nav:
   - title: Learn
+    secondaryItems:
+      - title: Browse all content
+        url: '#'
     items:
       - title: Featured Products
         url: '#'
         items:
-          - title: Analytis
+          - title: Analytics
             url: '#'
           - title: Campaign
             url: '#'
