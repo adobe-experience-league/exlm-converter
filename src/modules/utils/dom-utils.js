@@ -207,6 +207,7 @@ export const createMetaData = (document, meta, data) => {
   const metaProperties = [
     { name: 'id', content: data.id },
     { name: 'keywords', content: data.Keywords || '' },
+    { name: 'coveo-solution' , content: data.Solution.map(String).join(' ') || ''},
   ];
   metaProperties.forEach((property) => {
     const metaTag = document.createElement('meta');
