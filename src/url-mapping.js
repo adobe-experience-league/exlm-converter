@@ -1,47 +1,47 @@
 export default [
   {
     path: '/docs/authoring-guide-exl/using/markdown/cheatsheet',
-    id: 'recXZZxBo4pkOnx9k',
+    id: 'recrXgJulsTnJcffM',
   },
   {
     path: '/docs/authoring-guide-exl/using/markdown/syntax-style-guide',
-    id: 'rec9WkO4eYWupFTrM',
+    id: 'recgmHK5xohmAq6pP',
   },
 
   {
     path: '/docs/authoring-guide-exl/using/authoring/tables',
-    id: 'recSamvuJkILYVR1q  ',
+    id: 'recjxOhG2tGt9s6tZ',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/linking',
-    id: 'recDHkKH0MjzPsrwq',
+    id: 'recPhyVEATc9HazOJ',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/using-metadata',
-    id: 'reczCFfhqIQlpEejb',
+    id: 'recAcu9ds9wz8Uhtj',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/restructure-new',
-    id: 'recmQ0mtsvAYkwo4W',
+    id: 'rec4T5ZdNdcjeOYBx',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/includes',
-    id: 'rec3GuzJeOONUCEzJ',
+    id: 'recDEifTNPMwWgVDz',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/microsites',
-    id: 'recfe17eUvR7lnLCm',
+    id: 'recRAa7d0wMdz1G03',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/contextual-help-popovers',
-    id: 'recwo9P3E9EjlToZo',
+    id: 'recK2aI3NX6ml4xRU',
   },
   {
     path: '/docs/authoring-guide-exl/using/authoring/courses',
-    id: 'rec6E43FbKY1GDdeb',
+    id: 'rec4gK5tqM0B0Oqat',
   },
   {
     path: '/docs/authoring-guide-exl/test/collapsible-content',
-    id: 'recgMk4GOsep4yCep',
+    id: 'recTousPhoaYRkKQc',
   },
 ];
