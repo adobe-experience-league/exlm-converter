@@ -15,13 +15,17 @@ export default function createArticleMetaDataCreatedBy(document, data) {
     if (data.Level && data.Level !== '') {
       const levels = data.Level;
       levels.forEach((tags) => {
-        items.push(tags);
+        if (tags !== '') {
+          items.push(tags);
+        }
       });
     }
     if (data.Role && data.Role !== '') {
       const roles = data.Role;
       roles.forEach((role) => {
-        items.push(role);
+        if (role !== '') {
+          items.push(role);
+        }
       });
     }
     levelDivTag.append(
