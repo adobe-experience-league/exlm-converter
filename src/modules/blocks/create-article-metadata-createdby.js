@@ -5,14 +5,20 @@ export default function createArticleMetaDataCreatedBy(document, data) {
   if (data.Level || data.Role) {
     const metaElement = document.querySelector('.article-metadata');
     const levelDivTag = document.createElement('div');
-    const items = ['Created for:'];
-    if (data.Level) {
+    const createdForDiv = document.createElement('div');
+    const paragraph = document.createElement('p');
+    const parentDiv = document.createElement('div');
+    paragraph.textContent = 'CREATED FOR:';
+    createdForDiv.append(paragraph);
+    parentDiv.append(createdForDiv);
+    const items = [];
+    if (data.Level && data.Level !== '') {
       const levels = data.Level;
       levels.forEach((tags) => {
         items.push(tags);
       });
     }
-    if (data.Role) {
+    if (data.Role && data.Role !== '') {
       const roles = data.Role;
       roles.forEach((role) => {
         items.push(role);
@@ -24,7 +30,8 @@ export default function createArticleMetaDataCreatedBy(document, data) {
         items,
       }),
     );
-    const cells = [[levelDivTag]];
+    parentDiv.append(levelDivTag);
+    const cells = [[parentDiv]];
     const block = toBlock('article-metadata-createdby', cells, document);
     metaElement.insertAdjacentElement('afterend', block);
   }
