@@ -6,7 +6,7 @@ import { toBlock } from '../utils/dom-utils.js';
  */
 export default function createDocActions(document) {
   // Target mini toc container and prepend empty placeholder for doc actions block.
-  const docSection = document.querySelector('.mini-toc');
+  const docSection = document.querySelector('main > div:last-child');
   if (docSection) {
     const docActionDivNode = document.createElement('div');
     const cells = [[[docActionDivNode]]];
