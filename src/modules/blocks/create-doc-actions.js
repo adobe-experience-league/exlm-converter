@@ -5,7 +5,7 @@ import { toBlock } from '../utils/dom-utils.js';
  * @param {Document} document
  */
 export default function createDocActions(document) {
-  // Target mini toc container and prepend empty placeholder for doc actions block.
+  // Target MAIN block last div and insert an empty placeholder for doc actions block.
   const docSection = document.querySelector('main > div:last-child');
   if (docSection) {
     const docActionDivNode = document.createElement('div');
