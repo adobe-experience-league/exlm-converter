@@ -10,7 +10,7 @@ export default function createDocActions(document) {
   if (docSection) {
     const docActionDivNode = document.createElement('div');
     const cells = [[[docActionDivNode]]];
-    const block = toBlock(`doc-actions`, cells, document);
+    const block = toBlock('doc-actions', cells, document);
     docSection.insertBefore(block, docSection.children[0]);
   }
 }
