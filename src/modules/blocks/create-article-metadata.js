@@ -11,9 +11,7 @@ export default function createArticleMetaData(document, meta) {
   if (fullMetadata['last-update']) {
     const lastUpdatedElementTag = document.createElement('div');
     const isodate = new Date(fullMetadata['last-update']);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = isodate.toLocaleDateString('en-US', options);
-    const localeDateString = `Last update: ${formattedDate}`;
+    const localeDateString = `Last update: ${isodate}`;
     lastUpdatedElementTag.innerHTML = localeDateString;
     articleMetaDivTag.append(lastUpdatedElementTag);
   }
