@@ -4,7 +4,7 @@ signIn: 'Sign in'
 search:
   title: Search
   placeholder: 'Search Experience League'
-  url: /search.html
+  url: https://experienceleague.adobe.com/search.html
   filters:
     - title: All
       contenttype: All
