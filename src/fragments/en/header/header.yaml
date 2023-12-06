@@ -4,16 +4,24 @@ signIn: 'Sign in'
 search:
   title: Search
   placeholder: 'Search Experience League'
-  url: /search.html
+  url: https://experienceleague.adobe.com/search.html
   filters:
-    - All
-    - Certification
-    - Community
-    - Courses
-    - Documentation
-    - Events
-    - Troubleshooting
-    - Tutorials
+    - title: All
+      contenttype: All
+    - title: Certification
+      contenttype: Certification
+    - title: Community
+      contenttype: Community
+    - title: Courses
+      contenttype: Course
+    - title: Documentation
+      contenttype: Documentation
+    - title: Events
+      contenttype: Event
+    - title: Troubleshooting
+      contenttype: Troubleshooting
+    - title: Tutorials
+      contenttype: Tutorial
 languageSelector:
   title: Change Region
 nav:
