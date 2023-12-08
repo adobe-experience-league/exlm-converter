@@ -95,7 +95,7 @@ export default async function md2html(mdString, meta, data) {
   createTOC(document);
   createImgBlock(document);
   createAccordion(document);
-  createBreadcrumbs(document);
+  createBreadcrumbs(document, meta);
   createDocActions(document);
   // leave this at the end
   handleNestedBlocks(document);
