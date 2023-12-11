@@ -88,9 +88,9 @@ const ul = (items) =>
  * @returns
  */
 const alist = (items) => {
-  let anchors;
+  let anchors = '';
   items?.forEach((item) => {
-    anchors += `<a href="${item.url}" target="${item.url.urlOptions.target}" title="${item.title}">${item.title}</a>`;
+    anchors += `<a href="${item.url}" target="${item.urlOptions.target}" title="${item.title}">${item.title}</a>`;
   });
   return anchors;
 };
