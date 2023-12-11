@@ -1,5 +1,13 @@
 ---
-productGrid: 'Product grid'
+productGrid:
+  - title: Adobe Experience Cloud
+    url: https://experience.adobe.com/
+    urlOptions:
+      target: _blank
+  - title: Adobe Document Cloud
+    url: //documentcloud.adobe.com/link/home/
+    urlOptions:
+      target: _blank
 signUp: 'Sign up'
 signIn: 'Sign in'
 search:
