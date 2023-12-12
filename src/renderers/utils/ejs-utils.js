@@ -82,8 +82,22 @@ const block = (clazz, rows) => `<div class="${clazz}">
 const ul = (items) =>
   `<ul>${items.map((i) => `<li>${i}</li>`).join('\n')}</ul>`;
 
+/**
+ * render HTML <anchor list> from array of strings
+ * @param {string[]} items
+ * @returns
+ */
+const alist = (items) => {
+  let anchors = '';
+  items?.forEach((item) => {
+    anchors += `<a href="${item.url}" title="${item.title}">${item.title}</a>`;
+  });
+  return anchors;
+};
+
 export default {
   nav,
   block,
   ul,
+  alist,
 };

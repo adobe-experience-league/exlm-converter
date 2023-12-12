@@ -1,4 +1,9 @@
 ---
+productGrid:
+  - title: Adobe Experience Cloud
+    url: https://experience.adobe.com/
+  - title: Adobe Document Cloud
+    url: https://documentcloud.adobe.com/link/home/
 signUp: 'Sign up'
 signIn: 'Sign in'
 search:
@@ -59,7 +64,7 @@ nav:
             url: '#'
       - title: Content Types
         items:
-          - title: Courses
+          - title: Browse all courses
             subtitle: Expertly curated collections of lessons
             url: /dashboard/learning
           - title: Tutorials
