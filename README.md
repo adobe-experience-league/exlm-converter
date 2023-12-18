@@ -93,3 +93,5 @@ To get activation/application logs, you can run:
 - `aio runtime activation log --last` - logs the last activation log
 - `aio runtime activation result --last` - logs last activation result
 - `aio app logs` - application logs
+
+I want to merge this to main!
