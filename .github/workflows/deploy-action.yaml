@@ -22,6 +22,9 @@ jobs:
           else
             echo "env_name=dev" >> $GITHUB_OUTPUT
           fi
+      - name: Selected Environment is [${{ steps.env_select.outputs.env_name }}]
+        run: |
+          echo "Environment: ${{ steps.env_select.outputs.env_name }}"
     outputs:
       env_name: ${{ steps.env_select.outputs.env_name }}
   deploy:
@@ -29,7 +32,7 @@ jobs:
     environment:
       name: ${{ needs.env-select.outputs.env_name }}
     steps:
-      - uses: actions/checkout@v3'
+      - uses: actions/checkout@v3
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
