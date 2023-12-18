@@ -4,13 +4,32 @@ on:
   push:
     branches:
       - main
+      - stage
+      - develop
 
 jobs:
+  env-select:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Select an Environment
+        id: env_select
+        run: |
+          echo "Running on branch ${{ github.ref }}"
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "::set-output name=env_name::prod"
+          elif [ "${{ github.ref }}" = "refs/heads/stage" ]; then
+            echo "::set-output name=env_name::stage"
+          else
+             echo "::set-output name=env_name::dev"
+          fi
+    outputs:
+      env_name: ${{ steps.env_select.outputs.env_name }}
   deploy:
     runs-on: ubuntu-latest
-    environment: exlm
+    environment:
+      name: ${{ needs.env-select.outputs.env_name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3'
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -19,7 +38,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
       - name: Run npm ci
         run: npm ci
-      - name: Deploy Converter Action
+      - name: Deploy Converter Action to ${{ needs.env-select.outputs.env_name }}
         run: ./node_modules/.bin/aio app deploy
         env:
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
