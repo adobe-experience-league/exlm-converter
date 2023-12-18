@@ -29,6 +29,7 @@ jobs:
           echo "Environment: ${{ steps.env_select.outputs.env_name }}"
   deploy:
     runs-on: ubuntu-latest
+    needs: env-select
     environment:
       name: ${{ needs.env-select.outputs.env_name }}
     steps:
