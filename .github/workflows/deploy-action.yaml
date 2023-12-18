@@ -16,11 +16,11 @@ jobs:
         run: |
           echo "Running on branch ${{ github.ref }}"
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "::set-output name=env_name::prod"
+            echo "env_name=prod" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref }}" = "refs/heads/stage" ]; then
-            echo "::set-output name=env_name::stage"
+            echo "env_name=stage" >> $GITHUB_OUTPUT
           else
-             echo "::set-output name=env_name::dev"
+            echo "env_name=dev" >> $GITHUB_OUTPUT
           fi
     outputs:
       env_name: ${{ steps.env_select.outputs.env_name }}
