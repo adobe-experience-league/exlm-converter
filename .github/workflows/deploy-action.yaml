@@ -56,10 +56,10 @@ jobs:
           AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
-          BRANCH: ${{ github.ref_name }}
+          BRANCH: ${{ vars.BRANCH }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
-          BRANCH: ${{ github.ref_name }}
+          BRANCH: ${{ vars.BRANCH }}
