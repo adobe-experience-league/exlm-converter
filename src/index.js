@@ -16,6 +16,7 @@ import { dirname } from 'path';
 import renderDoc from './renderers/render-doc.js';
 import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
+import renderLanding from './renderers/render-landing.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -46,6 +47,10 @@ const aioLogger = Logger('App');
  */
 export const render = async function render(path, params) {
   if (path.startsWith('/docs')) {
+    if (path.split('/').length < 4) {
+      // landing pages less than 4 parts (inclusive of empty first part from the leading slash)
+      return renderLanding(path, dir);
+    }
     return renderDoc(path);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
