@@ -6,7 +6,10 @@ const DIST_ACTION_FOLDER = 'dist/static';
 const DIST_ACTION_FILE_NAME = 'index.js';
 const DIST_ACTION_INDEX = `${DIST_ACTION_FOLDER}/${DIST_ACTION_FILE_NAME}`;
 const BUNDLE_ENTRY = `src/${DIST_ACTION_FILE_NAME}`;
-const COPY_FOLDERS = [['src/fragments', `${DIST_ACTION_FOLDER}/fragments`]];
+const COPY_FOLDERS = [
+  ['src/fragments', `${DIST_ACTION_FOLDER}/fragments`],
+  ['src/landing', `${DIST_ACTION_FOLDER}/landing`],
+];
 
 const ACTION_PACKAGE_JSON = {
   main: DIST_ACTION_FILE_NAME,
