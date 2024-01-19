@@ -33,35 +33,35 @@ nav:
   - title: Learn
     secondaryItems:
       - title: Browse all content
-        url: '#'
+        url: '/en/browse'
     items:
       - title: Featured Products
         url: '#'
         items:
           - title: Analytics
-            url: '#'
+            url: '/en/browse/analytics'
           - title: Campaign
-            url: '#'
+            url: '/en/browse/campaign'
           - title: Commerce
-            url: '#'
+            url: '/en/browse/commerce'
           - title: Customer Journey Analytics
-            url: '#'
+            url: '/en/browse/customer-journey-analytics'
           - title: Data Collection
-            url: '#'
+            url: '/en/browse/experience-platform/data-collection'
           - title: Experience Manager
-            url: '#'
+            url: '/en/browse/experience-manager'
           - title: Experience Platform
-            url: '#'
+            url: '/en/browse/experience-platform'
           - title: Journey Optimizer
-            url: '#'
+            url: '/en/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '#'
+            url: '/en/browse/marketo/marketo-engage'
           - title: Target
-            url: '#'
+            url: '/en/browse/target'
           - title: Real-Time CDP
-            url: '#'
+            url: '/en/browse/real-time-customer-data-platform'
           - title: Workfront
-            url: '#'
+            url: '/en/browse/workfront'
       - title: Content Types
         items:
           - title: Browse all courses
