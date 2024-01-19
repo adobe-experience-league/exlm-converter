@@ -14,7 +14,8 @@ export default async function renderDoc(path) {
     const md = response.data[0].FullBody;
     const meta = response.data[0].FullMeta;
     const data = response.data[0];
-    const { convertedHtml, originalHtml } = await md2html(md, meta, data);
+    const pageType = "doc-article";
+    const { convertedHtml, originalHtml } = await md2html(md, meta, data, pageType);
     return {
       body: convertedHtml,
       headers: {

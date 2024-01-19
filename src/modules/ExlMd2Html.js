@@ -42,7 +42,7 @@ const doAmf = (md) => {
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
 };
 
-export default async function md2html(mdString, meta, data) {
+export default async function md2html(mdString, meta, data, pageType) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -74,32 +74,37 @@ export default async function md2html(mdString, meta, data) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  // createSections(document);
-  handleAbsoluteUrl(document);
-  createMetaData(document, meta, data);
-  createArticleMetaData(document, meta);
-  createVideo(document);
-  createBadge(document);
-  createRelatedArticles(document);
-  createNote(document);
-  createTabs(document);
-  createTables(document);
-  createShadeBox(document);
-  createCodeBlock(document);
-  createVideoTranscript(document);
-  createList(document);
-  createArticleMetaDataCreatedBy(document, data);
-  createArticleMetaDataTopics(document, meta);
-  handleExternalUrl(document);
-  createMiniTOC(document);
-  createTOC(document);
-  createImgBlock(document);
-  createAccordion(document);
-  createBreadcrumbs(document, meta);
-  createDocActions(document);
-  // leave this at the end
-  handleNestedBlocks(document);
-
+  if (pageType === 'doc-landing') {
+    // Blocks for Doc landing page will go here
+  } else if (pageType === 'solution-landing') {
+    // Blocks for Solution landing page will go here
+  } else {
+    // createSections(document);
+    handleAbsoluteUrl(document);
+    createMetaData(document, meta, data);
+    createArticleMetaData(document, meta);
+    createVideo(document);
+    createBadge(document);
+    createRelatedArticles(document);
+    createNote(document);
+    createTabs(document);
+    createTables(document);
+    createShadeBox(document);
+    createCodeBlock(document);
+    createVideoTranscript(document);
+    createList(document);
+    createArticleMetaDataCreatedBy(document, data);
+    createArticleMetaDataTopics(document, meta);
+    handleExternalUrl(document);
+    createMiniTOC(document);
+    createTOC(document);
+    createImgBlock(document);
+    createAccordion(document);
+    createBreadcrumbs(document, meta);
+    createDocActions(document);
+    // leave this at the end
+    handleNestedBlocks(document);
+  }
   return {
     convertedHtml: dom.serialize(),
     originalHtml: html,

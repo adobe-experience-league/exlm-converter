@@ -17,6 +17,7 @@ export default async function renderLanding(path, parentFolderPath) {
   const parts = path.split('/');
 
   const landingName = parts.length < 3 ? 'home' : parts[2];
+  const pageType = parts.length < 3 ? 'doc-landing' : 'solution-landing';
 
   const landingMdFilePath = join(
     parentFolderPath,
@@ -26,7 +27,7 @@ export default async function renderLanding(path, parentFolderPath) {
 
   const mdString = readFileSync(landingMdFilePath, 'utf-8');
   const { meta, md } = splitMD(mdString);
-  const { convertedHtml, originalHtml } = await md2html(md, meta, {});
+  const { convertedHtml, originalHtml } = await md2html(md, meta, {}, pageType);
   return {
     body: convertedHtml,
     headers: {
