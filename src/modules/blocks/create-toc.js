@@ -11,7 +11,7 @@ export default function createTOC(document, data) {
 
   if (data.toc) {
     const id = data.toc;
-    fragment.href = `/fragments/en/toc/${id}`;
+    fragment.href = `/toc/en/toc/${id}`;
     fragment.innerHTML = 'toc';
   }
   const cells = [[[fragment]]];

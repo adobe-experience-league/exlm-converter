@@ -55,16 +55,16 @@ export const render = async function render(path, params) {
     return renderDoc(path);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
-  // Regular expression pattern for toc.
-  const tocPattern = /^\/fragments\/[a-zA-Z]+\/toc/;
 
   if (path.startsWith('/fragments')) {
-    // Handle TOC
-    if (tocPattern.test(path)) {
-      return renderToc(path);
-    }
     return renderFragment(path, dir);
   }
+
+  // Handle TOC
+  if (path.startsWith('/toc')) {
+    return renderToc(path);
+  }
+
   // Handle AEM UE Pages by default
   return renderAem(path, params);
 };
