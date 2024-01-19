@@ -17,6 +17,7 @@ import renderDoc from './renderers/render-doc.js';
 import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
 import renderLanding from './renderers/render-landing.js';
+import renderToc from './renderers/render-toc.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -54,7 +55,14 @@ export const render = async function render(path, params) {
     return renderDoc(path);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
+  // Regular expression pattern for toc.
+  const tocPattern = /^\/fragments\/[a-zA-Z]+\/toc/;
+
   if (path.startsWith('/fragments')) {
+    // Handle TOC
+    if (tocPattern.test(path)) {
+      return renderToc(path);
+    }
     return renderFragment(path, dir);
   }
   // Handle AEM UE Pages by default
