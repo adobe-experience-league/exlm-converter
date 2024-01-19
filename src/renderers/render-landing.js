@@ -17,7 +17,7 @@ export default async function renderLanding(path, parentFolderPath) {
   const parts = path.split('/');
 
   const landingName = parts.length < 3 ? 'home' : parts[2];
-  const pageType = parts.length < 3 ? 'doc-landing' : 'solution-landing';
+  const pageType = parts.length < 3 ? 'docs-landing' : 'docs-solution-landing';
 
   const landingMdFilePath = join(
     parentFolderPath,

@@ -74,9 +74,9 @@ export default async function md2html(mdString, meta, data, pageType) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  if (pageType === 'doc-landing') {
+  if (pageType === 'docs-landing') {
     // Blocks for Doc landing page will go here
-  } else if (pageType === 'solution-landing') {
+  } else if (pageType === 'docs-solution-landing') {
     // Blocks for Solution landing page will go here
   } else {
     // createSections(document);
