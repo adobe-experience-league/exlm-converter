@@ -6,6 +6,7 @@ import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
 import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
+import { docPageType } from '../doc-page-types.js';
 import handleAbsoluteUrl from './utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
@@ -29,6 +30,7 @@ import createAccordion from './blocks/create-accordion.js';
 import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
+import createCloudSolutions from './blocks/create-cloud-solutions.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -42,7 +44,7 @@ const doAmf = (md) => {
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
 };
 
-export default async function md2html(mdString, meta, data) {
+export default async function md2html(mdString, meta, data, pageType) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -74,32 +76,37 @@ export default async function md2html(mdString, meta, data) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  // createSections(document);
-  handleAbsoluteUrl(document);
-  createMetaData(document, meta, data);
-  createArticleMetaData(document, meta);
-  createVideo(document);
-  createBadge(document);
-  createRelatedArticles(document);
-  createNote(document);
-  createTabs(document);
-  createTables(document);
-  createShadeBox(document);
-  createCodeBlock(document);
-  createVideoTranscript(document);
-  createList(document);
-  createArticleMetaDataCreatedBy(document, data);
-  createArticleMetaDataTopics(document, meta);
-  handleExternalUrl(document);
-  createMiniTOC(document);
-  createTOC(document, data);
-  createImgBlock(document);
-  createAccordion(document);
-  createBreadcrumbs(document, meta);
-  createDocActions(document);
-  // leave this at the end
-  handleNestedBlocks(document);
-
+  if (pageType === docPageType.DOC_LANDING) {
+    createCloudSolutions(document);
+  } else if (pageType === docPageType.SOLUTION_LANDING) {
+    // Blocks for Solution landing page will go here
+  } else {
+    // createSections(document);
+    handleAbsoluteUrl(document);
+    createMetaData(document, meta, data);
+    createArticleMetaData(document, meta);
+    createVideo(document);
+    createBadge(document);
+    createRelatedArticles(document);
+    createNote(document);
+    createTabs(document);
+    createTables(document);
+    createShadeBox(document);
+    createCodeBlock(document);
+    createVideoTranscript(document);
+    createList(document);
+    createArticleMetaDataCreatedBy(document, data);
+    createArticleMetaDataTopics(document, meta);
+    handleExternalUrl(document);
+    createMiniTOC(document);
+    createTOC(document, data);
+    createImgBlock(document);
+    createAccordion(document);
+    createBreadcrumbs(document, meta);
+    createDocActions(document);
+    // leave this at the end
+    handleNestedBlocks(document);
+  }
   return {
     convertedHtml: dom.serialize(),
     originalHtml: html,
