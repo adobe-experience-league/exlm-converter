@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 import md2html from '../modules/ExlMd2Html.js';
 import { addExtension } from '../modules/utils/path-utils.js';
+import { docPageType } from '../doc-page-types.js';
 
 function splitMD(mdString) {
   const parts = mdString.split('---');
@@ -17,7 +18,8 @@ export default async function renderLanding(path, parentFolderPath) {
   const parts = path.split('/');
 
   const landingName = parts.length < 3 ? 'home' : parts[2];
-  const pageType = parts.length < 3 ? 'doc-landing' : 'solution-landing';
+  const pageType =
+    parts.length < 3 ? docPageType.DOC_LANDING : docPageType.SOLUTION_LANDING;
 
   const landingMdFilePath = join(
     parentFolderPath,
