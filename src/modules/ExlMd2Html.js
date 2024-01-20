@@ -6,7 +6,7 @@ import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
 import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
-import { docPageType } from '../doc-page-types.js';
+import { DOCPAGETYPE } from '../doc-page-types.js';
 import handleAbsoluteUrl from './utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
@@ -79,12 +79,12 @@ export default async function md2html(mdString, meta, data, pageType) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  if (pageType === docPageType.DOC_LANDING) {
+  if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createMetaData(document, meta, data);
     handleAbsoluteUrl(document);
     createCloudSolutions(document);
     handleExternalUrl(document);
-  } else if (pageType === docPageType.SOLUTION_LANDING) {
+  } else if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
     createMetaData(document, meta, data);
     handleAbsoluteUrl(document);
     handleExternalUrl(document);
