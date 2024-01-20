@@ -6,7 +6,7 @@ import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
 import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
-import { docPageType } from '../doc-page-types.js';
+import { DOCPAGETYPE } from '../doc-page-types.js';
 import handleAbsoluteUrl from './utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
@@ -31,6 +31,9 @@ import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
+import createGuidesList from './blocks/create-guides-list.js';
+import createTutorialTiles from './blocks/create-tutorial-tiles.js';
+import createRelatedResources from './blocks/create-related-resources.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -76,10 +79,20 @@ export default async function md2html(mdString, meta, data, pageType) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  if (pageType === docPageType.DOC_LANDING) {
+  if (pageType === DOCPAGETYPE.DOC_LANDING) {
+    createMetaData(document, meta, data);
+    handleAbsoluteUrl(document);
     createCloudSolutions(document);
-  } else if (pageType === docPageType.SOLUTION_LANDING) {
-    // Blocks for Solution landing page will go here
+    handleExternalUrl(document);
+  } else if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
+    createMetaData(document, meta, data);
+    handleAbsoluteUrl(document);
+    handleExternalUrl(document);
+    createMiniTOC(document);
+    createBreadcrumbs(document, meta);
+    createGuidesList(document);
+    createTutorialTiles(document);
+    createRelatedResources(document);
   } else {
     // createSections(document);
     handleAbsoluteUrl(document);
