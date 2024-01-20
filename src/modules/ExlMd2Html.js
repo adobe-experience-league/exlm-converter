@@ -6,6 +6,7 @@ import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
 import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
+import { docPageType } from '../doc-page-types.js';
 import handleAbsoluteUrl from './utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
@@ -75,9 +76,9 @@ export default async function md2html(mdString, meta, data, pageType) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  if (pageType === 'docs-landing') {
+  if (pageType === docPageType.DOC_LANDING) {
     createCloudSolutions(document);
-  } else if (pageType === 'docs-solution-landing') {
+  } else if (pageType === docPageType.SOLUTION_LANDING) {
     // Blocks for Solution landing page will go here
   } else {
     // createSections(document);
