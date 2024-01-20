@@ -29,6 +29,7 @@ import createAccordion from './blocks/create-accordion.js';
 import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
+import createCloudSolutions from './blocks/create-cloud-solutions.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -75,7 +76,7 @@ export default async function md2html(mdString, meta, data, pageType) {
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
   if (pageType === 'docs-landing') {
-    // Blocks for Doc landing page will go here
+    createCloudSolutions(document);
   } else if (pageType === 'docs-solution-landing') {
     // Blocks for Solution landing page will go here
   } else {
