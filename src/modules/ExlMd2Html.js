@@ -31,6 +31,9 @@ import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
+import createGuidesList from './blocks/create-guides-list.js';
+import createTutorialTiles from './blocks/create-tutorial-tiles.js';
+import createRelatedResources from './blocks/create-related-resources.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -77,9 +80,19 @@ export default async function md2html(mdString, meta, data, pageType) {
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
   if (pageType === docPageType.DOC_LANDING) {
+    createMetaData(document, meta, data);
+    handleAbsoluteUrl(document);
     createCloudSolutions(document);
+    handleExternalUrl(document);
   } else if (pageType === docPageType.SOLUTION_LANDING) {
-    // Blocks for Solution landing page will go here
+    createMetaData(document, meta, data);
+    handleAbsoluteUrl(document);
+    handleExternalUrl(document);
+    createMiniTOC(document);
+    createBreadcrumbs(document, meta);
+    createGuidesList(document);
+    createTutorialTiles(document);
+    createRelatedResources(document);
   } else {
     // createSections(document);
     handleAbsoluteUrl(document);
