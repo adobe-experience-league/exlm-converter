@@ -99,7 +99,7 @@ export default async function md2html(mdString, meta, data, pageType) {
     createArticleMetaDataTopics(document, meta);
     handleExternalUrl(document);
     createMiniTOC(document);
-    createTOC(document);
+    createTOC(document, data);
     createImgBlock(document);
     createAccordion(document);
     createBreadcrumbs(document, meta);
