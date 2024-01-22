@@ -55,7 +55,7 @@ function absoluteToRelative(url, baseUrl) {
  *
  * @param {Document} document - The HTML document to process.
  */
-export default function handleAbsoluteUrl(document) {
+export default function handleUrls(document) {
   const elements = document.querySelectorAll('a');
   if (!elements) return;
 
