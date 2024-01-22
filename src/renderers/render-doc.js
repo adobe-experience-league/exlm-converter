@@ -2,6 +2,7 @@ import ExlClient from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../doc-page-types.js';
+import { matchDocsPath } from '../modules/utils/path-match-utils.js';
 
 const exlClient = new ExlClient({
   domain: 'https://experienceleague.adobe.com',
@@ -10,7 +11,17 @@ const exlClient = new ExlClient({
  * handles a markdown doc path
  */
 export default async function renderDoc(path) {
-  const response = await exlClient.getArticleByPath(removeExtension(path));
+  const {
+    params: { lang, solution, docRelPath },
+  } = matchDocsPath(path);
+
+  // construct the path in the articles API
+  const apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+
+  const response = await exlClient.getArticleByPath(
+    removeExtension(apiArticlePath),
+    lang,
+  );
   if (response.data.length > 0) {
     const md = response.data[0].FullBody;
     const meta = response.data[0].FullMeta;
