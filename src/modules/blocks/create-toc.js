@@ -12,7 +12,7 @@ export default function createTOC(document, data) {
   if (data.toc) {
     const id = data.toc;
     fragment.href = `/toc/en/toc/${id}`;
-  }else{
+  } else {
     fragment.href = '/fragments/en/toc/toc.html';
   }
   const cells = [[[fragment]]];

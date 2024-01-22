@@ -12,7 +12,7 @@ export default async function renderToc(path) {
   const res = await exlClient.getTOC(tocID);
   if (res.length > 0) {
     const tocData = new jsdom.JSDOM(res);
-    const tocHtmlString = tocData.serialize(); 
+    const tocHtmlString = tocData.serialize();
     let body;
     body = `
 <!doctype html>
