@@ -17,7 +17,11 @@ import renderDoc from './renderers/render-doc.js';
 import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
 import renderLanding from './renderers/render-landing.js';
-import renderToc from './renderers/render-toc.js';
+import {
+  isDocsPath,
+  isFragmentPath,
+  isLandingPath,
+} from './modules/utils/path-match-utils.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -47,22 +51,16 @@ const aioLogger = Logger('App');
  * @returns
  */
 export const render = async function render(path, params) {
-  if (path.startsWith('/docs')) {
-    if (path.split('/').length < 4) {
-      // landing pages less than 4 parts (inclusive of empty first part from the leading slash)
-      return renderLanding(path, dir);
-    }
+  if (isLandingPath(path)) {
+    return renderLanding(path, dir);
+  }
+
+  if (isDocsPath(path)) {
     return renderDoc(path);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
-
-  if (path.startsWith('/fragments')) {
+  if (isFragmentPath(path)) {
     return renderFragment(path, dir);
-  }
-
-  // Handle TOC
-  if (path.startsWith('/toc')) {
-    return renderToc(path);
   }
 
   // Handle AEM UE Pages by default

@@ -1,8 +1,9 @@
 import { join } from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import md2html from '../modules/ExlMd2Html.js';
 import { addExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../doc-page-types.js';
+import { matchLandingPath } from '../modules/utils/path-match-utils.js';
 
 function splitMD(mdString) {
   const parts = mdString.split('---');
@@ -15,17 +16,29 @@ function splitMD(mdString) {
  * handles a markdown doc path
  */
 export default async function renderLanding(path, parentFolderPath) {
-  const parts = path.split('/');
+  const {
+    params: { lang, solution },
+  } = matchLandingPath(path);
 
-  const landingName = parts.length < 3 ? 'home' : parts[2];
-  const pageType =
-    parts.length < 3 ? DOCPAGETYPE.DOC_LANDING : DOCPAGETYPE.SOLUTION_LANDING;
+  let landingName = 'home';
+  let pageType = DOCPAGETYPE.DOC_LANDING;
+  if (lang && solution) {
+    landingName = solution;
+    pageType = DOCPAGETYPE.SOLUTION_LANDING;
+  }
 
   const landingMdFilePath = join(
     parentFolderPath,
-    'landing/en',
+    `landing/${lang}`,
     addExtension(landingName, '.md'),
   );
+
+  // does not exist
+  if (!existsSync(landingMdFilePath)) {
+    return {
+      error: new Error(`No Landing Page found for: ${path}`),
+    };
+  }
 
   const mdString = readFileSync(landingMdFilePath, 'utf-8');
   const { meta, md } = splitMD(mdString);
