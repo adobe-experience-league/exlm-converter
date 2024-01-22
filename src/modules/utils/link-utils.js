@@ -50,6 +50,19 @@ function absoluteToRelative(url, baseUrl) {
   return relativeUrl;
 }
 
+export function rewriteDocsPath(docsPath) {
+  if (!docsPath.startsWith('/docs')) {
+    return docsPath; // not a docs path, return as is
+  }
+  const TEMP_BASE = 'https://localhost';
+  const url = new URL(docsPath, TEMP_BASE);
+  const lang = url.searchParams.get('lang') || 'en';
+  url.searchParams.delete('lang');
+  url.pathname = `${lang}${url.pathname}`;
+  // return full path without origin
+  return url.toString().replace(TEMP_BASE, '');
+}
+
 /**
  * Handles converting absolute URLs to relative URLs for links and images within a document.
  *
@@ -61,8 +74,14 @@ export default function handleUrls(document) {
 
   const baseUrl = 'https://experienceleague.adobe.com';
   elements.forEach((el) => {
-    const url = el.getAttribute('href');
-    if (isAbsoluteURL(url)) el.href = absoluteToRelative(url, baseUrl);
+    let rewritePath = el.getAttribute('href');
+    if (isAbsoluteURL(rewritePath))
+      rewritePath = absoluteToRelative(rewritePath, baseUrl);
+
+    // rewrite docs path to fix language path
+    rewritePath = rewriteDocsPath(rewritePath);
+
+    el.href = rewritePath;
   });
 }
 

@@ -15,9 +15,9 @@ export default async function renderDoc(path) {
     params: { lang, solution, docRelPath },
   } = matchDocsPath(path);
 
+  // construct the path in the articles API
   const apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
 
-  console.log({ apiArticlePath, lang, docRelPath });
   const response = await exlClient.getArticleByPath(
     removeExtension(apiArticlePath),
     lang,

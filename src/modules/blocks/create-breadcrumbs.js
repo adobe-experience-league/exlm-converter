@@ -1,5 +1,6 @@
 import yaml from 'js-yaml';
 import { toBlock } from '../utils/dom-utils.js';
+import { rewriteDocsPath } from '../utils/link-utils.js';
 
 export default function createBreadcrumbs(document, meta) {
   const headerElement = document.querySelector('h1');
@@ -13,13 +14,10 @@ export default function createBreadcrumbs(document, meta) {
       breadcrumbs.forEach((breadcrumb) => {
         const anchorTag = document.createElement('a');
         const { url, uri } = breadcrumb;
-        if (url) {
-          anchorTag.setAttribute('href', url);
-          anchorTag.textContent = breadcrumb.title;
-          metaDivTag.append(anchorTag);
-        }
-        if (uri) {
-          anchorTag.setAttribute('href', uri);
+        let href = url || uri; // in case the metadta value contains url or uri
+        if (href) {
+          href = rewriteDocsPath(href); // rewrite docs path to fix language path
+          anchorTag.setAttribute('href', href);
           anchorTag.textContent = breadcrumb.title;
           metaDivTag.append(anchorTag);
         }
