@@ -56,9 +56,9 @@ export function rewriteDocsPath(docsPath) {
   }
   const TEMP_BASE = 'https://localhost';
   const url = new URL(docsPath, TEMP_BASE);
-  const lang = url.searchParams.get('lang') || 'en';
+  const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
-  url.pathname = `${lang}${url.pathname}`;
+  url.pathname = `${lang.toLowerCase()}${url.pathname}`;
   // return full path without origin
   return url.toString().replace(TEMP_BASE, '');
 }
