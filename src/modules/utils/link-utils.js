@@ -61,7 +61,7 @@ export default function handleUrls(document) {
 
   const baseUrl = 'https://experienceleague.adobe.com';
   elements.forEach((el) => {
-    const url = el.href;
+    const url = el.getAttribute('href');
     if (isAbsoluteURL(url)) el.href = absoluteToRelative(url, baseUrl);
   });
 }
