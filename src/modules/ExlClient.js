@@ -1,5 +1,6 @@
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import mappings from '../url-mapping.js';
+import { getMatchLanguage } from './utils/language-utils.js';
 
 /**
  * @typedef {object} ExlArticle
@@ -89,10 +90,11 @@ export default class ExlClient {
    * @returns {ExlArticlesResponse}
    */
   async getArticleByPath(path, lang = 'en') {
+    const langForApi = getMatchLanguage(lang) || lang;
     // handle internal paths
     if (isInternal(path)) {
       const id = lookupId(path);
-      const articleResponse = await this.getArticleById(id, lang);
+      const articleResponse = await this.getArticleById(id, langForApi);
       // make it match the response from the API
       return {
         ...articleResponse,
@@ -101,9 +103,9 @@ export default class ExlClient {
     }
     const finalPath = addExtension(path, '.html');
     let url = new URL(finalPath, this.domain);
-    url.searchParams.set('lang', lang);
+    url.searchParams.set('lang', langForApi);
     url = encodeURIComponent(url.toString());
-    const apiPath = `api/articles?URL=${url}&lang=${lang}`;
+    const apiPath = `api/articles?URL=${url}&lang=${langForApi}`;
     const response = await this.doFetch(apiPath);
 
     if (response.error) {
