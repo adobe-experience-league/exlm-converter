@@ -134,39 +134,4 @@ export default class ExlClient {
     });
     return obj;
   }
-
-  /**
-   * Get TOC HTML content
-   * @param {string} tocID
-   * @returns {tocHTML}
-   */
-
-  async getTOC(tocID) {
-    const apiURL = `${this.domain}/api/tocs/${tocID}`;
-    const url = new URL(apiURL);
-    try {
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        // Not JSON, return response body directly
-        return await response.text();
-      }
-
-      const responseBody = await response.json();
-
-      if (!responseBody.data || !responseBody.data.HTML) {
-        throw new Error('Invalid response format. HTML content not found.');
-      }
-
-      const tocHTML = responseBody.data.HTML;
-      return tocHTML;
-    } catch (error) {
-      throw new Error(`Error fetching TOC: ${error.message}`);
-    }
-  }
 }

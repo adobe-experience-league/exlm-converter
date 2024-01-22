@@ -7,14 +7,11 @@ import { toBlock } from '../utils/dom-utils.js';
 export default function createTOC(document, data) {
   // assume that it's the second div in the main section, always.
   const tocSection = document.querySelector('main > div:nth-child(2)');
-  const fragment = document.createElement('a');
-  fragment.innerHTML = 'toc';
+  const fragment = document.createElement('div');
   if (data.toc) {
-    const id = data.toc;
-    fragment.href = `/toc/en/toc/${id}`;
-  } else {
-    fragment.href = '/fragments/en/toc/toc.html';
+    fragment.innerHTML = data.toc;
   }
+
   const cells = [[[fragment]]];
   const block = toBlock(`toc`, cells, document);
   tocSection.appendChild(block);
