@@ -5,8 +5,13 @@
  * @returns {boolean} Returns true if the URL is an absolute URL, false otherwise.
  */
 export function isAbsoluteURL(url) {
-  const absoluteRegex = /^(https?|ftp|file):\/\/.*/i;
-  return absoluteRegex.test(url);
+  try {
+    // eslint-disable-next-line no-new
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
@@ -46,32 +51,19 @@ function absoluteToRelative(url, baseUrl) {
 }
 
 /**
- * Updates specified attributes of HTML elements within the given document.
- * It converts absolute URLs to relative URLs using a base URL.
- *
- * @param {Document} document - The HTML document where elements will be updated.
- * @param {string} selector - A CSS selector for selecting elements to update.
- * @param {string} attribute - The attribute to update (e.g., 'href' or 'src').
- */
-function updateLink(document, selector, attribute) {
-  const elements = document.querySelectorAll(selector);
-  if (!elements) return;
-
-  elements.forEach((el) => {
-    const url = el.getAttribute(attribute);
-    const baseUrl = 'https://experienceleague.adobe.com';
-
-    if (isAbsoluteURL(url)) el[attribute] = absoluteToRelative(url, baseUrl);
-  });
-}
-
-/**
  * Handles converting absolute URLs to relative URLs for links and images within a document.
  *
  * @param {Document} document - The HTML document to process.
  */
 export default function handleAbsoluteUrl(document) {
-  updateLink(document, 'a', 'href');
+  const elements = document.querySelectorAll('a');
+  if (!elements) return;
+
+  const baseUrl = 'https://experienceleague.adobe.com';
+  elements.forEach((el) => {
+    const url = el.href;
+    if (isAbsoluteURL(url)) el.href = absoluteToRelative(url, baseUrl);
+  });
 }
 
 /**
