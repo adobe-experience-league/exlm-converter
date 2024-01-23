@@ -25,11 +25,9 @@ export default function createBreadcrumbs(document, meta, pageType) {
         });
       }
     }
-  } 
+  }
   if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
-    const docsTitle = fullMetadata.type
-      ? fullMetadata.type
-      : 'Documentation';
+    const docsTitle = fullMetadata.type ? fullMetadata.type : 'Documentation';
     const productTitle = fullMetadata.solution ? fullMetadata.solution : '';
 
     if (docsTitle) {
