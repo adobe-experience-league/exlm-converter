@@ -1,5 +1,5 @@
 export const DOCPAGETYPE = {
-  DOC_ARTICLE: 'doc-article',
-  DOC_LANDING: 'doc-landing',
-  SOLUTION_LANDING: 'solution-landing',
+  DOC_ARTICLE: 'docs-article',
+  DOC_LANDING: 'docs-landing',
+  SOLUTION_LANDING: 'docs-solution-landing',
 };
