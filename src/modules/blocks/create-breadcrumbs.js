@@ -27,11 +27,9 @@ export default function createBreadcrumbs(document, meta) {
     }
   }
   if (DOCPAGETYPE.SOLUTION_LANDING) {
-    console.log(document.location.href);
     const breadcrumbTitle = fullMetadata.type
       ? fullMetadata.type
       : 'Documentation';
-    // eslint-disable-next-line no-restricted-globals
     const productTitle = fullMetadata.solution ? fullMetadata.solution : '';
 
     if (breadcrumbTitle) {
