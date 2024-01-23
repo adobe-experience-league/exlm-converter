@@ -3,11 +3,11 @@ import { toBlock } from '../utils/dom-utils.js';
 import { rewriteDocsPath } from '../utils/link-utils.js';
 import { DOCPAGETYPE } from '../../doc-page-types.js';
 
-export default function createBreadcrumbs(document, meta) {
+export default function createBreadcrumbs(document, meta, pageType) {
   const headerElement = document.querySelector('h1');
   const metaDivTag = document.createElement('div');
   const fullMetadata = yaml.load(meta);
-  if (DOCPAGETYPE.DOC_ARTICLE) {
+  if (pageType === DOCPAGETYPE.DOC_ARTICLE) {
     if (fullMetadata.breadcrumbs) {
       const breadcrumbs = JSON.parse(fullMetadata.breadcrumbs);
       // Article Metadata breadcrumbs
@@ -26,7 +26,7 @@ export default function createBreadcrumbs(document, meta) {
       }
     }
   }
-  if (DOCPAGETYPE.SOLUTION_LANDING) {
+  if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
     const breadcrumbTitle = fullMetadata.type
       ? fullMetadata.type
       : 'Documentation';

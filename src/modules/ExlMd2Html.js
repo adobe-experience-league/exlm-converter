@@ -87,7 +87,7 @@ export default async function md2html(mdString, meta, data, pageType) {
   } else if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
     handleExternalUrl(document);
     createMiniTOC(document);
-    createBreadcrumbs(document, meta);
+    createBreadcrumbs(document, meta, pageType);
     createGuidesList(document);
     createTutorialTiles(document);
     createRelatedResources(document);
@@ -111,7 +111,7 @@ export default async function md2html(mdString, meta, data, pageType) {
     createTOC(document, data);
     createImgBlock(document);
     createAccordion(document);
-    createBreadcrumbs(document, meta);
+    createBreadcrumbs(document, meta, pageType);
     createDocActions(document);
     // leave this at the end
     handleNestedBlocks(document);
