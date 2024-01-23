@@ -25,17 +25,17 @@ export default function createBreadcrumbs(document, meta, pageType) {
         });
       }
     }
-  }
+  } 
   if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
-    const breadcrumbTitle = fullMetadata.type
+    const docsTitle = fullMetadata.type
       ? fullMetadata.type
       : 'Documentation';
     const productTitle = fullMetadata.solution ? fullMetadata.solution : '';
 
-    if (breadcrumbTitle) {
+    if (docsTitle) {
       const docAnchorTag = document.createElement('a');
       docAnchorTag.setAttribute('href', '/en/docs');
-      docAnchorTag.textContent = breadcrumbTitle;
+      docAnchorTag.textContent = docsTitle;
       metaDivTag.append(docAnchorTag);
     }
 
