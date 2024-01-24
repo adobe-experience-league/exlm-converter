@@ -28,7 +28,9 @@ export default function createBreadcrumbs(document, meta, pageType) {
   }
   if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
     const docsTitle = fullMetadata.type ? fullMetadata.type : 'Documentation';
-    const productTitle = fullMetadata['breadcrumb-name'] ? fullMetadata['breadcrumb-name'] : fullMetadata.solution;
+    const productTitle = fullMetadata['breadcrumb-name']
+      ? fullMetadata['breadcrumb-name']
+      : fullMetadata.solution;
 
     if (docsTitle) {
       const docAnchorTag = document.createElement('a');
