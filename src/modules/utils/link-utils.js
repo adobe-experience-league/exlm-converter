@@ -1,3 +1,5 @@
+import { removeExtension } from './path-utils.js';
+
 /**
  * Checks if a URL is an absolute URL.
  *
@@ -58,7 +60,9 @@ export function rewriteDocsPath(docsPath) {
   const url = new URL(docsPath, TEMP_BASE);
   const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
-  url.pathname = `${lang.toLowerCase()}${url.pathname}`;
+  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  pathname = removeExtension(pathname); // new URLs are extensionless
+  url.pathname = pathname;
   // return full path without origin
   return url.toString().replace(TEMP_BASE, '');
 }
