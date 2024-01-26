@@ -7,7 +7,7 @@ application:
         license: Apache-2.0
         actions:
           convert:
-            function: dist/static # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            function: dist/converter # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:
@@ -16,7 +16,17 @@ application:
               aemOwner: $OWNER
               aemRepo: $REPO
               aemBranch: $BRANCH
-
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          khoros:
+            function: dist/khoros # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+              khorosApiSecret: $KHOROS_API_SECRET
+              khorosOrigin: $KHOROS_ORIGIN
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
