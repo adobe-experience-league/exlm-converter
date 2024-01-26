@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import Logger from '@adobe/aio-lib-core-logging';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import renderDoc from './renderers/render-doc.js';
@@ -30,8 +29,6 @@ try {
 } catch (e) {
   dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
 }
-
-const aioLogger = Logger('converter');
 
 /**
  * @typedef {Object} Params
@@ -68,7 +65,6 @@ export const render = async function render(path, params) {
 };
 
 export const main = async function main(params) {
-  aioLogger.info({ params });
   // eslint-disable-next-line camelcase
   const { __ow_path, __ow_headers } = params;
   // eslint-disable-next-line camelcase
