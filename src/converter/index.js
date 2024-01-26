@@ -31,7 +31,7 @@ try {
   dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
 }
 
-const aioLogger = Logger('App');
+const aioLogger = Logger('converter');
 
 /**
  * @typedef {Object} Params

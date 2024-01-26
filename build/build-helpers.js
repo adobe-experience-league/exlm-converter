@@ -1,24 +1,30 @@
 import * as esbuild from 'esbuild';
 import fs from 'fs';
+import path from 'path';
 import { jsdomPatch } from './esbuild-plugins/jsdomPatch.cjs';
 
-const DIST_ACTION_FOLDER = 'dist/static';
-const DIST_ACTION_FILE_NAME = 'index.js';
-const DIST_ACTION_INDEX = `${DIST_ACTION_FOLDER}/${DIST_ACTION_FILE_NAME}`;
-const BUNDLE_ENTRY = `src/${DIST_ACTION_FILE_NAME}`;
-const COPY_FOLDERS = [
-  ['src/fragments', `${DIST_ACTION_FOLDER}/fragments`],
-  ['src/landing', `${DIST_ACTION_FOLDER}/landing`],
-];
+const ACTIONS_SRC_FOLDER = './src';
+const ACTIONS_DIST_FOLDER = './dist';
+const ACTION_ENTRY_FILE_NAME = 'index.js';
 
-const ACTION_PACKAGE_JSON = {
-  main: DIST_ACTION_FILE_NAME,
+export const doForEachAction = (callback) => {
+  fs.readdirSync(ACTIONS_SRC_FOLDER).forEach(async (action) => {
+    const sourceFolder = `${ACTIONS_SRC_FOLDER}/${action}`;
+    const entryPoint = `${sourceFolder}/${ACTION_ENTRY_FILE_NAME}`;
+    const distFolder = `${ACTIONS_DIST_FOLDER}/${action}`;
+    const outfile = `${distFolder}/${ACTION_ENTRY_FILE_NAME}`;
+    callback({
+      action,
+      sourceFolder,
+      entryPoint,
+      distFolder,
+      outfile,
+    });
+  });
 };
 
-const esbuildOptions = {
-  entryPoints: [BUNDLE_ENTRY],
+export const createEsbuildOptions = (overrides) => ({
   bundle: true,
-  outfile: DIST_ACTION_INDEX,
   platform: 'node',
   format: 'cjs', // needs to be cjs to support  __dirname and __filename for fragment serving
   target: 'node18', // this is the version in app.config.yaml
@@ -29,9 +35,11 @@ const esbuildOptions = {
   logOverride: {
     'empty-import-meta': 'debug', // sets the logging level for a specific message: "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
   },
-};
+  ...overrides,
+});
 
-export const buildAction = async () => esbuild.build(esbuildOptions);
+export const buildAction = async (esbuildOverrides) =>
+  esbuild.build(createEsbuildOptions(esbuildOverrides));
 
 /**
  * watch and rebuild the action if source changes
@@ -39,7 +47,12 @@ export const buildAction = async () => esbuild.build(esbuildOptions);
  * @param {Function} onSubsequentBuilds runs on subsequent builds
  * @returns
  */
-export const watchAction = async (onFirstBuild, onSubsequentBuilds) => {
+export const watchAction = async ({
+  esbuildOverrides,
+  onFirstBuild,
+  onSubsequentBuilds,
+}) => {
+  const esbuildOptions = createEsbuildOptions(esbuildOverrides);
   const context = await esbuild.context({
     ...esbuildOptions,
     plugins: [
@@ -75,8 +88,13 @@ const ensureDir = (dir) => {
  * @param {Array<Array<string>>} folders
  * @param {boolean} override
  */
-const copyFolders = (folders, { override }) => {
-  folders.forEach(([src, dest]) => {
+const copyFolders = (folders, distFolder, { override }) => {
+  folders.forEach((src) => {
+    if (!fs.existsSync(src)) {
+      // console.warn(`Folder ${src} does not exist`);
+      return;
+    }
+    const dest = path.join(distFolder, path.basename(src));
     if (override) fs.rmSync(dest, { recursive: true, force: true });
     ensureDir(dest);
     fs.cpSync(src, dest, { recursive: true });
@@ -86,20 +104,19 @@ const copyFolders = (folders, { override }) => {
 /**
  * Build the action into a folder to include static files/assets
  */
-export const buildActionFolder = async () => {
-  // create directory ./dist/static if it does not exist
-  ensureDir(DIST_ACTION_FOLDER);
+export const buildActionFolder = async ({ esbuildOverrides, config }) => {
+  const { outfile } = esbuildOverrides;
+  const { distFolder, sourceFolder } = config;
+  // create dist directory if it does not exist
+  ensureDir(distFolder);
   // copy static folders to dist
-  copyFolders(COPY_FOLDERS, { override: true });
+  copyFolders([`${sourceFolder}/static`], distFolder, { override: true });
   // write package.json file to dist. it contains the main entry point for the action
   fs.writeFileSync(
-    `${DIST_ACTION_FOLDER}/package.json`,
-    JSON.stringify(ACTION_PACKAGE_JSON, null, 2),
+    `${distFolder}/package.json`,
+    JSON.stringify({ main: path.basename(outfile) }, null, 2),
   );
 
   // bundle the action
-  await buildAction();
+  await buildAction(esbuildOverrides);
 };
-
-// by default, when this file is run, build the action.
-await buildActionFolder();

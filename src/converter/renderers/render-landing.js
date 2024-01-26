@@ -29,7 +29,7 @@ export default async function renderLanding(path, parentFolderPath) {
 
   const landingMdFilePath = join(
     parentFolderPath,
-    `landing/${lang}`,
+    `static/landing/${lang}`,
     addExtension(landingName, '.md'),
   );
 

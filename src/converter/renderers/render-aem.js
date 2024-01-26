@@ -21,11 +21,31 @@ function transformHTML(htmlString, aemAuthorUrl) {
   return dom.serialize();
 }
 
+function sendError(code, message) {
+  return {
+    body: {
+      error: {
+        code,
+        message,
+      },
+    },
+    headers: {},
+    statusCode: code,
+  };
+}
+
 /**
  * Renders content from AEM UE pages
  */
 export default async function renderAem(path, params) {
   const { aemAuthorUrl, aemOwner, aemRepo, aemBranch, authorization } = params;
+
+  if (!authorization) {
+    return sendError(401, 'Missing Authorization');
+  }
+  if (!aemAuthorUrl || !aemOwner || !aemRepo || !aemBranch) {
+    return sendError(500, 'Missing AEM configuration');
+  }
 
   const aemURL = `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${path}?wcmmode=disabled`;
   const url = new URL(aemURL);
