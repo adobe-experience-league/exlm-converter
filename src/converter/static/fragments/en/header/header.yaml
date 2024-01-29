@@ -6,6 +6,15 @@ productGrid:
     url: https://documentcloud.adobe.com/link/home/
 signUp: 'Sign up'
 signIn: 'Sign in'
+profileMenu:
+  - title: My learning profile
+    url: https://experienceleague.adobe.com/#dashboard/learning
+  - title: Achievements
+    url: https://experienceleague.adobe.com/#dashboard/awards
+  - title: Bookmarked content
+    url: https://experienceleague.adobe.com/#dashboard/bookmarks
+  - title: Sign out
+    url: '#'
 search:
   title: Search
   placeholder: 'Search Experience League'

@@ -26,6 +26,8 @@
   `, ]]) %>
   <!-- sign in -->
   <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
+  <!-- profile menu -->
+  <%- block("profile-menu", [[profileMenu(header.profileMenu)]]) %>
   <!-- product grid -->
   <%- block("product-grid", [[alist(header.productGrid)]]) %>
 </div>
