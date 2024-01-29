@@ -10,6 +10,6 @@ export default function createBackToBrowsing(document) {
 
   const cells = [[metaDivTag]];
   const block = toBlock('back-to-browsing', cells, document);
-  
+
   headerElement.parentNode.insertBefore(block, headerElement);
 }

@@ -9,15 +9,18 @@ export default function createBreadcrumbs(document, meta, pageType, reqLang) {
 
   if (pageType === DOCPAGETYPE.DOC_ARTICLE && fullMetadata.breadcrumbs) {
     const breadcrumbs = JSON.parse(fullMetadata.breadcrumbs) || [];
-    
+
     breadcrumbs.forEach((breadcrumb, index, array) => {
       const anchorTag = document.createElement('a');
       const { title, url, uri } = breadcrumb;
       const href = rewriteDocsPath(
-        ((array.length - 1) === index ) ? '#' : // The last breadcrumb is a markdown file and represents the current page
-        uri ? uri : url
+        array.length - 1 === index
+          ? '#' // The last breadcrumb is a markdown file and represents the current page
+          : uri
+          ? uri
+          : url,
       );
-      
+
       if (title && href) {
         anchorTag.setAttribute('href', href);
         anchorTag.textContent = title;
