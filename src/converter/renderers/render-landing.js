@@ -42,7 +42,13 @@ export default async function renderLanding(path, parentFolderPath) {
 
   const mdString = readFileSync(landingMdFilePath, 'utf-8');
   const { meta, md } = splitMD(mdString);
-  const { convertedHtml, originalHtml } = await md2html(md, meta, {}, pageType);
+  const { convertedHtml, originalHtml } = await md2html(
+    md,
+    meta,
+    {},
+    pageType,
+    lang,
+  );
   return {
     body: convertedHtml,
     headers: {

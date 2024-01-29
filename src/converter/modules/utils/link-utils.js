@@ -72,20 +72,38 @@ export function rewriteDocsPath(docsPath) {
  *
  * @param {Document} document - The HTML document to process.
  */
-export default function handleUrls(document) {
+export default function handleUrls(document, reqLang) {
   const elements = document.querySelectorAll('a');
   if (!elements) return;
 
   const baseUrl = 'https://experienceleague.adobe.com';
   elements.forEach((el) => {
     let rewritePath = el.getAttribute('href');
-    if (isAbsoluteURL(rewritePath))
+    if (
+      rewritePath.indexOf('#') !== -1 &&
+      rewritePath.indexOf('#_blank') === -1
+    )
+      return;
+
+    if (isAbsoluteURL(rewritePath)) {
       rewritePath = absoluteToRelative(rewritePath, baseUrl);
 
-    // rewrite docs path to fix language path
-    rewritePath = rewriteDocsPath(rewritePath);
+      // rewrite docs path to fix language path
+      rewritePath = rewriteDocsPath(rewritePath);
 
-    el.href = rewritePath;
+      el.href = rewritePath;
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (!rewritePath.startsWith('/docs')) {
+        const TEMP_BASE = 'https://localhost';
+        const url = new URL(rewritePath, TEMP_BASE);
+        let pathname = `/${reqLang.toLowerCase()}/docs${url.pathname}`;
+        pathname = removeExtension(pathname);
+        url.pathname = pathname;
+        // return full path without origin
+        el.href = url.toString().replace(TEMP_BASE, '');
+      }
+    }
   });
 }
 
