@@ -47,7 +47,7 @@ const doAmf = (md) => {
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
 };
 
-export default async function md2html(mdString, meta, data, pageType) {
+export default async function md2html(mdString, meta, data, pageType, lang) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -80,14 +80,14 @@ export default async function md2html(mdString, meta, data, pageType) {
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
   createMetaData(document, meta, data);
-  handleUrls(document);
+  handleUrls(document, lang);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
   } else if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
     handleExternalUrl(document);
     createMiniTOC(document);
-    createBreadcrumbs(document, meta, pageType);
+    createBreadcrumbs(document, meta, pageType, lang);
     createGuidesList(document);
     createTutorialTiles(document);
     createRelatedResources(document);
@@ -111,7 +111,7 @@ export default async function md2html(mdString, meta, data, pageType) {
     createTOC(document, data);
     createImgBlock(document);
     createAccordion(document);
-    createBreadcrumbs(document, meta, pageType);
+    createBreadcrumbs(document, meta, pageType, lang);
     createDocActions(document);
     // leave this at the end
     handleNestedBlocks(document);

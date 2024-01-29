@@ -31,6 +31,7 @@ export default async function renderDoc(path) {
       meta,
       data,
       DOCPAGETYPE.DOC_ARTICLE,
+      lang,
     );
     return {
       body: convertedHtml,
