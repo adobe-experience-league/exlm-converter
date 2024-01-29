@@ -29,6 +29,7 @@ import createImgBlock from './blocks/create-img-block.js';
 import createAccordion from './blocks/create-accordion.js';
 import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
+import createBackToBrowsing from './blocks/create-back-to-browsing.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createGuidesList from './blocks/create-guides-list.js';
@@ -112,10 +113,12 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createImgBlock(document);
     createAccordion(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
+    createBackToBrowsing(document);
     createDocActions(document);
     // leave this at the end
     handleNestedBlocks(document);
   }
+
   return {
     convertedHtml: dom.serialize(),
     originalHtml: html,
