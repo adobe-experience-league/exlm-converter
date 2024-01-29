@@ -5,7 +5,7 @@ import publish from './franklin-util.js';
 
 const filename = fileURLToPath(import.meta.url);
 const currentDirectory = dirname(filename);
-const SRC_PATH = join(currentDirectory, '../src');
+const SRC_PATH = join(currentDirectory, '../src/converter/static');
 const FRAGMENTS_PATH = join(SRC_PATH, '/fragments');
 
 // These variables can be set in the github action env variables in repo settings

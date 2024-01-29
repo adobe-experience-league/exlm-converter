@@ -2,7 +2,7 @@ import { match } from 'path-to-regexp';
 
 const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
-const fragmentMatchPath = '/:lang/fragments/:fragmentRelPath*';
+const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
 
 export const matchDocsPath = (path) => {
   const docsMatcher = match(docsMatchPath, { decode: decodeURIComponent });

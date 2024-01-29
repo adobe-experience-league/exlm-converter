@@ -32,7 +32,11 @@ function getOptionsInDirectory(directory) {
  * @param {string} parentFolderPath - path to parent folder of `fragments`
  */
 export default async function renderFragment(path, parentFolderPath) {
-  const fragmentPath = join(parentFolderPath, addExtension(path, '.html'));
+  const fragmentPath = join(
+    parentFolderPath,
+    'static',
+    addExtension(path, '.html'),
+  );
   if (path) {
     // Get header and footer static content from Github
     if (fs.existsSync(fragmentPath)) {
