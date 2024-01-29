@@ -95,9 +95,24 @@ const alist = (items) => {
   return anchors;
 };
 
+/**
+ * render HTML <anchor list> from array of strings
+ * @param {string[]} items
+ * @returns
+ */
+const profileMenu = (links) => {
+  let menulinks = '';
+  links?.forEach((link) => {
+    menulinks += `<a href="${link.url}" title="${link.title}">${link.title}</a>`;
+  });
+  menulinks += `<div class='community-profile'></div>`;
+  return menulinks;
+};
+
 export default {
   nav,
   block,
   ul,
   alist,
+  profileMenu,
 };
