@@ -3,7 +3,7 @@ import { toBlock } from '../utils/dom-utils.js';
 import { rewriteDocsPath } from '../utils/link-utils.js';
 import { DOCPAGETYPE } from '../../doc-page-types.js';
 
-export default function createBreadcrumbs(document, meta, pageType, lang) {
+export default function createBreadcrumbs(document, meta, pageType, reqLang) {
   const headerElement = document.querySelector('h1');
   const metaDivTag = document.createElement('div');
   const fullMetadata = yaml.load(meta);
@@ -34,7 +34,7 @@ export default function createBreadcrumbs(document, meta, pageType, lang) {
 
     if (docsTitle) {
       const docAnchorTag = document.createElement('a');
-      docAnchorTag.setAttribute('href', `/${lang}/docs`);
+      docAnchorTag.setAttribute('href', `/${reqLang}/docs`);
       docAnchorTag.textContent = docsTitle;
       metaDivTag.append(docAnchorTag);
     }
