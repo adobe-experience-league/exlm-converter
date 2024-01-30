@@ -78,18 +78,18 @@ nav:
             url: /dashboard/learning
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
-            url: /docs/home-tutorials.html
+            url: /en/docs/home-tutorials
           - title: Instructor-led training
             subtitle: Live & on-demand courses led by Adobe-certified instructors
-            url: /dashboard/instructor-led
+            url: https://learning.adobe.com/catalog.html
             urlOptions:
               target: _blank
 
   - title: Documentation
-    url: /docs/authoring-guide-exl/using/markdown/cheatsheet
+    url: /en/docs
 
   - title: Certifications
-    url: https://experienceleague.adobe.com/docs/certification/program/overview.html
+    url: /en/docs/certification/program/overview
 
   - title: Events
     url: https://experienceleague.adobe.com/events/
@@ -114,7 +114,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback Program
             subtitle: Influence Adobe product development
-            url: '#'
+            url: 'https://experienceleague.adobe.com/?lang=en#feedback'
       - title: Communities By Product
         items:
           - title: Advertising Cloud
