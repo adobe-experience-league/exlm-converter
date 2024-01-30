@@ -114,7 +114,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback Program
             subtitle: Influence Adobe product development
-            url: 'https://experienceleague.adobe.com/?lang=en#feedback'
+            url: 'https://experienceleague.adobe.com/#feedback'
       - title: Communities By Product
         items:
           - title: Advertising Cloud
