@@ -9,10 +9,11 @@ export default function createTutorialTiles(document, meta) {
   if (fullMetadata.type === 'Documentation') {
     if (ullistElements.length) {
       ullistElements.forEach((ullistElement) => {
-        const h2 = ullistElement.previousElementSibling;
+        const prevElement = ullistElement.previousElementSibling;
         if (
-          h2.tagName === 'H2' &&
-          (h2.id === 'tiles-tutorials' || h2.id === 'tutorials')
+          prevElement.tagName === 'H2' &&
+          (prevElement.id === 'tiles-tutorials' ||
+            prevElement.id === 'tutorials')
         ) {
           const ul = document.createElement('ul');
           ul.innerHTML = ullistElement.innerHTML;

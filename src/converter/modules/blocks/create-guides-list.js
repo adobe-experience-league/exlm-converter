@@ -9,10 +9,13 @@ export default function createGuidesList(document, meta) {
   if (fullMetadata.type === 'Documentation') {
     if (ullistElements.length) {
       ullistElements.forEach((ullistElement) => {
-        const h2 = ullistElement.previousElementSibling;
+        const prevElement = ullistElement.previousElementSibling; // it can be either h2 or h3
+        const h2Element = prevElement.previousElementSibling;
         if (
-          h2.tagName === 'H2' &&
-          (h2.id === 'lists-documentation' || h2.id === 'guides')
+          (prevElement.tagName === 'H2' &&
+            (prevElement.id === 'lists-documentation' ||
+              prevElement.id === 'guides')) ||
+          h2Element.tagName === 'H2'
         ) {
           const ul = document.createElement('ul');
           ul.innerHTML = ullistElement.innerHTML;

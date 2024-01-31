@@ -9,8 +9,8 @@ export default function createTutorialsList(document, meta) {
   if (fullMetadata.type === 'Tutorial') {
     if (ullistElements.length) {
       ullistElements.forEach((ullistElement) => {
-        const h2 = ullistElement.previousElementSibling;
-        if (h2.tagName === 'H2') {
+        const prevElement = ullistElement.previousElementSibling;
+        if (prevElement.tagName === 'H2') {
           const ul = document.createElement('ul');
           ul.innerHTML = ullistElement.innerHTML;
           const cells = [[ul]];
