@@ -33,7 +33,7 @@ import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createGuidesList from './blocks/create-guides-list.js';
 import createTutorialTiles from './blocks/create-tutorial-tiles.js';
-import createRelatedResources from './blocks/create-related-resources.js';
+import createTutorialsList from './blocks/create-tutorials-list.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -88,9 +88,10 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     handleExternalUrl(document);
     createMiniTOC(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
-    createGuidesList(document);
-    createTutorialTiles(document);
-    createRelatedResources(document);
+    createGuidesList(document, meta);
+    createTutorialTiles(document, meta);
+    createTutorialsList(document, meta);
+    createList(document);
   } else {
     // createSections(document);
     createArticleMetaData(document, meta);
