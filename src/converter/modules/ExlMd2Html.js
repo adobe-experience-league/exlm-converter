@@ -102,6 +102,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createTabs(document);
     createTables(document);
     createShadeBox(document);
+
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
