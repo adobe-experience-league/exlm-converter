@@ -9,7 +9,6 @@ import { blockToTable, replaceElement } from '../utils/dom-utils.js';
 export default function handleNestedBlocks(document) {
   // Add container block classes this array
   const blockClasses = [
-    'shade-box',
     'table',
     'tabs',
     'code',
