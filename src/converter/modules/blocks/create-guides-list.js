@@ -13,8 +13,7 @@ export default function createGuidesList(document, meta) {
         const h2Element = prevElement.previousElementSibling;
         if (
           (prevElement.tagName === 'H2' &&
-            (prevElement.id === 'lists-documentation' ||
-              prevElement.id === 'guides')) ||
+            prevElement.id === 'lists-documentation') ||
           h2Element.tagName === 'H2'
         ) {
           const ul = document.createElement('ul');

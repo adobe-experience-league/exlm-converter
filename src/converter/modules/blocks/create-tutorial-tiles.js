@@ -12,8 +12,7 @@ export default function createTutorialTiles(document, meta) {
         const prevElement = ullistElement.previousElementSibling;
         if (
           prevElement.tagName === 'H2' &&
-          (prevElement.id === 'tiles-tutorials' ||
-            prevElement.id === 'tutorials')
+          prevElement.id === 'tiles-tutorials'
         ) {
           const ul = document.createElement('ul');
           ul.innerHTML = ullistElement.innerHTML;
