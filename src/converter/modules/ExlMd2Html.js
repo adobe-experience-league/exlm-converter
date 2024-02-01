@@ -14,7 +14,6 @@ import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
-// import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
@@ -93,7 +92,6 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createTutorialsList(document, meta);
     createList(document);
   } else {
-    // createSections(document);
     createArticleMetaData(document, meta);
     createVideo(document);
     createBadge(document);
