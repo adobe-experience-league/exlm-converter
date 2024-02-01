@@ -6,7 +6,7 @@
  * @returns
  */
 export const addExtension = (path, extension) => {
-  if (!path.includes('.html') || !path.includes('.md')) {
+  if (!path.includes('.html') && !path.includes('.md')) {
     return `${path}${extension}`;
   }
   return path;
