@@ -17,7 +17,9 @@ export default async function renderDoc(path) {
 
   // construct the path in the articles API
   let apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
-  if (apiArticlePath.includes('.html') || apiArticlePath.includes('.md')) {
+  const regex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
+
+  if (regex.test(apiArticlePath)) {
     apiArticlePath = removeExtension(apiArticlePath);
   }
 
