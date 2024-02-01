@@ -16,12 +16,12 @@ export default async function renderDoc(path) {
   } = matchDocsPath(path);
 
   // construct the path in the articles API
-  const apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  let apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  if (apiArticlePath.includes('.html') || apiArticlePath.includes('.md')) {
+    apiArticlePath = removeExtension(apiArticlePath);
+  }
 
-  const response = await exlClient.getArticleByPath(
-    removeExtension(apiArticlePath),
-    lang,
-  );
+  const response = await exlClient.getArticleByPath(apiArticlePath, lang);
   if (response.data.length > 0) {
     const md = response.data[0].FullBody;
     const meta = response.data[0].FullMeta;
