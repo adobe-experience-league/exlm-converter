@@ -62,6 +62,10 @@ export function rewriteDocsPath(docsPath) {
   url.searchParams.delete('lang');
   let pathname = `${lang.toLowerCase()}${url.pathname}`;
   pathname = removeExtension(pathname); // new URLs are extensionless
+  if (pathname.endsWith('/docs/')) {
+    // remove trailing / from /docs/
+    pathname = pathname.replace(/\/+$/, '');
+  }
   url.pathname = pathname;
   // return full path without origin
   return url.toString().replace(TEMP_BASE, '');
