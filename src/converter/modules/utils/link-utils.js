@@ -65,7 +65,6 @@ export function rewriteDocsPath(docsPath) {
   if (pathname.includes('.html') || pathname.includes('.md')) {
     pathname = removeExtension(pathname); // new URLs are extensionless
   }
-  console.log(pathname);
   url.pathname = pathname;
   // return full path without origin
   return url.toString().replace(TEMP_BASE, '');
