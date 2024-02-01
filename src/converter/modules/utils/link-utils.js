@@ -61,7 +61,10 @@ export function rewriteDocsPath(docsPath) {
   const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
   let pathname = `${lang.toLowerCase()}${url.pathname}`;
-  pathname = removeExtension(pathname); // new URLs are extensionless
+  // In case of Urls like - /docs/target-learn/tutorials/administration/strategy/1.1-implementation-strategy-sys-governance
+  if (pathname.includes('.html') || pathname.includes('.md')) {
+    pathname = removeExtension(pathname); // new URLs are extensionless
+  }
   url.pathname = pathname;
   // return full path without origin
   return url.toString().replace(TEMP_BASE, '');
