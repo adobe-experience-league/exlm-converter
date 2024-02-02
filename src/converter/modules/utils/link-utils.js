@@ -83,6 +83,7 @@ export default function handleUrls(document, reqLang) {
   elements.forEach((el) => {
     let rewritePath = el.getAttribute('href');
     if (
+      rewritePath !== null &&
       rewritePath.indexOf('#') !== -1 &&
       rewritePath.indexOf('#_blank') === -1
     )
@@ -97,7 +98,7 @@ export default function handleUrls(document, reqLang) {
       el.href = rewritePath;
     } else {
       // eslint-disable-next-line no-lonely-if
-      if (!rewritePath.startsWith('/docs')) {
+      if (rewritePath !== null && !rewritePath.startsWith('/docs')) {
         const TEMP_BASE = 'https://localhost';
         const url = new URL(rewritePath, TEMP_BASE);
         let pathname = `/${reqLang.toLowerCase()}/docs${url.pathname}`;
