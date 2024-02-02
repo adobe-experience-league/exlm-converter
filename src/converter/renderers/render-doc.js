@@ -13,10 +13,15 @@ export default async function renderDoc(path) {
   } = matchDocsPath(path);
 
   // construct the path in the articles API
-  const apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  let apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  const regex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
+
+  if (regex.test(apiArticlePath)) {
+    apiArticlePath = removeExtension(apiArticlePath);
+  }
 
   const response = await defaultExlClient.getArticleByPath(
-    removeExtension(apiArticlePath),
+    apiArticlePath,
     lang,
   );
   if (response.data.length > 0) {
