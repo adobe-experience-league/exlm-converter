@@ -6,7 +6,9 @@
  * @returns
  */
 export const addExtension = (path, extension) => {
-  if (!path.includes('.html') && !path.includes('.md')) {
+  const extensionRegex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
+
+  if (!extensionRegex.test(path)) {
     return `${path}${extension}`;
   }
   return path;
