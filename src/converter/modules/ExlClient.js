@@ -126,10 +126,11 @@ export default class ExlClient {
   async getLandingPageByFileName(landingName, lang = 'en') {
     if (!landingName) throw new Error('landingName is required');
     const landingPages = await this.getLandingPages(lang);
-    return landingPages.find(
+    const landingPage = landingPages.find(
       (landing) =>
         removeExtension(landing.File) === removeExtension(landingName),
     );
+    return this.removeSpacesFromKeysRecursively(landingPage);
   }
 
   async doFetch(path) {

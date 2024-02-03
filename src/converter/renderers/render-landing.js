@@ -25,11 +25,13 @@ export default async function renderLanding(path) {
   );
 
   let md = landingPage?.Markdown;
+  const meta = landingPage?.FullMeta;
   const potentialDuplicateAnchors = Object.values(LANDING_IDS);
   md = dedupeAnchors(md, potentialDuplicateAnchors);
+
   const { convertedHtml, originalHtml } = await md2html(
     md,
-    {},
+    meta,
     {},
     pageType,
     lang,
