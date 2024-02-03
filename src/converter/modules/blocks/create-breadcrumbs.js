@@ -47,5 +47,5 @@ export default function createBreadcrumbs(document, meta, pageType, reqLang) {
   }
   const cells = [[metaDivTag]];
   const block = toBlock('breadcrumbs', cells, document);
-  headerElement.parentNode.insertBefore(block, headerElement);
+  headerElement?.parentNode.insertBefore(block, headerElement);
 }

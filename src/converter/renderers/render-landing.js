@@ -1,21 +1,13 @@
-import { join } from 'path';
-import { readFileSync, existsSync } from 'fs';
 import md2html from '../modules/ExlMd2Html.js';
-import { addExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../doc-page-types.js';
 import { matchLandingPath } from '../modules/utils/path-match-utils.js';
-
-function splitMD(mdString) {
-  const parts = mdString.split('---');
-  const meta = parts[1];
-  const md = parts.slice(2).join('---');
-  return { meta, md };
-}
+import { defaultExlClient } from '../modules/ExlClient.js';
+import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
 
 /**
  * handles a markdown doc path
  */
-export default async function renderLanding(path, parentFolderPath) {
+export default async function renderLanding(path) {
   const {
     params: { lang, solution },
   } = matchLandingPath(path);
@@ -27,24 +19,17 @@ export default async function renderLanding(path, parentFolderPath) {
     pageType = DOCPAGETYPE.SOLUTION_LANDING;
   }
 
-  const landingMdFilePath = join(
-    parentFolderPath,
-    `static/landing/${lang}`,
-    addExtension(landingName, '.md'),
+  const landingPage = await defaultExlClient.getLandingPageByFileName(
+    landingName,
+    lang,
   );
 
-  // does not exist
-  if (!existsSync(landingMdFilePath)) {
-    return {
-      error: new Error(`No Landing Page found for: ${path}`),
-    };
-  }
-
-  const mdString = readFileSync(landingMdFilePath, 'utf-8');
-  const { meta, md } = splitMD(mdString);
+  let md = landingPage?.Markdown;
+  const potentialDuplicateAnchors = Object.values(LANDING_IDS);
+  md = dedupeAnchors(md, potentialDuplicateAnchors);
   const { convertedHtml, originalHtml } = await md2html(
     md,
-    meta,
+    {},
     {},
     pageType,
     lang,
