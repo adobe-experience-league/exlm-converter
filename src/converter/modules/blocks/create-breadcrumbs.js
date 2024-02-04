@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import { toBlock } from '../utils/dom-utils.js';
 import { rewriteDocsPath } from '../utils/link-utils.js';
 import { DOCPAGETYPE } from '../../doc-page-types.js';
-import { DOCUMENTATION } from '../block-translated-content.js';
+import { DOCUMENTATION } from '../blocks-translated-content.js';
 
 export default function createBreadcrumbs(document, meta, pageType, reqLang) {
   const headerElement = document.querySelector('h1');

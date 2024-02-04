@@ -1,5 +1,5 @@
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
-import { CREATED_FOR } from '../block-translated-content.js';
+import { CREATED_FOR } from '../blocks-translated-content.js';
 
 export default function createArticleMetaDataCreatedBy(
   document,

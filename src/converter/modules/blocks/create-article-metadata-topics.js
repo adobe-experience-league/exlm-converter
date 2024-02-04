@@ -1,6 +1,6 @@
 import yaml from 'js-yaml';
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
-import { TOPICS } from '../block-translated-content.js';
+import { TOPICS } from '../blocks-translated-content.js';
 
 export default function createArticleMetaDataTopics(document, meta, reqLang) {
   const fullMetadata = yaml.load(meta);
