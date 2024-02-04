@@ -1,7 +1,8 @@
 import yaml from 'js-yaml';
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
+import { TOPICS } from '../block-translated-content.js';
 
-export default function createArticleMetaDataTopics(document, meta) {
+export default function createArticleMetaDataTopics(document, meta, reqLang) {
   const fullMetadata = yaml.load(meta);
   const metaElement = document.querySelector('.article-metadata');
   const feature = fullMetadata?.feature;
@@ -9,7 +10,7 @@ export default function createArticleMetaDataTopics(document, meta) {
   if (feature && feature.trim() !== '') {
     const topicMetadata = feature.split(', ').map((item) => item.trim());
     const featureDivTag = document.createElement('div');
-    const items = ['Topics:'];
+    const items = [TOPICS[`${reqLang.replace('-', '_')}`]];
     topicMetadata.forEach((tags) => {
       const a = document.createElement('a');
       a.setAttribute('href', '#');
