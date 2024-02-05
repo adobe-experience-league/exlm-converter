@@ -124,8 +124,9 @@ export default class ExlClient {
   }
 
   async getLandingPageByFileName(landingName, lang = 'en') {
+    const langForAPI = getMatchLanguage(lang) || lang;
     if (!landingName) throw new Error('landingName is required');
-    const landingPages = await this.getLandingPages(lang);
+    const landingPages = await this.getLandingPages(langForAPI);
     const landingPage = landingPages.find(
       (landing) =>
         removeExtension(landing.File) === removeExtension(landingName),
