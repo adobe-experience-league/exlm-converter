@@ -75,7 +75,7 @@ nav:
         items:
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
-            url: /dashboard/learning
+            url: https://experienceleague.adobe.com/#courses
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /en/docs/home-tutorials
