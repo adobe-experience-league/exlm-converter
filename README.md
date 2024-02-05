@@ -69,6 +69,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `AIO_RUNTIME_NAMESPACE` | secret |
 | `OWNER`                 | var    |
 | `REPO`                  | var    |
+| `BRANCH`                | var    |
 | `AEM_AUTHOR_URL`        | var    |
 | `KHOROS_ORIGIN`         | secret |
 | `KHOROS_API_SECRET`     | secret |

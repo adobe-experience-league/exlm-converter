@@ -115,6 +115,25 @@ export default class ExlClient {
     }
   }
 
+  async getLandingPages(lang = 'en') {
+    const apiUrl = new URL('/api/landing-pages', this.domain);
+    apiUrl.searchParams.set('lang', lang);
+    apiUrl.searchParams.set('page_size', '100');
+    const json = await this.doFetch(apiUrl.toString());
+    return json?.data;
+  }
+
+  async getLandingPageByFileName(landingName, lang = 'en') {
+    const langForAPI = getMatchLanguage(lang) || lang;
+    if (!landingName) throw new Error('landingName is required');
+    const landingPages = await this.getLandingPages(langForAPI);
+    const landingPage = landingPages.find(
+      (landing) =>
+        removeExtension(landing.File) === removeExtension(landingName),
+    );
+    return this.removeSpacesFromKeysRecursively(landingPage);
+  }
+
   async doFetch(path) {
     const url = new URL(path, this.domain);
     const response = await fetch(url);
@@ -135,3 +154,7 @@ export default class ExlClient {
     return obj;
   }
 }
+
+export const defaultExlClient = new ExlClient({
+  domain: 'https://experienceleague.adobe.com',
+});

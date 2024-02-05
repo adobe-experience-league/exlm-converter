@@ -1,6 +1,11 @@
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
+import { CREATED_FOR } from '../blocks-translated-labels.js';
 
-export default function createArticleMetaDataCreatedBy(document, data) {
+export default function createArticleMetaDataCreatedBy(
+  document,
+  data,
+  reqLang,
+) {
   // Article Metadata Created For
   if (data.Level || data.Role) {
     const metaElement = document.querySelector('.article-metadata');
@@ -8,7 +13,7 @@ export default function createArticleMetaDataCreatedBy(document, data) {
     const createdForDiv = document.createElement('div');
     const paragraph = document.createElement('p');
     const parentDiv = document.createElement('div');
-    paragraph.textContent = 'CREATED FOR:';
+    paragraph.textContent = CREATED_FOR[`${reqLang}`];
     createdForDiv.append(paragraph);
     parentDiv.append(createdForDiv);
     const items = [];
