@@ -7,7 +7,10 @@ import { toBlock, createNewSectionForBlock } from '../utils/dom-utils.js';
 export default function createShadeBox(document) {
   Array.from(document.querySelectorAll('.sp-wrapper')).forEach(
     (shadeBoxElement) => {
-      const shadeBoxSection = createNewSectionForBlock(shadeBoxElement);
+      const shadeBoxSection = createNewSectionForBlock(
+        document,
+        shadeBoxElement,
+      );
 
       shadeBoxSection.append(...shadeBoxElement.children);
       shadeBoxSection.append(

@@ -147,14 +147,15 @@ const getHeadingLevel = (element) => {
 };
 
 /**
- * Creates a new section for the given element/block. The resulting dom contains up to 3 sections: 
+ * Creates a new section for the given element/block. The resulting dom contains up to 3 sections:
  * 1) the original section the block was in, containing elements before the block
  * 2) the new section containing only the block
  * 3) If there are elements after the block, a new section containing those elements
+ * @param {Document} document
  * @param {Element} block the block element
  * @returns the new section the block is contained in
  */
-export const createNewSectionForBlock = (block) => {
+export const createNewSectionForBlock = (document, block) => {
   const section = block.parentElement;
   const blockSection = document.createElement('div');
   const subsequenSection = document.createElement('div');
