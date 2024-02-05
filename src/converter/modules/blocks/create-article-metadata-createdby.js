@@ -1,5 +1,5 @@
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
-import { CREATED_FOR } from '../blocks-translated-content.js';
+import { CREATED_FOR } from '../blocks-translated-labels.js';
 
 export default function createArticleMetaDataCreatedBy(
   document,
@@ -13,7 +13,7 @@ export default function createArticleMetaDataCreatedBy(
     const createdForDiv = document.createElement('div');
     const paragraph = document.createElement('p');
     const parentDiv = document.createElement('div');
-    paragraph.textContent = CREATED_FOR[`${reqLang.replace('-', '_')}`];
+    paragraph.textContent = CREATED_FOR[`${reqLang}`];
     createdForDiv.append(paragraph);
     parentDiv.append(createdForDiv);
     const items = [];

@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import { toBlock } from '../utils/dom-utils.js';
 import { rewriteDocsPath } from '../utils/link-utils.js';
 import { DOCPAGETYPE } from '../../doc-page-types.js';
-import { DOCUMENTATION } from '../blocks-translated-content.js';
+import { DOCUMENTATION } from '../blocks-translated-labels.js';
 
 export default function createBreadcrumbs(document, meta, pageType, reqLang) {
   const headerElement = document.querySelector('h1');
@@ -28,7 +28,7 @@ export default function createBreadcrumbs(document, meta, pageType, reqLang) {
     }
   }
   if (pageType === DOCPAGETYPE.SOLUTION_LANDING) {
-    const docsTitle = DOCUMENTATION[`${reqLang.replace('-', '_')}`];
+    const docsTitle = DOCUMENTATION[`${reqLang}`];
     const productTitle = fullMetadata['breadcrumb-name']
       ? fullMetadata['breadcrumb-name']
       : fullMetadata.solution;

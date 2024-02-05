@@ -8,9 +8,9 @@ export const DOCUMENTATION = {
   nl: 'Documentatie',
   ko: '설명서',
   ja: 'ドキュメント',
-  pt_br: 'Documentação',
-  zh_hant: '文件',
-  zh_hans: '文档',
+  'pt-br': 'Documentação',
+  'zh-hant': '文件',
+  'zh-hans': '文档',
 };
 
 export const CREATED_FOR = {
@@ -23,9 +23,9 @@ export const CREATED_FOR = {
   nl: 'Gemaakt voor:',
   ko: '작성 대상:',
   ja: '作成対象：',
-  pt_br: 'Criado para:',
-  zh_hant: '建立對象：',
-  zh_hans: '创建对象：',
+  'pt-br': 'Criado para:',
+  'zh-hant': '建立對象：',
+  'zh-hans': '创建对象：',
 };
 
 export const TOPICS = {
@@ -38,7 +38,7 @@ export const TOPICS = {
   nl: 'Onderwerpen:',
   ko: '주제:',
   ja: 'トピック：',
-  pt_br: 'Tópicos:',
-  zh_hant: '主題：',
-  zh_hans: '主题：',
+  'pt-br': 'Tópicos:',
+  'zh-hant': '主題：',
+  'zh-hans': '主题：',
 };
