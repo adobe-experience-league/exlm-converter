@@ -24,24 +24,29 @@ export default async function renderLanding(path) {
     lang,
   );
 
-  let md = landingPage?.Markdown;
-  const meta = landingPage?.FullMeta;
-  const potentialDuplicateAnchors = Object.values(LANDING_IDS);
-  md = dedupeAnchors(md, potentialDuplicateAnchors);
+  if (landingPage !== undefined) {
+    let md = landingPage?.Markdown;
+    const meta = landingPage?.FullMeta;
+    const potentialDuplicateAnchors = Object.values(LANDING_IDS);
+    md = dedupeAnchors(md, potentialDuplicateAnchors);
 
-  const { convertedHtml, originalHtml } = await md2html(
-    md,
-    meta,
-    {},
-    pageType,
-    lang,
-  );
+    const { convertedHtml, originalHtml } = await md2html(
+      md,
+      meta,
+      {},
+      pageType,
+      lang,
+    );
+    return {
+      body: convertedHtml,
+      headers: {
+        'Content-Type': 'text/html',
+      },
+      md,
+      original: originalHtml,
+    };
+  }
   return {
-    body: convertedHtml,
-    headers: {
-      'Content-Type': 'text/html',
-    },
-    md,
-    original: originalHtml,
+    error: new Error(`No Page found for: ${path}`),
   };
 }
