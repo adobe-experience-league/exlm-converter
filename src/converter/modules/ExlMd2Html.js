@@ -100,8 +100,8 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
-    createArticleMetaDataCreatedBy(document, data);
-    createArticleMetaDataTopics(document, meta);
+    createArticleMetaDataCreatedBy(document, data, reqLang);
+    createArticleMetaDataTopics(document, meta, reqLang);
     handleExternalUrl(document);
     createMiniTOC(document);
     createTOC(document, data);
