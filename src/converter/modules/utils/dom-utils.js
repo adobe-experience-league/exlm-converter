@@ -163,7 +163,7 @@ export const createNewSectionForBlock = (document, block) => {
 
   let nextPointer = block.nextElementSibling;
   if (nextPointer) {
-    section.after(subsequenSection);
+    blockSection.after(subsequenSection);
     while (nextPointer) {
       const next = nextPointer.nextElementSibling;
       subsequenSection.append(nextPointer);
