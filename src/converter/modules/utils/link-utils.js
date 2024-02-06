@@ -1,4 +1,5 @@
 import { removeExtension } from './path-utils.js';
+import { getMatchLanguage } from './language-utils.js';
 
 /**
  * Checks if a URL is an absolute URL.
@@ -60,7 +61,8 @@ export function rewriteDocsPath(docsPath) {
   const url = new URL(docsPath, TEMP_BASE);
   const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
-  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  const rewriteLang = getMatchLanguage(lang) || lang.split('-')[0];
+  let pathname = `${rewriteLang.toLowerCase()}${url.pathname}`;
   const extRegex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
 
   if (extRegex.test(pathname)) {
