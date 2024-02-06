@@ -79,6 +79,9 @@ nav:
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /en/docs/home-tutorials
+          - title: Certification
+            subtitle: Proven expertise of Adobe marketing solutions
+            url: /en/docs/certification/program/overview
           - title: Instructor-led training
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
@@ -87,9 +90,6 @@ nav:
 
   - title: Documentation
     url: /en/docs
-
-  - title: Certifications
-    url: /en/docs/certification/program/overview
 
   - title: Events
     url: https://experienceleague.adobe.com/events/
