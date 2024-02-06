@@ -1,6 +1,7 @@
 name: Deploy Converter Action
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -51,6 +52,8 @@ jobs:
       - name: Deploy Converter Action to ${{ needs.env-select.outputs.env_name }}
         run: ./node_modules/.bin/aio app deploy
         env:
+          KHOROS_ORIGIN: ${{ secrets.KHOROS_ORIGIN }}
+          KHOROS_API_SECRET: ${{ secrets.KHOROS_API_SECRET }}
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
           AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
