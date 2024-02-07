@@ -268,9 +268,17 @@ export const createMetaData = (document, meta, data, pageType) => {
       key === 'title' &&
       fullMetadata.solution
     ) {
-      const solution = Array.isArray(fullMetadata.solution)
-        ? fullMetadata.solution[0]
-        : fullMetadata.solution;
+      let solution;
+
+      if (typeof fullMetadata.solution === 'string') {
+        // eslint-disable-next-line prefer-destructuring
+        solution = fullMetadata.solution.split(',')[0];
+      } else if (Array.isArray(fullMetadata.solution)) {
+        // eslint-disable-next-line prefer-destructuring
+        solution = fullMetadata.solution[0];
+      } else {
+        solution = fullMetadata.solution;
+      }
       metaTag.setAttribute('content', seo(value, solution, 'Adobe'));
     } else {
       metaTag.setAttribute('content', value);
