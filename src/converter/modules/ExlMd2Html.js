@@ -14,7 +14,6 @@ import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
-// import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
@@ -60,8 +59,8 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
       h('header', []),
       h('main', [
         h('div', content.hast), // Base Content - Must be first child for proper rendering
-        h('div', []), // Left Rail Block - TOC - Must be second child for proper rendering
-        h('div', []), // Right Rail Block - mini TOC - Must be third child for proper rendering
+        h('div', []), // Left Rail Block - TOC - Must be second-last section for proper rendering
+        h('div', []), // Right Rail Block - mini TOC - Must be last section for proper rendering
       ]),
       h('footer', []),
     ]),
@@ -88,7 +87,6 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createBreadcrumbs(document, meta, pageType, reqLang);
     createLandingLists(document);
   } else {
-    // createSections(document);
     createArticleMetaData(document, meta);
     createVideo(document);
     createBadge(document);
@@ -97,6 +95,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createTabs(document);
     createTables(document);
     createShadeBox(document);
+
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
