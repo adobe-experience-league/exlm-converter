@@ -242,7 +242,6 @@ const seo = (arg = '', additive = '', req = 'Adobe') =>
 export const createMetaData = (document, meta, data, pageType) => {
   const fragment = document.createDocumentFragment();
   const fullMetadata = yaml.load(meta);
-  console.log(fullMetadata);
 
   // Metadata from data key API Response
   const metaProperties = [
