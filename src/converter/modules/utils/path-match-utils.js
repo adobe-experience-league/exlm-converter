@@ -6,6 +6,12 @@ const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
 
 export const matchDocsPath = (path) => {
   const docsMatcher = match(docsMatchPath, { decode: decodeURIComponent });
+  if (/^\/en\/docs/.test(path)) {
+    return docsMatcher('404');
+  }
+  if (/^\/docs/.test(path)) {
+    return docsMatcher(`/en${path}`);
+  }
   return docsMatcher(path);
 };
 
