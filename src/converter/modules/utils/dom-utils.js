@@ -1,5 +1,6 @@
 import jsdom from 'jsdom';
 import yaml from 'js-yaml';
+import { DOCPAGETYPE } from '../../doc-page-types.js';
 
 global.Node = new jsdom.JSDOM().window.Node;
 
@@ -221,13 +222,24 @@ export const createSections = (document) => {
 };
 
 /**
+ * Generates an SEO-friendly string by combining input arguments.
+ *
+ * @param {string} arg - The main argument for the SEO string.
+ * @param {string} additive - Additional content to be included in the SEO string.
+ * @param {string} req - The required content, used if additive does not include it.
+ * @returns {string} - The SEO-friendly string.
+ */
+const seo = (arg = '', additive = '', req = 'Adobe') =>
+  `${arg} | ${additive.includes(req) ? additive : `${req} ${additive}`}`;
+
+/**
  * Creates and appends meta elements to the document's head based on the provided meta string.
  *
  * @param {Document} document - The Document object representing the web page.
  * @param {string} meta - The string containing key-value pairs to be converted into meta elements.
  * @returns {void}
  */
-export const createMetaData = (document, meta, data) => {
+export const createMetaData = (document, meta, data, pageType) => {
   const fragment = document.createDocumentFragment();
   const fullMetadata = yaml.load(meta);
 
@@ -236,6 +248,7 @@ export const createMetaData = (document, meta, data) => {
     { name: 'id', content: data.id },
     { name: 'keywords', content: data.Keywords || '' },
   ];
+
   metaProperties.forEach((property) => {
     const metaTag = document.createElement('meta');
     Object.entries(property).forEach(([key, value]) => {
@@ -248,7 +261,21 @@ export const createMetaData = (document, meta, data) => {
   Object.entries(fullMetadata).forEach(([key, value]) => {
     const metaTag = document.createElement('meta');
     metaTag.setAttribute('name', key);
-    metaTag.setAttribute('content', value);
+
+    // Handle title and solution combination
+    if (
+      pageType === DOCPAGETYPE.DOC_ARTICLE &&
+      key === 'title' &&
+      fullMetadata.solution
+    ) {
+      const solution = Array.isArray(fullMetadata.solution)
+        ? fullMetadata.solution[0]
+        : fullMetadata.solution;
+      metaTag.setAttribute('content', seo(value, solution, 'Adobe'));
+    } else {
+      metaTag.setAttribute('content', value);
+    }
+
     fragment.appendChild(metaTag);
   });
 

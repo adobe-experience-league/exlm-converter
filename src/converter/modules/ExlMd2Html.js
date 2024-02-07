@@ -76,7 +76,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  createMetaData(document, meta, data);
+  createMetaData(document, meta, data, pageType);
   handleUrls(document, reqLang);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
