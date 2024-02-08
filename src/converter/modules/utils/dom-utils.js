@@ -279,6 +279,7 @@ export const createMetaData = (document, meta, data, pageType) => {
       } else {
         solution = fullMetadata.solution;
       }
+      // In case of "General" solution, defaults to "Experience Cloud".
       if (solution === 'General') {
         solution = 'Experience Cloud';
       }
