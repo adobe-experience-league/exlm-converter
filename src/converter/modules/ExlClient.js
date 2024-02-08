@@ -105,7 +105,8 @@ export default class ExlClient {
     let url = new URL(finalPath, this.domain);
     url.searchParams.set('lang', langForApi);
     url = encodeURIComponent(url.toString());
-    const apiPath = `api/articles?URL=${url}&lang=${langForApi}`;
+    url = url.toLowerCase(); // use lowercase when using `Search%20URL` query param
+    const apiPath = `api/articles?Search%20URL=${url}&lang=${langForApi}`;
     const response = await this.doFetch(apiPath);
 
     if (response.error) {
