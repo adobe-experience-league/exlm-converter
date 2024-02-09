@@ -73,9 +73,12 @@ nav:
             url: '/en/browse/workfront'
       - title: Content Types
         items:
-          - title: Browse all courses
+          - title: Recommended Courses
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home#dashboard/learning'
+          - title: Browse All Courses
+            subtitle: Explore our full catalog of courses
+            url: '/home#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /en/docs/home-tutorials
@@ -84,7 +87,7 @@ nav:
             url: /en/docs/certification/program/overview
           - title: Instructor-led training
             subtitle: Live & on-demand courses led by Adobe-certified instructors
-            url: https://learning.adobe.com/catalog.html
+            url: https://learning.adobe.com/
             urlOptions:
               target: _blank
 
