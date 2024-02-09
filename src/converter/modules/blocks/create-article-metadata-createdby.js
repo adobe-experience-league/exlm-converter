@@ -7,6 +7,9 @@ export default function createArticleMetaDataCreatedBy(
   reqLang,
 ) {
   // Article Metadata Created For
+  const metaElement = document.querySelector('.article-metadata');
+  const parentDiv = document.createElement('div');
+
   if (data.Level || data.Role) {
     if (Array.isArray(data.Level) && Array.isArray(data.Role)) {
       const levelsArray = data.Level;
@@ -15,10 +18,7 @@ export default function createArticleMetaDataCreatedBy(
         !(levelsArray.length === 1 && levelsArray[0] === '') ||
         !(rolesArray.length === 1 && rolesArray[0] === '')
       ) {
-        const metaElement = document.querySelector('.article-metadata');
         const levelDivTag = document.createElement('div');
-        const parentDiv = document.createElement('div');
-
         const createdForDiv = document.createElement('div');
         const paragraph = document.createElement('p');
         paragraph.textContent = CREATED_FOR[`${reqLang}`];
@@ -43,10 +43,10 @@ export default function createArticleMetaDataCreatedBy(
           }),
         );
         parentDiv.append(levelDivTag);
-        const cells = [[parentDiv]];
-        const block = toBlock('article-metadata-createdby', cells, document);
-        metaElement.insertAdjacentElement('afterend', block);
       }
     }
   }
+  const cells = [[parentDiv]];
+  const block = toBlock('article-metadata-createdby', cells, document);
+  metaElement.insertAdjacentElement('afterend', block);
 }
