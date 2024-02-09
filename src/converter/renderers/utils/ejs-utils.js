@@ -12,7 +12,6 @@ const urlWithOptions = (url, options) => {
     const u = new URL(url, defaultBase);
     if (options) {
       u.hash = `${url.hash || ''}${JSON.stringify(options)}`;
-      console.log('url with options', u.toString());
     }
     if (u.origin === defaultBase) {
       // the url is relative, remove base
