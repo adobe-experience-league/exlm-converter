@@ -64,11 +64,14 @@ const converterHandler = async (req, res) => {
     authorization: `Bearer ${ACCESS_TOKEN}`,
   };
 
-  const { body, headers, md, original, error } = await render(path, params);
+  const { body, headers, md, original, error, statusCode } = await render(
+    path,
+    params,
+  );
 
   if (error) {
-    res.status(error.code || 503);
-    res.send(error.message);
+    res.status(error.code || statusCode || 503);
+    res.send(error);
     return;
   }
   // set headers as they are.

@@ -1,10 +1,13 @@
 import jsdom from 'jsdom';
+import Logger from '@adobe/aio-lib-core-logging';
 import {
   isAbsoluteURL,
   relativeToAbsolute,
 } from '../modules/utils/link-utils.js';
 import { isBinary, isHTML } from '../modules/utils/media-utils.js';
 import renderAemAsset from './render-aem-asset.js';
+
+export const aioLogger = Logger('render-aem');
 
 /**
  * @param {string} htmlString
@@ -23,14 +26,11 @@ function transformHTML(htmlString, aemAuthorUrl) {
 
 function sendError(code, message) {
   return {
-    body: {
-      error: {
-        code,
-        message,
-      },
-    },
-    headers: {},
     statusCode: code,
+    error: {
+      code,
+      message,
+    },
   };
 }
 
@@ -55,12 +55,19 @@ export default async function renderAem(path, params) {
     fetchHeaders.authorization = authorization;
   }
 
-  const resp = await fetch(url, { headers: fetchHeaders });
+  let resp;
 
-  if (!resp.ok) {
-    return { error: { code: resp.status, message: resp.statusText } };
+  try {
+    console.log('fetching AEM content', url);
+    resp = await fetch(url, { headers: fetchHeaders });
+  } catch (e) {
+    aioLogger.error('Error fetching AEM content', e);
+    return sendError(500, 'Internal Server Error');
   }
 
+  if (!resp.ok) {
+    return sendError(resp.status, 'Internal Server Error');
+  }
   // note that this can contain charset, example 'text/html; charset=utf-8'
   const contentType = resp.headers.get('Content-Type');
 
