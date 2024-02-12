@@ -105,7 +105,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Events
             subtitle: Attend local and virtual events
-            url: '/events/?lang=en'
+            url: '/events/?lang=fr'
           - title: Employee Advisors
             subtitle: Connect with one of our experts
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -114,7 +114,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback Program
             subtitle: Influence Adobe product development
-            url: '/home?lang=en#feedback'
+            url: '/home?lang=fr#feedback'
       - title: Communities By Product
         items:
           - title: Advertising Cloud
