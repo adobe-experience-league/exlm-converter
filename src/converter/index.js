@@ -78,7 +78,7 @@ export const main = async function main(params) {
 
   if (!error) {
     return {
-      statusCode: error.code || statusCode || 200,
+      statusCode: statusCode || 200,
       headers,
       body,
     };
