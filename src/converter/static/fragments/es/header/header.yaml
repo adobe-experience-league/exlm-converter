@@ -8,17 +8,17 @@ signUp: 'Sign up'
 signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
-    url: https://experienceleague.adobe.com/#dashboard/learning
+    url: '/home#dashboard/learning'
   - title: Achievements
-    url: https://experienceleague.adobe.com/#dashboard/awards
+    url: '/home#dashboard/awards'
   - title: Bookmarked content
-    url: https://experienceleague.adobe.com/#dashboard/bookmarks
+    url: /home/#dashboard/bookmarks
   - title: Sign out
     url: '#'
 search:
   title: Search
   placeholder: 'Search Experience League'
-  url: https://experienceleague.adobe.com/search.html
+  url: /search.html
   filters:
     - title: All
       contenttype: All
@@ -42,43 +42,46 @@ nav:
   - title: Learn
     secondaryItems:
       - title: Browse all content
-        url: '/en/browse'
+        url: '/es/browse'
     items:
       - title: Featured Products
         url: '#'
         items:
           - title: Analytics
-            url: '/en/browse/analytics'
+            url: '/es/browse/analytics'
           - title: Campaign
-            url: '/en/browse/campaign'
+            url: '/es/browse/campaign'
           - title: Commerce
-            url: '/en/browse/commerce'
+            url: '/es/browse/commerce'
           - title: Customer Journey Analytics
-            url: '/en/browse/customer-journey-analytics'
+            url: '/es/browse/customer-journey-analytics'
           - title: Data Collection
-            url: '/en/browse/experience-platform/data-collection'
+            url: '/es/browse/experience-platform/data-collection'
           - title: Experience Manager
-            url: '/en/browse/experience-manager'
+            url: '/es/browse/experience-manager'
           - title: Experience Platform
-            url: '/en/browse/experience-platform'
+            url: '/es/browse/experience-platform'
           - title: Journey Optimizer
-            url: '/en/browse/journey-optimizer'
+            url: '/es/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/en/browse/marketo/marketo-engage'
+            url: '/es/browse/marketo/marketo-engage'
           - title: Target
-            url: '/en/browse/target'
+            url: '/es/browse/target'
           - title: Real-Time CDP
-            url: '/en/browse/real-time-customer-data-platform'
+            url: '/es/browse/real-time-customer-data-platform'
           - title: Workfront
-            url: '/en/browse/workfront'
+            url: '/es/browse/workfront'
       - title: Content Types
         items:
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
-            url: /dashboard/learning
+            url: '/home/#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
-            url: /en/docs/home-tutorials
+            url: /es/docs/home-tutorials
+          - title: Certification
+            subtitle: Proven expertise of Adobe marketing solutions
+            url: /es/docs/certification/program/overview
           - title: Instructor-led training
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
@@ -86,13 +89,10 @@ nav:
               target: _blank
 
   - title: Documentation
-    url: /en/docs
-
-  - title: Certifications
-    url: /en/docs/certification/program/overview
+    url: /es/docs
 
   - title: Events
-    url: https://experienceleague.adobe.com/events/
+    url: /events
 
   - title: Community
     items:
@@ -105,7 +105,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Events
             subtitle: Attend local and virtual events
-            url: https://experienceleague.adobe.com/events/?lang=en
+            url: '/events/?lang=en'
           - title: Employee Advisors
             subtitle: Connect with one of our experts
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -114,7 +114,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback Program
             subtitle: Influence Adobe product development
-            url: 'https://experienceleague.adobe.com/#feedback'
+            url: '/home?lang=en#feedback'
       - title: Communities By Product
         items:
           - title: Advertising Cloud
@@ -144,21 +144,21 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
           - title: Creative Cloud
-            url: https://community.adobe.com/#_blank
+            url: 'https://community.adobe.com/#_blank'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: https://community.magento.com/#_blank
+            url: 'https://community.magento.com/#_blank'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: https://nation.marketo.com/#_blank
+            url: 'https://nation.marketo.com/#_blank'
             urlOptions:
               target: _blank
 
   - title: Support
-    url: https://experienceleague.adobe.com/#support
+    url: '/home#support'
