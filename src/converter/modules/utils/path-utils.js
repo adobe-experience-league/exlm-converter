@@ -1,5 +1,3 @@
-import { extname } from 'path';
-
 // eslint-disable-next-line import/prefer-default-export
 /**
  * add extension to path if not present
@@ -7,8 +5,14 @@ import { extname } from 'path';
  * @param {string} extension
  * @returns
  */
-export const addExtension = (path, extension) =>
-  extname(path) === '' ? `${path}${extension}` : path;
+export const addExtension = (path, extension) => {
+  const extensionRegex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
+
+  if (!extensionRegex.test(path)) {
+    return `${path}${extension}`;
+  }
+  return path;
+};
 
 /**
  * Remove extension from path

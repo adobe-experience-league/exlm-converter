@@ -14,7 +14,6 @@ import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
-// import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
@@ -31,9 +30,7 @@ import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
-import createGuidesList from './blocks/create-guides-list.js';
-import createTutorialTiles from './blocks/create-tutorial-tiles.js';
-import createRelatedResources from './blocks/create-related-resources.js';
+import createLandingLists from './blocks/create-landing-lists.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -62,8 +59,8 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
       h('header', []),
       h('main', [
         h('div', content.hast), // Base Content - Must be first child for proper rendering
-        h('div', []), // Left Rail Block - TOC - Must be second child for proper rendering
-        h('div', []), // Right Rail Block - mini TOC - Must be third child for proper rendering
+        h('div', []), // Left Rail Block - TOC - Must be second-last section for proper rendering
+        h('div', []), // Right Rail Block - mini TOC - Must be last section for proper rendering
       ]),
       h('footer', []),
     ]),
@@ -79,7 +76,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  createMetaData(document, meta, data);
+  createMetaData(document, meta, data, pageType);
   handleUrls(document, reqLang);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
@@ -88,11 +85,8 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     handleExternalUrl(document);
     createMiniTOC(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
-    createGuidesList(document);
-    createTutorialTiles(document);
-    createRelatedResources(document);
+    createLandingLists(document);
   } else {
-    // createSections(document);
     createArticleMetaData(document, meta);
     createVideo(document);
     createBadge(document);
@@ -101,11 +95,12 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createTabs(document);
     createTables(document);
     createShadeBox(document);
+
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
-    createArticleMetaDataCreatedBy(document, data);
-    createArticleMetaDataTopics(document, meta);
+    createArticleMetaDataCreatedBy(document, data, reqLang);
+    createArticleMetaDataTopics(document, meta, reqLang);
     handleExternalUrl(document);
     createMiniTOC(document);
     createTOC(document, data);

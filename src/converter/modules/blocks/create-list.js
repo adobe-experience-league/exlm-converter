@@ -1,27 +1,18 @@
 import { toBlock, replaceElement } from '../utils/dom-utils.js';
 
+export const createListBlock = (document, listEl) => {
+  const tag = listEl.tagName.toLowerCase();
+  const cloneList = document.createElement(tag);
+  cloneList.innerHTML = listEl.innerHTML;
+  const block = toBlock('list ol', [[cloneList]], document);
+  replaceElement(listEl, block);
+};
+
 export default function createList(document) {
   const ollistElements = Array.from(document.querySelectorAll('ol'));
   const ullistElements = Array.from(document.querySelectorAll('ul'));
-  if (ollistElements.length) {
-    ollistElements.forEach((ollistElement) => {
-      const ol = document.createElement('ol');
-      ol.innerHTML = ollistElement.innerHTML;
-      const cells = [[ol]];
-      const block = toBlock('list ol', cells, document);
 
-      replaceElement(ollistElement, block);
-    });
-  }
+  const allLists = [...ollistElements, ...ullistElements];
 
-  if (ullistElements.length) {
-    ullistElements.forEach((ullistElement) => {
-      const ul = document.createElement('ul');
-      ul.innerHTML = ullistElement.innerHTML;
-      const cells = [[ul]];
-      const block = toBlock('list ul', cells, document);
-
-      replaceElement(ullistElement, block);
-    });
-  }
+  allLists.forEach((listEl) => createListBlock(document, listEl));
 }

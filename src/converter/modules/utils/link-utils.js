@@ -1,4 +1,5 @@
 import { removeExtension } from './path-utils.js';
+import { getMatchLanguage } from './language-utils.js';
 
 /**
  * Checks if a URL is an absolute URL.
@@ -60,8 +61,13 @@ export function rewriteDocsPath(docsPath) {
   const url = new URL(docsPath, TEMP_BASE);
   const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
-  let pathname = `${lang.toLowerCase()}${url.pathname}`;
-  pathname = removeExtension(pathname); // new URLs are extensionless
+  const rewriteLang = getMatchLanguage(lang) || lang.split('-')[0];
+  let pathname = `${rewriteLang.toLowerCase()}${url.pathname}`;
+  const extRegex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
+
+  if (extRegex.test(pathname)) {
+    pathname = removeExtension(pathname); // new URLs are extensionless
+  }
   url.pathname = pathname;
   // return full path without origin
   return url.toString().replace(TEMP_BASE, '');
@@ -80,6 +86,7 @@ export default function handleUrls(document, reqLang) {
   elements.forEach((el) => {
     let rewritePath = el.getAttribute('href');
     if (
+      rewritePath !== null &&
       rewritePath.indexOf('#') !== -1 &&
       rewritePath.indexOf('#_blank') === -1
     )
@@ -94,7 +101,7 @@ export default function handleUrls(document, reqLang) {
       el.href = rewritePath;
     } else {
       // eslint-disable-next-line no-lonely-if
-      if (!rewritePath.startsWith('/docs')) {
+      if (rewritePath !== null && !rewritePath.startsWith('/docs')) {
         const TEMP_BASE = 'https://localhost';
         const url = new URL(rewritePath, TEMP_BASE);
         let pathname = `/${reqLang.toLowerCase()}/docs${url.pathname}`;

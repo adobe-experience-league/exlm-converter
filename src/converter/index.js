@@ -49,7 +49,7 @@ try {
  */
 export const render = async function render(path, params) {
   if (isLandingPath(path)) {
-    return renderLanding(path, dir);
+    return renderLanding(path);
   }
 
   if (isDocsPath(path)) {
@@ -78,7 +78,7 @@ export const main = async function main(params) {
 
   if (!error) {
     return {
-      statusCode: statusCode || 200,
+      statusCode: error?.code || statusCode || 200,
       headers,
       body,
     };

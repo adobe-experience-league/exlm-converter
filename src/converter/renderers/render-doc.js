@@ -1,12 +1,9 @@
-import ExlClient from '../modules/ExlClient.js';
+import { defaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../doc-page-types.js';
 import { matchDocsPath } from '../modules/utils/path-match-utils.js';
 
-const exlClient = new ExlClient({
-  domain: 'https://experienceleague.adobe.com',
-});
 /**
  * handles a markdown doc path
  */
@@ -16,10 +13,15 @@ export default async function renderDoc(path) {
   } = matchDocsPath(path);
 
   // construct the path in the articles API
-  const apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  let apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  const regex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
 
-  const response = await exlClient.getArticleByPath(
-    removeExtension(apiArticlePath),
+  if (regex.test(apiArticlePath)) {
+    apiArticlePath = removeExtension(apiArticlePath);
+  }
+
+  const response = await defaultExlClient.getArticleByPath(
+    apiArticlePath,
     lang,
   );
   if (response.data.length > 0) {

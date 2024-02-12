@@ -1,4 +1,4 @@
-import { replaceElement, toBlock } from '../utils/dom-utils.js';
+import { toBlock, createNewSectionForBlock } from '../utils/dom-utils.js';
 
 /**
  *
@@ -7,11 +7,16 @@ import { replaceElement, toBlock } from '../utils/dom-utils.js';
 export default function createShadeBox(document) {
   Array.from(document.querySelectorAll('.sp-wrapper')).forEach(
     (shadeBoxElement) => {
-      const children = Array.from(shadeBoxElement.childNodes);
-      replaceElement(
+      const shadeBoxSection = createNewSectionForBlock(
+        document,
         shadeBoxElement,
-        toBlock('shade-box', [[children]], document),
       );
+
+      shadeBoxSection.append(...shadeBoxElement.children);
+      shadeBoxSection.append(
+        toBlock('section-metadata', [['style', 'shade-box']], document),
+      );
+      shadeBoxElement.remove();
     },
   );
 }
