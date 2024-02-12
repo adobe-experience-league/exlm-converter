@@ -1,10 +1,32 @@
 import { replaceElement, toBlock } from '../utils/dom-utils.js';
 
+// Function to check if two elements are adjacent siblings
+function areAdjacentElements(element1, element2) {
+  return (
+    element1.nextElementSibling === element2 ||
+    element1.previousElementSibling === element2
+  );
+}
+
 export default function createBadge(document) {
-  const BadgeElements = Array.from(
+  const badgesInsideSingleP = document.querySelectorAll('p .sp-badge-wrapper');
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < badgesInsideSingleP.length; i++) {
+    const currentBadge = badgesInsideSingleP[i];
+    const nextBadge = badgesInsideSingleP[i + 1];
+
+    if (areAdjacentElements(currentBadge, nextBadge)) {
+      currentBadge.classList.add('same-p-tag');
+      nextBadge.classList.add('same-p-tag');
+    }
+  }
+
+  const badgeElements = Array.from(
     document.getElementsByClassName('sp-badge-wrapper'),
   );
-  BadgeElements.forEach((element) => {
+
+  badgeElements.forEach((element) => {
     if (element.parentElement.closest('a')) {
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');
@@ -48,7 +70,10 @@ export default function createBadge(document) {
 
       const variant = spBadge.getAttribute('variant');
       const title = spBadge.getAttribute('title');
-
+      let elClass = '';
+      if (element.getAttribute('class').indexOf('same-p-tag') > 0) {
+        elClass = 'same-p-tag';
+      }
       let cells = [[div1]];
 
       if (title !== null) {
@@ -58,7 +83,7 @@ export default function createBadge(document) {
         cells = [[div1], [div2]];
       }
 
-      const block = toBlock(`badge ${variant}`, cells, document);
+      const block = toBlock(`badge ${variant} ${elClass}`, cells, document);
       replaceElement(element, block);
     }
   });
