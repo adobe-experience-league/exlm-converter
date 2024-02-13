@@ -58,7 +58,7 @@ export default async function renderAem(path, params) {
   let resp;
 
   try {
-    console.log('fetching AEM content', url);
+    aioLogger.info('fetching AEM content', url);
     resp = await fetch(url, { headers: fetchHeaders });
   } catch (e) {
     aioLogger.error('Error fetching AEM content', e);
