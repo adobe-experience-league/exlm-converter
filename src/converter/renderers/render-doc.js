@@ -25,8 +25,9 @@ export default async function renderDoc(path) {
     lang,
   );
 
-  if (response.data.length > 0) {
-    const article = response.data.find((d) => d.FullMeta && d.FullBody);
+  const article = response?.data?.find((d) => d.FullMeta && d.FullBody);
+
+  if (article) {
     const md = article.FullBody;
     const meta = article.FullMeta;
     const { convertedHtml, originalHtml } = await md2html(
