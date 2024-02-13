@@ -8,7 +8,7 @@ signUp: 'Sign up'
 signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
-    url: '/home#dashboard/learning'
+    url: '/home#dashboard/profile'
   - title: Achievements
     url: '/home#dashboard/awards'
   - title: Bookmarked content
