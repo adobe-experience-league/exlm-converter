@@ -31,6 +31,7 @@ import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createLandingLists from './blocks/create-landing-lists.js';
+import { updateAnchors } from './utils/update-anchors.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -79,6 +80,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   const { document } = dom.window;
   createMetaData(document, meta, data, pageType);
   handleUrls(document, reqLang);
+  updateAnchors(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
