@@ -39,6 +39,7 @@ const doAmf = (md) => {
   // code below fixes that by encoding the backticks that are not preceded with a new line
   // before passing to AMF, and then decoding them after.
   // this: `(?<!\n)` means not preceded by a new line
+  if (!md) return md;
   const backTickEncoded = md.replace(/(?<!\n)```/g, '&grave;&grave;&grave;');
   const amfProcessed = afm(backTickEncoded, 'extension');
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');

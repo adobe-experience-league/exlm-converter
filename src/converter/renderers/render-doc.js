@@ -20,18 +20,20 @@ export default async function renderDoc(path) {
     apiArticlePath = removeExtension(apiArticlePath);
   }
 
-  const response = await defaultExlClient.getArticleByPath(
+  const response = await defaultExlClient.getArticlesByPath(
     apiArticlePath,
     lang,
   );
-  if (response.data.length > 0) {
-    const md = response.data[0].FullBody;
-    const meta = response.data[0].FullMeta;
-    const data = response.data[0];
+
+  const article = response?.data?.find((d) => d.FullMeta && d.FullBody);
+
+  if (article) {
+    const md = article.FullBody;
+    const meta = article.FullMeta;
     const { convertedHtml, originalHtml } = await md2html(
       md,
       meta,
-      data,
+      article,
       DOCPAGETYPE.DOC_ARTICLE,
       lang,
     );
