@@ -243,6 +243,20 @@ export const createMetaData = (document, meta, data, pageType) => {
   const fragment = document.createDocumentFragment();
   const fullMetadata = yaml.load(meta);
 
+  if (fullMetadata.robots && fullMetadata.ROBOTS) {
+    // the exl api returns both robots and ROBOTS for hidden pages, we need to combine them.
+    const robots =
+      fullMetadata?.robots?.split(',')?.map((s) => s.trim().toLowerCase()) ||
+      [];
+    const ROBOTS =
+      fullMetadata?.ROBOTS?.split(',')?.map((s) => s.trim().toLowerCase()) ||
+      [];
+    const combinedRobots = new Set([...robots, ...ROBOTS]);
+    delete fullMetadata.robots;
+    delete fullMetadata.ROBOTS;
+    fullMetadata.robots = Array.from(combinedRobots).join(', ');
+  }
+
   // Metadata from data key API Response
   const metaProperties = [
     { name: 'id', content: data.id },
