@@ -53,10 +53,24 @@ function absoluteToRelative(url, baseUrl) {
   return relativeUrl;
 }
 
-export function rewriteDocsPath(docsPath) {
-  if (!docsPath.startsWith('/docs')) {
-    return docsPath; // not a docs path, return as is
+export function isAssetPath(docsPath) {
+  const match = docsPath.match(/\.([a-zA-Z0-9]+)(\?.*)?$/);
+  if (
+    match &&
+    match[1] &&
+    match[1].toLowerCase() !== 'html' &&
+    match[1].toLowerCase() !== 'md'
+  ) {
+    return true;
   }
+  return false;
+}
+
+export function rewriteDocsPath(docsPath) {
+  if (!docsPath.startsWith('/docs') || isAssetPath(docsPath)) {
+    return docsPath; // not a docs path or if asset path, return as is
+  }
+
   const TEMP_BASE = 'https://localhost';
   const url = new URL(docsPath, TEMP_BASE);
   const lang = url.searchParams.get('lang') || 'en'; // en is default
