@@ -4,47 +4,47 @@ productGrid:
     url: https://experience.adobe.com/
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
-signUp: 'Sign up'
-signIn: 'Sign in'
+signUp: 'Registrera sig'
+signIn: 'Logga in'
 profileMenu:
-  - title: My learning profile
+  - title: Min utbildningsprofil
     url: '/home#dashboard/learning'
   - title: Achievements
     url: '/home#dashboard/awards'
-  - title: Bookmarked content
+  - title: Bokmärkt innehåll
     url: /home/#dashboard/bookmarks
-  - title: Sign out
+  - title: Logga ut
     url: '#'
 search:
   title: Search
-  placeholder: 'Search Experience League'
+  placeholder: 'Sök i Experience League'
   url: /search.html
   filters:
-    - title: All
+    - title: Alla
       contenttype: All
-    - title: Certification
+    - title: Certifiering
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Courses
+    - title: Kurser
       contenttype: Course
-    - title: Documentation
+    - title: Dokumentation
       contenttype: Documentation
-    - title: Events
+    - title: Event
       contenttype: Event
-    - title: Troubleshooting
+    - title: Felsökning
       contenttype: Troubleshooting
-    - title: Tutorials
+    - title: Självstudiekurser
       contenttype: Tutorial
 languageSelector:
-  title: Change Region
+  title: Ändra region
 nav:
-  - title: Learn
+  - title: Lär
     secondaryItems:
-      - title: Browse all content
+      - title: Bläddra bland allt innehåll
         url: '/sv/browse'
     items:
-      - title: Featured Products
+      - title: Utvalda produkter
         url: '#'
         items:
           - title: Analytics
@@ -71,78 +71,78 @@ nav:
             url: '/sv/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/sv/browse/workfront'
-      - title: Content Types
+      - title: Typer av innehåll
         items:
-          - title: Browse all courses
+          - title: Bläddra bland alla kurser
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'
-          - title: Tutorials
+          - title: Självstudiekurser
             subtitle: Solution-specific videos and how-tos
             url: /sv/docs/home-tutorials
-          - title: Certification
+          - title: Certifiering
             subtitle: Proven expertise of Adobe marketing solutions
             url: /sv/docs/certification/program/overview
-          - title: Instructor-led training
+          - title: Instruktörsledd utbildning
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
             urlOptions:
               target: _blank
 
-  - title: Documentation
+  - title: Dokumentation
     url: /sv/docs
 
-  - title: Events
+  - title: Event
     url: /events
 
   - title: Community
     items:
-      - title: Quick Links
+      - title: Snabblänkar
         items:
-          - title: Community home
-            url: https://experienceleaguecommunities.adobe.com/?profile.language=en
-          - title: Experience Cloud Advocates
-            subtitle: Meet our community of customer advocates
-            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
-          - title: Events
-            subtitle: Attend local and virtual events
+          - title: Startsida för community
+            url: https://experienceleaguecommunities.adobe.com/?profile.language=sv
+          - title: Experience Cloud-förespråkare
+            subtitle: Möt vår community av kundförespråkare
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=sv
+          - title: Event
+            subtitle: Gå på lokala och virtuella event
             url: '/events/?lang=sv'
-          - title: Employee Advisors
-            subtitle: Connect with one of our experts
-            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
-          - title: Experience League Showcase
-            subtitle: Read real-world use cases of Experience Cloud products written by your peers
-            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
-          - title: Adobe Feedback Program
+          - title: Rådgivare för anställda
+            subtitle: Få kontakt med en av våra experter
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=sv
+          - title: Showcase för Experience League
+            subtitle: Verkliga scenarier med Experience Cloud-produkter skrivna av andra användare
+            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=sv
+          - title: Adobe Feedbackprogram
             subtitle: Influence Adobe product development
             url: '/home?lang=sv#feedback'
-      - title: Communities By Product
+      - title: Communities efter produkt
         items:
           - title: Advertising Cloud
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=sv
           - title: Analytics
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=sv
           - title: Audience Manager
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
-          - title: Campaign Classic v7 & Campaign v8
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=sv
+          - title: Campaign Classic v7 och Campaign v8
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=sv
           - title: Campaign Standard
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=sv
           - title: Developer
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=sv
           - title: Experience Cloud
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
-          - title: Experience Manager Sites & More
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=sv
+          - title: Experience Manager Sites med mera
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=sv
           - title: Experience Platform
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=sv
           - title: Journey Optimizer
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=sv
           - title: Target
-            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=en
+            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=sv
           - title: Real-Time CDP
-            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=sv
           - title: Workfront
-            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=sv
           - title: Creative Cloud
             url: 'https://community.adobe.com/#_blank'
             urlOptions:
