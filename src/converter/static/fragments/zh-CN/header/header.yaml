@@ -73,6 +73,11 @@ nav:
             url: '/zh-cn/browse/workfront'
       - title: Content Types
         items:
+          - title: 推荐课程
+            subtitle: Your expertly curated courses
+            url: '/home#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'

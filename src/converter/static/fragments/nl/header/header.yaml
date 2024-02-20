@@ -73,6 +73,11 @@ nav:
             url: '/nl/browse/workfront'
       - title: Soorten inhoud
         items:
+          - title: Aanbevolen cursussen
+            subtitle: Your expertly curated courses
+            url: '/home#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
           - title: Blader door alle cursussen
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'

@@ -73,6 +73,11 @@ nav:
             url: '/sv/browse/workfront'
       - title: Typer av innehåll
         items:
+          - title: Rekommenderade kurser
+            subtitle: Your expertly curated courses
+            url: '/home#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
           - title: Bläddra bland alla kurser
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'

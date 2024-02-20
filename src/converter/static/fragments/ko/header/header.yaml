@@ -73,6 +73,11 @@ nav:
             url: '/ko/browse/workfront'
       - title: Content Types
         items:
+          - title: 추천 과정
+            subtitle: Your expertly curated courses
+            url: '/home#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'

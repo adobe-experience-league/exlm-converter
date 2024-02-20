@@ -73,6 +73,11 @@ nav:
             url: '/ja/browse/workfront'
       - title: コンテンツの種類
         items:
+          - title: おすすめのコース
+            subtitle: Your expertly curated courses
+            url: '/home#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
           - title: すべてのコースを参照
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'

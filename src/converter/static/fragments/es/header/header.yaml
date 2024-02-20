@@ -73,6 +73,11 @@ nav:
             url: '/es/browse/workfront'
       - title: Tipos de contenido
         items:
+          - title: Cursos recomendados
+            subtitle: Your expertly curated courses
+            url: '/home#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
           - title: Ver todos los cursos
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'
