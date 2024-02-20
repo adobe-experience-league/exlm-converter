@@ -42,35 +42,35 @@ nav:
   - title: 学习
     secondaryItems:
       - title: Browse all content
-        url: '/zh-cn/browse'
+        url: '/zh-hans/browse'
     items:
       - title: Featured Products
         url: '#'
         items:
           - title: Analytics
-            url: '/zh-cn/browse/analytics'
+            url: '/zh-hans/browse/analytics'
           - title: Campaign
-            url: '/zh-cn/browse/campaign'
+            url: '/zh-hans/browse/campaign'
           - title: Commerce
-            url: '/zh-cn/browse/commerce'
+            url: '/zh-hans/browse/commerce'
           - title: Customer Journey Analytics
-            url: '/zh-cn/browse/customer-journey-analytics'
+            url: '/zh-hans/browse/customer-journey-analytics'
           - title: Data Collection
-            url: '/zh-cn/browse/experience-platform/data-collection'
+            url: '/zh-hans/browse/experience-platform/data-collection'
           - title: Experience Manager
-            url: '/zh-cn/browse/experience-manager'
+            url: '/zh-hans/browse/experience-manager'
           - title: Experience Platform
-            url: '/zh-cn/browse/experience-platform'
+            url: '/zh-hans/browse/experience-platform'
           - title: Journey Optimizer
-            url: '/zh-cn/browse/journey-optimizer'
+            url: '/zh-hans/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/zh-cn/browse/marketo/marketo-engage'
+            url: '/zh-hans/browse/marketo/marketo-engage'
           - title: Target
-            url: '/zh-cn/browse/target'
+            url: '/zh-hans/browse/target'
           - title: Real-Time CDP
-            url: '/zh-cn/browse/real-time-customer-data-platform'
+            url: '/zh-hans/browse/real-time-customer-data-platform'
           - title: Workfront
-            url: '/zh-cn/browse/workfront'
+            url: '/zh-hans/browse/workfront'
       - title: Content Types
         items:
           - title: 推荐课程
@@ -83,10 +83,10 @@ nav:
             url: '/home/#courses'
           - title: 教程
             subtitle: Solution-specific videos and how-tos
-            url: /zh-cn/docs/home-tutorials
+            url: /zh-hans/docs/home-tutorials
           - title: 认证
             subtitle: Proven expertise of Adobe marketing solutions
-            url: /zh-cn/docs/certification/program/overview
+            url: /zh-hans/docs/certification/program/overview
           - title: 讲师指导的培训
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
@@ -94,7 +94,7 @@ nav:
               target: _blank
 
   - title: 文档
-    url: /zh-cn/docs
+    url: /zh-hans/docs
 
   - title: 事件
     url: /events
@@ -110,7 +110,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: 事件
             subtitle: 参加本地和虚拟活动
-            url: '/events/?lang=zh-cn'
+            url: '/events/?lang=zh-Hans'
           - title: 员工顾问
             subtitle: 与我们的专家交流
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -119,7 +119,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback Program
             subtitle: Influence Adobe product development
-            url: '/home?lang=zh-cn#feedback'
+            url: '/home?lang=zh-Hans#feedback'
       - title: 社区（按产品）
         items:
           - title: Advertising Cloud
