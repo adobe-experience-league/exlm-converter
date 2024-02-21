@@ -1,0 +1,33 @@
+<div>
+  <%
+    // This is an ejs template, see: https://ejs.co/#docs and the function reading this file for available optiopns
+    // You'll notice each part of the header is rendered as a "block". Weather or not it is handled as a block on
+    // the frontend is a separate matter. But this ensures an expected order of items/parts in the header.
+  %>
+  <!-- Adobe logo -->
+  <%- block("adobe-logo", [[`<a href="//business.adobe.com">:adobe-red-logo:</a
+  >`]]) %>
+  <!-- Logo -->
+  <%- block("brand", [[`<a href="/">Experience League</a>`]])%>
+  <!-- Navigation Items -->
+  <%- block("nav", [[nav(header.nav)]])%>
+  <!-- sign up button -->
+  <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
+  <!-- Search -->
+  <%- block( "search", [ [`
+  <a href="${header.search.url}">${header.search.title}</a>
+  `, `
+  <p>${header.search.placeholder}</p>
+  `, ul(header.search.filters.map(filter =>
+  `${filter.title}:${filter.contenttype}`))] ]) %>
+  <!-- Language Selector -->
+  <%- block("language-selector", [[ `
+  <p>${header.languageSelector.title}</p>
+  `, ]]) %>
+  <!-- sign in -->
+  <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
+  <!-- profile menu -->
+  <%- block("profile-menu", [[profileMenu(header.profileMenu)]]) %>
+  <!-- product grid -->
+  <%- block("product-grid", [[alist(header.productGrid)]]) %>
+</div>
