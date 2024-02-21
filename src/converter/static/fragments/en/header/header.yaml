@@ -12,7 +12,7 @@ profileMenu:
   - title: Achievements
     url: '/home#dashboard/awards'
   - title: Bookmarked content
-    url: /home/#dashboard/bookmarks
+    url: /home#dashboard/bookmarks
   - title: Sign out
     url: '#'
 search:
