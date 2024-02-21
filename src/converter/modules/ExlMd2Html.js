@@ -31,6 +31,7 @@ import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createLandingLists from './blocks/create-landing-lists.js';
+import createStaffPicksBlock from './blocks/create-staff-picks-block.js';
 import { updateAnchors } from './utils/update-anchors.js';
 
 const doAmf = (md) => {
@@ -96,6 +97,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createRelatedArticles(document);
     createNote(document);
     createTabs(document);
+    createStaffPicksBlock(document);
     createTables(document);
     createShadeBox(document);
 
