@@ -5,75 +5,75 @@ productGrid:
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
 signUp: 'Sign up'
-signIn: 'Sign in'
+signIn: '로그인'
 profileMenu:
-  - title: My learning profile
-    url: '/home#dashboard/profile'
-  - title: Achievements
+  - title: 프로필
+    url: '/home#dashboard/learning'
+  - title: 도전 과제
     url: '/home#dashboard/awards'
-  - title: Bookmarked content
-    url: /home#dashboard/bookmarks
-  - title: Sign out
+  - title: 책갈피
+    url: /home/#dashboard/bookmarks
+  - title: 로그아웃
     url: '#'
 search:
-  title: Search
-  placeholder: 'Search Experience League'
+  title: 검색
+  placeholder: 'Experience League 검색'
   url: /search.html
   filters:
-    - title: All
+    - title: 모두
       contenttype: All
-    - title: Certification
+    - title: 인증
       contenttype: Certification
-    - title: Community
+    - title: 커뮤니티
       contenttype: Community
-    - title: Courses
+    - title: 교육 과정
       contenttype: Course
-    - title: Documentation
+    - title: 설명서
       contenttype: Documentation
-    - title: Events
+    - title: 이벤트
       contenttype: Event
-    - title: Troubleshooting
+    - title: 문제 해결
       contenttype: Troubleshooting
     - title: Tutorials
       contenttype: Tutorial
 languageSelector:
   title: Change Region
 nav:
-  - title: Learn
+  - title: 학습
     secondaryItems:
       - title: Browse all content
-        url: '/en/browse'
+        url: '/ko/browse'
     items:
       - title: Featured Products
         url: '#'
         items:
           - title: Analytics
-            url: '/en/browse/analytics'
+            url: '/ko/browse/analytics'
           - title: Campaign
-            url: '/en/browse/campaign'
+            url: '/ko/browse/campaign'
           - title: Commerce
-            url: '/en/browse/commerce'
+            url: '/ko/browse/commerce'
           - title: Customer Journey Analytics
-            url: '/en/browse/customer-journey-analytics'
+            url: '/ko/browse/customer-journey-analytics'
           - title: Data Collection
-            url: '/en/browse/experience-platform/data-collection'
+            url: '/ko/browse/experience-platform/data-collection'
           - title: Experience Manager
-            url: '/en/browse/experience-manager'
+            url: '/ko/browse/experience-manager'
           - title: Experience Platform
-            url: '/en/browse/experience-platform'
+            url: '/ko/browse/experience-platform'
           - title: Journey Optimizer
-            url: '/en/browse/journey-optimizer'
+            url: '/ko/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/en/browse/marketo/marketo-engage'
+            url: '/ko/browse/marketo/marketo-engage'
           - title: Target
-            url: '/en/browse/target'
+            url: '/ko/browse/target'
           - title: Real-Time CDP
-            url: '/en/browse/real-time-customer-data-platform'
+            url: '/ko/browse/real-time-customer-data-platform'
           - title: Workfront
-            url: '/en/browse/workfront'
+            url: '/ko/browse/workfront'
       - title: Content Types
         items:
-          - title: Recommended courses
+          - title: 추천 과정
             subtitle: Your expertly curated courses
             url: '/home#dashboard/learning'
             urlOptions:
@@ -83,44 +83,44 @@ nav:
             url: '/home/#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
-            url: /en/docs/home-tutorials
+            url: /ko/docs/home-tutorials
           - title: Certification
             subtitle: Proven expertise of Adobe marketing solutions
-            url: /en/docs/certification/program/overview
+            url: /ko/docs/certification/program/overview
           - title: Instructor-led training
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
             urlOptions:
               target: _blank
 
-  - title: Documentation
-    url: /en/docs
+  - title: 설명서
+    url: /ko/docs
 
   - title: Events
     url: /events
 
-  - title: Community
+  - title: 커뮤니티
     items:
-      - title: Quick Links
+      - title: 빠른 링크
         items:
-          - title: Community home
+          - title: 제품별 커뮤니티
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
-          - title: Experience Cloud Advocates
-            subtitle: Meet our community of customer advocates
+          - title: Experience Cloud 지지자
+            subtitle: 고객 지지자 커뮤니티를 만나보십시오.
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
-          - title: Events
-            subtitle: Attend local and virtual events
-            url: '/events/?lang=en'
-          - title: Employee Advisors
-            subtitle: Connect with one of our experts
+          - title: 이벤트
+            subtitle: 로컬 및 가상 이벤트 참석
+            url: '/events/?lang=ko'
+          - title: 직원 어드바이저
+            subtitle: 전문가 중 한 명과 연결
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
-          - title: Experience League Showcase
-            subtitle: Read real-world use cases of Experience Cloud products written by your peers
+          - title: Experience League 쇼케이스
+            subtitle: 동료가 작성한 Experience Cloud 제품의 실제 사용 사례 읽기
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
-          - title: Adobe Feedback Program
+          - title: Adobe 피드백 프로그램
             subtitle: Influence Adobe product development
-            url: '/home?lang=en#feedback'
-      - title: Communities By Product
+            url: '/home?lang=ko#feedback'
+      - title: 제품별 커뮤니티
         items:
           - title: Advertising Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
@@ -165,5 +165,5 @@ nav:
             urlOptions:
               target: _blank
 
-  - title: Support
+  - title: 지원
     url: '/home#support'

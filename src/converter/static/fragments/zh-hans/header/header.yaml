@@ -5,75 +5,75 @@ productGrid:
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
 signUp: 'Sign up'
-signIn: 'Sign in'
+signIn: '登录'
 profileMenu:
-  - title: My learning profile
-    url: '/home#dashboard/profile'
-  - title: Achievements
+  - title: 配置文件
+    url: '/home#dashboard/learning'
+  - title: 成就
     url: '/home#dashboard/awards'
-  - title: Bookmarked content
-    url: /home#dashboard/bookmarks
-  - title: Sign out
+  - title: 完成配置文件后，请查看您的奖项。
+    url: /home/#dashboard/bookmarks
+  - title: 注销
     url: '#'
 search:
-  title: Search
-  placeholder: 'Search Experience League'
+  title: 搜索
+  placeholder: '搜索 Experience League'
   url: /search.html
   filters:
-    - title: All
+    - title: 全部
       contenttype: All
-    - title: Certification
+    - title: 认证
       contenttype: Certification
-    - title: Community
+    - title: 社区
       contenttype: Community
-    - title: Courses
+    - title: 课程
       contenttype: Course
-    - title: Documentation
+    - title: 文档
       contenttype: Documentation
-    - title: Events
+    - title: 事件
       contenttype: Event
-    - title: Troubleshooting
+    - title: 疑难解答
       contenttype: Troubleshooting
-    - title: Tutorials
+    - title: 教程
       contenttype: Tutorial
 languageSelector:
   title: Change Region
 nav:
-  - title: Learn
+  - title: 学习
     secondaryItems:
       - title: Browse all content
-        url: '/en/browse'
+        url: '/zh-hans/browse'
     items:
       - title: Featured Products
         url: '#'
         items:
           - title: Analytics
-            url: '/en/browse/analytics'
+            url: '/zh-hans/browse/analytics'
           - title: Campaign
-            url: '/en/browse/campaign'
+            url: '/zh-hans/browse/campaign'
           - title: Commerce
-            url: '/en/browse/commerce'
+            url: '/zh-hans/browse/commerce'
           - title: Customer Journey Analytics
-            url: '/en/browse/customer-journey-analytics'
+            url: '/zh-hans/browse/customer-journey-analytics'
           - title: Data Collection
-            url: '/en/browse/experience-platform/data-collection'
+            url: '/zh-hans/browse/experience-platform/data-collection'
           - title: Experience Manager
-            url: '/en/browse/experience-manager'
+            url: '/zh-hans/browse/experience-manager'
           - title: Experience Platform
-            url: '/en/browse/experience-platform'
+            url: '/zh-hans/browse/experience-platform'
           - title: Journey Optimizer
-            url: '/en/browse/journey-optimizer'
+            url: '/zh-hans/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/en/browse/marketo/marketo-engage'
+            url: '/zh-hans/browse/marketo/marketo-engage'
           - title: Target
-            url: '/en/browse/target'
+            url: '/zh-hans/browse/target'
           - title: Real-Time CDP
-            url: '/en/browse/real-time-customer-data-platform'
+            url: '/zh-hans/browse/real-time-customer-data-platform'
           - title: Workfront
-            url: '/en/browse/workfront'
+            url: '/zh-hans/browse/workfront'
       - title: Content Types
         items:
-          - title: Recommended courses
+          - title: 推荐课程
             subtitle: Your expertly curated courses
             url: '/home#dashboard/learning'
             urlOptions:
@@ -81,46 +81,46 @@ nav:
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'
-          - title: Tutorials
+          - title: 教程
             subtitle: Solution-specific videos and how-tos
-            url: /en/docs/home-tutorials
-          - title: Certification
+            url: /zh-hans/docs/home-tutorials
+          - title: 认证
             subtitle: Proven expertise of Adobe marketing solutions
-            url: /en/docs/certification/program/overview
-          - title: Instructor-led training
+            url: /zh-hans/docs/certification/program/overview
+          - title: 讲师指导的培训
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
             urlOptions:
               target: _blank
 
-  - title: Documentation
-    url: /en/docs
+  - title: 文档
+    url: /zh-hans/docs
 
-  - title: Events
+  - title: 事件
     url: /events
 
-  - title: Community
+  - title: 社区
     items:
-      - title: Quick Links
+      - title: 快速链接
         items:
-          - title: Community home
+          - title: 社区主页
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
-          - title: Experience Cloud Advocates
-            subtitle: Meet our community of customer advocates
+          - title: Experience Cloud 倡导者
+            subtitle: 认识我们的客户倡导者社区
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
-          - title: Events
-            subtitle: Attend local and virtual events
-            url: '/events/?lang=en'
-          - title: Employee Advisors
-            subtitle: Connect with one of our experts
+          - title: 事件
+            subtitle: 参加本地和虚拟活动
+            url: '/events/?lang=zh-Hans'
+          - title: 员工顾问
+            subtitle: 与我们的专家交流
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
-          - title: Experience League Showcase
-            subtitle: Read real-world use cases of Experience Cloud products written by your peers
+          - title: Experience League 内容展示
+            subtitle: 阅读由您的同行撰写的 Experience Cloud 真实用例
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback Program
             subtitle: Influence Adobe product development
-            url: '/home?lang=en#feedback'
-      - title: Communities By Product
+            url: '/home?lang=zh-Hans#feedback'
+      - title: 社区（按产品）
         items:
           - title: Advertising Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
@@ -165,5 +165,5 @@ nav:
             urlOptions:
               target: _blank
 
-  - title: Support
+  - title: 技术支持
     url: '/home#support'

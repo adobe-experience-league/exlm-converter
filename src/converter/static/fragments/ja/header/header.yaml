@@ -4,123 +4,123 @@ productGrid:
     url: https://experience.adobe.com/
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
-signUp: 'Sign up'
-signIn: 'Sign in'
+signUp: 'サインアップ'
+signIn: 'ログイン'
 profileMenu:
-  - title: My learning profile
-    url: '/home#dashboard/profile'
-  - title: Achievements
+  - title: マイ学習プロファイル
+    url: '/home#dashboard/learning'
+  - title: 成果
     url: '/home#dashboard/awards'
-  - title: Bookmarked content
-    url: /home#dashboard/bookmarks
-  - title: Sign out
+  - title: ブックマークされたコンテンツ
+    url: /home/#dashboard/bookmarks
+  - title: ログアウト
     url: '#'
 search:
   title: Search
-  placeholder: 'Search Experience League'
+  placeholder: 'Experience League を検索'
   url: /search.html
   filters:
-    - title: All
+    - title: すべて
       contenttype: All
-    - title: Certification
+    - title: 認定制度
       contenttype: Certification
-    - title: Community
+    - title: コミュニティ
       contenttype: Community
-    - title: Courses
+    - title: コース
       contenttype: Course
-    - title: Documentation
+    - title: ドキュメント
       contenttype: Documentation
-    - title: Events
+    - title: イベント
       contenttype: Event
-    - title: Troubleshooting
+    - title: トラブルシューティング
       contenttype: Troubleshooting
-    - title: Tutorials
+    - title: チュートリアル
       contenttype: Tutorial
 languageSelector:
-  title: Change Region
+  title: 地域を変更
 nav:
-  - title: Learn
+  - title: 学習
     secondaryItems:
-      - title: Browse all content
-        url: '/en/browse'
+      - title: すべてのコンテンツを参照
+        url: '/ja/browse'
     items:
-      - title: Featured Products
+      - title: 推奨製品
         url: '#'
         items:
           - title: Analytics
-            url: '/en/browse/analytics'
+            url: '/ja/browse/analytics'
           - title: Campaign
-            url: '/en/browse/campaign'
+            url: '/ja/browse/campaign'
           - title: Commerce
-            url: '/en/browse/commerce'
+            url: '/ja/browse/commerce'
           - title: Customer Journey Analytics
-            url: '/en/browse/customer-journey-analytics'
+            url: '/ja/browse/customer-journey-analytics'
           - title: Data Collection
-            url: '/en/browse/experience-platform/data-collection'
+            url: '/ja/browse/experience-platform/data-collection'
           - title: Experience Manager
-            url: '/en/browse/experience-manager'
+            url: '/ja/browse/experience-manager'
           - title: Experience Platform
-            url: '/en/browse/experience-platform'
+            url: '/ja/browse/experience-platform'
           - title: Journey Optimizer
-            url: '/en/browse/journey-optimizer'
+            url: '/ja/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/en/browse/marketo/marketo-engage'
+            url: '/ja/browse/marketo/marketo-engage'
           - title: Target
-            url: '/en/browse/target'
+            url: '/ja/browse/target'
           - title: Real-Time CDP
-            url: '/en/browse/real-time-customer-data-platform'
+            url: '/ja/browse/real-time-customer-data-platform'
           - title: Workfront
-            url: '/en/browse/workfront'
-      - title: Content Types
+            url: '/ja/browse/workfront'
+      - title: コンテンツの種類
         items:
-          - title: Recommended courses
+          - title: おすすめのコース
             subtitle: Your expertly curated courses
             url: '/home#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
+          - title: すべてのコースを参照
             subtitle: Expertly curated collections of lessons
             url: '/home/#courses'
-          - title: Tutorials
+          - title: チュートリアル
             subtitle: Solution-specific videos and how-tos
-            url: /en/docs/home-tutorials
-          - title: Certification
+            url: /ja/docs/home-tutorials
+          - title: 認定制度
             subtitle: Proven expertise of Adobe marketing solutions
-            url: /en/docs/certification/program/overview
-          - title: Instructor-led training
+            url: /ja/docs/certification/program/overview
+          - title: インストラクター主導のトレーニング
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/catalog.html
             urlOptions:
               target: _blank
 
-  - title: Documentation
-    url: /en/docs
+  - title: ドキュメント
+    url: /ja/docs
 
-  - title: Events
+  - title: イベント
     url: /events
 
-  - title: Community
+  - title: コミュニティ
     items:
-      - title: Quick Links
+      - title: クイックリンク
         items:
-          - title: Community home
+          - title: コミュニティホーム
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
-          - title: Experience Cloud Advocates
-            subtitle: Meet our community of customer advocates
+          - title: Experience Cloud アドボケート
+            subtitle: コミュニティのカスタマーアドボケートに会う
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
-          - title: Events
-            subtitle: Attend local and virtual events
-            url: '/events/?lang=en'
-          - title: Employee Advisors
-            subtitle: Connect with one of our experts
+          - title: イベント
+            subtitle: ローカルおよびバーチャルのイベントに出席
+            url: '/events/?lang=ja'
+          - title: スタッフアドバイザー
+            subtitle: エキスパートとつながる
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
           - title: Experience League Showcase
-            subtitle: Read real-world use cases of Experience Cloud products written by your peers
+            subtitle: 他のユーザーによる Experience Cloud 製品の実際の使用例を読む
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
-          - title: Adobe Feedback Program
+          - title: Adobe フィードバックプログラム
             subtitle: Influence Adobe product development
-            url: '/home?lang=en#feedback'
-      - title: Communities By Product
+            url: '/home?lang=ja#feedback'
+      - title: 製品別コミュニティ
         items:
           - title: Advertising Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
@@ -128,7 +128,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
           - title: Audience Manager
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
-          - title: Campaign Classic v7 & Campaign v8
+          - title: Campaign Classic v7 および Campaign v8
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
           - title: Campaign Standard
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
@@ -136,7 +136,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
           - title: Experience Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
-          - title: Experience Manager Sites & More
+          - title: Experience Manager Sites など
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
           - title: Experience Platform
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en
@@ -165,5 +165,5 @@ nav:
             urlOptions:
               target: _blank
 
-  - title: Support
+  - title: サポート
     url: '/home#support'
