@@ -33,6 +33,7 @@ import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createLandingLists from './blocks/create-landing-lists.js';
 import createStaffPicksBlock from './blocks/create-staff-picks-block.js';
 import { updateAnchors } from './utils/update-anchors.js';
+import createTargetInsertion from './blocks/create-target-insertion.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -82,6 +83,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   createMetaData(document, meta, data, pageType);
   handleUrls(document, reqLang);
   updateAnchors(document);
+  createTargetInsertion(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
@@ -100,7 +102,6 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createStaffPicksBlock(document);
     createTables(document);
     createShadeBox(document);
-
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
