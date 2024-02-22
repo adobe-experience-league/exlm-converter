@@ -108,6 +108,13 @@ export default function handleUrls(document, reqLang, pageType) {
     if (pathToRewrite === null) return;
 
     if (isAbsoluteURL(pathToRewrite)) {
+      // If the absolute URL starts with https://experienceleague.adobe.com/# or https://experienceleague.adobe.com/?, return as is
+      if (
+        pathToRewrite.startsWith(`${baseUrl}/?`) ||
+        pathToRewrite.startsWith(`${baseUrl}/#`)
+      )
+        return;
+
       // make url relative if it is absolute AND has the same passed baseUrl (Prod EXL)
       let newPath = absoluteToRelative(pathToRewrite, baseUrl);
       // rewrite docs path to fix language path
