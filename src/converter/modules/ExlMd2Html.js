@@ -34,6 +34,7 @@ import createLandingLists from './blocks/create-landing-lists.js';
 import createStaffPicksBlock from './blocks/create-staff-picks-block.js';
 import { updateAnchors } from './utils/update-anchors.js';
 import createTargetInsertion from './blocks/create-target-insertion.js';
+import { createRecommendationMoreHelp } from './blocks/create-recommendation-more-help.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -83,7 +84,6 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   createMetaData(document, meta, data, pageType);
   handleUrls(document, reqLang);
   updateAnchors(document);
-  createTargetInsertion(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
@@ -114,6 +114,9 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createAccordion(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
     createDocActions(document);
+    createTargetInsertion(document);
+    // leave this at the end - UGP-10241
+    createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
   }
