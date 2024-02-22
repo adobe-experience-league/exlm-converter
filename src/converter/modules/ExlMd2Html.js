@@ -82,7 +82,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
   createMetaData(document, meta, data, pageType);
-  handleUrls(document, reqLang);
+  handleUrls(document, reqLang, pageType);
   updateAnchors(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
