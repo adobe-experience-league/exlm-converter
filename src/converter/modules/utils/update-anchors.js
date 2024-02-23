@@ -23,7 +23,7 @@ export const updateAnchors = (document) => {
     // check if id matches -1 AKA - followed by any number of digits
     if (headingEl.id) {
       if (!isMarkdownItGeneratedId(headingEl.id)) {
-        const anchor = document.createTextNode(`:anchor-${headingEl.id}:`);
+        const anchor = document.createTextNode(` :anchor-${headingEl.id}:`);
         headingEl.appendChild(anchor);
       }
     }
