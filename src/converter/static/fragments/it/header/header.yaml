@@ -80,7 +80,7 @@ nav:
               auth-only: 'true'
           - title: Sfoglia tutti i corsi
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /it/docs/home-tutorials

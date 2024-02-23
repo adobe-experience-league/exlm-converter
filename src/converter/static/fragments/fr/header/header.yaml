@@ -80,7 +80,7 @@ nav:
               auth-only: 'true'
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home#courses'
           - title: Tutoriels
             subtitle: Solution-specific videos and how-tos
             url: /fr/docs/home-tutorials

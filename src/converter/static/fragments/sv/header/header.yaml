@@ -80,7 +80,7 @@ nav:
               auth-only: 'true'
           - title: Bläddra bland alla kurser
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home#courses'
           - title: Självstudiekurser
             subtitle: Solution-specific videos and how-tos
             url: /sv/docs/home-tutorials

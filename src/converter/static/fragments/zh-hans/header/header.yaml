@@ -80,7 +80,7 @@ nav:
               auth-only: 'true'
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home#courses'
           - title: 教程
             subtitle: Solution-specific videos and how-tos
             url: /zh-hans/docs/home-tutorials

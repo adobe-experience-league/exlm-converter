@@ -80,7 +80,7 @@ nav:
               auth-only: 'true'
           - title: すべてのコースを参照
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home#courses'
           - title: チュートリアル
             subtitle: Solution-specific videos and how-tos
             url: /ja/docs/home-tutorials
