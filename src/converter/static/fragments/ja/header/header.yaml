@@ -8,11 +8,11 @@ signUp: 'サインアップ'
 signIn: 'ログイン'
 profileMenu:
   - title: マイ学習プロファイル
-    url: '/home#dashboard/learning'
+    url: '/home?lang=ja#dashboard/learning'
   - title: 成果
-    url: '/home#dashboard/awards'
+    url: '/home?lang=ja#dashboard/awards'
   - title: ブックマークされたコンテンツ
-    url: /home/#dashboard/bookmarks
+    url: /home?lang=ja#dashboard/bookmarks
   - title: ログアウト
     url: '#'
 search:
@@ -75,12 +75,12 @@ nav:
         items:
           - title: おすすめのコース
             subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
+            url: '/home?lang=ja#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: すべてのコースを参照
             subtitle: Expertly curated collections of lessons
-            url: '/home#courses'
+            url: '/home?lang=ja#courses'
           - title: チュートリアル
             subtitle: Solution-specific videos and how-tos
             url: /ja/docs/home-tutorials
@@ -97,7 +97,7 @@ nav:
     url: /ja/docs
 
   - title: イベント
-    url: /events
+    url: /events?lang=ja
 
   - title: コミュニティ
     items:
@@ -110,7 +110,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: イベント
             subtitle: ローカルおよびバーチャルのイベントに出席
-            url: '/events/?lang=ja'
+            url: '/events?lang=ja'
           - title: スタッフアドバイザー
             subtitle: エキスパートとつながる
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -166,4 +166,4 @@ nav:
               target: _blank
 
   - title: サポート
-    url: '/home#support'
+    url: '/home?lang=ja#support'

@@ -8,11 +8,11 @@ signUp: 'Registrera sig'
 signIn: 'Logga in'
 profileMenu:
   - title: Min utbildningsprofil
-    url: '/home#dashboard/learning'
+    url: '/home?lang=sv#dashboard/learning'
   - title: Achievements
-    url: '/home#dashboard/awards'
+    url: '/home?lang=sv#dashboard/awards'
   - title: Bokmärkt innehåll
-    url: /home/#dashboard/bookmarks
+    url: /home?lang=sv#dashboard/bookmarks
   - title: Logga ut
     url: '#'
 search:
@@ -75,12 +75,12 @@ nav:
         items:
           - title: Rekommenderade kurser
             subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
+            url: '/home?lang=sv#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: Bläddra bland alla kurser
             subtitle: Expertly curated collections of lessons
-            url: '/home#courses'
+            url: '/home?lang=sv#courses'
           - title: Självstudiekurser
             subtitle: Solution-specific videos and how-tos
             url: /sv/docs/home-tutorials
@@ -97,7 +97,7 @@ nav:
     url: /sv/docs
 
   - title: Event
-    url: /events
+    url: /events?lang=sv
 
   - title: Community
     items:
@@ -110,7 +110,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Event
             subtitle: Gå på lokala och virtuella event
-            url: '/events/?lang=sv'
+            url: '/events?lang=sv'
           - title: Rådgivare för anställda
             subtitle: Få kontakt med en av våra experter
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -166,4 +166,4 @@ nav:
               target: _blank
 
   - title: Support
-    url: '/home#support'
+    url: '/home?lang=sv#support'

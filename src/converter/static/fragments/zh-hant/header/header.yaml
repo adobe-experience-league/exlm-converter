@@ -8,11 +8,11 @@ signUp: 'Sign up'
 signIn: '登入'
 profileMenu:
   - title: 個人資料
-    url: '/home#dashboard/learning'
+    url: '/home?lang=zh-Hant#dashboard/learning'
   - title: 成就
-    url: '/home#dashboard/awards'
+    url: '/home?lang=zh-Hant#dashboard/awards'
   - title: 書籤
-    url: /home/#dashboard/bookmarks
+    url: /home?lang=zh-Hant#dashboard/bookmarks
   - title: 登出
     url: '#'
 search:
@@ -75,12 +75,12 @@ nav:
         items:
           - title: 建議課程
             subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
+            url: '/home?lang=zh-Hant#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
-            url: '/home#courses'
+            url: '/home?lang=zh-Hant#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /zh-hant/docs/home-tutorials
@@ -97,7 +97,7 @@ nav:
     url: /zh-hant/docs
 
   - title: 事件
-    url: /events
+    url: /events?lang=zh-Hant
 
   - title: 社群
     items:
@@ -110,7 +110,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: 事件
             subtitle: 出席本機及虛擬事件
-            url: '/events/?lang=zh-Hant'
+            url: '/events?lang=zh-Hant'
           - title: 員工顧問
             subtitle: 與我們的專家交流
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -166,4 +166,4 @@ nav:
               target: _blank
 
   - title: 支援
-    url: '/home#support'
+    url: '/home?lang=zh-Hant#support'

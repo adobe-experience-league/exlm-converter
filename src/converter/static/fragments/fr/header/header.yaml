@@ -8,11 +8,11 @@ signUp: 'Se connecter'
 signIn: 'Se connecter'
 profileMenu:
   - title: Mon profil d’apprentissage
-    url: '/home#dashboard/learning'
+    url: '/home?lang=fr#dashboard/learning'
   - title: Réalisations
-    url: '/home#dashboard/awards'
+    url: '/home?lang=fr#dashboard/awards'
   - title: Contenu mis en signet
-    url: /home/#dashboard/bookmarks
+    url: /home?lang=fr#dashboard/bookmarks
   - title: Se déconnecter
     url: '#'
 search:
@@ -75,12 +75,12 @@ nav:
         items:
           - title: Cours recommandés
             subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
+            url: '/home?lang=fr#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: Browse all courses
             subtitle: Expertly curated collections of lessons
-            url: '/home#courses'
+            url: '/home?lang=fr#courses'
           - title: Tutoriels
             subtitle: Solution-specific videos and how-tos
             url: /fr/docs/home-tutorials
@@ -97,7 +97,7 @@ nav:
     url: /fr/docs
 
   - title: Événements
-    url: /events
+    url: /events?lang=fr
 
   - title: Communauté
     items:
@@ -110,7 +110,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Événements
             subtitle: Participation à des événements virtuels et locaux
-            url: '/events/?lang=fr'
+            url: '/events?lang=fr'
           - title: Spécialistes internes
             subtitle: Entrer en contact avec nos spécialistes
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -166,4 +166,4 @@ nav:
               target: _blank
 
   - title: Assistance
-    url: '/home#support'
+    url: '/home?lang=fr#support'
