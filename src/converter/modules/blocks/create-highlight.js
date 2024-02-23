@@ -22,5 +22,12 @@ export default function createHighlight(document) {
       const highlightEl = toHighlightedEl(document, textNode);
       replaceElement(textNode, toHighlightedEl(document, highlightEl));
     });
+
+    // move all the children of the preview element to the parent
+    // and then remove the preview element
+    while (previewEl.firstChild) {
+      previewEl.parentNode.insertBefore(previewEl.firstChild, previewEl);
+    }
+    previewEl.remove();
   });
 }
