@@ -8,11 +8,11 @@ signUp: 'Inschrijven'
 signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
-    url: '/home#dashboard/learning'
+    url: '/home?lang=nl#dashboard/learning'
   - title: Successen
-    url: '/home#dashboard/awards'
+    url: '/home?lang=nl#dashboard/awards'
   - title: Inhoud met bladwijzers
-    url: /home/#dashboard/bookmarks
+    url: /home?lang=nl#dashboard/bookmarks
   - title: Afmelden
     url: '#'
 search:
@@ -75,12 +75,12 @@ nav:
         items:
           - title: Aanbevolen cursussen
             subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
+            url: '/home?lang=nl#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: Blader door alle cursussen
             subtitle: Expertly curated collections of lessons
-            url: '/home/#courses'
+            url: '/home?lang=nl#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /nl/docs/home-tutorials
@@ -97,7 +97,7 @@ nav:
     url: /nl/docs
 
   - title: Evenementen
-    url: /events
+    url: /events?lang=nl
 
   - title: Community
     items:
@@ -110,7 +110,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Evenementen
             subtitle: Lokale en virtuele evenementen bijwonen
-            url: '/events/?lang=nl'
+            url: '/events?lang=nl'
           - title: Adobe-adviseurs
             subtitle: Leg contact met een van onze experts
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
@@ -166,4 +166,4 @@ nav:
               target: _blank
 
   - title: Ondersteuning
-    url: '/home#support'
+    url: '/home?lang=nl#support'
