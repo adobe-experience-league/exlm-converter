@@ -12,6 +12,7 @@ import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
+import createHighlight from './blocks/create-highlight.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
 import createShadeBox from './blocks/create-shade-box.js';
@@ -98,6 +99,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createBadge(document);
     createRelatedArticles(document);
     createNote(document);
+    createHighlight(document);
     createTabs(document);
     createStaffPicksBlock(document);
     createTables(document);
