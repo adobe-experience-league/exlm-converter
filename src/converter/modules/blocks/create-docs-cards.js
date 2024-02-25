@@ -1,12 +1,12 @@
 import { replaceElement, toBlock } from '../utils/dom-utils.js';
 
 const createButton = (document, href, text) => {
-  const strong = document.createElement('strong');
+  const em = document.createElement('em');
   const a = document.createElement('a');
   a.href = href;
   a.textContent = text;
-  strong.appendChild(a);
-  return strong;
+  em.appendChild(a);
+  return em;
 };
 
 /**
