@@ -26,7 +26,7 @@ export default function createDocsCards(document) {
         const headline = cardContent.querySelector('.headline');
         const cardHeadline = document.createElement('p');
         const cardHeadlineStrong = document.createElement('strong');
-        cardHeadlineStrong.textContent = headline.textContent;
+        cardHeadlineStrong.innerHTML = headline.innerHTML;
         cardHeadline.appendChild(cardHeadlineStrong);
 
         // card text
