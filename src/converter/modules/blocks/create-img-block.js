@@ -1,11 +1,14 @@
 import { toBlock } from '../utils/dom-utils.js';
 
 const getDecorateImgConfig = (img) => {
+  const isParentAnchor =
+    img?.parentNode?.tagName?.trim()?.toLowerCase() === 'a';
   let className = '';
   if (img?.align) {
     className += ` ${img.align}-align`;
   }
   if (img?.parentNode?.tagName?.trim()?.toLowerCase() === 'center') {
+    img.parentElement.replaceWith(...img.parentElement.childNodes);
     className += `center-align`;
   }
   if (img?.width) {
@@ -15,7 +18,7 @@ const getDecorateImgConfig = (img) => {
     className += ` modal-image`;
   }
   return {
-    canDecorate: !!className,
+    canDecorate: !!className && !isParentAnchor,
     className,
   };
 };

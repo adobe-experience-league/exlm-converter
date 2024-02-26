@@ -19,24 +19,6 @@ export function isAbsoluteURL(url) {
 }
 
 /**
- * Removes the ".html" extension from the last segment of a URL's path.
- *
- * @param {string} inputURL - The input URL that you want to modify.
- * @returns {string} The modified URL with the ".html" extension removed from the last path segment.
- */
-function removeHtmlExtensionFromURL(inputURL) {
-  const url = new URL(inputURL);
-  const pathSegments = url.pathname.split('/');
-
-  pathSegments[pathSegments.length - 1] = pathSegments[
-    pathSegments.length - 1
-  ].replace(/\.html$/, '');
-  url.pathname = pathSegments.join('/');
-
-  return url.toString();
-}
-
-/**
  * Converts an absolute URL to a relative URL within the context of a base URL.
  *
  * @param {string} url - The absolute URL to be converted.
@@ -50,8 +32,7 @@ function absoluteToRelative(url, baseUrl) {
   // if baseUrl and provided url have different origins, return url as is.
   if (absolute.origin !== base.origin) return url;
 
-  const urlWithoutExtension = removeHtmlExtensionFromURL(url);
-  const relativeUrl = urlWithoutExtension.split(baseUrl).pop();
+  const relativeUrl = url.split(baseUrl).pop();
   return relativeUrl;
 }
 
@@ -69,9 +50,18 @@ export function isAssetPath(docsPath) {
   return false;
 }
 
+const isIgnoredDocsPath = (path) =>
+  ['/docs/courses/', '/docs/assets/'].some((ignoredPath) =>
+    path.startsWith(ignoredPath),
+  );
+
 export function rewriteDocsPath(docsPath) {
-  if (!docsPath.startsWith('/docs') || isAssetPath(docsPath)) {
-    return docsPath; // not a docs path or if asset path, return as is
+  if (
+    !docsPath.startsWith('/docs') ||
+    isAssetPath(docsPath) ||
+    isIgnoredDocsPath(docsPath)
+  ) {
+    return docsPath; // not a docs path or might be an asset path or ignored path.
   }
 
   const TEMP_BASE = 'https://localhost';
@@ -108,15 +98,17 @@ export default function handleUrls(document, reqLang, pageType) {
     if (pathToRewrite === null) return;
 
     if (isAbsoluteURL(pathToRewrite)) {
-      // If the absolute URL starts with https://experienceleague.adobe.com/# or https://experienceleague.adobe.com/?, return as is
-      if (
-        pathToRewrite.startsWith(`${baseUrl}/?`) ||
-        pathToRewrite.startsWith(`${baseUrl}/#`)
-      )
-        return;
-
       // make url relative if it is absolute AND has the same passed baseUrl (Prod EXL)
       let newPath = absoluteToRelative(pathToRewrite, baseUrl);
+
+      if (
+        pageType === DOCPAGETYPE.DOC_LANDING &&
+        (newPath.startsWith(`/?`) || newPath.startsWith(`/#`))
+      ) {
+        // Update newPath to "/home" and append the original query string or hash
+        newPath = newPath.replace(/^\/?/, '/home');
+      }
+
       // rewrite docs path to fix language path
       newPath = rewriteDocsPath(newPath);
       el.href = newPath;

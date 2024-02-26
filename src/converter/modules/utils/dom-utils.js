@@ -3,6 +3,7 @@ import yaml from 'js-yaml';
 import { DOCPAGETYPE } from '../../doc-page-types.js';
 
 global.Node = new jsdom.JSDOM().window.Node;
+global.NodeFilter = new jsdom.JSDOM().window.NodeFilter;
 
 /**
  * @param {string} className
@@ -396,4 +397,27 @@ export const groupWithParagraphs = (document, nodes) => {
     result.push(currentParagraph);
   }
   return result;
+};
+
+/**
+ *
+ * @param {Document} document
+ * @param {HTMLElement} element
+ * @returns {Node[]}
+ */
+export const getAllDecendantTextNodes = (document, element) => {
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false,
+  );
+  const textNodes = [];
+  while (walker.nextNode()) {
+    const { currentNode } = walker;
+    if (currentNode.textContent.trim().length !== 0) {
+      textNodes.push(walker.currentNode);
+    }
+  }
+  return textNodes;
 };

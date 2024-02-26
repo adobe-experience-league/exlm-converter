@@ -12,6 +12,7 @@ import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
+import createHighlight from './blocks/create-highlight.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
 import createShadeBox from './blocks/create-shade-box.js';
@@ -35,6 +36,7 @@ import createStaffPicksBlock from './blocks/create-staff-picks-block.js';
 import { updateAnchors } from './utils/update-anchors.js';
 import createTargetInsertion from './blocks/create-target-insertion.js';
 import { createRecommendationMoreHelp } from './blocks/create-recommendation-more-help.js';
+import createDocsCards from './blocks/create-docs-cards.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -98,6 +100,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createBadge(document);
     createRelatedArticles(document);
     createNote(document);
+    createHighlight(document);
     createTabs(document);
     createStaffPicksBlock(document);
     createTables(document);
@@ -115,6 +118,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createBreadcrumbs(document, meta, pageType, reqLang);
     createDocActions(document);
     createTargetInsertion(document);
+    createDocsCards(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
