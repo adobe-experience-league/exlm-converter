@@ -8,6 +8,7 @@ const getDecorateImgConfig = (img) => {
     className += ` ${img.align}-align`;
   }
   if (img?.parentNode?.tagName?.trim()?.toLowerCase() === 'center') {
+    img.parentElement.replaceWith(...img.parentElement.childNodes);
     className += `center-align`;
   }
   if (img?.width) {
