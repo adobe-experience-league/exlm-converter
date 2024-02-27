@@ -77,7 +77,7 @@ export function rewriteDocsPath(docsPath) {
   }
   url.pathname = pathname;
   // return full path without origin
-  return url.toString().replace(TEMP_BASE, '');
+  return url.toString().toLowerCase().replace(TEMP_BASE, '');
 }
 
 /**
@@ -116,7 +116,7 @@ export default function handleUrls(document, reqLang, pageType) {
       // landing page specifically can contain solution urls that look like this: "journey-optimizer.html" we need to transform that to the proper docs path.
       if (!pathToRewrite.includes('/') && pathToRewrite.endsWith('.html')) {
         const newPath = removeExtension(pathToRewrite);
-        el.href = `/${reqLang.toLowerCase()}/docs/${newPath}`;
+        el.href = `/${reqLang.toLowerCase()}/docs/${newPath.toLowerCase()}`;
       }
     }
   });

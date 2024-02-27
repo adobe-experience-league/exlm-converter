@@ -64,7 +64,7 @@ nav:
           - title: Journey Optimizer
             url: '/zh-hans/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/zh-hans/browse/marketo/marketo-engage'
+            url: '/zh-hans/browse/marketo-engage'
           - title: Target
             url: '/zh-hans/browse/target'
           - title: Real-Time CDP
@@ -89,7 +89,7 @@ nav:
             url: /zh-hans/docs/certification/program/overview
           - title: 讲师指导的培训
             subtitle: Live & on-demand courses led by Adobe-certified instructors
-            url: https://learning.adobe.com/catalog.html
+            url: https://learning.adobe.com/
             urlOptions:
               target: _blank
 
@@ -153,7 +153,7 @@ nav:
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
             urlOptions:
               target: _blank
           - title: Commerce

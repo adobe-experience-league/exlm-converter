@@ -64,7 +64,7 @@ nav:
           - title: Journey Optimizer
             url: '/ja/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/ja/browse/marketo/marketo-engage'
+            url: '/ja/browse/marketo-engage'
           - title: Target
             url: '/ja/browse/target'
           - title: Real-Time CDP
@@ -89,7 +89,7 @@ nav:
             url: /ja/docs/certification/program/overview
           - title: インストラクター主導のトレーニング
             subtitle: Live & on-demand courses led by Adobe-certified instructors
-            url: https://learning.adobe.com/catalog.html
+            url: https://learning.adobe.com/
             urlOptions:
               target: _blank
 
@@ -104,56 +104,56 @@ nav:
       - title: クイックリンク
         items:
           - title: コミュニティホーム
-            url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/?profile.language=ja
           - title: Experience Cloud アドボケート
             subtitle: コミュニティのカスタマーアドボケートに会う
-            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=ja
           - title: イベント
             subtitle: ローカルおよびバーチャルのイベントに出席
             url: '/events?lang=ja'
           - title: スタッフアドバイザー
             subtitle: エキスパートとつながる
-            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=ja
           - title: Experience League Showcase
             subtitle: 他のユーザーによる Experience Cloud 製品の実際の使用例を読む
-            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=ja
           - title: Adobe フィードバックプログラム
             subtitle: Influence Adobe product development
             url: '/home?lang=ja#feedback'
       - title: 製品別コミュニティ
         items:
           - title: Advertising Cloud
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=ja
           - title: Analytics
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=ja
           - title: Audience Manager
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=ja
           - title: Campaign Classic v7 および Campaign v8
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=ja
           - title: Campaign Standard
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=ja
           - title: Developer
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=ja
           - title: Experience Cloud
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=ja
           - title: Experience Manager Sites など
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=ja
           - title: Experience Platform
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=ja
           - title: Journey Optimizer
-            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=ja
           - title: Target
-            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=en
+            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=ja
           - title: Real-Time CDP
-            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=ja
           - title: Workfront
-            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
+            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=ja
           - title: Creative Cloud
             url: 'https://community.adobe.com/#_blank'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=ja&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
             urlOptions:
               target: _blank
           - title: Commerce
