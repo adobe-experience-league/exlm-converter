@@ -64,7 +64,7 @@ nav:
           - title: Journey Optimizer
             url: '/ja/browse/journey-optimizer'
           - title: Marketo Engage
-            url: '/ja/browse/marketo/marketo-engage'
+            url: '/ja/browse/marketo-engage'
           - title: Target
             url: '/ja/browse/target'
           - title: Real-Time CDP
@@ -89,7 +89,7 @@ nav:
             url: /ja/docs/certification/program/overview
           - title: インストラクター主導のトレーニング
             subtitle: Live & on-demand courses led by Adobe-certified instructors
-            url: https://learning.adobe.com/catalog.html
+            url: https://learning.adobe.com/
             urlOptions:
               target: _blank
 
@@ -153,7 +153,7 @@ nav:
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
             urlOptions:
               target: _blank
           - title: Commerce
