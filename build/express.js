@@ -11,12 +11,21 @@
  */
 import express from 'express';
 import dotenv from 'dotenv';
-import { render } from '../src/index.js';
+import { render } from '../src/converter/index.js';
+import { main as khorosMain } from '../src/khoros/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
 
 const dotEnvFile = 'build/.local.env';
 dotenv.config({ path: dotEnvFile });
-const { AEM_AUTHOR_URL, OWNER, REPO, BRANCH, ACCESS_TOKEN } = process.env;
+const {
+  AEM_AUTHOR_URL,
+  OWNER,
+  REPO,
+  BRANCH,
+  ACCESS_TOKEN,
+  KHOROS_ORIGIN,
+  KHOROS_API_SECRET,
+} = process.env;
 
 // https://stackoverflow.com/a/75916716
 const isBase64 = (str) => {
@@ -43,7 +52,7 @@ const port = 3030;
  * @param {import('express').Response} res
  * @returns
  */
-const handler = async (req, res) => {
+const converterHandler = async (req, res) => {
   const { path, query } = req;
 
   const params = {
@@ -55,11 +64,14 @@ const handler = async (req, res) => {
     authorization: `Bearer ${ACCESS_TOKEN}`,
   };
 
-  const { body, headers, md, original, error } = await render(path, params);
+  const { body, headers, md, original, error, statusCode } = await render(
+    path,
+    params,
+  );
 
   if (error) {
-    res.status(error.code || 503);
-    res.send(error.message);
+    res.status(error.code || statusCode || 503);
+    res.send(error);
     return;
   }
   // set headers as they are.
@@ -78,6 +90,27 @@ const handler = async (req, res) => {
   }
 };
 
-app.get('/**', handler);
+const khorosHandler = async (req, res) => {
+  const { path: originalPath, query, headers } = req;
+  const path = originalPath.replace('/khoros', '');
+
+  console.log({
+    query,
+  });
+
+  const params = {
+    __ow_path: path,
+    __ow_headers: headers,
+    khorosApiSecret: KHOROS_API_SECRET,
+    khorosOrigin: KHOROS_ORIGIN,
+  };
+
+  const { body, statusCode } = await khorosMain(params);
+  res.status(statusCode || 200);
+  res.send(body);
+};
+
+app.get('/khoros/**', khorosHandler);
+app.get('/**', converterHandler);
 
 app.listen(port, () => console.log(`Converter listening on port ${port}`));

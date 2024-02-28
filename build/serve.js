@@ -1,7 +1,7 @@
 import { join, dirname } from 'path';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
-import { watchAction } from './bundle-action.js';
+import { doForEachAction, watchAction } from './build-helpers.js';
 
 const filename = fileURLToPath(import.meta.url);
 const currentDirectory = dirname(filename);
@@ -30,18 +30,27 @@ const execute = async (command, desc) =>
     });
   });
 
+const buildPromises = [];
 // watch for change in action, bundle it, then restart express server
-watchAction(() => {
-  const nodeMon = join(
-    currentDirectory,
-    '..',
-    'node_modules',
-    '.bin',
-    'nodemon',
+doForEachAction(({ entryPoint, outfile }) => {
+  buildPromises.push(
+    new Promise((resolve) => {
+      watchAction({
+        esbuildOverrides: {
+          entryPoints: [entryPoint],
+          outfile,
+        },
+        onFirstBuild: () => {
+          resolve();
+        },
+      });
+    }),
   );
-  const express = join(currentDirectory, 'express.js');
-  const dist = join(currentDirectory, '..', 'dist');
-  const distBundle = join(currentDirectory, '..', 'dist', 'index.js');
-  const command = `${nodeMon} ${express} --inspect ${distBundle} --watch ${dist}`;
-  execute(command, 'nodemon');
 });
+
+await Promise.all(buildPromises);
+const nodeMon = join(currentDirectory, '..', 'node_modules', '.bin', 'nodemon');
+const express = join(currentDirectory, 'express.js');
+const dist = join(currentDirectory, '..', 'dist');
+const command = `${nodeMon} ${express} --watch ${dist}`;
+execute(command, 'nodemon');

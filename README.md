@@ -47,7 +47,7 @@ ACCESS_TOKEN=<token>
 
 ## Deployment
 
-The action is built and deployed by a [github workflow](../../.github/workflows/deploy-action.yaml).
+The action is built and deployed by a [github workflow](.github/workflows/deploy-action.yaml).
 
 To deploy the action manually use the App Builder CLI. The [Getting Started guide for AIO Runtime](https://developer.adobe.com/runtime/docs/guides/getting-started/setup/#creating-a-namespace-and-retrieving-the-credentials) provides detailed steps to setup a local environment.
 
@@ -69,7 +69,10 @@ The action requires the follwoing environment variables/secrets to be set:
 | `AIO_RUNTIME_NAMESPACE` | secret |
 | `OWNER`                 | var    |
 | `REPO`                  | var    |
+| `BRANCH`                | var    |
 | `AEM_AUTHOR_URL`        | var    |
+| `KHOROS_ORIGIN`         | secret |
+| `KHOROS_API_SECRET`     | secret |
 
 ## Debugging common issues
 

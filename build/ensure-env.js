@@ -6,7 +6,14 @@ const requireMember = (name, obj) => {
   }
 };
 
-const COMMON = ['AEM_AUTHOR_URL', 'OWNER', 'REPO', 'BRANCH'];
+const COMMON = [
+  'AEM_AUTHOR_URL',
+  'OWNER',
+  'REPO',
+  'BRANCH',
+  'KHOROS_ORIGIN',
+  'KHOROS_API_SECRET',
+];
 const EXPRESS = ['ACCESS_TOKEN'];
 
 export function ensureBuildEnv() {
