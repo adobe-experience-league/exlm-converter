@@ -11,7 +11,7 @@ const urlWithOptions = (url, options) => {
     const defaultBase = 'https://invalid.adobe.com';
     const u = new URL(url, defaultBase);
     if (options) {
-      u.hash = `${url.hash || ''}${JSON.stringify(options)}`;
+      u.hash = `${u.hash || ''}${JSON.stringify(options)}`;
     }
     if (u.origin === defaultBase) {
       // the url is relative, remove base
