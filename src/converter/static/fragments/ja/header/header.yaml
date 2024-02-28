@@ -149,19 +149,19 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=ja
           - title: Creative Cloud
-            url: 'https://community.adobe.com/#_blank'
+            url: 'https://community.adobe.com'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=ja&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=ja&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: 'https://community.magento.com/#_blank'
+            url: 'https://community.magento.com'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: 'https://nation.marketo.com/#_blank'
+            url: 'https://nation.marketo.com'
             urlOptions:
               target: _blank
 
