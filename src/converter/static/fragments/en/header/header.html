@@ -10,8 +10,8 @@
   <%- block("brand", [[`<a href="/">Experience League</a>`]])%>
   <!-- Navigation Items -->
   <%- block("nav", [[nav(header.nav)]])%>
-  <!-- sign up button -->
-  <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
+  <!-- sign in -->
+  <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
   <!-- Search -->
   <%- block( "search", [ [`
   <a href="${header.search.url}">${header.search.title}</a>
@@ -23,8 +23,6 @@
   <%- block("language-selector", [[ `
   <p>${header.languageSelector.title}</p>
   `, ]]) %>
-  <!-- sign in -->
-  <%- block("sign-in", [[`<a href="#">${header.signIn}</a>`]]) %>
   <!-- profile menu -->
   <%- block("profile-menu", [[profileMenu(header.profileMenu)]]) %>
   <!-- product grid -->

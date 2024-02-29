@@ -4,7 +4,6 @@ productGrid:
     url: https://experience.adobe.com/
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
-signUp: 'Inschrijven'
 signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
