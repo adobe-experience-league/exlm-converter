@@ -11,7 +11,7 @@ profileMenu:
     url: '/home?lang=it#dashboard/learning'
   - title: Risultati
     url: '/home?lang=it#dashboard/awards'
-  - title: Contenuto con segnalibro
+  - title: Contenuto con segnalibri
     url: /home?lang=it#dashboard/bookmarks
   - title: Esci
     url: '#'
@@ -37,14 +37,14 @@ search:
     - title: Tutorials
       contenttype: Tutorial
 languageSelector:
-  title: Cambia regione
+  title: Cambia area geografica
 nav:
   - title: Scopri
     secondaryItems:
       - title: Sfoglia tutti i contenuti
         url: '/it/browse'
     items:
-      - title: Prodotti sponsorizzati
+      - title: Prodotti in primo piano
         url: '#'
         items:
           - title: Analytics
@@ -74,21 +74,21 @@ nav:
       - title: Tipi di contenuto
         items:
           - title: Corsi consigliati
-            subtitle: Your expertly curated courses
+            subtitle: I tuoi corsi curati da esperti
             url: '/home?lang=it#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: Sfoglia tutti i corsi
-            subtitle: Expertly curated collections of lessons
+            subtitle: Raccolte di lezioni curate da esperti
             url: '/home?lang=it#courses'
           - title: Tutorials
-            subtitle: Solution-specific videos and how-tos
+            subtitle: Video e guide pratiche per specifiche soluzioni
             url: /it/docs/home-tutorials
           - title: Certificazione
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Esperienza comprovata nelle soluzioni Adobe per il marketing
             url: /it/docs/certification/program/overview
           - title: Corsi con istruttore
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Corsi live e on-demand con istruttori con certificazione Adobe
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -118,7 +118,7 @@ nav:
             subtitle: Casi d’uso reali dei prodotti Experience Cloud descritti da altri professionisti come te
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Programma di feedback
-            subtitle: Influence Adobe product development
+            subtitle: Influenza lo sviluppo dei prodotti Adobe
             url: '/home?lang=it#feedback'
       - title: Community per prodotto
         items:

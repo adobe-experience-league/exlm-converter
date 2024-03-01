@@ -7,11 +7,11 @@ productGrid:
 signUp: 'Sign up'
 signIn: 'Anmelden'
 profileMenu:
-  - title: Profil
+  - title: Meu perfil de aprendizagem
     url: '/home?lang=pt-BR#dashboard/learning'
   - title: Erfolge
     url: '/home?lang=pt-BR#dashboard/awards'
-  - title: Lesezeichen
+  - title: Conteúdo marcado
     url: /home?lang=pt-BR#dashboard/bookmarks
   - title: Abmelden
     url: '#'
@@ -37,14 +37,14 @@ search:
     - title: Tutorials
       contenttype: Tutorial
 languageSelector:
-  title: Change Region
+  title: Alterar região
 nav:
   - title: Lernressourcen
     secondaryItems:
-      - title: Browse all content
+      - title: Procurar em todo o conteúdo
         url: '/pt-br/browse'
     items:
-      - title: Featured Products
+      - title: Produtos em destaque
         url: '#'
         items:
           - title: Analytics
@@ -71,24 +71,24 @@ nav:
             url: '/pt-br/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/pt-br/browse/workfront'
-      - title: Content Types
+      - title: Tipos de conteúdo
         items:
           - title: Cursos recomendados
-            subtitle: Your expertly curated courses
+            subtitle: Seus cursos com curadoria especializada
             url: '/home?lang=pt-BR#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
+          - title: Procurar todos os cursos
+            subtitle: Coleções de lições com curadoria especializada
             url: '/home?lang=pt-BR#courses'
           - title: Tutorials
-            subtitle: Solution-specific videos and how-tos
+            subtitle: Vídeos específicos da solução e instruções
             url: /pt-br/docs/home-tutorials
           - title: Zertifizierung
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Experiência comprovada em soluções de marketing da Adobe
             url: /pt-br/docs/certification/program/overview
           - title: Inhaltsbibliothek durchsuchen
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Cursos ao vivo e sob demanda com instrutores certificados pela Adobe
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -118,7 +118,7 @@ nav:
             subtitle: Echte Nutzungsszenarios für Experience Cloud-Produkte, erstellt von Kolleginnen und Kollegen
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=pt
           - title: Adobe Programa de feedback
-            subtitle: Influence Adobe product development
+            subtitle: Influenciar o desenvolvimento de produtos da Adobe
             url: '/home?lang=pt-br#feedback'
       - title: Communities nach Produkt
         items:

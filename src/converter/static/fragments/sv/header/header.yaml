@@ -7,7 +7,7 @@ productGrid:
 signUp: 'Registrera sig'
 signIn: 'Logga in'
 profileMenu:
-  - title: Min utbildningsprofil
+  - title: Min studieprofil
     url: '/home?lang=sv#dashboard/learning'
   - title: Achievements
     url: '/home?lang=sv#dashboard/awards'
@@ -44,7 +44,7 @@ nav:
       - title: Bläddra bland allt innehåll
         url: '/sv/browse'
     items:
-      - title: Utvalda produkter
+      - title: Presenterade produkter
         url: '#'
         items:
           - title: Analytics
@@ -71,24 +71,24 @@ nav:
             url: '/sv/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/sv/browse/workfront'
-      - title: Typer av innehåll
+      - title: Innehållstyper
         items:
           - title: Rekommenderade kurser
-            subtitle: Your expertly curated courses
+            subtitle: Dina kurser som satts samman av experter
             url: '/home?lang=sv#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: Bläddra bland alla kurser
-            subtitle: Expertly curated collections of lessons
+            subtitle: Samlingar med lektioner som satts samman av experter
             url: '/home?lang=sv#courses'
           - title: Självstudiekurser
-            subtitle: Solution-specific videos and how-tos
+            subtitle: Lösningsspecifika videor och instruktioner
             url: /sv/docs/home-tutorials
           - title: Certifiering
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Beprövad expertis i Adobes marknadsföringslösningar
             url: /sv/docs/certification/program/overview
           - title: Instruktörsledd utbildning
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Live- och on demand-kurser som leds av Adobe-certifierade instruktörer
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -118,7 +118,7 @@ nav:
             subtitle: Verkliga scenarier med Experience Cloud-produkter skrivna av andra användare
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedbackprogram
-            subtitle: Influence Adobe product development
+            subtitle: Påverka Adobes produktutveckling
             url: '/home?lang=sv#feedback'
       - title: Communities efter produkt
         items:
