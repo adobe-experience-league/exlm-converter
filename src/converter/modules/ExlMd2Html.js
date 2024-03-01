@@ -33,6 +33,7 @@ import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createLandingLists from './blocks/create-landing-lists.js';
 import createStaffPicksBlock from './blocks/create-staff-picks-block.js';
+import createUpcomingEventsBlock from './blocks/create-upcoming-events-block.js';
 import { updateAnchors } from './utils/update-anchors.js';
 import createTargetInsertion from './blocks/create-target-insertion.js';
 import { createRecommendationMoreHelp } from './blocks/create-recommendation-more-help.js';
@@ -103,6 +104,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createHighlight(document);
     createTabs(document);
     createStaffPicksBlock(document);
+    createUpcomingEventsBlock(document);
     createTables(document);
     createShadeBox(document);
     createCodeBlock(document);

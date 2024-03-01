@@ -4,14 +4,13 @@ productGrid:
     url: https://experience.adobe.com/
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
-signUp: 'Sign up'
 signIn: '登入'
 profileMenu:
-  - title: 個人資料
+  - title: 我的學習個人資料
     url: '/home?lang=zh-Hant#dashboard/learning'
   - title: 成就
     url: '/home?lang=zh-Hant#dashboard/awards'
-  - title: 書籤
+  - title: 已建立書籤的內容
     url: /home?lang=zh-Hant#dashboard/bookmarks
   - title: 登出
     url: '#'
@@ -37,14 +36,14 @@ search:
     - title: Tutorials
       contenttype: Tutorial
 languageSelector:
-  title: Change Region
+  title: 切換地區
 nav:
-  - title: Learn
+  - title: 學習
     secondaryItems:
-      - title: Browse all content
+      - title: 瀏覽所有內容
         url: '/zh-hant/browse'
     items:
-      - title: Featured Products
+      - title: 精選產品
         url: '#'
         items:
           - title: Analytics
@@ -71,24 +70,24 @@ nav:
             url: '/zh-hant/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/zh-hant/browse/workfront'
-      - title: Content Types
+      - title: 內容類型
         items:
           - title: 建議課程
-            subtitle: Your expertly curated courses
+            subtitle: 您精選的課程
             url: '/home?lang=zh-Hant#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
+          - title: 瀏覽所有課程
+            subtitle: 精選的課程集合
             url: '/home?lang=zh-Hant#courses'
-          - title: Tutorials
-            subtitle: Solution-specific videos and how-tos
+          - title: 教學課程
+            subtitle: 解決方案特定視訊和操作說明
             url: /zh-hant/docs/home-tutorials
           - title: 認證
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: 經過驗證的 Adobe 行銷解決方案專業知識
             url: /zh-hant/docs/certification/program/overview
           - title: 導學型培訓
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: 由 Adobe 認證的講師授課的現場和隨選課程
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -118,7 +117,7 @@ nav:
             subtitle: 閱讀同級同事所撰寫Experience Cloud產品的真實使用案例
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe 回饋方案
-            subtitle: Influence Adobe product development
+            subtitle: 影響 Adobe 產品開發
             url: '/home?lang=zh-Hant#feedback'
       - title: 各產品的社群
         items:
@@ -149,19 +148,19 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
           - title: Creative Cloud
-            url: 'https://community.adobe.com/#_blank'
+            url: 'https://community.adobe.com'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: 'https://community.magento.com/#_blank'
+            url: 'https://community.magento.com'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: 'https://nation.marketo.com/#_blank'
+            url: 'https://nation.marketo.com'
             urlOptions:
               target: _blank
 
