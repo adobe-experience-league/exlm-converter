@@ -4,7 +4,6 @@ productGrid:
     url: https://experience.adobe.com/
   - title: Adobe Document Cloud
     url: https://documentcloud.adobe.com/link/home/
-signUp: 'Sign up'
 signIn: '로그인'
 profileMenu:
   - title: 프로필
