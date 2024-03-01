@@ -10,7 +10,7 @@ profileMenu:
     url: '/home?lang=ja#dashboard/learning'
   - title: 成果
     url: '/home?lang=ja#dashboard/awards'
-  - title: ブックマークされたコンテンツ
+  - title: ブックマークしたコンテンツ
     url: /home?lang=ja#dashboard/bookmarks
   - title: ログアウト
     url: '#'
@@ -43,7 +43,7 @@ nav:
       - title: すべてのコンテンツを参照
         url: '/ja/browse'
     items:
-      - title: 推奨製品
+      - title: 注目の製品
         url: '#'
         items:
           - title: Analytics
@@ -70,24 +70,24 @@ nav:
             url: '/ja/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/ja/browse/workfront'
-      - title: コンテンツの種類
+      - title: コンテンツタイプ
         items:
           - title: おすすめのコース
-            subtitle: Your expertly curated courses
+            subtitle: エキスパートが厳選したコース
             url: '/home?lang=ja#dashboard/learning'
             urlOptions:
               auth-only: 'true'
           - title: すべてのコースを参照
-            subtitle: Expertly curated collections of lessons
+            subtitle: エキスパートが厳選したレッスン集
             url: '/home?lang=ja#courses'
           - title: チュートリアル
-            subtitle: Solution-specific videos and how-tos
+            subtitle: ソリューション固有のビデオとハウツー
             url: /ja/docs/home-tutorials
           - title: 認定制度
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: アドビのマーケティングソリューションの確かな専門知識
             url: /ja/docs/certification/program/overview
           - title: インストラクター主導のトレーニング
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Adobe Certified Instructor によるライブ＆オンデマンドコース
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -117,7 +117,7 @@ nav:
             subtitle: 他のユーザーによる Experience Cloud 製品の実際の使用例を読む
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=ja
           - title: Adobe フィードバックプログラム
-            subtitle: Influence Adobe product development
+            subtitle: アドビ製品開発への影響力
             url: '/home?lang=ja#feedback'
       - title: 製品別コミュニティ
         items:
@@ -148,19 +148,19 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=ja
           - title: Creative Cloud
-            url: 'https://community.adobe.com/#_blank'
+            url: 'https://community.adobe.com'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=ja&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=ja&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: 'https://community.magento.com/#_blank'
+            url: 'https://community.magento.com'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: 'https://nation.marketo.com/#_blank'
+            url: 'https://nation.marketo.com'
             urlOptions:
               target: _blank
 

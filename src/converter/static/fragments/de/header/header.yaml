@@ -6,11 +6,11 @@ productGrid:
     url: https://documentcloud.adobe.com/link/home/
 signIn: 'Anmelden'
 profileMenu:
-  - title: Mein Lern profil
+  - title: Mein Lernprofil
     url: '/home?lang=de#dashboard/profile'
   - title: Erfolge
     url: '/home?lang=de#dashboard/awards'
-  - title: Mit Lesezeichen versehene Inhalte
+  - title: Inhalt mit Lesezeichen
     url: /home?lang=de#dashboard/bookmarks
   - title: Abmelden
     url: '#'
@@ -70,24 +70,24 @@ nav:
             url: '/de/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/de/browse/workfront'
-      - title: Inhaltstypen
+      - title: Content-Typen
         items:
           - title: Empfohlene Kurse
-            subtitle: Your expertly curated courses
+            subtitle: Ihre von Fachleuten kuratierten Kurse
             url: '/home?lang=de#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
+          - title: Alle Kurse durchsuchen
+            subtitle: Von Fachleuten kuratierte Sammlungen von Lektionen
             url: '/home?lang=de#courses'
           - title: Tutorials
-            subtitle: Solution-specific videos and how-tos
+            subtitle: Lösungsspezifische Videos und Anleitungen
             url: /de/docs/home-tutorials
           - title: Zertifizierung
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Bewährte Kompetenz von Adobe-Marketing-Lösungen
             url: /de/docs/certification/program/overview
           - title: Schulungen mit Kursleiter
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Live- und On-Demand-Kurse unter Leitung von Adobe-zertifizierten Lehrkräften
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -117,7 +117,7 @@ nav:
             subtitle: Echte Nutzungsszenarios für Experience Cloud-Produkte, erstellt von Kolleginnen und Kollegen
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=de
           - title: Adobe Feedback-Programm
-            subtitle: Einfluss auf die Adobe-Produktentwicklung nehmen
+            subtitle: Einfluss auf die Produktentwicklung von Adobe
             url: '/home?lang=de#feedback'
       - title: Communities nach Produkt
         items:
@@ -148,19 +148,19 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=de
           - title: Creative Cloud
-            url: 'https://community.adobe.com/#_blank'
+            url: 'https://community.adobe.com'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=de&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=de&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: 'https://community.magento.com/#_blank'
+            url: 'https://community.magento.com'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: 'https://nation.marketo.com/#_blank'
+            url: 'https://nation.marketo.com'
             urlOptions:
               target: _blank
 

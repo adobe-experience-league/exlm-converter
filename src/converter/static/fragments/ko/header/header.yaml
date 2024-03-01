@@ -6,11 +6,11 @@ productGrid:
     url: https://documentcloud.adobe.com/link/home/
 signIn: '로그인'
 profileMenu:
-  - title: 프로필
+  - title: 내 학습 프로필
     url: '/home?lang=ko#dashboard/learning'
   - title: 도전 과제
     url: '/home?lang=ko#dashboard/awards'
-  - title: 책갈피
+  - title: 책갈피가 표시된 콘텐츠
     url: /home?lang=ko#dashboard/bookmarks
   - title: 로그아웃
     url: '#'
@@ -36,14 +36,14 @@ search:
     - title: Tutorials
       contenttype: Tutorial
 languageSelector:
-  title: Change Region
+  title: 지역 변경
 nav:
   - title: 학습
     secondaryItems:
-      - title: Browse all content
+      - title: 전체 콘텐츠 찾아보기
         url: '/ko/browse'
     items:
-      - title: Featured Products
+      - title: 주요 제품
         url: '#'
         items:
           - title: Analytics
@@ -70,24 +70,24 @@ nav:
             url: '/ko/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/ko/browse/workfront'
-      - title: Content Types
+      - title: 콘텐츠 유형
         items:
           - title: 추천 과정
-            subtitle: Your expertly curated courses
+            subtitle: 전문적으로 선별된 교육 과정
             url: '/home?lang=ko#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
+          - title: 전체 과정 찾아보기
+            subtitle: 전문적으로 선별된 학습 컬렉션
             url: '/home?lang=ko#courses'
           - title: Tutorials
-            subtitle: Solution-specific videos and how-tos
+            subtitle: 솔루션별 비디오 및 사용 방법
             url: /ko/docs/home-tutorials
           - title: Certification
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Adobe 마케팅 솔루션에 대한 검증된 전문 지식
             url: /ko/docs/certification/program/overview
           - title: Instructor-led training
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Adobe 인증 강사가 진행하는 라이브 및 온디맨드 과정
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -117,7 +117,7 @@ nav:
             subtitle: 동료가 작성한 Experience Cloud 제품의 실제 사용 사례 읽기
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe 피드백 프로그램
-            subtitle: Influence Adobe product development
+            subtitle: Adobe 제품 개발에 영향
             url: '/home?lang=ko#feedback'
       - title: 제품별 커뮤니티
         items:
@@ -148,19 +148,19 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
           - title: Creative Cloud
-            url: 'https://community.adobe.com/#_blank'
+            url: 'https://community.adobe.com'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: 'https://community.magento.com/#_blank'
+            url: 'https://community.magento.com'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: 'https://nation.marketo.com/#_blank'
+            url: 'https://nation.marketo.com'
             urlOptions:
               target: _blank
 

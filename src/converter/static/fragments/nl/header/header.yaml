@@ -10,7 +10,7 @@ profileMenu:
     url: '/home?lang=nl#dashboard/learning'
   - title: Successen
     url: '/home?lang=nl#dashboard/awards'
-  - title: Inhoud met bladwijzers
+  - title: Gebookmarkte content
     url: /home?lang=nl#dashboard/bookmarks
   - title: Afmelden
     url: '#'
@@ -40,10 +40,10 @@ languageSelector:
 nav:
   - title: Training
     secondaryItems:
-      - title: Blader door alle inhoud
+      - title: Bladeren in alle content
         url: '/nl/browse'
     items:
-      - title: Uitgelichte producten
+      - title: Aanbevolen producten
         url: '#'
         items:
           - title: Analytics
@@ -70,24 +70,24 @@ nav:
             url: '/nl/browse/real-time-customer-data-platform'
           - title: Workfront
             url: '/nl/browse/workfront'
-      - title: Soorten inhoud
+      - title: Contenttypen
         items:
           - title: Aanbevolen cursussen
-            subtitle: Your expertly curated courses
+            subtitle: Uw deskundig samengestelde cursussen
             url: '/home?lang=nl#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Blader door alle cursussen
-            subtitle: Expertly curated collections of lessons
+          - title: Door alle cursussen bladeren
+            subtitle: Deskundig samengestelde verzamelingen van lessen
             url: '/home?lang=nl#courses'
           - title: Tutorials
-            subtitle: Solution-specific videos and how-tos
+            subtitle: Oplossingsspecifieke video's en instructies
             url: /nl/docs/home-tutorials
           - title: Certificering
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Bewezen expertise in Adobe-marketingoplossingen
             url: /nl/docs/certification/program/overview
           - title: Training onder leiding van instructeurs
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Live en on demand-cursussen onder leiding van Adobe Certified Instructors
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -117,7 +117,7 @@ nav:
             subtitle: Lees alles over ervaringen met Experience Cloud-producten uit de praktijk, geschreven door uw collega's
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Feedback-programma
-            subtitle: Influence Adobe product development
+            subtitle: Invloed op Adobe-productontwikkeling
             url: '/home?lang=nl#feedback'
       - title: Communities per product
         items:
@@ -148,19 +148,19 @@ nav:
           - title: Workfront
             url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
           - title: Creative Cloud
-            url: 'https://community.adobe.com/#_blank'
+            url: 'https://community.adobe.com'
             urlOptions:
               target: _blank
           - title: Document Cloud
-            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions#_blank'
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
             urlOptions:
               target: _blank
           - title: Commerce
-            url: 'https://community.magento.com/#_blank'
+            url: 'https://community.magento.com'
             urlOptions:
               target: _blank
           - title: Marketo Engage
-            url: 'https://nation.marketo.com/#_blank'
+            url: 'https://nation.marketo.com'
             urlOptions:
               target: _blank
 
