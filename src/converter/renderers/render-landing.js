@@ -14,7 +14,7 @@ export default async function renderLanding(path) {
 
   let landingName = 'home';
   let pageType = DOCPAGETYPE.DOC_LANDING;
-  if (lang && solution) {
+  if (lang && solution && solution !== 'home') {
     landingName = solution;
     pageType = DOCPAGETYPE.SOLUTION_LANDING;
   }
