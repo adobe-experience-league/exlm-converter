@@ -49,11 +49,11 @@ try {
  */
 export const render = async function render(path, params) {
   if (isLandingPath(path)) {
-    return renderLanding(path);
+    return renderLanding(path, dir);
   }
 
   if (isDocsPath(path)) {
-    return renderDoc(path);
+    return renderDoc(path, dir);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
