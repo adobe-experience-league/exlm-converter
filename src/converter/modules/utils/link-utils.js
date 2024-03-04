@@ -91,6 +91,7 @@ let regexRedirects;
  * @returns
  */
 const getRedirect = (path, dir) => {
+  if (!path.startsWith('/')) return path; // not a relative path
   if (!oneToOneRedirects) {
     const oneToOneJsonFilePath = join(
       dir,
@@ -121,18 +122,19 @@ const getRedirect = (path, dir) => {
   // look in one-to-one redirects
   if (oneToOneRedirects[srcPath]) {
     srcUrl.pathname = oneToOneRedirects[srcPath];
-  }
-
-  // look in regex redirects
-  for (let i = 0; i < regexRedirects.length; i += 1) {
-    const redirect = regexRedirects[i];
-    const matches = redirect.regex.exec(srcPath);
-    if (matches && matches.length > 0) {
-      const replacement = matches.length >= 1 ? matches[1] : '';
-      // eslint-disable-next-line no-template-curly-in-string
-      srcUrl.pathname = redirect.to.replace('${path}', replacement);
+  } else {
+    // look in regex redirects
+    for (let i = 0; i < regexRedirects.length; i += 1) {
+      const redirect = regexRedirects[i];
+      const matches = redirect.regex.exec(srcPath);
+      if (matches && matches.length > 0) {
+        const replacement = matches.length >= 1 ? matches[1] : '';
+        // eslint-disable-next-line no-template-curly-in-string
+        srcUrl.pathname = redirect.to.replace('${path}', replacement);
+      }
     }
   }
+
   return srcUrl.toString().toLowerCase().replace(TEMP_BASE, '');
 };
 
