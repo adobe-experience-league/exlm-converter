@@ -7,7 +7,7 @@ import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
 /**
  * handles a markdown doc path
  */
-export default async function renderLanding(path) {
+export default async function renderLanding(path, dir) {
   const {
     params: { lang, solution },
   } = matchLandingPath(path);
@@ -39,13 +39,14 @@ export default async function renderLanding(path) {
     const potentialDuplicateAnchors = Object.values(LANDING_IDS);
     md = dedupeAnchors(md, potentialDuplicateAnchors);
 
-    const { convertedHtml, originalHtml } = await md2html(
-      md,
+    const { convertedHtml, originalHtml } = await md2html({
+      mdString: md,
       meta,
-      {},
+      data: {},
       pageType,
-      lang,
-    );
+      reqLang: lang,
+      dir,
+    });
     return {
       body: convertedHtml,
       headers: {

@@ -7,7 +7,7 @@ import { matchDocsPath } from '../modules/utils/path-match-utils.js';
 /**
  * handles a markdown doc path
  */
-export default async function renderDoc(path) {
+export default async function renderDoc(path, dir) {
   const {
     params: { lang, solution, docRelPath },
   } = matchDocsPath(path);
@@ -30,13 +30,14 @@ export default async function renderDoc(path) {
   if (article) {
     const md = article.FullBody;
     const meta = article.FullMeta;
-    const { convertedHtml, originalHtml } = await md2html(
-      md,
+    const { convertedHtml, originalHtml } = await md2html({
+      mdString: md,
       meta,
-      article,
-      DOCPAGETYPE.DOC_ARTICLE,
-      lang,
-    );
+      data: article,
+      pageType: DOCPAGETYPE.DOC_ARTICLE,
+      reqLang: lang,
+      dir,
+    });
     return {
       body: convertedHtml,
       headers: {
