@@ -12,9 +12,18 @@ export default async function renderLanding(path) {
     params: { lang, solution },
   } = matchLandingPath(path);
 
+  if (solution === 'home') {
+    return {
+      error: new Error(
+        `this path is invalid: ${path}, please use /<lang>/docs instead for home page.`,
+      ),
+    };
+  }
+
+  // default to landing page (in case solution is not provided)
   let landingName = 'home';
   let pageType = DOCPAGETYPE.DOC_LANDING;
-  if (lang && solution) {
+  if (lang && solution && solution !== 'home') {
     landingName = solution;
     pageType = DOCPAGETYPE.SOLUTION_LANDING;
   }
