@@ -1,4 +1,5 @@
 const fs = require('fs');
+// eslint-disable-next-line import/no-unresolved
 const PCRE = require('pcre-to-regexp');
 const ConfigParser = require('./nginx-parser.js');
 
