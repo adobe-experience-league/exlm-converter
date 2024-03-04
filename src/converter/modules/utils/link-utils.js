@@ -1,7 +1,10 @@
+import { join } from 'path';
+import { readFileSync } from 'fs';
 import { removeExtension } from './path-utils.js';
 import { getMatchLanguage } from './language-utils.js';
 import { DOCPAGETYPE } from '../../doc-page-types.js';
 
+const TEMP_BASE = 'https://localhost';
 /**
  * Checks if a URL is an absolute URL.
  *
@@ -64,7 +67,6 @@ export function rewriteDocsPath(docsPath) {
     return docsPath; // not a docs path or might be an asset path or ignored path.
   }
 
-  const TEMP_BASE = 'https://localhost';
   const url = new URL(docsPath, TEMP_BASE);
   const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
@@ -80,6 +82,62 @@ export function rewriteDocsPath(docsPath) {
   return url.toString().toLowerCase().replace(TEMP_BASE, '');
 }
 
+let oneToOneRedirects;
+let regexRedirects;
+/**
+ * get redirect for link, if any
+ * @param {string} path relative path to be redirected
+ * @param {string} dir dir where the redirect json files exist
+ * @returns
+ */
+const getRedirect = (path, dir) => {
+  if (!path.startsWith('/')) return path; // not a relative path
+  if (!oneToOneRedirects) {
+    const oneToOneJsonFilePath = join(
+      dir,
+      'static',
+      'redirects',
+      'one-to-one-redirects.json',
+    );
+    const str = readFileSync(oneToOneJsonFilePath, 'utf8');
+    oneToOneRedirects = JSON.parse(str);
+  }
+  if (!regexRedirects) {
+    const regexJsonFilePath = join(
+      dir,
+      'static',
+      'redirects',
+      'regex-redirects.json',
+    );
+    const str = readFileSync(regexJsonFilePath, 'utf8');
+    const obj = JSON.parse(str);
+    regexRedirects = Object.entries(obj).map(([key, value]) => ({
+      regex: new RegExp(key),
+      to: value,
+    }));
+  }
+  const srcUrl = new URL(path, TEMP_BASE);
+  const srcPath = srcUrl.pathname;
+
+  // look in one-to-one redirects
+  if (oneToOneRedirects[srcPath]) {
+    srcUrl.pathname = oneToOneRedirects[srcPath];
+  } else {
+    // look in regex redirects
+    for (let i = 0; i < regexRedirects.length; i += 1) {
+      const redirect = regexRedirects[i];
+      const matches = redirect.regex.exec(srcPath);
+      if (matches && matches.length > 0) {
+        const replacement = matches.length >= 1 ? matches[1] : '';
+        // eslint-disable-next-line no-template-curly-in-string
+        srcUrl.pathname = redirect.to.replace('${path}', replacement);
+      }
+    }
+  }
+
+  return srcUrl.toString().toLowerCase().replace(TEMP_BASE, '');
+};
+
 /**
  * Handles converting absolute URLs to relative URLs for links and images within a document.
  *
@@ -87,7 +145,7 @@ export function rewriteDocsPath(docsPath) {
  * @param {string} reqLang - The language code for the requested language.
  * @param {string} pageType - The type of page being processed.
  */
-export default function handleUrls(document, reqLang, pageType) {
+export default function handleUrls(document, reqLang, pageType, dir) {
   const elements = document.querySelectorAll('a');
   if (!elements) return;
 
@@ -100,6 +158,9 @@ export default function handleUrls(document, reqLang, pageType) {
     if (isAbsoluteURL(pathToRewrite)) {
       // make url relative if it is absolute AND has the same passed baseUrl (Prod EXL)
       let newPath = absoluteToRelative(pathToRewrite, baseUrl);
+
+      // handle redirects
+      newPath = getRedirect(newPath, dir);
 
       if (
         pageType === DOCPAGETYPE.DOC_LANDING &&

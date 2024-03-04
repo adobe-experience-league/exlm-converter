@@ -7,14 +7,23 @@ import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
 /**
  * handles a markdown doc path
  */
-export default async function renderLanding(path) {
+export default async function renderLanding(path, dir) {
   const {
     params: { lang, solution },
   } = matchLandingPath(path);
 
+  if (solution === 'home') {
+    return {
+      error: new Error(
+        `this path is invalid: ${path}, please use /<lang>/docs instead for home page.`,
+      ),
+    };
+  }
+
+  // default to landing page (in case solution is not provided)
   let landingName = 'home';
   let pageType = DOCPAGETYPE.DOC_LANDING;
-  if (lang && solution) {
+  if (lang && solution && solution !== 'home') {
     landingName = solution;
     pageType = DOCPAGETYPE.SOLUTION_LANDING;
   }
@@ -30,13 +39,14 @@ export default async function renderLanding(path) {
     const potentialDuplicateAnchors = Object.values(LANDING_IDS);
     md = dedupeAnchors(md, potentialDuplicateAnchors);
 
-    const { convertedHtml, originalHtml } = await md2html(
-      md,
+    const { convertedHtml, originalHtml } = await md2html({
+      mdString: md,
       meta,
-      {},
+      data: {},
       pageType,
-      lang,
-    );
+      reqLang: lang,
+      dir,
+    });
     return {
       body: convertedHtml,
       headers: {
