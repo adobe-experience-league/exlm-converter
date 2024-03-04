@@ -52,7 +52,14 @@ const doAmf = (md) => {
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
 };
 
-export default async function md2html(mdString, meta, data, pageType, reqLang) {
+export default async function md2html({
+  mdString,
+  meta,
+  data,
+  pageType,
+  reqLang,
+  dir,
+}) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -85,7 +92,7 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
   createMetaData(document, meta, data, pageType);
-  handleUrls(document, reqLang, pageType);
+  handleUrls(document, reqLang, pageType, dir);
   updateAnchors(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
