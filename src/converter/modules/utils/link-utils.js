@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 import { removeExtension } from './path-utils.js';
 import { getMatchLanguage } from './language-utils.js';
+import { DOCPAGETYPE } from '../../doc-page-types.js';
 
 const TEMP_BASE = 'https://localhost';
 const EXPERIENCE_LEAGE_BASE = 'https://experienceleague.adobe.com';
@@ -149,9 +150,17 @@ export default function handleUrls(document, reqLang, pageType, dir) {
     if (!isAbsoluteExlUrl && isHttp) return; // external link
 
     // not absolute, not slash, not starting with docs
-    // it's a relative url like: <a href="dynamic-media-developer-resources">
+    // it's a relative url like: <a href="dynamic-media-developer-resources.html"> or <a href="journey-optimizer.html">
     // remove extension and return
     if (!isAbsoluteExlUrl && !isSlashUrl) {
+      // landing pages are an exception
+      if (pageType === DOCPAGETYPE.DOC_LANDING) {
+        // landing page specifically can contain solution urls that look like this: "journey-optimizer.html" we need to transform that to the proper docs path.
+        if (!pathToRewrite.includes('/') && pathToRewrite.endsWith('.html')) {
+          pathToRewrite = `/${reqLang.toLowerCase()}/docs/${pathToRewrite.toLowerCase()}`;
+        }
+      }
+
       // relative url that does not start withb / - remove extension if any
       el.href = removeExtension(pathToRewrite);
       return;
