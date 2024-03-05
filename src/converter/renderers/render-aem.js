@@ -24,7 +24,8 @@ function transformHTML(htmlString, aemAuthorUrl) {
   const metaTags = document.querySelectorAll('meta[name="image"]');
   metaTags.forEach((el) => {
     const uri = el.getAttribute('content');
-    if (uri.startsWith('/') && !isAbsoluteURL(uri)) el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
+    if (uri.startsWith('/') && !isAbsoluteURL(uri))
+      el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   return dom.serialize();
 }
