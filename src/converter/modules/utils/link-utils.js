@@ -145,14 +145,13 @@ export default function handleUrls(document, reqLang, pageType, dir) {
       pathToRewrite.startsWith('http://') ||
       pathToRewrite.startsWith('https://');
     const isSlashUrl = pathToRewrite.startsWith('/');
-    const startsWithDocs = pathToRewrite.startsWith('/docs');
 
     if (!isAbsoluteExlUrl && isHttp) return; // external link
 
     // not absolute, not slash, not starting with docs
     // it's a relative url like: <a href="dynamic-media-developer-resources">
     // remove extension and return
-    if (!isAbsoluteExlUrl && !isSlashUrl && !startsWithDocs) {
+    if (!isAbsoluteExlUrl && !isSlashUrl) {
       // relative url that does not start withb / - remove extension if any
       el.href = removeExtension(pathToRewrite);
       return;
