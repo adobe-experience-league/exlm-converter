@@ -19,5 +19,5 @@ export default function createArticleMetaData(document, meta) {
 
   const cells = [[articleMetaDivTag]];
   const block = toBlock('article-metadata', cells, document);
-  headerElement.parentNode.insertBefore(block, headerElement.nextSibling);
+  headerElement?.parentNode.insertBefore(block, headerElement.nextSibling);
 }
