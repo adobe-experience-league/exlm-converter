@@ -2,9 +2,9 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 import { removeExtension } from './path-utils.js';
 import { getMatchLanguage } from './language-utils.js';
-import { DOCPAGETYPE } from '../../doc-page-types.js';
 
 const TEMP_BASE = 'https://localhost';
+const EXPERIENCE_LEAGE_BASE = 'https://experienceleague.adobe.com';
 /**
  * Checks if a URL is an absolute URL.
  *
@@ -19,24 +19,6 @@ export function isAbsoluteURL(url) {
   } catch (e) {
     return false;
   }
-}
-
-/**
- * Converts an absolute URL to a relative URL within the context of a base URL.
- *
- * @param {string} url - The absolute URL to be converted.
- * @param {string} baseUrl - The base URL used as a reference for creating a relative URL.
- * @returns {string} Returns the relative URL.
- */
-function absoluteToRelative(url, baseUrl) {
-  const absolute = new URL(url);
-  const base = new URL(baseUrl);
-
-  // if baseUrl and provided url have different origins, return url as is.
-  if (absolute.origin !== base.origin) return url;
-
-  const relativeUrl = url.split(baseUrl).pop();
-  return relativeUrl;
 }
 
 export function isAssetPath(docsPath) {
@@ -149,37 +131,44 @@ export default function handleUrls(document, reqLang, pageType, dir) {
   const elements = document.querySelectorAll('a');
   if (!elements) return;
 
-  const baseUrl = 'https://experienceleague.adobe.com';
   elements.forEach((el) => {
-    const pathToRewrite = el.getAttribute('href');
+    let pathToRewrite = el.getAttribute('href');
 
     if (pathToRewrite === null) return;
 
-    if (isAbsoluteURL(pathToRewrite)) {
-      // make url relative if it is absolute AND has the same passed baseUrl (Prod EXL)
-      let newPath = absoluteToRelative(pathToRewrite, baseUrl);
+    if (pathToRewrite.startsWith('mailto:')) return;
+    if (pathToRewrite.startsWith('tel:')) return;
+    if (pathToRewrite.startsWith('#')) return;
 
-      // handle redirects
-      newPath = getRedirect(newPath, dir);
+    const isAbsoluteExlUrl = pathToRewrite.startsWith(EXPERIENCE_LEAGE_BASE);
+    const isHttp =
+      pathToRewrite.startsWith('http://') ||
+      pathToRewrite.startsWith('https://');
+    const isSlashUrl = pathToRewrite.startsWith('/');
+    const startsWithDocs = pathToRewrite.startsWith('/docs');
 
-      if (
-        pageType === DOCPAGETYPE.DOC_LANDING &&
-        (newPath.startsWith(`/?`) || newPath.startsWith(`/#`))
-      ) {
-        // Update newPath to "/home" and append the original query string or hash
-        newPath = newPath.replace(/^\/?/, '/home');
-      }
+    if (!isAbsoluteExlUrl && isHttp) return; // external link
 
-      // rewrite docs path to fix language path
-      newPath = rewriteDocsPath(newPath);
-      el.href = newPath;
-    } else if (pageType === DOCPAGETYPE.DOC_LANDING) {
-      // landing page specifically can contain solution urls that look like this: "journey-optimizer.html" we need to transform that to the proper docs path.
-      if (!pathToRewrite.includes('/') && pathToRewrite.endsWith('.html')) {
-        const newPath = removeExtension(pathToRewrite);
-        el.href = `/${reqLang.toLowerCase()}/docs/${newPath.toLowerCase()}`;
-      }
+    // not absolute, not slash, not starting with docs
+    // it's a relative url like: <a href="dynamic-media-developer-resources">
+    // remove extension and return
+    if (!isAbsoluteExlUrl && !isSlashUrl && !startsWithDocs) {
+      // relative url that does not start withb / - remove extension if any
+      el.href = removeExtension(pathToRewrite);
+      return;
     }
+
+    // if the path is absolute, convert it to a relative path
+    if (isAbsoluteExlUrl) {
+      pathToRewrite = pathToRewrite.replace(EXPERIENCE_LEAGE_BASE, '');
+    }
+
+    // handle redirects
+    pathToRewrite = getRedirect(pathToRewrite, dir);
+    // rewrite docs path to fix language path
+    pathToRewrite = rewriteDocsPath(pathToRewrite);
+
+    el.href = pathToRewrite;
   });
 }
 
