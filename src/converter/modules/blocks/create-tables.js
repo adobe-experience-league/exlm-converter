@@ -92,14 +92,21 @@ export default function createTables(document) {
         }
       }
 
+      if (table.querySelector('tfoot')) variations.push(`table-with-footer`);
+
       /** @type {HTMLElement[]} */
       const $rows = [];
+      const $tfootRows = [];
       Array.from(table.children).forEach((child) => {
         if (
           child.tagName.toLowerCase() === 'thead' ||
           child.tagName.toLowerCase() === 'tbody'
         ) {
           $rows.push(...Array.from(child.children));
+        }
+
+        if (child.tagName.toLowerCase() === 'tfoot') {
+          $tfootRows.push(...Array.from(child.children));
         }
       });
 
@@ -109,7 +116,7 @@ export default function createTables(document) {
           return groupWithParagraphs(document, cellChildren);
         }),
       );
-
+      result.push($tfootRows);
       replaceElement(
         table,
         toBlock(`table ${variations.join(' ')}`, result, document),
