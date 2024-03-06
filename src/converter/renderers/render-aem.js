@@ -16,10 +16,16 @@ function transformHTML(htmlString, aemAuthorUrl) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
-  const elements = document.querySelectorAll('img');
-  elements.forEach((el) => {
+  const images = document.querySelectorAll('img');
+  images.forEach((el) => {
     const uri = el.getAttribute('src');
     if (!isAbsoluteURL(uri)) el.src = relativeToAbsolute(uri, aemAuthorUrl);
+  });
+  const metaTags = document.querySelectorAll('meta[name="image"]');
+  metaTags.forEach((el) => {
+    const uri = el.getAttribute('content');
+    if (uri.startsWith('/') && !isAbsoluteURL(uri))
+      el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   return dom.serialize();
 }
