@@ -95,8 +95,7 @@ export default function createTables(document) {
         cell.querySelectorAll('strong').forEach((strongElement) => {
           getAllDecendantTextNodes(document, strongElement).forEach(
             (textNode) => {
-              const highlightEl = convertToStrong(document, textNode);
-              replaceElement(textNode, convertToStrong(document, highlightEl));
+              replaceElement(textNode, convertToStrong(document, textNode));
             },
           );
 
