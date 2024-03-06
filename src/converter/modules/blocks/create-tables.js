@@ -42,7 +42,8 @@ export default function createTables(document) {
 
       if (table.querySelector('tfoot')) {
         tfoot = table.querySelector('tfoot');
-        // table.querySelector('tfoot').remove();
+        table.querySelector('tfoot').remove();
+        table.append(tfoot);
         variations.push('with-tfoot');
       }
 
