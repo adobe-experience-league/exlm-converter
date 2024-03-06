@@ -18,7 +18,7 @@ export default function createBreadcrumbs(document, meta, pageType, reqLang) {
           const { url, uri } = breadcrumb;
           let href = url || uri; // in case the metadta value contains url or uri
           if (href) {
-            href = rewriteDocsPath(href); // rewrite docs path to fix language path
+            href = rewriteDocsPath(href, reqLang); // rewrite docs path to fix language path
             anchorTag.setAttribute('href', href);
             anchorTag.textContent = breadcrumb.title;
             metaDivTag.append(anchorTag);

@@ -59,8 +59,10 @@ const previewThenPublish = async (path) => {
 const files = await readdirRecursive(FRAGMENTS_PATH);
 // Publish all fragments asynchronously
 await Promise.all(
-  files.map((file) => {
-    const path = relative(SRC_PATH, file);
-    return previewThenPublish(path);
-  }),
+  files
+    .filter((file) => file.endsWith('.html'))
+    .map((file) => {
+      const path = relative(SRC_PATH, file);
+      return previewThenPublish(path);
+    }),
 );
