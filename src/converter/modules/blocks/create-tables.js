@@ -2,6 +2,7 @@ import {
   toBlock,
   replaceElement,
   groupWithParagraphs,
+  getAllDecendantTextNodes,
 } from '../utils/dom-utils.js';
 
 function rgbToHex(rgbString) {
@@ -21,16 +22,30 @@ function rgbToHex(rgbString) {
   return r + g + b;
 }
 
+const convertToStrong = (document, textNode) => {
+  const strong = document.createElement('strong');
+  strong.innerHTML = textNode.textContent;
+  return strong;
+};
+
 /**
  * @param {Document} document
  */
 export default function createTables(document) {
   const tables = Array.from(document.getElementsByTagName('table'));
   let result = [];
+  let tfoot;
 
   if (tables.length) {
     tables.forEach((table) => {
       const variations = [];
+
+      if (table.querySelector('tfoot')) {
+        tfoot = table.querySelector('tfoot');
+        table.querySelector('tfoot').remove();
+        table.append(tfoot);
+        variations.push('with-tfoot');
+      }
 
       // Number of cells in a row.
       let cells = table.querySelectorAll('tr');
@@ -76,6 +91,22 @@ export default function createTables(document) {
         if (cell.getAttribute('height')) {
           variations.push(`${i}-height-${cell.getAttribute('height')}`);
         }
+
+        cell.querySelectorAll('strong').forEach((strongElement) => {
+          getAllDecendantTextNodes(document, strongElement).forEach(
+            (textNode) => {
+              replaceElement(textNode, convertToStrong(document, textNode));
+            },
+          );
+
+          while (strongElement.firstChild) {
+            strongElement.parentNode.insertBefore(
+              strongElement.firstChild,
+              strongElement,
+            );
+          }
+          strongElement.remove();
+        });
       });
 
       // Auto or Fixed variation
@@ -109,6 +140,11 @@ export default function createTables(document) {
           return groupWithParagraphs(document, cellChildren);
         }),
       );
+
+      if (tfoot) {
+        const cellChildren = Array.from(tfoot.children);
+        result.push([...groupWithParagraphs(document, cellChildren)]);
+      }
 
       replaceElement(
         table,
