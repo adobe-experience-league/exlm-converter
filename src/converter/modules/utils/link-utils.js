@@ -41,7 +41,7 @@ const isIgnoredDocsPath = (path) =>
     path.startsWith(ignoredPath),
   );
 
-export function rewriteDocsPath(docsPath) {
+export function rewriteDocsPath(docsPath, reqLang) {
   if (
     !docsPath.startsWith('/docs') ||
     isAssetPath(docsPath) ||
@@ -51,7 +51,7 @@ export function rewriteDocsPath(docsPath) {
   }
 
   const url = new URL(docsPath, TEMP_BASE);
-  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  const lang = url.searchParams.get('lang') || reqLang;
   url.searchParams.delete('lang');
   const rewriteLang = getMatchLanguage(lang) || lang.split('-')[0];
   let pathname = `${rewriteLang.toLowerCase()}${url.pathname}`;
@@ -174,7 +174,7 @@ export default function handleUrls(document, reqLang, pageType, dir) {
     // handle redirects
     pathToRewrite = getRedirect(pathToRewrite, dir);
     // rewrite docs path to fix language path
-    pathToRewrite = rewriteDocsPath(pathToRewrite);
+    pathToRewrite = rewriteDocsPath(pathToRewrite, reqLang);
 
     el.href = pathToRewrite;
   });
