@@ -2,7 +2,7 @@ import {
   toBlock,
   replaceElement,
   groupWithParagraphs,
-  wrapWithParagraphs,
+  getAllDecendantTextNodes,
 } from '../utils/dom-utils.js';
 
 function rgbToHex(rgbString) {
@@ -22,6 +22,12 @@ function rgbToHex(rgbString) {
   return r + g + b;
 }
 
+const convertToStrong = (document, textNode) => {
+  const strong = document.createElement('strong');
+  strong.innerHTML = textNode.textContent;
+  return strong;
+};
+
 /**
  * @param {Document} document
  */
@@ -36,7 +42,7 @@ export default function createTables(document) {
 
       if (table.querySelector('tfoot')) {
         tfoot = table.querySelector('tfoot');
-        table.querySelector('tfoot').remove();
+        // table.querySelector('tfoot').remove();
         variations.push('with-tfoot');
       }
 
@@ -84,6 +90,23 @@ export default function createTables(document) {
         if (cell.getAttribute('height')) {
           variations.push(`${i}-height-${cell.getAttribute('height')}`);
         }
+
+        cell.querySelectorAll('strong').forEach((strongElement) => {
+          getAllDecendantTextNodes(document, strongElement).forEach(
+            (textNode) => {
+              const highlightEl = convertToStrong(document, textNode);
+              replaceElement(textNode, convertToStrong(document, highlightEl));
+            },
+          );
+
+          while (strongElement.firstChild) {
+            strongElement.parentNode.insertBefore(
+              strongElement.firstChild,
+              strongElement,
+            );
+          }
+          strongElement.remove();
+        });
       });
 
       // Auto or Fixed variation
@@ -121,12 +144,6 @@ export default function createTables(document) {
       if (tfoot) {
         const cellChildren = Array.from(tfoot.childNodes);
         result.push([...groupWithParagraphs(document, cellChildren)]);
-
-        const nodes = [];
-        tfoot.querySelectorAll('*').forEach((node) => {
-          nodes.push(node);
-        });
-        wrapWithParagraphs(document, nodes);
       }
 
       replaceElement(
