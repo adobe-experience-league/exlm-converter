@@ -2,6 +2,7 @@ import {
   toBlock,
   replaceElement,
   groupWithParagraphs,
+  wrapWithParagraphs,
 } from '../utils/dom-utils.js';
 
 function rgbToHex(rgbString) {
@@ -119,7 +120,13 @@ export default function createTables(document) {
 
       if (tfoot) {
         const cellChildren = Array.from(tfoot.childNodes);
-        result.push(Array.from(groupWithParagraphs(document, cellChildren)));
+        result.push([...groupWithParagraphs(document, cellChildren)]);
+
+        const nodes = [];
+        tfoot.querySelectorAll('*').forEach((node) => {
+          nodes.push(node);
+        });
+        wrapWithParagraphs(document, nodes);
       }
 
       replaceElement(

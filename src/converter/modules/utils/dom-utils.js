@@ -374,6 +374,7 @@ const isInlineElement = (element) =>
  */
 export const groupWithParagraphs = (document, nodes) => {
   const result = [];
+  // console.log(nodes)
   let currentParagraph = document.createElement('p');
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < nodes.length; i++) {
@@ -397,6 +398,23 @@ export const groupWithParagraphs = (document, nodes) => {
     result.push(currentParagraph);
   }
   return result;
+};
+
+function wrap(el, wrapper) {
+  el.parentNode.insertBefore(wrapper, el);
+  wrapper.appendChild(el);
+}
+
+export const wrapWithParagraphs = (document, nodes) => {
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    const currentParagraph = document.createElement('p');
+    // encountered a block level element
+    if (node.nodeType === Node.ELEMENT_NODE && isInlineElement(node)) {
+      wrap(node, currentParagraph);
+    }
+  }
 };
 
 /**
