@@ -11,5 +11,5 @@ export default function createBackToBrowsing(document) {
   const cells = [[metaDivTag]];
   const block = toBlock('back-to-browsing', cells, document);
 
-  headerElement?.parentNode?.prepend(block, headerElement);
+  headerElement?.parentNode?.prepend(block);
 }

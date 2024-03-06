@@ -126,10 +126,10 @@ export default async function md2html({
     createImgBlock(document);
     createAccordion(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
-    createBackToBrowsing(document);
     createDocActions(document);
     createTargetInsertion(document);
     createDocsCards(document);
+    createBackToBrowsing(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
