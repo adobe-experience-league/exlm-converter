@@ -27,17 +27,10 @@ function rgbToHex(rgbString) {
 export default function createTables(document) {
   const tables = Array.from(document.getElementsByTagName('table'));
   let result = [];
-  let tfoot;
 
   if (tables.length) {
     tables.forEach((table) => {
       const variations = [];
-
-      if (table.querySelector('tfoot')) {
-        tfoot = table.querySelector('tfoot');
-        table.querySelector('tfoot').remove();
-        variations.push('with-tfoot');
-      }
 
       // Number of cells in a row.
       let cells = table.querySelectorAll('tr');
@@ -116,11 +109,6 @@ export default function createTables(document) {
           return groupWithParagraphs(document, cellChildren);
         }),
       );
-
-      if (tfoot) {
-        const cellChildren = Array.from(tfoot.childNodes);
-        result.push(Array.from(groupWithParagraphs(document, cellChildren)));
-      }
 
       replaceElement(
         table,
