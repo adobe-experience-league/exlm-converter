@@ -142,7 +142,7 @@ export default function createTables(document) {
       );
 
       if (tfoot) {
-        const cellChildren = Array.from(tfoot.childNodes);
+        const cellChildren = Array.from(tfoot.children);
         result.push([...groupWithParagraphs(document, cellChildren)]);
       }
 
