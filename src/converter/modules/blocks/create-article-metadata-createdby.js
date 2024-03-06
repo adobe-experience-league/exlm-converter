@@ -48,5 +48,5 @@ export default function createArticleMetaDataCreatedBy(
   }
   const cells = [[parentDiv]];
   const block = toBlock('article-metadata-createdby', cells, document);
-  metaElement.insertAdjacentElement('afterend', block);
+  metaElement?.insertAdjacentElement('afterend', block);
 }
