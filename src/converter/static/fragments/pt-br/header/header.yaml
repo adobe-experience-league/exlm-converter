@@ -1,0 +1,168 @@
+---
+productGrid:
+  - title: Adobe Experience Cloud
+    url: https://experience.adobe.com/
+  - title: Adobe Document Cloud
+    url: https://documentcloud.adobe.com/link/home/
+signIn: 'Anmelden'
+profileMenu:
+  - title: Meu perfil de aprendizagem
+    url: '/home?lang=pt-BR#dashboard/learning'
+  - title: Erfolge
+    url: '/home?lang=pt-BR#dashboard/awards'
+  - title: Conteúdo marcado
+    url: /home?lang=pt-BR#dashboard/bookmarks
+  - title: Abmelden
+    url: '#'
+search:
+  title: Search
+  placeholder: 'In Experience League suchen'
+  url: /search.html
+  filters:
+    - title: Alle
+      contenttype: All
+    - title: Zertifizierung
+      contenttype: Certification
+    - title: Community
+      contenttype: Community
+    - title: Kurse
+      contenttype: Course
+    - title: Dokumentation
+      contenttype: Documentation
+    - title: Events
+      contenttype: Event
+    - title: Fehlerbehebung
+      contenttype: Troubleshooting
+    - title: Tutorials
+      contenttype: Tutorial
+languageSelector:
+  title: Alterar região
+nav:
+  - title: Lernressourcen
+    secondaryItems:
+      - title: Procurar em todo o conteúdo
+        url: '/pt-br/browse'
+    items:
+      - title: Produtos em destaque
+        url: '#'
+        items:
+          - title: Analytics
+            url: '/pt-br/browse/analytics'
+          - title: Campaign
+            url: '/pt-br/browse/campaign'
+          - title: Commerce
+            url: '/pt-br/browse/commerce'
+          - title: Customer Journey Analytics
+            url: '/pt-br/browse/customer-journey-analytics'
+          - title: Data Collection
+            url: '/pt-br/browse/experience-platform/data-collection'
+          - title: Experience Manager
+            url: '/pt-br/browse/experience-manager'
+          - title: Experience Platform
+            url: '/pt-br/browse/experience-platform'
+          - title: Journey Optimizer
+            url: '/pt-br/browse/journey-optimizer'
+          - title: Marketo Engage
+            url: '/pt-br/browse/marketo-engage'
+          - title: Target
+            url: '/pt-br/browse/target'
+          - title: Real-Time CDP
+            url: '/pt-br/browse/real-time-customer-data-platform'
+          - title: Workfront
+            url: '/pt-br/browse/workfront'
+      - title: Tipos de conteúdo
+        items:
+          - title: Cursos recomendados
+            subtitle: Seus cursos com curadoria especializada
+            url: '/home?lang=pt-BR#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
+          - title: Procurar todos os cursos
+            subtitle: Coleções de lições com curadoria especializada
+            url: '/home?lang=pt-BR#courses'
+          - title: Tutorials
+            subtitle: Vídeos específicos da solução e instruções
+            url: /pt-br/docs/home-tutorials
+          - title: Zertifizierung
+            subtitle: Experiência comprovada em soluções de marketing da Adobe
+            url: /pt-br/docs/certification/program/overview
+          - title: Inhaltsbibliothek durchsuchen
+            subtitle: Cursos ao vivo e sob demanda com instrutores certificados pela Adobe
+            url: https://learning.adobe.com/
+            urlOptions:
+              target: _blank
+
+  - title: Dokumentation
+    url: /pt-br/docs
+
+  - title: Events
+    url: /events?lang=pt-BR
+
+  - title: Community
+    items:
+      - title: Schnell-Links
+        items:
+          - title: Community-Startseite
+            url: https://experienceleaguecommunities.adobe.com/?profile.language=pt
+          - title: Fürsprecherinnen und Fürsprecher für Experience Cloud
+            subtitle: Lernen Sie unsere Community von Kundenfürsprecherinnen und -fürsprechern kennen
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=pt
+          - title: Events
+            subtitle: Nehmen Sie an lokalen und virtuellen Events teil
+            url: '/events?lang=pt-BR'
+          - title: Interne Beraterinnen und Berater
+            subtitle: Vernetzen Sie sich mit unseren Expertinnen und Experten
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=pt
+          - title: Anwendungsbeispiele in der Experience League
+            subtitle: Echte Nutzungsszenarios für Experience Cloud-Produkte, erstellt von Kolleginnen und Kollegen
+            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=pt
+          - title: Adobe Programa de feedback
+            subtitle: Influenciar o desenvolvimento de produtos da Adobe
+            url: '/home?lang=pt-br#feedback'
+      - title: Communities nach Produkt
+        items:
+          - title: Advertising Cloud
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=pt
+          - title: Analytics
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=pt
+          - title: Audience Manager
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=pt
+          - title: Campaign Classic v7 & Campaign v8
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=pt
+          - title: Campaign Standard
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=pt
+          - title: Developer
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=pt
+          - title: Experience Cloud
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=pt
+          - title: Experience Manager Sites & More
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=pt
+          - title: Experience Platform
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=pt
+          - title: Journey Optimizer
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=pt
+          - title: Target
+            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=pt
+          - title: Real-Time CDP
+            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=pt
+          - title: Workfront
+            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=pt
+          - title: Creative Cloud
+            url: 'https://community.adobe.com'
+            urlOptions:
+              target: _blank
+          - title: Document Cloud
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=pt&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
+            urlOptions:
+              target: _blank
+          - title: Commerce
+            url: 'https://community.magento.com'
+            urlOptions:
+              target: _blank
+          - title: Marketo Engage
+            url: 'https://nation.marketo.com'
+            urlOptions:
+              target: _blank
+
+  - title: Support
+    url: '/home?lang=pt-BR#support'

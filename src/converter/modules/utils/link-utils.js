@@ -1,5 +1,11 @@
+import { join } from 'path';
+import { readFileSync } from 'fs';
 import { removeExtension } from './path-utils.js';
+import { getMatchLanguage } from './language-utils.js';
+import { DOCPAGETYPE } from '../../doc-page-types.js';
 
+const TEMP_BASE = 'https://localhost';
+const EXPERIENCE_LEAGE_BASE = 'https://experienceleague.adobe.com';
 /**
  * Checks if a URL is an absolute URL.
  *
@@ -16,94 +22,161 @@ export function isAbsoluteURL(url) {
   }
 }
 
-/**
- * Removes the ".html" extension from the last segment of a URL's path.
- *
- * @param {string} inputURL - The input URL that you want to modify.
- * @returns {string} The modified URL with the ".html" extension removed from the last path segment.
- */
-function removeHtmlExtensionFromURL(inputURL) {
-  const url = new URL(inputURL);
-  const pathSegments = url.pathname.split('/');
-
-  pathSegments[pathSegments.length - 1] = pathSegments[
-    pathSegments.length - 1
-  ].replace(/\.html$/, '');
-  url.pathname = pathSegments.join('/');
-
-  return url.toString();
+export function isAssetPath(docsPath) {
+  // A docs asset is any path that has an extension, but that extension is not .html or .md
+  const match = docsPath.match(/\.([a-zA-Z0-9]+)(\?.*)?$/);
+  if (
+    match &&
+    match[1] &&
+    match[1].toLowerCase() !== 'html' &&
+    match[1].toLowerCase() !== 'md'
+  ) {
+    return true;
+  }
+  return false;
 }
 
-/**
- * Converts an absolute URL to a relative URL within the context of a base URL.
- *
- * @param {string} url - The absolute URL to be converted.
- * @param {string} baseUrl - The base URL used as a reference for creating a relative URL.
- * @returns {string} Returns the relative URL.
- */
-function absoluteToRelative(url, baseUrl) {
-  const absolute = new URL(url);
-  const base = new URL(baseUrl);
-
-  if (absolute.origin !== base.origin) return url;
-
-  const urlWithoutExtension = removeHtmlExtensionFromURL(url);
-  const relativeUrl = urlWithoutExtension.split(baseUrl).pop();
-  return relativeUrl;
-}
+const isIgnoredDocsPath = (path) =>
+  ['/docs/courses/', '/docs/assets/'].some((ignoredPath) =>
+    path.startsWith(ignoredPath),
+  );
 
 export function rewriteDocsPath(docsPath) {
-  if (!docsPath.startsWith('/docs')) {
-    return docsPath; // not a docs path, return as is
+  if (
+    !docsPath.startsWith('/docs') ||
+    isAssetPath(docsPath) ||
+    isIgnoredDocsPath(docsPath)
+  ) {
+    return docsPath; // not a docs path or might be an asset path or ignored path.
   }
-  const TEMP_BASE = 'https://localhost';
+
   const url = new URL(docsPath, TEMP_BASE);
   const lang = url.searchParams.get('lang') || 'en'; // en is default
   url.searchParams.delete('lang');
-  let pathname = `${lang.toLowerCase()}${url.pathname}`;
-  pathname = removeExtension(pathname); // new URLs are extensionless
+  const rewriteLang = getMatchLanguage(lang) || lang.split('-')[0];
+  let pathname = `${rewriteLang.toLowerCase()}${url.pathname}`;
+  const extRegex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
+
+  if (extRegex.test(pathname)) {
+    pathname = removeExtension(pathname); // new URLs are extensionless
+  }
   url.pathname = pathname;
   // return full path without origin
-  return url.toString().replace(TEMP_BASE, '');
+  return url.toString().toLowerCase().replace(TEMP_BASE, '');
 }
+
+let oneToOneRedirects;
+let regexRedirects;
+/**
+ * get redirect for link, if any
+ * @param {string} path relative path to be redirected
+ * @param {string} dir dir where the redirect json files exist
+ * @returns
+ */
+const getRedirect = (path, dir) => {
+  if (!path.startsWith('/')) return path; // not a relative path
+  if (!oneToOneRedirects) {
+    const oneToOneJsonFilePath = join(
+      dir,
+      'static',
+      'redirects',
+      'one-to-one-redirects.json',
+    );
+    const str = readFileSync(oneToOneJsonFilePath, 'utf8');
+    oneToOneRedirects = JSON.parse(str);
+  }
+  if (!regexRedirects) {
+    const regexJsonFilePath = join(
+      dir,
+      'static',
+      'redirects',
+      'regex-redirects.json',
+    );
+    const str = readFileSync(regexJsonFilePath, 'utf8');
+    const obj = JSON.parse(str);
+    regexRedirects = Object.entries(obj).map(([key, value]) => ({
+      regex: new RegExp(key),
+      to: value,
+    }));
+  }
+  const srcUrl = new URL(path, TEMP_BASE);
+  const srcPath = srcUrl.pathname;
+
+  // look in one-to-one redirects
+  if (oneToOneRedirects[srcPath]) {
+    srcUrl.pathname = oneToOneRedirects[srcPath];
+  } else {
+    // look in regex redirects
+    for (let i = 0; i < regexRedirects.length; i += 1) {
+      const redirect = regexRedirects[i];
+      const matches = redirect.regex.exec(srcPath);
+      if (matches && matches.length > 0) {
+        const replacement = matches.length >= 1 ? matches[1] : '';
+        // eslint-disable-next-line no-template-curly-in-string
+        srcUrl.pathname = redirect.to.replace('${path}', replacement);
+      }
+    }
+  }
+
+  return srcUrl.toString().toLowerCase().replace(TEMP_BASE, '');
+};
 
 /**
  * Handles converting absolute URLs to relative URLs for links and images within a document.
  *
  * @param {Document} document - The HTML document to process.
+ * @param {string} reqLang - The language code for the requested language.
+ * @param {string} pageType - The type of page being processed.
  */
-export default function handleUrls(document, reqLang) {
+export default function handleUrls(document, reqLang, pageType, dir) {
   const elements = document.querySelectorAll('a');
   if (!elements) return;
 
-  const baseUrl = 'https://experienceleague.adobe.com';
   elements.forEach((el) => {
-    let rewritePath = el.getAttribute('href');
-    if (
-      rewritePath.indexOf('#') !== -1 &&
-      rewritePath.indexOf('#_blank') === -1
-    )
-      return;
+    let pathToRewrite = el.getAttribute('href');
 
-    if (isAbsoluteURL(rewritePath)) {
-      rewritePath = absoluteToRelative(rewritePath, baseUrl);
+    if (pathToRewrite === null) return;
 
-      // rewrite docs path to fix language path
-      rewritePath = rewriteDocsPath(rewritePath);
+    if (pathToRewrite.startsWith('mailto:')) return;
+    if (pathToRewrite.startsWith('tel:')) return;
+    if (pathToRewrite.startsWith('#')) return;
 
-      el.href = rewritePath;
-    } else {
-      // eslint-disable-next-line no-lonely-if
-      if (!rewritePath.startsWith('/docs')) {
-        const TEMP_BASE = 'https://localhost';
-        const url = new URL(rewritePath, TEMP_BASE);
-        let pathname = `/${reqLang.toLowerCase()}/docs${url.pathname}`;
-        pathname = removeExtension(pathname);
-        url.pathname = pathname;
-        // return full path without origin
-        el.href = url.toString().replace(TEMP_BASE, '');
+    const isAbsoluteExlUrl = pathToRewrite.startsWith(EXPERIENCE_LEAGE_BASE);
+    const isHttp =
+      pathToRewrite.startsWith('http://') ||
+      pathToRewrite.startsWith('https://');
+    const isSlashUrl = pathToRewrite.startsWith('/');
+
+    if (!isAbsoluteExlUrl && isHttp) return; // external link
+
+    // not absolute, not slash, not starting with docs
+    // it's a relative url like: <a href="dynamic-media-developer-resources.html"> or <a href="journey-optimizer.html">
+    // remove extension and return
+    if (!isAbsoluteExlUrl && !isSlashUrl) {
+      // landing pages are an exception
+      if (pageType === DOCPAGETYPE.DOC_LANDING) {
+        // landing page specifically can contain solution urls that look like this: "journey-optimizer.html" we need to transform that to the proper docs path.
+        if (!pathToRewrite.includes('/') && pathToRewrite.endsWith('.html')) {
+          pathToRewrite = `/${reqLang.toLowerCase()}/docs/${pathToRewrite.toLowerCase()}`;
+        }
       }
+
+      // relative url that does not start withb / - remove extension if any
+      el.href = removeExtension(pathToRewrite);
+      return;
     }
+
+    // if the path is absolute, convert it to a relative path
+    if (isAbsoluteExlUrl) {
+      pathToRewrite = pathToRewrite.replace(EXPERIENCE_LEAGE_BASE, '');
+    }
+
+    // handle redirects
+    pathToRewrite = getRedirect(pathToRewrite, dir);
+    // rewrite docs path to fix language path
+    pathToRewrite = rewriteDocsPath(pathToRewrite);
+
+    el.href = pathToRewrite;
   });
 }
 

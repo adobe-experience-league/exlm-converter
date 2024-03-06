@@ -1,38 +1,43 @@
-import ExlClient from '../modules/ExlClient.js';
+import { defaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../doc-page-types.js';
 import { matchDocsPath } from '../modules/utils/path-match-utils.js';
 
-const exlClient = new ExlClient({
-  domain: 'https://experienceleague.adobe.com',
-});
 /**
  * handles a markdown doc path
  */
-export default async function renderDoc(path) {
+export default async function renderDoc(path, dir) {
   const {
     params: { lang, solution, docRelPath },
   } = matchDocsPath(path);
 
   // construct the path in the articles API
-  const apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  let apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
+  const regex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
 
-  const response = await exlClient.getArticleByPath(
-    removeExtension(apiArticlePath),
+  if (regex.test(apiArticlePath)) {
+    apiArticlePath = removeExtension(apiArticlePath);
+  }
+
+  const response = await defaultExlClient.getArticlesByPath(
+    apiArticlePath,
     lang,
   );
-  if (response.data.length > 0) {
-    const md = response.data[0].FullBody;
-    const meta = response.data[0].FullMeta;
-    const data = response.data[0];
-    const { convertedHtml, originalHtml } = await md2html(
-      md,
+
+  const article = response?.data?.find((d) => d.FullMeta && d.FullBody);
+
+  if (article) {
+    const md = article.FullBody;
+    const meta = article.FullMeta;
+    const { convertedHtml, originalHtml } = await md2html({
+      mdString: md,
       meta,
-      data,
-      DOCPAGETYPE.DOC_ARTICLE,
-      lang,
-    );
+      data: article,
+      pageType: DOCPAGETYPE.DOC_ARTICLE,
+      reqLang: lang,
+      dir,
+    });
     return {
       body: convertedHtml,
       headers: {

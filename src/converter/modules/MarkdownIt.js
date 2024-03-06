@@ -21,7 +21,7 @@ export default function markdownItToHtml(mdString) {
     .use(attrs, {
       allowedAttributes: ['id', 'class', 'style', 'target'],
     })
-    .use(anchor, { level: [1, 2, 3, 4, 5, 6] })
+    .use(anchor, { level: [1, 2, 3, 4, 5, 6], slugify: () => '' })
     .use(collapsible)
     .use(container, 'warning')
     .use(deflist)

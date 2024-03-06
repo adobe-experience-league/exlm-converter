@@ -12,9 +12,9 @@ import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
 import createNote from './blocks/create-note.js';
+import createHighlight from './blocks/create-highlight.js';
 import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
-// import { createSections } from './utils/dom-utils.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
@@ -32,9 +32,13 @@ import createBreadcrumbs from './blocks/create-breadcrumbs.js';
 import createBackToBrowsing from './blocks/create-back-to-browsing.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
-import createGuidesList from './blocks/create-guides-list.js';
-import createTutorialTiles from './blocks/create-tutorial-tiles.js';
-import createRelatedResources from './blocks/create-related-resources.js';
+import createLandingLists from './blocks/create-landing-lists.js';
+import createStaffPicksBlock from './blocks/create-staff-picks-block.js';
+import createUpcomingEventsBlock from './blocks/create-upcoming-events-block.js';
+import { updateAnchors } from './utils/update-anchors.js';
+import createTargetInsertion from './blocks/create-target-insertion.js';
+import { createRecommendationMoreHelp } from './blocks/create-recommendation-more-help.js';
+import createDocsCards from './blocks/create-docs-cards.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -43,12 +47,20 @@ const doAmf = (md) => {
   // code below fixes that by encoding the backticks that are not preceded with a new line
   // before passing to AMF, and then decoding them after.
   // this: `(?<!\n)` means not preceded by a new line
+  if (!md) return md;
   const backTickEncoded = md.replace(/(?<!\n)```/g, '&grave;&grave;&grave;');
   const amfProcessed = afm(backTickEncoded, 'extension');
   return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
 };
 
-export default async function md2html(mdString, meta, data, pageType, reqLang) {
+export default async function md2html({
+  mdString,
+  meta,
+  data,
+  pageType,
+  reqLang,
+  dir,
+}) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
@@ -63,8 +75,8 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
       h('header', []),
       h('main', [
         h('div', content.hast), // Base Content - Must be first child for proper rendering
-        h('div', []), // Left Rail Block - TOC - Must be second child for proper rendering
-        h('div', []), // Right Rail Block - mini TOC - Must be third child for proper rendering
+        h('div', []), // Left Rail Block - TOC - Must be second-last section for proper rendering
+        h('div', []), // Right Rail Block - mini TOC - Must be last section for proper rendering
       ]),
       h('footer', []),
     ]),
@@ -80,8 +92,9 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  createMetaData(document, meta, data);
-  handleUrls(document, reqLang);
+  createMetaData(document, meta, data, pageType);
+  handleUrls(document, reqLang, pageType, dir);
+  updateAnchors(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
@@ -89,24 +102,24 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     handleExternalUrl(document);
     createMiniTOC(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
-    createGuidesList(document);
-    createTutorialTiles(document);
-    createRelatedResources(document);
+    createLandingLists(document);
   } else {
-    // createSections(document);
     createArticleMetaData(document, meta);
     createVideo(document);
     createBadge(document);
     createRelatedArticles(document);
     createNote(document);
+    createHighlight(document);
     createTabs(document);
+    createStaffPicksBlock(document);
+    createUpcomingEventsBlock(document);
     createTables(document);
     createShadeBox(document);
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
-    createArticleMetaDataCreatedBy(document, data);
-    createArticleMetaDataTopics(document, meta);
+    createArticleMetaDataCreatedBy(document, data, reqLang);
+    createArticleMetaDataTopics(document, meta, reqLang);
     handleExternalUrl(document);
     createMiniTOC(document);
     createTOC(document, data);
@@ -115,6 +128,10 @@ export default async function md2html(mdString, meta, data, pageType, reqLang) {
     createBreadcrumbs(document, meta, pageType, reqLang);
     createBackToBrowsing(document);
     createDocActions(document);
+    createTargetInsertion(document);
+    createDocsCards(document);
+    // leave this at the end - UGP-10241
+    createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
   }

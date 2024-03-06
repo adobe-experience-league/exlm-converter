@@ -5,14 +5,11 @@
     // the frontend is a separate matter. But this ensures an expected order of items/parts in the header.
   %>
   <!-- Adobe logo -->
-  <%- block("adobe-logo", [[`<a href="//business.adobe.com">:adobe-red-logo:</a
-  >`]]) %>
+  <%- block("adobe-logo", [[`<a href="/">:adobe-red-logo:</a>`]]) %>
   <!-- Logo -->
   <%- block("brand", [[`<a href="/">Experience League</a>`]])%>
   <!-- Navigation Items -->
   <%- block("nav", [[nav(header.nav)]])%>
-  <!-- sign up button -->
-  <%- block("sign-up", [[`<a href="#">${header.signUp}</a>`]]) %>
   <!-- Search -->
   <%- block( "search", [ [`
   <a href="${header.search.url}">${header.search.title}</a>

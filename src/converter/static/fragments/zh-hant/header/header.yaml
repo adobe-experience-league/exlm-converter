@@ -1,0 +1,168 @@
+---
+productGrid:
+  - title: Adobe Experience Cloud
+    url: https://experience.adobe.com/
+  - title: Adobe Document Cloud
+    url: https://documentcloud.adobe.com/link/home/
+signIn: '登入'
+profileMenu:
+  - title: 我的學習個人資料
+    url: '/home?lang=zh-Hant#dashboard/learning'
+  - title: 成就
+    url: '/home?lang=zh-Hant#dashboard/awards'
+  - title: 已建立書籤的內容
+    url: /home?lang=zh-Hant#dashboard/bookmarks
+  - title: 登出
+    url: '#'
+search:
+  title: 搜尋
+  placeholder: '搜尋Experience League'
+  url: /search.html
+  filters:
+    - title: 全部
+      contenttype: All
+    - title: 認證
+      contenttype: Certification
+    - title: 社群
+      contenttype: Community
+    - title: 課程
+      contenttype: Course
+    - title: 檔案
+      contenttype: Documentation
+    - title: 事件
+      contenttype: Event
+    - title: 疑難排解
+      contenttype: Troubleshooting
+    - title: Tutorials
+      contenttype: Tutorial
+languageSelector:
+  title: 切換地區
+nav:
+  - title: 學習
+    secondaryItems:
+      - title: 瀏覽所有內容
+        url: '/zh-hant/browse'
+    items:
+      - title: 精選產品
+        url: '#'
+        items:
+          - title: Analytics
+            url: '/zh-hant/browse/analytics'
+          - title: Campaign
+            url: '/zh-hant/browse/campaign'
+          - title: Commerce
+            url: '/zh-hant/browse/commerce'
+          - title: Customer Journey Analytics
+            url: '/zh-hant/browse/customer-journey-analytics'
+          - title: Data Collection
+            url: '/zh-hant/browse/experience-platform/data-collection'
+          - title: Experience Manager
+            url: '/zh-hant/browse/experience-manager'
+          - title: Experience Platform
+            url: '/zh-hant/browse/experience-platform'
+          - title: Journey Optimizer
+            url: '/zh-hant/browse/journey-optimizer'
+          - title: Marketo Engage
+            url: '/zh-hant/browse/marketo-engage'
+          - title: Target
+            url: '/zh-hant/browse/target'
+          - title: Real-Time CDP
+            url: '/zh-hant/browse/real-time-customer-data-platform'
+          - title: Workfront
+            url: '/zh-hant/browse/workfront'
+      - title: 內容類型
+        items:
+          - title: 建議課程
+            subtitle: 您精選的課程
+            url: '/home?lang=zh-Hant#dashboard/learning'
+            urlOptions:
+              auth-only: 'true'
+          - title: 瀏覽所有課程
+            subtitle: 精選的課程集合
+            url: '/home?lang=zh-Hant#courses'
+          - title: 教學課程
+            subtitle: 解決方案特定視訊和操作說明
+            url: /zh-hant/docs/home-tutorials
+          - title: 認證
+            subtitle: 經過驗證的 Adobe 行銷解決方案專業知識
+            url: /zh-hant/docs/certification/program/overview
+          - title: 導學型培訓
+            subtitle: 由 Adobe 認證的講師授課的現場和隨選課程
+            url: https://learning.adobe.com/
+            urlOptions:
+              target: _blank
+
+  - title: 檔案
+    url: /zh-hant/docs
+
+  - title: 事件
+    url: /events?lang=zh-Hant
+
+  - title: 社群
+    items:
+      - title: 快速連結
+        items:
+          - title: 社群首頁
+            url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+          - title: Experience Cloud擁護者
+            subtitle: 與客戶擁護者社群見面
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
+          - title: 事件
+            subtitle: 出席本機及虛擬事件
+            url: '/events?lang=zh-Hant'
+          - title: 員工顧問
+            subtitle: 與我們的專家交流
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
+          - title: Experience LeagueShowcase
+            subtitle: 閱讀同級同事所撰寫Experience Cloud產品的真實使用案例
+            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
+          - title: Adobe 回饋方案
+            subtitle: 影響 Adobe 產品開發
+            url: '/home?lang=zh-Hant#feedback'
+      - title: 各產品的社群
+        items:
+          - title: Advertising Cloud
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
+          - title: Analytics
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
+          - title: Audience Manager
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
+          - title: Campaign Classic v7 & Campaign v8
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
+          - title: Campaign Standard
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
+          - title: Developer
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
+          - title: Experience Cloud
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
+          - title: Experience Manager Sites & More
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
+          - title: Experience Platform
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en
+          - title: Journey Optimizer
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=en
+          - title: Target
+            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=en
+          - title: Real-Time CDP
+            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=en
+          - title: Workfront
+            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
+          - title: Creative Cloud
+            url: 'https://community.adobe.com'
+            urlOptions:
+              target: _blank
+          - title: Document Cloud
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
+            urlOptions:
+              target: _blank
+          - title: Commerce
+            url: 'https://community.magento.com'
+            urlOptions:
+              target: _blank
+          - title: Marketo Engage
+            url: 'https://nation.marketo.com'
+            urlOptions:
+              target: _blank
+
+  - title: 支援
+    url: '/home?lang=zh-Hant#support'

@@ -89,7 +89,7 @@ export default class ExlClient {
    * @param {string} lang
    * @returns {ExlArticlesResponse}
    */
-  async getArticleByPath(path, lang = 'en') {
+  async getArticlesByPath(path, lang = 'en') {
     const langForApi = getMatchLanguage(lang) || lang;
     // handle internal paths
     if (isInternal(path)) {
@@ -105,7 +105,8 @@ export default class ExlClient {
     let url = new URL(finalPath, this.domain);
     url.searchParams.set('lang', langForApi);
     url = encodeURIComponent(url.toString());
-    const apiPath = `api/articles?URL=${url}&lang=${langForApi}`;
+    url = url.toLowerCase(); // use lowercase when using `Search%20URL` query param
+    const apiPath = `api/articles?Search%20URL=${url}&lang=${langForApi}`;
     const response = await this.doFetch(apiPath);
 
     if (response.error) {
@@ -113,6 +114,25 @@ export default class ExlClient {
     } else {
       return this.removeSpacesFromKeysRecursively(response);
     }
+  }
+
+  async getLandingPages(lang = 'en') {
+    const apiUrl = new URL('/api/landing-pages', this.domain);
+    apiUrl.searchParams.set('lang', lang);
+    apiUrl.searchParams.set('page_size', '100');
+    const json = await this.doFetch(apiUrl.toString());
+    return json?.data;
+  }
+
+  async getLandingPageByFileName(landingName, lang = 'en') {
+    const langForAPI = getMatchLanguage(lang) || lang;
+    if (!landingName) throw new Error('landingName is required');
+    const landingPages = await this.getLandingPages(langForAPI);
+    const landingPage = landingPages.find(
+      (landing) =>
+        removeExtension(landing.File) === removeExtension(landingName),
+    );
+    return this.removeSpacesFromKeysRecursively(landingPage);
   }
 
   async doFetch(path) {
@@ -135,3 +155,7 @@ export default class ExlClient {
     return obj;
   }
 }
+
+export const defaultExlClient = new ExlClient({
+  domain: 'https://experienceleague.adobe.com',
+});

@@ -53,7 +53,7 @@ export const render = async function render(path, params) {
   }
 
   if (isDocsPath(path)) {
-    return renderDoc(path);
+    return renderDoc(path, dir);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
@@ -78,7 +78,7 @@ export const main = async function main(params) {
 
   if (!error) {
     return {
-      statusCode: statusCode || 200,
+      statusCode: error?.code || statusCode || 200,
       headers,
       body,
     };
