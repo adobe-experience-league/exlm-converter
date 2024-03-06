@@ -146,8 +146,6 @@ export default function createTables(document) {
         result.push([...groupWithParagraphs(document, cellChildren)]);
       }
 
-      console.log(result);
-
       replaceElement(
         table,
         toBlock(`table ${variations.join(' ')}`, result, document),
