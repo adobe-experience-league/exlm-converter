@@ -122,6 +122,31 @@ const getRedirect = (path, dir) => {
 };
 
 /**
+ * paths that are / and have a hash are converted to /home (with that hash)
+ * @param {string} path
+ * @returns
+ */
+const rewriteHomePath = (path) => {
+  let isHomePath = false;
+  let convertedHomePath = path;
+  try {
+    const url = new URL(path, TEMP_BASE);
+    isHomePath = url.pathname === '/' && url.hash !== '';
+
+    if (isHomePath) {
+      url.pathname = '/home';
+      convertedHomePath = url.toString().toLowerCase().replace(TEMP_BASE, '');
+    }
+  } catch (e) {
+    // do nothing
+  }
+  return {
+    isHomePath,
+    convertedHomePath,
+  };
+};
+
+/**
  * Handles converting absolute URLs to relative URLs for links and images within a document.
  *
  * @param {Document} document - The HTML document to process.
@@ -169,6 +194,13 @@ export default function handleUrls(document, reqLang, pageType, dir) {
     // if the path is absolute, convert it to a relative path
     if (isAbsoluteExlUrl) {
       pathToRewrite = pathToRewrite.replace(EXPERIENCE_LEAGE_BASE, '');
+    }
+
+    // handle home path URLs
+    const { isHomePath, convertedHomePath } = rewriteHomePath(pathToRewrite);
+    if (isHomePath) {
+      el.href = convertedHomePath;
+      return;
     }
 
     // handle redirects
