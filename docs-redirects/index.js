@@ -8,7 +8,7 @@ const CONF_FILE = 'docs.conf';
 const parser = new ConfigParser();
 console.log(`Reading config file ${CONF_FILE}`);
 const config = parser.readConfigFile(CONF_FILE, { parseIncludes: false });
-console.log(JSON.stringify(config, null, 2));
+// console.log(JSON.stringify(config, null, 2));
 const configEntries = Object.entries(config);
 console.log(`Found ${configEntries.length} entries in the config file`);
 
@@ -36,6 +36,7 @@ const isOneToOneRedirect = ([key, value]) =>
 const cleanEntry = ([key, value]) => {
   const from = key
     .replace('location ~ ^', '')
+    .replace('location ~* ^', '')
     .replace(/\$/g, '')
     .replace(/\\\./g, '.');
   const to =
