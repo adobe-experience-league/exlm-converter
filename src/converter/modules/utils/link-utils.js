@@ -199,7 +199,10 @@ export default function handleUrls(document, reqLang, pageType, dir) {
     // remove extension and return
     if (!isAbsoluteExlUrl && !isSlashUrl) {
       // landing pages are an exception
-      if (pageType === DOCPAGETYPE.DOC_LANDING) {
+      if (
+        pageType === DOCPAGETYPE.DOC_LANDING ||
+        pageType === DOCPAGETYPE.SOLUTION_LANDING
+      ) {
         // landing page specifically can contain solution urls that look like this: "journey-optimizer.html" we need to transform that to the proper docs path.
         if (!pathToRewrite.includes('/') && pathToRewrite.endsWith('.html')) {
           pathToRewrite = `/${reqLang.toLowerCase()}/docs/${pathToRewrite.toLowerCase()}`;
