@@ -51,6 +51,14 @@ export function rewriteDocsPath(docsPath, reqLang) {
   }
 
   const url = new URL(docsPath, TEMP_BASE);
+  if (
+    url.pathname === '/docs/home' ||
+    url.pathname === '/docs/home.html' ||
+    url.pathname === '/docs/home/'
+  ) {
+    url.pathname = '/docs';
+  }
+
   const lang = url.searchParams.get('lang') || reqLang;
   url.searchParams.delete('lang');
   const rewriteLang = getMatchLanguage(lang) || lang.split('-')[0];
@@ -65,8 +73,38 @@ export function rewriteDocsPath(docsPath, reqLang) {
   return url.toString().toLowerCase().replace(TEMP_BASE, '');
 }
 
-let oneToOneRedirects;
-let regexRedirects;
+const redirects = {};
+
+const getOneToOneRedirects = (dir) => {
+  if (redirects.oneToOne) return redirects.oneToOne;
+  const oneToOneJsonFilePath = join(
+    dir,
+    'static',
+    'redirects',
+    'one-to-one-redirects.json',
+  );
+  const str = readFileSync(oneToOneJsonFilePath, 'utf8');
+  redirects.oneToOne = JSON.parse(str);
+  return redirects.oneToOne;
+};
+
+const getRegexRedirects = (dir) => {
+  if (redirects.regex) return redirects.regex;
+  const regexJsonFilePath = join(
+    dir,
+    'static',
+    'redirects',
+    'regex-redirects.json',
+  );
+  const str = readFileSync(regexJsonFilePath, 'utf8');
+  const obj = JSON.parse(str);
+  redirects.regex = Object.entries(obj).map(([key, value]) => ({
+    regex: new RegExp(key),
+    to: value,
+  }));
+  return redirects.regex;
+};
+
 /**
  * get redirect for link, if any
  * @param {string} path relative path to be redirected
@@ -75,50 +113,57 @@ let regexRedirects;
  */
 const getRedirect = (path, dir) => {
   if (!path.startsWith('/')) return path; // not a relative path
-  if (!oneToOneRedirects) {
-    const oneToOneJsonFilePath = join(
-      dir,
-      'static',
-      'redirects',
-      'one-to-one-redirects.json',
-    );
-    const str = readFileSync(oneToOneJsonFilePath, 'utf8');
-    oneToOneRedirects = JSON.parse(str);
-  }
-  if (!regexRedirects) {
-    const regexJsonFilePath = join(
-      dir,
-      'static',
-      'redirects',
-      'regex-redirects.json',
-    );
-    const str = readFileSync(regexJsonFilePath, 'utf8');
-    const obj = JSON.parse(str);
-    regexRedirects = Object.entries(obj).map(([key, value]) => ({
-      regex: new RegExp(key),
-      to: value,
-    }));
-  }
+
+  const oneToOneRedirects = getOneToOneRedirects(dir);
+  const regexRedirects = getRegexRedirects(dir);
   const srcUrl = new URL(path, TEMP_BASE);
   const srcPath = srcUrl.pathname;
 
   // look in one-to-one redirects
   if (oneToOneRedirects[srcPath]) {
-    srcUrl.pathname = oneToOneRedirects[srcPath];
-  } else {
-    // look in regex redirects
-    for (let i = 0; i < regexRedirects.length; i += 1) {
-      const redirect = regexRedirects[i];
-      const matches = redirect.regex.exec(srcPath);
-      if (matches && matches.length > 0) {
-        const replacement = matches.length >= 1 ? matches[1] : '';
-        // eslint-disable-next-line no-template-curly-in-string
-        srcUrl.pathname = redirect.to.replace('${path}', replacement);
-      }
+    // srcUrl.pathname = oneToOneRedirects[srcPath];
+    const newPath = oneToOneRedirects[srcPath];
+    // follow the redirects
+    return getRedirect(newPath, dir);
+  }
+  // look in regex redirects
+  for (let i = 0; i < regexRedirects.length; i += 1) {
+    const redirect = regexRedirects[i];
+    const matches = redirect.regex.exec(srcPath);
+    redirect.regex.lastIndex = 0; // reset the regex
+    if (matches && matches.length > 0) {
+      const replacement = matches.length >= 1 ? matches[1] : '';
+      // eslint-disable-next-line no-template-curly-in-string
+      const newPath = redirect.to.replace('${path}', replacement);
+      return getRedirect(newPath, dir);
     }
   }
+  return srcPath;
+};
 
-  return srcUrl.toString().toLowerCase().replace(TEMP_BASE, '');
+/**
+ * paths that are / and have a hash are converted to /home (with that hash)
+ * @param {string} path
+ * @returns
+ */
+const rewriteHomePath = (path) => {
+  let isHomePath = false;
+  let convertedHomePath = path;
+  try {
+    const url = new URL(path, TEMP_BASE);
+    isHomePath = url.pathname === '/' && url.hash !== '';
+
+    if (isHomePath) {
+      url.pathname = '/home';
+      convertedHomePath = url.toString().toLowerCase().replace(TEMP_BASE, '');
+    }
+  } catch (e) {
+    // do nothing
+  }
+  return {
+    isHomePath,
+    convertedHomePath,
+  };
 };
 
 /**
@@ -169,6 +214,13 @@ export default function handleUrls(document, reqLang, pageType, dir) {
     // if the path is absolute, convert it to a relative path
     if (isAbsoluteExlUrl) {
       pathToRewrite = pathToRewrite.replace(EXPERIENCE_LEAGE_BASE, '');
+    }
+
+    // handle home path URLs
+    const { isHomePath, convertedHomePath } = rewriteHomePath(pathToRewrite);
+    if (isHomePath) {
+      el.href = convertedHomePath;
+      return;
     }
 
     // handle redirects
