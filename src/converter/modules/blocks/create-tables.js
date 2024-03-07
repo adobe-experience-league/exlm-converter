@@ -2,7 +2,6 @@ import {
   toBlock,
   replaceElement,
   groupWithParagraphs,
-  getAllDecendantTextNodes,
 } from '../utils/dom-utils.js';
 
 function rgbToHex(rgbString) {
@@ -21,12 +20,6 @@ function rgbToHex(rgbString) {
 
   return r + g + b;
 }
-
-const convertToStrong = (document, textNode) => {
-  const strong = document.createElement('strong');
-  strong.innerHTML = textNode.textContent;
-  return strong;
-};
 
 /**
  * @param {Document} document
@@ -91,22 +84,6 @@ export default function createTables(document) {
         if (cell.getAttribute('height')) {
           variations.push(`${i}-height-${cell.getAttribute('height')}`);
         }
-
-        cell.querySelectorAll('strong').forEach((strongElement) => {
-          getAllDecendantTextNodes(document, strongElement).forEach(
-            (textNode) => {
-              replaceElement(textNode, convertToStrong(document, textNode));
-            },
-          );
-
-          while (strongElement.firstChild) {
-            strongElement.parentNode.insertBefore(
-              strongElement.firstChild,
-              strongElement,
-            );
-          }
-          strongElement.remove();
-        });
       });
 
       // Auto or Fixed variation

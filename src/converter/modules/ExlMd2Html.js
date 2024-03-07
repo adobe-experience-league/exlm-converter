@@ -29,6 +29,7 @@ import createImgBlock from './blocks/create-img-block.js';
 import createAccordion from './blocks/create-accordion.js';
 import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
+import createBackToBrowsing from './blocks/create-back-to-browsing.js';
 import createDocActions from './blocks/create-doc-actions.js';
 import createCloudSolutions from './blocks/create-cloud-solutions.js';
 import createLandingLists from './blocks/create-landing-lists.js';
@@ -128,11 +129,13 @@ export default async function md2html({
     createDocActions(document);
     createTargetInsertion(document);
     createDocsCards(document);
+    createBackToBrowsing(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
   }
+
   return {
     convertedHtml: dom.serialize(),
     originalHtml: html,
