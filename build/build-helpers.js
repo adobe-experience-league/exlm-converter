@@ -6,9 +6,11 @@ import { jsdomPatch } from './esbuild-plugins/jsdomPatch.cjs';
 const ACTIONS_SRC_FOLDER = './src';
 const ACTIONS_DIST_FOLDER = './dist';
 const ACTION_ENTRY_FILE_NAME = 'index.js';
+const IGNORED_FOLDERS = ['common'];
 
 export const doForEachAction = (callback) => {
   fs.readdirSync(ACTIONS_SRC_FOLDER).forEach(async (action) => {
+    if (IGNORED_FOLDERS.includes(action)) return;
     const sourceFolder = `${ACTIONS_SRC_FOLDER}/${action}`;
     const entryPoint = `${sourceFolder}/${ACTION_ENTRY_FILE_NAME}`;
     const distFolder = `${ACTIONS_DIST_FOLDER}/${action}`;

@@ -1,5 +1,5 @@
 import md2html from '../modules/ExlMd2Html.js';
-import { DOCPAGETYPE } from '../doc-page-types.js';
+import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchLandingPath } from '../modules/utils/path-match-utils.js';
 import { defaultExlClient } from '../modules/ExlClient.js';
 import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
@@ -7,7 +7,7 @@ import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
 /**
  * handles a markdown doc path
  */
-export default async function renderLanding(path, dir) {
+export default async function renderLanding(path) {
   const {
     params: { lang, solution },
   } = matchLandingPath(path);
@@ -45,7 +45,6 @@ export default async function renderLanding(path, dir) {
       data: {},
       pageType,
       reqLang: lang,
-      dir,
     });
     return {
       body: convertedHtml,
