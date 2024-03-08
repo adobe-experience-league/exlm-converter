@@ -13,8 +13,8 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import { jwtDecode } from 'jwt-decode';
 import { isValidImsToken } from './utils/ims-utils.js';
-import { sendError } from './utils/response-utils.js';
 import { PROFILE_MENU_LIST, getProfileMenu } from './utils/khoros-utils.js';
+import { sendError } from '../common/utils/response-utils.js';
 
 export const aioLogger = Logger('khoros');
 

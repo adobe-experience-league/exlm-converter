@@ -1,13 +1,13 @@
 import { defaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
-import { DOCPAGETYPE } from '../doc-page-types.js';
+import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchDocsPath } from '../modules/utils/path-match-utils.js';
 
 /**
  * handles a markdown doc path
  */
-export default async function renderDoc(path, dir) {
+export default async function renderDoc(path) {
   const {
     params: { lang, solution, docRelPath },
   } = matchDocsPath(path);
@@ -36,7 +36,6 @@ export default async function renderDoc(path, dir) {
       data: article,
       pageType: DOCPAGETYPE.DOC_ARTICLE,
       reqLang: lang,
-      dir,
     });
     return {
       body: convertedHtml,

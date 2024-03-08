@@ -1,6 +1,6 @@
 import jsdom from 'jsdom';
 import yaml from 'js-yaml';
-import { DOCPAGETYPE } from '../../doc-page-types.js';
+import { DOCPAGETYPE } from '../../../common/utils/doc-page-types.js';
 
 global.Node = new jsdom.JSDOM().window.Node;
 global.NodeFilter = new jsdom.JSDOM().window.NodeFilter;
