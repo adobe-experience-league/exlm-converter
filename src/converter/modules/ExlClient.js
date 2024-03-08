@@ -1,6 +1,6 @@
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import mappings from '../url-mapping.js';
-import { getMatchLanguage } from './utils/language-utils.js';
+import { getMatchLanguage } from '../../common/utils/language-utils.js';
 
 /**
  * @typedef {object} ExlArticle

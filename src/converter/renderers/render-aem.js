@@ -3,7 +3,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import {
   isAbsoluteURL,
   relativeToAbsolute,
-} from '../modules/utils/link-utils.js';
+} from '../../common/utils/link-utils.js';
 import { isBinary, isHTML } from '../modules/utils/media-utils.js';
 import renderAemAsset from './render-aem-asset.js';
 
