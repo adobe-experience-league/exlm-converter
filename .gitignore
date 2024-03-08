@@ -4,3 +4,4 @@ dist/
 node_modules
 dev.json
 build/.local.env
+src/converter/static/.DS_Store
