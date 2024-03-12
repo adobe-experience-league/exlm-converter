@@ -19,7 +19,6 @@ import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
 import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
-import createList from './blocks/create-list.js';
 import createArticleMetaData from './blocks/create-article-metadata.js';
 import createArticleMetaDataTopics from './blocks/create-article-metadata-topics.js';
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
@@ -116,7 +115,7 @@ export default async function md2html({
     createShadeBox(document);
     createCodeBlock(document);
     createVideoTranscript(document);
-    createList(document);
+    // createList(document);
     createArticleMetaDataCreatedBy(document, data, reqLang);
     createArticleMetaDataTopics(document, meta, reqLang);
     handleExternalUrl(document);
