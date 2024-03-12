@@ -1,15 +1,18 @@
 import { toBlock, replaceElement } from '../utils/dom-utils.js';
 
 export const createListBlock = (document, listEl) => {
-  const isOrdered = listEl.tagName.toLowerCase() === 'ol';
-  const rows = [[...listEl.children]];
-  const block = toBlock(`list${isOrdered ? ' ordered' : ''}`, rows, document);
+  const tag = listEl.tagName.toLowerCase();
+  const cloneList = document.createElement(tag);
+  cloneList.innerHTML = listEl.innerHTML;
+  const block = toBlock('list ol', [[cloneList]], document);
   replaceElement(listEl, block);
 };
 
 export default function createList(document) {
-  document
-    .querySelectorAll('ol, ul')
-    .filter((listEl) => listEl.querySelector('div'))
-    .forEach((listEl) => createListBlock(document, listEl));
+  const ollistElements = Array.from(document.querySelectorAll('ol'));
+  const ullistElements = Array.from(document.querySelectorAll('ul'));
+
+  const allLists = [...ollistElements, ...ullistElements];
+
+  allLists.forEach((listEl) => createListBlock(document, listEl));
 }
