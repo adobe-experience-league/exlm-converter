@@ -33,7 +33,7 @@ search:
       contenttype: Event
     - title: 疑難排解
       contenttype: Troubleshooting
-    - title: Tutorials
+    - title: 教學課程
       contenttype: Tutorial
 languageSelector:
   title: 切換地區
