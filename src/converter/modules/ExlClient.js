@@ -1,7 +1,10 @@
+import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import mappings from '../url-mapping.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
 import stateLib from './utils/state-lib-util.js';
+
+export const aioLogger = Logger('ExlClient');
 
 /**
  * @typedef {object} ExlArticle
@@ -138,26 +141,24 @@ export default class ExlClient {
   }
 
   async getSolutions() {
-    try {
-      const solutionsState = await this.state.get('solutions');
-      if (solutionsState) return solutionsState;
-
-      const apiUrl = new URL(
-        '/api/solutions?page_size=1000&full=true',
-        this.domain,
-      );
-      const res = await fetch(apiUrl.toString());
-      const data = await res.json();
-      const solutions = data.data || [];
-      if (solutions) {
-        // store for 24 hours (86400 seconds)
-        await this.state.put('solutions', solutions, { ttl: '86400' });
-      }
-      return solutions;
-    } catch (error) {
-      console.error('Error fetching solutions', error);
-      return [];
+    const solutionsState = await this.state.get('solutions');
+    if (solutionsState && solutionsState.value) {
+      aioLogger.debug('Using cached solutions');
+      return JSON.parse(solutionsState.value);
     }
+
+    aioLogger.debug('Fetching solutions from API');
+    const solutionsPath = '/api/solutions?page_size=1000&full=true';
+    const data = await this.doFetch(solutionsPath);
+    const solutions = data.data || [];
+    aioLogger.debug(`Fetched ${solutions.length} solutions and caching them.`);
+    if (solutions) {
+      // store for 24 hours (86400 seconds)
+      await this.state.put('solutions', JSON.stringify(solutions), {
+        ttl: 86400,
+      });
+    }
+    return solutions;
   }
 
   async getLandingPageByFileName(landingName, lang = 'en') {
