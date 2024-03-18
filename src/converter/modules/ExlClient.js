@@ -1,7 +1,7 @@
-import stateLib from '@adobe/aio-lib-state';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import mappings from '../url-mapping.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
+import stateLib from './utils/state-lib-util.js';
 
 /**
  * @typedef {object} ExlArticle
