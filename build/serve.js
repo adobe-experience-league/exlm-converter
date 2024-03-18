@@ -6,6 +6,8 @@ import { doForEachAction, watchAction } from './build-helpers.js';
 const filename = fileURLToPath(import.meta.url);
 const currentDirectory = dirname(filename);
 
+process.env.LOCAL_CONVERTER = true;
+
 /**
  * Execute a Command
  * @param {*} command

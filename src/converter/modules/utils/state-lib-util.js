@@ -19,6 +19,7 @@ const localStateLib = {
   },
 };
 
+// use a mock version of state lib if LOCAL_CONVERTER is set; used for local development
 const stateLib = process?.env?.LOCAL_CONVERTER ? localStateLib : aioLibState;
 
 export default stateLib;

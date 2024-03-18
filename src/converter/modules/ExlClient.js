@@ -150,7 +150,8 @@ export default class ExlClient {
       const data = await res.json();
       const solutions = data.data || [];
       if (solutions) {
-        await this.state.put('solutions', solutions);
+        // store for 24 hours (86400 seconds)
+        await this.state.put('solutions', solutions, { ttl: '86400' });
       }
       return solutions;
     } catch (error) {
