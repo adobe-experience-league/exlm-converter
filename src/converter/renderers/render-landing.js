@@ -1,7 +1,7 @@
 import md2html from '../modules/ExlMd2Html.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchLandingPath } from '../modules/utils/path-match-utils.js';
-import { defaultExlClient } from '../modules/ExlClient.js';
+import { createDefaultExlClient } from '../modules/ExlClient.js';
 import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
 
 /**
@@ -28,6 +28,7 @@ export default async function renderLanding(path) {
     pageType = DOCPAGETYPE.SOLUTION_LANDING;
   }
 
+  const defaultExlClient = await createDefaultExlClient();
   const landingPage = await defaultExlClient.getLandingPageByFileName(
     landingName,
     lang,
