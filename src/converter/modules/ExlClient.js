@@ -1,6 +1,10 @@
+import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import mappings from '../url-mapping.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
+import stateLib from './utils/state-lib-util.js';
+
+export const aioLogger = Logger('ExlClient');
 
 /**
  * @typedef {object} ExlArticle
@@ -61,9 +65,20 @@ const lookupId = (path) => {
   return mapping?.id;
 };
 
+/**
+ * @typedef {Object} ExlClientOptions
+ * @property {string} domain
+ * @property {StateStore} state
+ */
+
 export default class ExlClient {
-  constructor({ domain = 'https://experienceleague.adobe.com' } = {}) {
+  /**
+   *
+   * @param {ExlClientOptions} options
+   */
+  constructor({ domain = 'https://experienceleague.adobe.com', state } = {}) {
     this.domain = domain;
+    this.state = state;
   }
 
   /**
@@ -107,6 +122,7 @@ export default class ExlClient {
     url = encodeURIComponent(url.toString());
     url = url.toLowerCase(); // use lowercase when using `Search%20URL` query param
     const apiPath = `api/articles?Search%20URL=${url}&lang=${langForApi}`;
+    console.log(`Fetching article from ${apiPath}`);
     const response = await this.doFetch(apiPath);
 
     if (response.error) {
@@ -122,6 +138,27 @@ export default class ExlClient {
     apiUrl.searchParams.set('page_size', '100');
     const json = await this.doFetch(apiUrl.toString());
     return json?.data;
+  }
+
+  async getSolutions() {
+    const solutionsState = await this.state.get('solutions');
+    if (solutionsState && solutionsState.value) {
+      aioLogger.debug('Using cached solutions');
+      return JSON.parse(solutionsState.value);
+    }
+
+    aioLogger.debug('Fetching solutions from API');
+    const solutionsPath = '/api/solutions?page_size=1000&full=true';
+    const data = await this.doFetch(solutionsPath);
+    const solutions = data.data || [];
+    aioLogger.debug(`Fetched ${solutions.length} solutions and caching them.`);
+    if (solutions) {
+      // store for 24 hours (86400 seconds)
+      await this.state.put('solutions', JSON.stringify(solutions), {
+        ttl: 86400,
+      });
+    }
+    return solutions;
   }
 
   async getLandingPageByFileName(landingName, lang = 'en') {
@@ -156,6 +193,15 @@ export default class ExlClient {
   }
 }
 
-export const defaultExlClient = new ExlClient({
-  domain: 'https://experienceleague.adobe.com',
-});
+let defaultExlClient;
+
+export const createDefaultExlClient = async () => {
+  if (!defaultExlClient) {
+    const state = await stateLib.init();
+    defaultExlClient = new ExlClient({
+      domain: 'https://experienceleague.adobe.com',
+      state,
+    });
+  }
+  return defaultExlClient;
+};
