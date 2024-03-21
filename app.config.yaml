@@ -10,6 +10,9 @@ application:
             function: dist/converter # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
             runtime: 'nodejs:18'
+            limits:
+              memory: 512
+              concurrency: 500
             inputs:
               LOG_LEVEL: debug
               aemAuthorUrl: $AEM_AUTHOR_URL
