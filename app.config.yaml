@@ -11,8 +11,8 @@ application:
             web: 'yes'
             runtime: 'nodejs:18'
             limits:
-              memory: 512
-              concurrency: 500
+              memory: 1024
+              concurrency: 200
             inputs:
               LOG_LEVEL: debug
               aemAuthorUrl: $AEM_AUTHOR_URL
