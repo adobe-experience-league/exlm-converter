@@ -1,6 +1,7 @@
 import { match } from 'path-to-regexp';
 
 const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
+const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
 
@@ -10,6 +11,15 @@ export const matchDocsPath = (path) => {
 };
 
 export const isDocsPath = (path) => matchDocsPath(path) !== false;
+
+export const matchCoursesPath = (path) => {
+  const coursesMatcher = match(coursesMatchPath, {
+    decode: decodeURIComponent,
+  });
+  return coursesMatcher(path);
+};
+
+export const isCoursesPath = (path) => matchCoursesPath(path) !== false;
 
 export const matchLandingPath = (path) => {
   const landingMatcher = match(landingMatchPath, {

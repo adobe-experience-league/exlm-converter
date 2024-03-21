@@ -5,7 +5,7 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
+import { handleExternalUrl } from './utils/dom-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import handleUrls from '../../common/utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
@@ -38,6 +38,8 @@ import { updateAnchors } from './utils/update-anchors.js';
 import createTargetInsertion from './blocks/create-target-insertion.js';
 import { createRecommendationMoreHelp } from './blocks/create-recommendation-more-help.js';
 import createDocsCards from './blocks/create-docs-cards.js';
+import { createMetaData } from './utils/metadata-util.js';
+import { createDefaultExlClient } from './ExlClient.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -90,7 +92,9 @@ export default async function md2html({
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  createMetaData(document, meta, data, pageType);
+  const defaultExlClient = await createDefaultExlClient();
+  const solutions = await defaultExlClient.getSolutions();
+  createMetaData(document, meta, data, pageType, solutions);
   handleUrls(document, reqLang, pageType);
   updateAnchors(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {

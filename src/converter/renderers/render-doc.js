@@ -1,4 +1,4 @@
-import { defaultExlClient } from '../modules/ExlClient.js';
+import { createDefaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
@@ -20,6 +20,7 @@ export default async function renderDoc(path) {
     apiArticlePath = removeExtension(apiArticlePath);
   }
 
+  const defaultExlClient = await createDefaultExlClient();
   const response = await defaultExlClient.getArticlesByPath(
     apiArticlePath,
     lang,
