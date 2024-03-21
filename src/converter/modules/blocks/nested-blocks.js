@@ -1,4 +1,28 @@
-import { blockToTable, replaceElement } from '../utils/dom-utils.js';
+import { toBlock } from '../utils/dom-utils.js';
+
+let fragmentIndex = 0;
+function createFragmentSection(block, document) {
+  const fragmentSection = document.createElement('div');
+  const fragmentReference = document.createElement('p');
+  const blockName = block.classList[0];
+
+  const fragmentId = `inline-fragment-${blockName}-${fragmentIndex}`;
+  fragmentReference.innerHTML = `<a href="#${fragmentId}">${fragmentId}</a>`;
+  fragmentSection.append(block.cloneNode(true));
+  fragmentSection.append(
+    toBlock(
+      'section-metadata',
+      [
+        ['style', 'inline-fragment'],
+        ['id', fragmentId],
+      ],
+      document,
+    ),
+  );
+
+  fragmentIndex += 1;
+  return { fragmentSection, fragmentReference };
+}
 
 /**
  * retroactively converts any nested blocks into tables.
@@ -30,8 +54,15 @@ export default function handleNestedBlocks(document) {
     blockClasses.forEach((nestedBlockClass) => {
       const nestedBlocks = [...block.getElementsByClassName(nestedBlockClass)];
       nestedBlocks.forEach((nestedBlock) => {
-        const table = blockToTable(nestedBlock, document);
-        replaceElement(nestedBlock, table);
+        // const table = blockToTable(nestedBlock, document);
+        // replaceElement(nestedBlock, table);
+        const { fragmentSection, fragmentReference } = createFragmentSection(
+          nestedBlock,
+          document,
+        );
+        const section = block.parentElement;
+        section.after(fragmentSection);
+        nestedBlock.replaceWith(fragmentReference);
       });
     });
   });
