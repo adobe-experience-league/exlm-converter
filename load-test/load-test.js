@@ -7,24 +7,26 @@ const LOCAL_SERVER_COMMAND =
   'NODE_ENV=production LOCAL_CONVERTER=true node --max-old-space-size=512 --node-memory-debug ../build/express.js';
 
 const AUTOCANNON_DEFAULT_OPTIONS = {
-  url: 'https://51837-ahmedexlm-dev.adobeioruntime.net/api/v1/web/main/convert/en/docs/commerce-operations/reference/magento-open-source-beta',
-  // url: 'http://localhost:3030/en/docs/commerce-operations/reference/magento-open-source-beta',
-  connections: 3,
+  url: 'http://localhost:3030/en/docs/commerce-operations/reference/magento-open-source-beta',
+  connections: 15,
   pipelining: 1,
   duration: 30,
   debug: true,
 };
-
+const runDetails = `Load of ${AUTOCANNON_DEFAULT_OPTIONS.connections} concurrent connections for ${AUTOCANNON_DEFAULT_OPTIONS.duration} seconds on url: ${AUTOCANNON_DEFAULT_OPTIONS.url}`;
 // file loggers
 const now = Date.now();
 const logs = `./logs`;
 const responseBodyAppender = new FileAppender(
   `${logs}/${now}-responses-body.log`,
 );
+responseBodyAppender.appendLine(runDetails);
 const responseStatAppender = new FileAppender(
   `${logs}/${now}-responses-stat.log`,
 );
+responseStatAppender.appendLine(runDetails);
 const processAppender = new FileAppender(`${logs}/${now}-process.log`);
+processAppender.appendLine(runDetails);
 
 function setupClient(client) {
   client.on('body', (buffer) =>
@@ -38,9 +40,7 @@ function setupClient(client) {
 }
 
 const runAutocannon = async (opts, onDone) => {
-  console.log(
-    `Running load of ${opts.connections} concurrent connections for ${opts.duration} seconds on url: ${opts.url}...`,
-  );
+  console.log(runDetails);
   const autocannonInstance = autocannon({ ...opts, setupClient });
   autocannonInstance.on('done', (result) => {
     console.log('DONE.');
