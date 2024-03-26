@@ -34,7 +34,7 @@ jobs:
     environment:
       name: ${{ needs.env-select.outputs.env_name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - if: ${{ needs.env-select.outputs.env_name == '' }}
         run: |
           echo "An Environment ha not been selected by the previous job, this might be an issue with the action."
@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "An Environment was selected, proceeding with the deployment to ${{ needs.env-select.outputs.env_name }}."
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
