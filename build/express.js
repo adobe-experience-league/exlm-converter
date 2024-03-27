@@ -95,17 +95,13 @@ const converterHandler = async (req, res) => {
 const khorosHandler = async (req, res) => {
   const { path: originalPath, query, headers } = req;
   const path = originalPath.replace('/khoros', '');
-
-  console.log({
-    query,
-  });
-
   const params = {
     __ow_path: path,
     __ow_headers: headers,
     khorosApiSecret: KHOROS_API_SECRET,
     imsOrigin: IMS_ORIGIN,
     khorosOrigin: KHOROS_ORIGIN,
+    ...query,
   };
 
   const { body, statusCode } = await khorosMain(params);
