@@ -27,6 +27,10 @@ const {
   KHOROS_ORIGIN,
   KHOROS_API_SECRET,
   IMS_ORIGIN,
+  IMS_CLIENT_ID,
+  IMS_CLIENT_SECRET,
+  IMS_AUTHORIZATION_CODE,
+  IPASS_API_KEY,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -95,17 +99,17 @@ const converterHandler = async (req, res) => {
 const khorosHandler = async (req, res) => {
   const { path: originalPath, query, headers } = req;
   const path = originalPath.replace('/khoros', '');
-
-  console.log({
-    query,
-  });
-
   const params = {
     __ow_path: path,
     __ow_headers: headers,
     khorosApiSecret: KHOROS_API_SECRET,
     imsOrigin: IMS_ORIGIN,
+    imsClientId: IMS_CLIENT_ID,
+    imsClientSecret: IMS_CLIENT_SECRET,
+    imsAuthorizationCode: IMS_AUTHORIZATION_CODE,
+    ipassApiKey: IPASS_API_KEY,
     khorosOrigin: KHOROS_ORIGIN,
+    ...query,
   };
 
   const { body, statusCode } = await khorosMain(params);
