@@ -3,11 +3,11 @@ import Logger from '@adobe/aio-lib-core-logging';
 
 export const aioLogger = Logger('khoros-ims-utils');
 
-export const isValidImsToken = async (token) => {
+export const isValidImsToken = async (token, imsOrigin) => {
   // eslint-disable-next-line camelcase
   const { client_id, type } = jwtDecode(token);
   // eslint-disable-next-line camelcase
-  const validationUrl = `https://ims-na1.adobelogin.com/ims/validate_token/v1?client_id=${client_id}&type=${type}`;
+  const validationUrl = `${imsOrigin}/ims/validate_token/v1?client_id=${client_id}&type=${type}`;
   const response = await fetch(validationUrl, {
     headers: {
       Authorization: `Bearer ${token}`,

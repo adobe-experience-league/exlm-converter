@@ -26,6 +26,7 @@ export const main = async function main(params) {
     __ow_headers,
     khorosApiSecret,
     khorosOrigin,
+    imsOrigin,
     lang = 'en',
   } = params;
   // eslint-disable-next-line camelcase
@@ -40,13 +41,16 @@ export const main = async function main(params) {
     return sendError(401, 'Missing Khoros Token');
   }
   if (!khorosOrigin) {
-    return sendError(500, 'Missing Configuration');
+    return sendError(500, 'Missing Configuration: Khoros Origin');
+  }
+  if (!imsOrigin) {
+    return sendError(500, 'Missing Configuration: IMS Origin');
   }
   if (!imsToken) {
     return sendError(401, 'Missing IMS Token');
   }
 
-  const isValidToken = await isValidImsToken(imsToken);
+  const isValidToken = await isValidImsToken(imsToken, imsOrigin);
 
   if (!isValidToken) {
     return sendError(401, 'Invalid IMS Token');

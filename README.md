@@ -73,6 +73,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `AEM_AUTHOR_URL`        | var    |
 | `KHOROS_ORIGIN`         | secret |
 | `KHOROS_API_SECRET`     | secret |
+| `IMS_ORIGIN`            | secret |
 
 ## Debugging common issues
 
