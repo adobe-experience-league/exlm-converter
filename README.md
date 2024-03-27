@@ -85,21 +85,25 @@ The action requires the follwoing environment variables/secrets to be set:
 
 > see github docs for how to add those: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
 
-| Name                     | Type   | description                                                                        |
-| ------------------------ | ------ | ---------------------------------------------------------------------------------- |
-| `AIO_RUNTIME_AUTH`       | secret | used to deploy the action, obtained from: https://developer.adobe.com/console/home |
-| `AIO_RUNTIME_NAMESPACE`  | secret | used to deploy the action, obtained from: https://developer.adobe.com/console/home |
-| `OWNER`                  | var    | this repo owner, sent to AEM for AEM content                                       |
-| `REPO`                   | var    | this repo name, sent to AEM for AEM content                                        |
-| `BRANCH`                 | var    | this repo branch, sent to AEM for AEM content                                      |
-| `AEM_AUTHOR_URL`         | var    | AEM author instance url to get content from                                        |
-| `KHOROS_ORIGIN`          | secret | the origin used to proxy khoros requests                                           |
-| `KHOROS_API_SECRET`      | secret | the API secret used for khoros requests                                            |
-| `IMS_ORIGIN`             | secret | the IMS origin to call for IMS authentication                                      |
-| `IMS_CLIENT_ID`          | secret | the IMS client id to use for IMS authentication                                    |
-| `IMS_CLIENT_SECRET`      | secret | the IMS client secret to use for IMS authentication                                |
-| `IMS_AUTHORIZATION_CODE` | secret | the IMS auth code to use for IMS authentication                                    |
-| `IPASS_API_KEY`          | secret | the API KEY for iPaaS - for khoros API in lower environments                       |
+| Name                     | Type   | required for Prod? | description                                                  |
+| ------------------------ | ------ | ------------------ | ------------------------------------------------------------ |
+| `AIO_RUNTIME_AUTH`       | secret | yes                | used to deploy the action                                    |
+| `AIO_RUNTIME_NAMESPACE`  | secret | yes                | used to deploy the action                                    |
+| `OWNER`                  | var    | yes                | this repo owner, sent to AEM for AEM content                 |
+| `REPO`                   | var    | yes                | this repo name, sent to AEM for AEM content                  |
+| `BRANCH`                 | var    | yes                | this repo branch, sent to AEM for AEM content                |
+| `AEM_AUTHOR_URL`         | var    | yes                | AEM author instance url to get content from                  |
+| `KHOROS_ORIGIN`          | secret | yes                | the origin used to proxy khoros requests                     |
+| `KHOROS_API_SECRET`      | secret | yes                | the API secret used for khoros requests                      |
+| `IMS_ORIGIN`             | secret | yes                | the IMS origin to call for IMS authentication                |
+| `IMS_CLIENT_ID`          | secret | no                 | the IMS client id to use for IMS authentication              |
+| `IMS_CLIENT_SECRET`      | secret | no                 | the IMS client secret to use for IMS authentication          |
+| `IMS_AUTHORIZATION_CODE` | secret | no                 | the IMS auth code to use for IMS authentication              |
+| `IPASS_API_KEY`          | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments |
+
+> `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
+> for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication
+> `IMS_CLIENT_ID` is required in all envs sincve we need it for IMS token validation
 
 ## Debugging common issues
 
