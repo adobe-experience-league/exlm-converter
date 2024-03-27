@@ -27,6 +27,10 @@ const {
   KHOROS_ORIGIN,
   KHOROS_API_SECRET,
   IMS_ORIGIN,
+  IMS_CLIENT_ID,
+  IMS_CLIENT_SECRET,
+  IMS_AUTHORIZATION_CODE,
+  IPASS_API_KEY,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -100,6 +104,10 @@ const khorosHandler = async (req, res) => {
     __ow_headers: headers,
     khorosApiSecret: KHOROS_API_SECRET,
     imsOrigin: IMS_ORIGIN,
+    imsClientId: IMS_CLIENT_ID,
+    imsClientSecret: IMS_CLIENT_SECRET,
+    imsAuthorizationCode: IMS_AUTHORIZATION_CODE,
+    ipassApiKey: IPASS_API_KEY,
     khorosOrigin: KHOROS_ORIGIN,
     ...query,
   };

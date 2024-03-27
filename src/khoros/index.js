@@ -29,6 +29,7 @@ export const main = async function main(params) {
     imsClientId,
     imsClientSecret,
     imsAuthorizationCode,
+    ipassApiKey,
     lang = 'en',
   } = params;
   // eslint-disable-next-line camelcase
@@ -48,6 +49,9 @@ export const main = async function main(params) {
   if (!imsOrigin) return sendError(500, 'Missing Config: IMS Origin');
   if (!imsToken) return sendError(401, 'Missing IMS Token');
 
+  const shouldUseIpass =
+    imsClientId && imsClientSecret && imsAuthorizationCode && ipassApiKey;
+
   const imsService = getDefaultImsService({
     imsOrigin,
     clientId: imsClientId,
@@ -62,10 +66,11 @@ export const main = async function main(params) {
   }
 
   const additionalHeaders = {};
-  // get access token if the environment is configured for it
-  if (imsClientId && imsClientSecret && imsAuthorizationCode) {
+  // get access token if we should use ipass
+  if (shouldUseIpass) {
     const token = await imsService.getAccessToken();
-    additionalHeaders.Authorization = `Bearer ${token}`;
+    additionalHeaders.Authorization = `${token}`;
+    additionalHeaders.api_key = ipassApiKey;
   }
 
   // eslint-disable-next-line camelcase
@@ -73,6 +78,7 @@ export const main = async function main(params) {
 
   return khorosProxy.proxyPath({
     path,
+    pathPrefix: shouldUseIpass ? '' : '/plugins/custom/adobe/adobedx',
     // eslint-disable-next-line camelcase
     params: { user: user_id, lang },
     additionalHeaders,

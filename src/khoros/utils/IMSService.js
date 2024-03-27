@@ -4,7 +4,7 @@ import { IMSTokenResponseStore } from './IMSTokenResponseStore.js';
 
 export const aioLogger = Logger('IMSService');
 
-const GET_TOKEN_PATH = '/ims/token/v1';
+const GET_TOKEN_PATH = '/ims/token';
 const VALIDATE_TOKEN_PATH = '/ims/validate_token/v1';
 
 export class IMSService {
@@ -50,7 +50,9 @@ export class IMSService {
     });
     try {
       const json = await response.json();
-      return json?.valid || false;
+      const isValid = json?.valid || false;
+      aioLogger.debug(`token is ${isValid ? 'valid' : 'invalid'}`);
+      return isValid;
     } catch (e) {
       aioLogger.error(e);
       return false;
@@ -134,11 +136,12 @@ export class IMSService {
     const formData = new FormData();
     // create formdata from params
     Object.entries(params).forEach(([key, value]) => {
+      // aioLogger.debug(`appending ${key}: ${value} to formdata`);
       formData.append(key, value);
     });
 
     const url = `${imsOrigin}${GET_TOKEN_PATH}`;
-    console.debug(`fetching access token from IMS:  ${url}`);
+    aioLogger.debug(`fetching access token from IMS:  ${url}`);
 
     return fetch(url, {
       method: 'POST',

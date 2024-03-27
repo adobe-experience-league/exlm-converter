@@ -3,7 +3,7 @@ import { sendError } from '../../common/utils/response-utils.js';
 
 export const aioLogger = Logger('KhorosProxy');
 
-const ALLOWED_PATHS = ['/plugins/custom/adobe/adobedx/profile-menu-list'];
+const ALLOWED_PATHS = ['/profile-menu-list'];
 
 /**
  * Proxy request to khoros
@@ -24,22 +24,27 @@ export class KhorosProxy {
    * @param {Object.<string, string>} params
    * @returns
    */
-  async proxyPath({ path, params = {}, additionalHeaders = {} }) {
+  async proxyPath({ path, pathPrefix, params = {}, additionalHeaders = {} }) {
     if (!KhorosProxy.canHandle(path)) {
       return sendError(404, 'Not Found');
     }
+
     try {
-      const body = await this.fetchKhorosJson({
+      const response = await this.fetchKhoros({
         path,
+        pathPrefix,
         params,
         additionalHeaders,
       });
+      const body = await response.json();
+      aioLogger.debug(`khoros response [${response.status}]`, body);
+
       return {
         body,
         headers: {
           'Content-Type': 'application/json',
         },
-        statusCode: 200,
+        statusCode: response.status,
       };
     } catch (error) {
       aioLogger.error(error);
@@ -51,24 +56,31 @@ export class KhorosProxy {
    *
    * @param {string} path
    * @param {Object.<string, string>} params
-   * @returns {Promise<Object>}
+   * @returns {Promise<Response>}
    */
-  async fetchKhorosJson({ path, params = {}, additionalHeaders = {} }) {
+  async fetchKhoros({ path, pathPrefix, params = {}, additionalHeaders = {} }) {
     // build query params out of params object
     const queryParams = Object.keys(params)
       .map((key) => `${key}=${params[key]}`)
       .join('&');
+
     const query = queryParams ? `?${queryParams}` : '';
-    const khorosUrl = `${this.khorosOrigin}${path || ''}${query || ''}`;
-    aioLogger.debug(`fetching khoros url: ${khorosUrl}`);
-    const response = await fetch(khorosUrl, {
-      headers: {
-        'x-api-secret': this.khorosApiSecret,
-        ...additionalHeaders,
-      },
+    const pathWithQuery = [pathPrefix, path, query].filter(Boolean).join('');
+    const khorosUrl = `${this.khorosOrigin}${pathWithQuery}`;
+    const headers = {
+      'x-api-secret': this.khorosApiSecret,
+      ...additionalHeaders,
+    };
+    // aioLogger.debug(
+    //   `fetching khoros url: ${khorosUrl} with headers: ${JSON.stringify(
+    //     headers,
+    //     null,
+    //     2,
+    //   )}`,
+    // );
+    return fetch(khorosUrl, {
+      headers,
     });
-    const json = await response.json();
-    return json;
   }
 }
 

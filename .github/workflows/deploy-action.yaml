@@ -55,6 +55,10 @@ jobs:
           KHOROS_ORIGIN: ${{ secrets.KHOROS_ORIGIN }}
           KHOROS_API_SECRET: ${{ secrets.KHOROS_API_SECRET }}
           IMS_ORIGIN: ${{ secrets.IMS_ORIGIN }}
+          IMS_CLIENT_ID: ${{ secrets.IMS_CLIENT_ID }}
+          IMS_CLIENT_SECRET: ${{ secrets.IMS_CLIENT_SECRET }}
+          IMS_AUTHORIZATION_CODE: ${{ secrets.IMS_AUTHORIZATION_CODE }}
+          IPASS_API_KEY: ${{ secrets.IPASS_API_KEY }}
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
           AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}

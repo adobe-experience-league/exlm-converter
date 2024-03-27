@@ -45,6 +45,28 @@ ACCESS_TOKEN=<token>
 
 > Developer tokens are short lived and should only be used for local testing/debugging.
 
+### working with the khoros API (and action locally)
+
+in local, and lower environments, iPaaS is used to proxy to khoros services.
+
+The khoros action is available locally at `localhost:3030/khoros/<proxy path here>` when you run `npm run serve`
+
+this local setup requires the follwoing env variables to be added to `build/.local.env`
+
+> please reach out to the dev team for these values
+
+```
+KHOROS_ORIGIN=<the ipass origin used to proxy to khoros>
+KHOROS_API_SECRET=<the khoros dev env API secret>
+IMS_ORIGIN=<the ims origin to auth agains, use the stage origin>
+IMS_CLIENT_ID=<the ims client id used to obtain a token to access iPaaS>
+IMS_CLIENT_SECRET=<the ims client secret used to obtain a token to access iPaaS>
+IMS_AUTHORIZATION_CODET=<the ims client auth code used to obtain a token to access iPaaS>
+IPASS_API_KEY=<the ipass api key for dev iPaaS service for the given KHOROS_ORIGIN>
+```
+
+> Please note, on Prod, iPaaS is not used, the khoros endpoint is called directly.
+
 ## Deployment
 
 The action is built and deployed by a [github workflow](.github/workflows/deploy-action.yaml).
@@ -63,17 +85,21 @@ The action requires the follwoing environment variables/secrets to be set:
 
 > see github docs for how to add those: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
 
-| Name                    | Type   |
-| ----------------------- | ------ |
-| `AIO_RUNTIME_AUTH`      | secret |
-| `AIO_RUNTIME_NAMESPACE` | secret |
-| `OWNER`                 | var    |
-| `REPO`                  | var    |
-| `BRANCH`                | var    |
-| `AEM_AUTHOR_URL`        | var    |
-| `KHOROS_ORIGIN`         | secret |
-| `KHOROS_API_SECRET`     | secret |
-| `IMS_ORIGIN`            | secret |
+| Name                     | Type   | description                                                                        |
+| ------------------------ | ------ | ---------------------------------------------------------------------------------- |
+| `AIO_RUNTIME_AUTH`       | secret | used to deploy the action, obtained from: https://developer.adobe.com/console/home |
+| `AIO_RUNTIME_NAMESPACE`  | secret | used to deploy the action, obtained from: https://developer.adobe.com/console/home |
+| `OWNER`                  | var    | this repo owner, sent to AEM for AEM content                                       |
+| `REPO`                   | var    | this repo name, sent to AEM for AEM content                                        |
+| `BRANCH`                 | var    | this repo branch, sent to AEM for AEM content                                      |
+| `AEM_AUTHOR_URL`         | var    | AEM author instance url to get content from                                        |
+| `KHOROS_ORIGIN`          | secret | the origin used to proxy khoros requests                                           |
+| `KHOROS_API_SECRET`      | secret | the API secret used for khoros requests                                            |
+| `IMS_ORIGIN`             | secret | the IMS origin to call for IMS authentication                                      |
+| `IMS_CLIENT_ID`          | secret | the IMS client id to use for IMS authentication                                    |
+| `IMS_CLIENT_SECRET`      | secret | the IMS client secret to use for IMS authentication                                |
+| `IMS_AUTHORIZATION_CODE` | secret | the IMS auth code to use for IMS authentication                                    |
+| `IPASS_API_KEY`          | secret | the API KEY for iPaaS - for khoros API in lower environments                       |
 
 ## Debugging common issues
 
