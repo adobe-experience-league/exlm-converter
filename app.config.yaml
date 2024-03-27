@@ -30,6 +30,7 @@ application:
               LOG_LEVEL: debug
               khorosApiSecret: $KHOROS_API_SECRET
               khorosOrigin: $KHOROS_ORIGIN
+              imsOrigin: $IMS_ORIGIN
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

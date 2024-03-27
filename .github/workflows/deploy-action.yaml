@@ -54,6 +54,7 @@ jobs:
         env:
           KHOROS_ORIGIN: ${{ secrets.KHOROS_ORIGIN }}
           KHOROS_API_SECRET: ${{ secrets.KHOROS_API_SECRET }}
+          IMS_ORIGIN: ${{ secrets.IMS_ORIGIN }}
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
           AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}

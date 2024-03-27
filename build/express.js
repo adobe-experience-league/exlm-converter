@@ -26,6 +26,7 @@ const {
   ACCESS_TOKEN,
   KHOROS_ORIGIN,
   KHOROS_API_SECRET,
+  IMS_ORIGIN,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -103,6 +104,7 @@ const khorosHandler = async (req, res) => {
     __ow_path: path,
     __ow_headers: headers,
     khorosApiSecret: KHOROS_API_SECRET,
+    imsOrigin: IMS_ORIGIN,
     khorosOrigin: KHOROS_ORIGIN,
   };
 
