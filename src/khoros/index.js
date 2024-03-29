@@ -12,12 +12,11 @@
 
 import Logger from '@adobe/aio-lib-core-logging';
 import { jwtDecode } from 'jwt-decode';
-import { isValidImsToken } from './utils/ims-utils.js';
-import { PROFILE_MENU_LIST, getProfileMenu } from './utils/khoros-utils.js';
 import { sendError } from '../common/utils/response-utils.js';
+import { getDefaultImsService } from './utils/IMSService.js';
+import { KhorosProxy, getDefaultKhorosProxy } from './utils/KhorosProxy.js';
 
 export const aioLogger = Logger('khoros');
-
 export const main = async function main(params) {
   const {
     // eslint-disable-next-line camelcase
@@ -26,6 +25,11 @@ export const main = async function main(params) {
     __ow_headers,
     khorosApiSecret,
     khorosOrigin,
+    imsOrigin,
+    imsClientId,
+    imsClientSecret,
+    imsAuthorizationCode,
+    ipassApiKey,
     lang = 'en',
   } = params;
   // eslint-disable-next-line camelcase
@@ -33,49 +37,50 @@ export const main = async function main(params) {
   // eslint-disable-next-line camelcase
   const imsToken = __ow_headers['x-ims-token'] || '';
 
-  if (path !== PROFILE_MENU_LIST) {
-    return sendError(404, 'Not Found');
-  }
-  if (!khorosApiSecret) {
-    return sendError(401, 'Missing Khoros Token');
-  }
-  if (!khorosOrigin) {
-    return sendError(500, 'Missing Configuration');
-  }
-  if (!imsToken) {
-    return sendError(401, 'Missing IMS Token');
-  }
+  const khorosProxy = getDefaultKhorosProxy({
+    khorosOrigin,
+    khorosApiSecret,
+  });
 
-  const isValidToken = await isValidImsToken(imsToken);
+  // check if request and env are valid
+  if (!KhorosProxy.canHandle(path)) return sendError(404, 'Not Found');
+  if (!khorosApiSecret) return sendError(401, 'Missing Khoros Token');
+  if (!khorosOrigin) return sendError(500, 'Missing Config: Khoros Origin');
+  if (!imsOrigin) return sendError(500, 'Missing Config: IMS Origin');
+  if (!imsToken) return sendError(401, 'Missing IMS Token');
 
+  const shouldUseIpass =
+    imsClientId && imsClientSecret && imsAuthorizationCode && ipassApiKey;
+
+  const imsService = getDefaultImsService({
+    imsOrigin,
+    clientId: imsClientId,
+    clientSecret: imsClientSecret,
+    authorizationCode: imsAuthorizationCode,
+  });
+
+  // validate provided ims token
+  const isValidToken = await imsService.isValidImsToken(imsToken);
   if (!isValidToken) {
     return sendError(401, 'Invalid IMS Token');
   }
 
-  if (path === PROFILE_MENU_LIST) {
-    // eslint-disable-next-line camelcase
-    const { user_id } = jwtDecode(imsToken);
-
-    try {
-      // eslint-disable-next-line camelcase
-      const body = await getProfileMenu({
-        khorosOrigin,
-        // eslint-disable-next-line camelcase
-        user_id,
-        lang,
-        khorosApiSecret,
-      });
-      return {
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        statusCode: 200,
-      };
-    } catch (e) {
-      return sendError(500, 'Internal Server Error');
-    }
+  const additionalHeaders = {};
+  // get access token if we should use ipass
+  if (shouldUseIpass) {
+    const token = await imsService.getAccessToken();
+    additionalHeaders.Authorization = `${token}`;
+    additionalHeaders.api_key = ipassApiKey;
   }
 
-  return sendError(404, 'Not Found');
+  // eslint-disable-next-line camelcase
+  const { user_id } = jwtDecode(imsToken);
+
+  return khorosProxy.proxyPath({
+    path,
+    pathPrefix: shouldUseIpass ? '' : '/plugins/custom/adobe/adobedx',
+    // eslint-disable-next-line camelcase
+    params: { user: user_id, lang },
+    additionalHeaders,
+  });
 };
