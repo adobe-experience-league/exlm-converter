@@ -22,7 +22,7 @@ const getImageAttributes = (img) => {
     // remove center tag
     img?.parentNode?.parentNode?.replaceChild(img, img?.parentNode);
   }
-  if (img.width) attr.width = img.width;
+  if (img.hasAttribute('width')) attr.width = img.getAttribute('width');
   if (img.className?.includes('modal-image')) attr.modal = 'regular';
   if (img.className?.includes('modal-image-full')) attr.modal = 'full';
   return attr;
@@ -45,11 +45,12 @@ export default function createImg(document) {
     const newImg = document.createElement('img');
     newImg.src = img.src;
     if (hasAttributes) {
-      // images are inlined by default, and should always be, unless styled otherwise.
-      // thus, we cannot use a block here and opted to pass options in alt attributes as JSON. Will be decorated FE.
-      if (img.alt) attributes.alt = img.alt;
-      if (img.title) attributes.title = img.title;
-      newImg.alt = JSON.stringify(attributes);
+      // add text node after img
+      const attributesAsText = Object.entries(attributes)
+        .map(([key, value]) => `${key}="${value}"`)
+        .join(' ');
+      const text = document.createTextNode(`{${attributesAsText}}`);
+      img.parentNode.insertBefore(text, img.nextSibling);
     } else {
       newImg.alt = img.alt;
       newImg.title = img.title;
