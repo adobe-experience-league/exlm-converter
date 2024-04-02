@@ -32,6 +32,12 @@ export default function handleNestedBlocks(document) {
       nestedBlocks.forEach((nestedBlock) => {
         const table = blockToTable(nestedBlock, document);
         replaceElement(nestedBlock, table);
+        const parent = table.parentElement;
+        if (parent.tagName.toLowerCase() === 'p') {
+          // if the parent is a p tag, then we need to replace the p with it's children: https://jira.corp.adobe.com/browse/UGP-10614
+          // if the nested block is with a <p> tag, the grid-table md would be invalid and would result in bad chars rendered.
+          parent.replaceWith(...parent.childNodes);
+        }
       });
     });
   });
