@@ -25,7 +25,7 @@ import createArticleMetaDataTopics from './blocks/create-article-metadata-topics
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
-import createImgBlock from './blocks/create-img-block.js';
+import createImg from './blocks/create-img.js';
 import createAccordion from './blocks/create-accordion.js';
 import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
@@ -126,7 +126,7 @@ export default async function md2html({
     handleExternalUrl(document);
     createMiniTOC(document);
     createTOC(document, data);
-    createImgBlock(document);
+    createImg(document);
     createAccordion(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
     createDocActions(document);

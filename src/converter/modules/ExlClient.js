@@ -2,7 +2,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import mappings from '../url-mapping.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
-import stateLib from './utils/state-lib-util.js';
+import stateLib from '../../common/utils/state-lib-util.js';
 
 export const aioLogger = Logger('ExlClient');
 
