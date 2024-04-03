@@ -51,10 +51,9 @@ export default function createImg(document) {
         .join(' ');
       const text = document.createTextNode(`{${attributesAsText}}`);
       img.parentNode.insertBefore(text, img.nextSibling);
-    } else {
-      newImg.alt = img.alt;
-      newImg.title = img.title;
     }
+    if (img.alt) newImg.alt = img.alt;
+    if (img.title) newImg.title = img.title;
     // replace img with newImg
     img.parentNode.replaceChild(newImg, img);
   });
