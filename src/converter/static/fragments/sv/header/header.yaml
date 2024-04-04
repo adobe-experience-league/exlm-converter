@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Logga in'
 profileMenu:
   - title: Min studieprofil
-    url: '/home?lang=sv#dashboard/learning'
+    url: '/home?lang=sv#dashboard/profile'
   - title: Achievements
     url: '/home?lang=sv#dashboard/awards'
   - title: Bokmärkt innehåll

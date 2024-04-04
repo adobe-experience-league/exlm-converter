@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Accedi'
 profileMenu:
   - title: Il mio profilo di apprendimento
-    url: '/home?lang=it#dashboard/learning'
+    url: '/home?lang=it#dashboard/profile'
   - title: Risultati
     url: '/home?lang=it#dashboard/awards'
   - title: Contenuto con segnalibri

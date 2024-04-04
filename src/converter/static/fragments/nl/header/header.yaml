@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
-    url: '/home?lang=nl#dashboard/learning'
+    url: '/home?lang=nl#dashboard/profile'
   - title: Successen
     url: '/home?lang=nl#dashboard/awards'
   - title: Gebookmarkte content
