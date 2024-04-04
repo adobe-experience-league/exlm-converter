@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Se connecter'
 profileMenu:
   - title: Mon profil de formation
-    url: '/home?lang=fr#dashboard/learning'
+    url: '/home?lang=fr#dashboard/profile'
   - title: Réalisations
     url: '/home?lang=fr#dashboard/awards'
   - title: Contenu marqué d’un signet

@@ -7,7 +7,7 @@ productGrid:
 signIn: 'ログイン'
 profileMenu:
   - title: マイ学習プロファイル
-    url: '/home?lang=ja#dashboard/learning'
+    url: '/home?lang=ja#dashboard/profile'
   - title: 成果
     url: '/home?lang=ja#dashboard/awards'
   - title: ブックマークしたコンテンツ

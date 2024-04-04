@@ -7,7 +7,7 @@ productGrid:
 signIn: '登入'
 profileMenu:
   - title: 我的學習個人資料
-    url: '/home?lang=zh-Hant#dashboard/learning'
+    url: '/home?lang=zh-Hant#dashboard/profile'
   - title: 成就
     url: '/home?lang=zh-Hant#dashboard/awards'
   - title: 已建立書籤的內容
