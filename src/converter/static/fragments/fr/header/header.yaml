@@ -46,30 +46,10 @@ nav:
       - title: Produits en vedette
         url: '#'
         items:
-          - title: Analytics
-            url: '/fr/browse/analytics'
-          - title: Campaign
-            url: '/fr/browse/campaign'
-          - title: Commerce
-            url: '/fr/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/fr/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/fr/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/fr/browse/experience-manager'
-          - title: Experience Platform
-            url: '/fr/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/fr/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/fr/browse/marketo-engage'
-          - title: Target
-            url: '/fr/browse/target'
-          - title: Real-Time CDP
-            url: '/fr/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/fr/browse/workfront'
+          - title: Produits en vedette
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: Types de contenu
         items:
           - title: Cours recommandés

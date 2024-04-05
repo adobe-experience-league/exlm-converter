@@ -46,30 +46,10 @@ nav:
       - title: 推荐产品
         url: '#'
         items:
-          - title: Analytics
-            url: '/zh-hans/browse/analytics'
-          - title: Campaign
-            url: '/zh-hans/browse/campaign'
-          - title: Commerce
-            url: '/zh-hans/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/zh-hans/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/zh-hans/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/zh-hans/browse/experience-manager'
-          - title: Experience Platform
-            url: '/zh-hans/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/zh-hans/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/zh-hans/browse/marketo-engage'
-          - title: Target
-            url: '/zh-hans/browse/target'
-          - title: Real-Time CDP
-            url: '/zh-hans/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/zh-hans/browse/workfront'
+          - title: 推荐产品
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: 内容类型
         items:
           - title: 推荐课程
