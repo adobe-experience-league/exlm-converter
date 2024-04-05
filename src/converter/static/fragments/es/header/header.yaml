@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Iniciar sesión'
 profileMenu:
   - title: Mi perfil de aprendizaje
-    url: '/home?lang=es#dashboard/learning'
+    url: '/home?lang=es#dashboard/profile'
   - title: Logros
     url: '/home?lang=es#dashboard/awards'
   - title: Contenido con marcador
