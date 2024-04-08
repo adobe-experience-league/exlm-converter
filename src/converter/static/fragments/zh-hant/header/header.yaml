@@ -46,30 +46,10 @@ nav:
       - title: 精選產品
         url: '#'
         items:
-          - title: Analytics
-            url: '/zh-hant/browse/analytics'
-          - title: Campaign
-            url: '/zh-hant/browse/campaign'
-          - title: Commerce
-            url: '/zh-hant/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/zh-hant/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/zh-hant/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/zh-hant/browse/experience-manager'
-          - title: Experience Platform
-            url: '/zh-hant/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/zh-hant/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/zh-hant/browse/marketo-engage'
-          - title: Target
-            url: '/zh-hant/browse/target'
-          - title: Real-Time CDP
-            url: '/zh-hant/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/zh-hant/browse/workfront'
+          - title: 精選產品
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: 內容類型
         items:
           - title: 建議課程
