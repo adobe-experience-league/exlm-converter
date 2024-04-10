@@ -46,30 +46,10 @@ nav:
       - title: Presenterade produkter
         url: '#'
         items:
-          - title: Analytics
-            url: '/sv/browse/analytics'
-          - title: Campaign
-            url: '/sv/browse/campaign'
-          - title: Commerce
-            url: '/sv/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/sv/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/sv/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/sv/browse/experience-manager'
-          - title: Experience Platform
-            url: '/sv/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/sv/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/sv/browse/marketo-engage'
-          - title: Target
-            url: '/sv/browse/target'
-          - title: Real-Time CDP
-            url: '/sv/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/sv/browse/workfront'
+          - title: Presenterade produkter
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: Innehållstyper
         items:
           - title: Rekommenderade kurser
