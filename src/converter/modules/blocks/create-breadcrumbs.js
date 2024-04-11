@@ -20,7 +20,7 @@ export default function createBreadcrumbs(document, meta, pageType, reqLang) {
           if (href) {
             href = rewriteDocsPath(href, reqLang); // rewrite docs path to fix language path
             anchorTag.setAttribute('href', href);
-            anchorTag.textContent = breadcrumb.title;
+            anchorTag.innerHTML = breadcrumb.title;
             metaDivTag.append(anchorTag);
           }
         });
