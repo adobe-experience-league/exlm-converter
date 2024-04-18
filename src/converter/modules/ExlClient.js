@@ -161,15 +161,10 @@ export default class ExlClient {
   }
 }
 
-let defaultExlClient;
-
 export const createDefaultExlClient = async () => {
-  if (!defaultExlClient) {
-    const state = await stateLib.init();
-    defaultExlClient = new ExlClient({
-      domain: 'https://experienceleague.adobe.com',
-      state,
-    });
-  }
-  return defaultExlClient;
+  const state = await stateLib.init();
+  return new ExlClient({
+    domain: 'https://experienceleague.adobe.com',
+    state,
+  });
 };

@@ -150,13 +150,9 @@ export class IMSService {
   }
 }
 
-let defaultImsService;
 /**
  *
  * @param {Object} opts
  * @returns {IMSService}
  */
-export const getDefaultImsService = (opts) => {
-  defaultImsService = defaultImsService || new IMSService(opts);
-  return defaultImsService;
-};
+export const getDefaultImsService = (opts) => new IMSService(opts);
