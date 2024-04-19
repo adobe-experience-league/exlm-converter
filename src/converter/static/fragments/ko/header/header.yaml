@@ -46,30 +46,10 @@ nav:
       - title: 주요 제품
         url: '#'
         items:
-          - title: Analytics
-            url: '/ko/browse/analytics'
-          - title: Campaign
-            url: '/ko/browse/campaign'
-          - title: Commerce
-            url: '/ko/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/ko/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/ko/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/ko/browse/experience-manager'
-          - title: Experience Platform
-            url: '/ko/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/ko/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/ko/browse/marketo-engage'
-          - title: Target
-            url: '/ko/browse/target'
-          - title: Real-Time CDP
-            url: '/ko/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/ko/browse/workfront'
+          - title: 주요 제품
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: 콘텐츠 유형
         items:
           - title: 추천 과정

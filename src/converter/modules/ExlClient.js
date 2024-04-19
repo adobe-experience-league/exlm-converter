@@ -1,6 +1,5 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
-import mappings from '../url-mapping.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
 import stateLib from '../../common/utils/state-lib-util.js';
 
@@ -44,28 +43,6 @@ export const aioLogger = Logger('ExlClient');
  */
 
 /**
- * @typedef {Object} ExlArticlesResponse
- * @property {ExlArticle[]} data
- * @property {string|null} error
- * @property {Array} links
- * @property {Number} status
- */
-
-const isInternal = (path) => path.startsWith('/docs/authoring-guide-exl');
-
-/**
- * lookup the id of a document by path from the maintained list.
- * This is temporary.
- */
-const lookupId = (path) => {
-  const noExtension = removeExtension(path);
-  const mapping = mappings.find(
-    (map) => map.path.trim() === noExtension.trim(),
-  );
-  return mapping?.id;
-};
-
-/**
  * @typedef {Object} ExlClientOptions
  * @property {string} domain
  * @property {StateStore} state
@@ -107,15 +84,6 @@ export default class ExlClient {
   async getArticlesByPath(path, lang = 'en') {
     const langForApi = getMatchLanguage(lang) || lang;
     // handle internal paths
-    if (isInternal(path)) {
-      const id = lookupId(path);
-      const articleResponse = await this.getArticleById(id, langForApi);
-      // make it match the response from the API
-      return {
-        ...articleResponse,
-        data: [articleResponse.data],
-      };
-    }
     const finalPath = addExtension(path, '.html');
     let url = new URL(finalPath, this.domain);
     url.searchParams.set('lang', langForApi);
@@ -193,15 +161,10 @@ export default class ExlClient {
   }
 }
 
-let defaultExlClient;
-
 export const createDefaultExlClient = async () => {
-  if (!defaultExlClient) {
-    const state = await stateLib.init();
-    defaultExlClient = new ExlClient({
-      domain: 'https://experienceleague.adobe.com',
-      state,
-    });
-  }
-  return defaultExlClient;
+  const state = await stateLib.init();
+  return new ExlClient({
+    domain: 'https://experienceleague.adobe.com',
+    state,
+  });
 };
