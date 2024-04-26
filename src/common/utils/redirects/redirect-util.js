@@ -40,5 +40,6 @@ export const getRedirect = (path) => {
       return getRedirect(newPath);
     }
   }
-  return srcPath;
+  srcUrl.pathname = srcPath;
+  return srcUrl.toString().replace(TEMP_BASE, ''); // preserve hash and search
 };
