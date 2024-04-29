@@ -54,7 +54,9 @@ export default async function renderFragment(path, parentFolderPath) {
         body = `
         <!doctype html>
         <html>
-          <head></head>
+          <head>
+            <meta name="ROBOTS" content="NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET">
+          </head>
           <body>
             <header></header>
             <main>
