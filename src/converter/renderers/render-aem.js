@@ -1,18 +1,140 @@
 import jsdom from 'jsdom';
 import Logger from '@adobe/aio-lib-core-logging';
+import { isBinary, isHTML } from '../modules/utils/media-utils.js';
+import renderAemAsset from './render-aem-asset.js';
 import {
   isAbsoluteURL,
   relativeToAbsolute,
 } from '../../common/utils/link-utils.js';
-import { isBinary, isHTML } from '../modules/utils/media-utils.js';
-import renderAemAsset from './render-aem-asset.js';
 
-export const aioLogger = Logger('render-aem');
+const aioLogger = Logger('render-aem');
+
+/**
+ * Formats aem tagpicker data
+ */
+function formatArticlePageMetaTags(inputString) {
+  return inputString
+    .replace(/exl:[^/]*\/*/g, '')
+    .split(',')
+    .map((part) => part.trim());
+}
+
+/**
+ * Decodes base64 strings
+ */
+function decodeBase64(encodedString) {
+  return Buffer.from(encodedString, 'base64').toString('utf-8');
+}
+
+/**
+ * Fetches data from Author bio page set in page metadata
+ */
+async function fetchAuthorBioPage(authorBioPageURL, params) {
+  try {
+    // eslint-disable-next-line no-use-before-define
+    return await renderAem(authorBioPageURL, params);
+  } catch (error) {
+    throw new Error(`Error fetching or parsing author bio page: ${error}`);
+  }
+}
+
+/**
+ * Transforms metadata for Article pages
+ */
+async function transformArticlePageMetadata(htmlString, params) {
+  const dom = new jsdom.JSDOM(htmlString);
+  const { document } = dom.window;
+
+  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
+  const roleMeta = document.querySelector(`meta[name="role"]`);
+  const levelMeta = document.querySelector(`meta[name="level"]`);
+
+  if (solutionMeta) {
+    const solutions = formatArticlePageMetaTags(
+      solutionMeta.getAttribute('content'),
+    );
+
+    // Decode and split each solution into parts
+    const decodedSolutions = solutions.map((solution) => {
+      const parts = solution.split('/');
+      const decodedSolution = parts.map((part) => decodeBase64(part.trim()));
+      return decodedSolution;
+    });
+
+    // Set the content attribute of solutionMeta to the decoded solutions
+    solutionMeta.setAttribute(
+      'content',
+      decodedSolutions.map((parts) => parts[0]),
+    );
+
+    // Adding version meta tag
+    decodedSolutions.forEach((parts) => {
+      if (parts.length > 1) {
+        const versionContent = parts[parts.length - 1];
+        const versionMeta = document.createElement('meta');
+        versionMeta.setAttribute('name', 'version');
+        versionMeta.setAttribute('content', versionContent);
+        document.head.appendChild(versionMeta);
+      }
+    });
+  }
+
+  if (roleMeta) {
+    const roles = formatArticlePageMetaTags(roleMeta.getAttribute('content'));
+    const decodedRoles = roles.map((role) => decodeBase64(role));
+    roleMeta.setAttribute('content', decodedRoles);
+  }
+
+  if (levelMeta) {
+    const levels = formatArticlePageMetaTags(levelMeta.getAttribute('content'));
+    const decodedLevels = levels.map((level) => decodeBase64(level));
+    levelMeta.setAttribute('content', decodedLevels);
+  }
+
+  // Get author details from author bio page
+  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
+  if (authorMeta) {
+    try {
+      const authorBioPageURL = authorMeta.getAttribute('content');
+      const authorBioPageData = await fetchAuthorBioPage(
+        authorBioPageURL,
+        params,
+      );
+      const authorBioDOM = new jsdom.JSDOM(authorBioPageData.body);
+      const authorBioDocument = authorBioDOM.window.document;
+      const authorBioDiv = authorBioDocument.querySelector('.author-bio');
+      if (authorBioDiv) {
+        const authorName = authorBioDiv
+          .querySelector('div:nth-child(2)')
+          .textContent.trim();
+        const authorType = authorBioDiv
+          .querySelector('div:nth-child(4)')
+          .textContent.trim();
+        if (authorName) {
+          const authorNameMeta = document.createElement('meta');
+          authorNameMeta.setAttribute('name', 'author-name');
+          authorNameMeta.setAttribute('content', authorName);
+          document.head.appendChild(authorNameMeta);
+        }
+        if (authorType) {
+          const authorTypeMeta = document.createElement('meta');
+          authorTypeMeta.setAttribute('name', 'author-type');
+          authorTypeMeta.setAttribute('content', authorType);
+          document.head.appendChild(authorTypeMeta);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching or parsing author bio page:', error);
+    }
+  }
+
+  return dom.serialize();
+}
 
 /**
  * @param {string} htmlString
  */
-function transformHTML(htmlString, aemAuthorUrl) {
+async function transformHTML(htmlString, aemAuthorUrl, path, params) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -27,6 +149,11 @@ function transformHTML(htmlString, aemAuthorUrl) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
+
+  if (path.includes('/articles/') && !path.includes('/articles/authors/')) {
+    return transformArticlePageMetadata(dom.serialize(), params);
+  }
+
   return dom.serialize();
 }
 
@@ -89,7 +216,7 @@ export default async function renderAem(path, params) {
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = transformHTML(await resp.text(), aemAuthorUrl);
+    body = await transformHTML(await resp.text(), aemAuthorUrl, path, params);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
