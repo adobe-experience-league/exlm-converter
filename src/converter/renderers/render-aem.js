@@ -7,7 +7,7 @@ import {
   relativeToAbsolute,
 } from '../../common/utils/link-utils.js';
 
-const aioLogger = Logger('render-aem');
+export const aioLogger = Logger('render-aem');
 
 /**
  * Formats aem tagpicker data
