@@ -47,7 +47,7 @@ async function fetchAuthorBioPageData(document, authorBioPageURL, params) {
 /**
  * Transforms metadata for Article pages
  */
-export async function transformArticlePageMetadata(htmlString, params) {
+async function transformArticlePageMetadata(htmlString, params) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
