@@ -27,7 +27,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
-  // added no indexing rule for author bio pages
+  // added no indexing rule for author bio pages.
   if (path.includes('/articles/authors')) {
     const robotsMeta = document.createElement('meta');
     robotsMeta.setAttribute('name', 'robots');
@@ -105,7 +105,6 @@ export default async function renderAem(path, params) {
   } else {
     body = await resp.text();
   }
-
   // passthrough the same content type from AEM.
   return { body, headers, statusCode };
 }
