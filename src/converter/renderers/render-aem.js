@@ -122,7 +122,11 @@ async function transformHTML(htmlString, aemAuthorUrl, path, params) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
-
+  // no indexing rule for author bio pages
+  if (path.includes('/articles/authors')) {
+    setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
+  }
+  // Update page metadata for AEM Article Pages
   if (path.includes('/articles/') && !path.includes('/articles/authors/')) {
     return transformArticlePageMetadata(dom.serialize(), params);
   }
