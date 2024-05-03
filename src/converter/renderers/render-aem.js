@@ -12,7 +12,7 @@ export const aioLogger = Logger('render-aem');
 /**
  * @param {string} htmlString
  */
-function transformHTML(htmlString, aemAuthorUrl) {
+function transformHTML(htmlString, aemAuthorUrl, path) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -27,6 +27,16 @@ function transformHTML(htmlString, aemAuthorUrl) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
+  // added no indexing rule for author bio pages
+  if (path.includes('/articles/authors')) {
+    const robotsMeta = document.createElement('meta');
+    robotsMeta.setAttribute('name', 'robots');
+    robotsMeta.setAttribute(
+      'content',
+      'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET',
+    );
+    document.head.appendChild(robotsMeta);
+  }
   return dom.serialize();
 }
 
@@ -89,7 +99,7 @@ export default async function renderAem(path, params) {
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = transformHTML(await resp.text(), aemAuthorUrl);
+    body = transformHTML(await resp.text(), aemAuthorUrl, path);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
