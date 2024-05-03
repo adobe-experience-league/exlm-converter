@@ -107,7 +107,7 @@ async function transformArticlePageMetadata(htmlString, params) {
 /**
  * @param {string} htmlString
  */
-async function transformHTML(htmlString, aemAuthorUrl, path, params) {
+function transformHTML(htmlString, aemAuthorUrl, path) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -125,10 +125,6 @@ async function transformHTML(htmlString, aemAuthorUrl, path, params) {
   // no indexing rule for author bio pages
   if (path.includes('/articles/authors')) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
-  }
-  // Update page metadata for AEM Article Pages
-  if (path.includes('/articles/') && !path.includes('/articles/authors/')) {
-    return transformArticlePageMetadata(dom.serialize(), params);
   }
 
   return dom.serialize();
@@ -193,7 +189,11 @@ export default async function renderAem(path, params) {
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = await transformHTML(await resp.text(), aemAuthorUrl, path, params);
+    body = transformHTML(await resp.text(), aemAuthorUrl, path);
+    // Update page metadata for Article Pages
+    if (path.includes('/articles/') && !path.includes('/articles/authors/')) {
+      body = await transformArticlePageMetadata(body, params);
+    }
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
