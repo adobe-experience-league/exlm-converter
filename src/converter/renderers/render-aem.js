@@ -6,52 +6,59 @@ import {
   isAbsoluteURL,
   relativeToAbsolute,
 } from '../../common/utils/link-utils.js';
+import {
+  formatArticlePageMetaTags,
+  decodeBase64,
+  getMetadata,
+  setMetadata,
+} from './utils/aem-article-page-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
 /**
- * Formats aem tagpicker data
- */
-function formatArticlePageMetaTags(inputString) {
-  return inputString
-    .replace(/exl:[^/]*\/*/g, '')
-    .split(',')
-    .map((part) => part.trim());
-}
-
-/**
- * Decodes base64 strings
- */
-function decodeBase64(encodedString) {
-  return Buffer.from(encodedString, 'base64').toString('utf-8');
-}
-
-/**
  * Fetches data from Author bio page set in page metadata
  */
-async function fetchAuthorBioPage(authorBioPageURL, params) {
+async function fetchAuthorBioPageData(document, authorBioPageURL, params) {
   try {
     // eslint-disable-next-line no-use-before-define
-    return await renderAem(authorBioPageURL, params);
+    const authorBioPageData = await renderAem(authorBioPageURL, params);
+    const authorBioDOM = new jsdom.JSDOM(authorBioPageData.body);
+    const authorBioDocument = authorBioDOM.window.document;
+    const authorBioDiv = authorBioDocument.querySelector('.author-bio');
+    if (authorBioDiv) {
+      const authorName = authorBioDiv
+        .querySelector('div:nth-child(2)')
+        .textContent.trim();
+      const authorType = authorBioDiv
+        .querySelector('div:nth-child(4)')
+        .textContent.trim();
+      if (authorName) {
+        setMetadata(document, 'author-name', authorName);
+      }
+      if (authorType) {
+        setMetadata(document, 'author-type', authorType);
+      }
+    }
   } catch (error) {
-    throw new Error(`Error fetching or parsing author bio page: ${error}`);
+    console.error('Error fetching or parsing author bio page:', error);
   }
 }
 
 /**
  * Transforms metadata for Article pages
  */
-async function transformArticlePageMetadata(htmlString, params) {
+export async function transformArticlePageMetadata(htmlString, params) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
+  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
 
   if (solutionMeta) {
     const solutions = formatArticlePageMetaTags(
-      solutionMeta.getAttribute('content'),
+      getMetadata(document, 'coveo-solution'),
     );
 
     // Decode and split each solution into parts
@@ -62,8 +69,9 @@ async function transformArticlePageMetadata(htmlString, params) {
     });
 
     // Set the content attribute of solutionMeta to the decoded solutions
-    solutionMeta.setAttribute(
-      'content',
+    setMetadata(
+      document,
+      'coveo-solution',
       decodedSolutions.map((parts) => parts[0]),
     );
 
@@ -71,61 +79,26 @@ async function transformArticlePageMetadata(htmlString, params) {
     decodedSolutions.forEach((parts) => {
       if (parts.length > 1) {
         const versionContent = parts[parts.length - 1];
-        const versionMeta = document.createElement('meta');
-        versionMeta.setAttribute('name', 'version');
-        versionMeta.setAttribute('content', versionContent);
-        document.head.appendChild(versionMeta);
+        setMetadata(document, 'version', versionContent);
       }
     });
   }
 
   if (roleMeta) {
-    const roles = formatArticlePageMetaTags(roleMeta.getAttribute('content'));
+    const roles = formatArticlePageMetaTags(getMetadata(document, 'role'));
     const decodedRoles = roles.map((role) => decodeBase64(role));
-    roleMeta.setAttribute('content', decodedRoles);
+    setMetadata(document, 'role', decodedRoles);
   }
 
   if (levelMeta) {
-    const levels = formatArticlePageMetaTags(levelMeta.getAttribute('content'));
+    const levels = formatArticlePageMetaTags(getMetadata(document, 'level'));
     const decodedLevels = levels.map((level) => decodeBase64(level));
-    levelMeta.setAttribute('content', decodedLevels);
+    setMetadata(document, 'level', decodedLevels);
   }
 
-  // Get author details from author bio page
-  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
   if (authorMeta) {
-    try {
-      const authorBioPageURL = authorMeta.getAttribute('content');
-      const authorBioPageData = await fetchAuthorBioPage(
-        authorBioPageURL,
-        params,
-      );
-      const authorBioDOM = new jsdom.JSDOM(authorBioPageData.body);
-      const authorBioDocument = authorBioDOM.window.document;
-      const authorBioDiv = authorBioDocument.querySelector('.author-bio');
-      if (authorBioDiv) {
-        const authorName = authorBioDiv
-          .querySelector('div:nth-child(2)')
-          .textContent.trim();
-        const authorType = authorBioDiv
-          .querySelector('div:nth-child(4)')
-          .textContent.trim();
-        if (authorName) {
-          const authorNameMeta = document.createElement('meta');
-          authorNameMeta.setAttribute('name', 'author-name');
-          authorNameMeta.setAttribute('content', authorName);
-          document.head.appendChild(authorNameMeta);
-        }
-        if (authorType) {
-          const authorTypeMeta = document.createElement('meta');
-          authorTypeMeta.setAttribute('name', 'author-type');
-          authorTypeMeta.setAttribute('content', authorType);
-          document.head.appendChild(authorTypeMeta);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching or parsing author bio page:', error);
-    }
+    const authorBioPageURL = getMetadata(document, 'author-bio-page');
+    await fetchAuthorBioPageData(document, authorBioPageURL, params);
   }
 
   return dom.serialize();
