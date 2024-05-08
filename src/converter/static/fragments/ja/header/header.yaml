@@ -7,7 +7,7 @@ productGrid:
 signIn: 'ログイン'
 profileMenu:
   - title: マイ学習プロファイル
-    url: '/home?lang=ja#dashboard/learning'
+    url: '/home?lang=ja#dashboard/profile'
   - title: 成果
     url: '/home?lang=ja#dashboard/awards'
   - title: ブックマークしたコンテンツ
@@ -46,30 +46,10 @@ nav:
       - title: 注目の製品
         url: '#'
         items:
-          - title: Analytics
-            url: '/ja/browse/analytics'
-          - title: Campaign
-            url: '/ja/browse/campaign'
-          - title: Commerce
-            url: '/ja/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/ja/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/ja/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/ja/browse/experience-manager'
-          - title: Experience Platform
-            url: '/ja/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/ja/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/ja/browse/marketo-engage'
-          - title: Target
-            url: '/ja/browse/target'
-          - title: Real-Time CDP
-            url: '/ja/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/ja/browse/workfront'
+          - title: 注目の製品
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: コンテンツタイプ
         items:
           - title: おすすめのコース

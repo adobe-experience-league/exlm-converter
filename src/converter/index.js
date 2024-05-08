@@ -17,6 +17,7 @@ import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
 import renderLanding from './renderers/render-landing.js';
 import {
+  isCoursesPath,
   isDocsPath,
   isFragmentPath,
   isLandingPath,
@@ -48,6 +49,15 @@ try {
  * @returns
  */
 export const render = async function render(path, params) {
+  // specifically return 404 for courses, untill they are migrated.
+  if (isCoursesPath(path)) {
+    return {
+      statusCode: 404,
+      headers: {},
+      body: 'Courses are not supported at this time',
+    };
+  }
+
   if (isLandingPath(path)) {
     return renderLanding(path, dir);
   }

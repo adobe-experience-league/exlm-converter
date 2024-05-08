@@ -7,7 +7,7 @@ productGrid:
 signIn: '登录'
 profileMenu:
   - title: 我的学习个人资料
-    url: '/home?lang=zh-Hans#dashboard/learning'
+    url: '/home?lang=zh-Hans#dashboard/profile'
   - title: 成就
     url: '/home?lang=zh-Hans#dashboard/awards'
   - title: 已添加书签的内容
@@ -46,30 +46,10 @@ nav:
       - title: 推荐产品
         url: '#'
         items:
-          - title: Analytics
-            url: '/zh-hans/browse/analytics'
-          - title: Campaign
-            url: '/zh-hans/browse/campaign'
-          - title: Commerce
-            url: '/zh-hans/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/zh-hans/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/zh-hans/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/zh-hans/browse/experience-manager'
-          - title: Experience Platform
-            url: '/zh-hans/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/zh-hans/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/zh-hans/browse/marketo-engage'
-          - title: Target
-            url: '/zh-hans/browse/target'
-          - title: Real-Time CDP
-            url: '/zh-hans/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/zh-hans/browse/workfront'
+          - title: 推荐产品
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: 内容类型
         items:
           - title: 推荐课程
@@ -127,7 +107,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
           - title: Audience Manager
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
-          - title: Campaign Classic v7 & Campaign v8
+          - title: Campaign Classic v7 和 Campaign v8
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
           - title: Campaign Standard
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
@@ -135,7 +115,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
           - title: Experience Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
-          - title: Experience Manager Sites & More
+          - title: Experience Manager Sites 和更多
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
           - title: Experience Platform
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en

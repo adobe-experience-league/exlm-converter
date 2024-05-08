@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
-    url: '/home?lang=nl#dashboard/learning'
+    url: '/home?lang=nl#dashboard/profile'
   - title: Successen
     url: '/home?lang=nl#dashboard/awards'
   - title: Gebookmarkte content
@@ -46,30 +46,10 @@ nav:
       - title: Aanbevolen producten
         url: '#'
         items:
-          - title: Analytics
-            url: '/nl/browse/analytics'
-          - title: Campaign
-            url: '/nl/browse/campaign'
-          - title: Commerce
-            url: '/nl/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/nl/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/nl/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/nl/browse/experience-manager'
-          - title: Experience Platform
-            url: '/nl/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/nl/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/nl/browse/marketo-engage'
-          - title: Target
-            url: '/nl/browse/target'
-          - title: Real-Time CDP
-            url: '/nl/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/nl/browse/workfront'
+          - title: Aanbevolen producten
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: Contenttypen
         items:
           - title: Aanbevolen cursussen

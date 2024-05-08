@@ -1,8 +1,7 @@
-import { join } from 'path';
-import { readFileSync } from 'fs';
-import { removeExtension } from './path-utils.js';
+import { removeExtension } from '../../converter/modules/utils/path-utils.js';
 import { getMatchLanguage } from './language-utils.js';
-import { DOCPAGETYPE } from '../../doc-page-types.js';
+import { DOCPAGETYPE } from './doc-page-types.js';
+import { getRedirect } from './redirects/redirect-util.js';
 
 const TEMP_BASE = 'https://localhost';
 const EXPERIENCE_LEAGE_BASE = 'https://experienceleague.adobe.com';
@@ -51,6 +50,14 @@ export function rewriteDocsPath(docsPath, reqLang) {
   }
 
   const url = new URL(docsPath, TEMP_BASE);
+  if (
+    url.pathname === '/docs/home' ||
+    url.pathname === '/docs/home.html' ||
+    url.pathname === '/docs/home/'
+  ) {
+    url.pathname = '/docs';
+  }
+
   const lang = url.searchParams.get('lang') || reqLang;
   url.searchParams.delete('lang');
   const rewriteLang = getMatchLanguage(lang) || lang.split('-')[0];
@@ -65,60 +72,29 @@ export function rewriteDocsPath(docsPath, reqLang) {
   return url.toString().toLowerCase().replace(TEMP_BASE, '');
 }
 
-let oneToOneRedirects;
-let regexRedirects;
 /**
- * get redirect for link, if any
- * @param {string} path relative path to be redirected
- * @param {string} dir dir where the redirect json files exist
+ * paths that are / and have a hash are converted to /home (with that hash)
+ * @param {string} path
  * @returns
  */
-const getRedirect = (path, dir) => {
-  if (!path.startsWith('/')) return path; // not a relative path
-  if (!oneToOneRedirects) {
-    const oneToOneJsonFilePath = join(
-      dir,
-      'static',
-      'redirects',
-      'one-to-one-redirects.json',
-    );
-    const str = readFileSync(oneToOneJsonFilePath, 'utf8');
-    oneToOneRedirects = JSON.parse(str);
-  }
-  if (!regexRedirects) {
-    const regexJsonFilePath = join(
-      dir,
-      'static',
-      'redirects',
-      'regex-redirects.json',
-    );
-    const str = readFileSync(regexJsonFilePath, 'utf8');
-    const obj = JSON.parse(str);
-    regexRedirects = Object.entries(obj).map(([key, value]) => ({
-      regex: new RegExp(key),
-      to: value,
-    }));
-  }
-  const srcUrl = new URL(path, TEMP_BASE);
-  const srcPath = srcUrl.pathname;
+const rewriteHomePath = (path) => {
+  let isHomePath = false;
+  let convertedHomePath = path;
+  try {
+    const url = new URL(path, TEMP_BASE);
+    isHomePath = url.pathname === '/' && url.hash !== '';
 
-  // look in one-to-one redirects
-  if (oneToOneRedirects[srcPath]) {
-    srcUrl.pathname = oneToOneRedirects[srcPath];
-  } else {
-    // look in regex redirects
-    for (let i = 0; i < regexRedirects.length; i += 1) {
-      const redirect = regexRedirects[i];
-      const matches = redirect.regex.exec(srcPath);
-      if (matches && matches.length > 0) {
-        const replacement = matches.length >= 1 ? matches[1] : '';
-        // eslint-disable-next-line no-template-curly-in-string
-        srcUrl.pathname = redirect.to.replace('${path}', replacement);
-      }
+    if (isHomePath) {
+      url.pathname = '/home';
+      convertedHomePath = url.toString().toLowerCase().replace(TEMP_BASE, '');
     }
+  } catch (e) {
+    // do nothing
   }
-
-  return srcUrl.toString().toLowerCase().replace(TEMP_BASE, '');
+  return {
+    isHomePath,
+    convertedHomePath,
+  };
 };
 
 /**
@@ -128,7 +104,7 @@ const getRedirect = (path, dir) => {
  * @param {string} reqLang - The language code for the requested language.
  * @param {string} pageType - The type of page being processed.
  */
-export default function handleUrls(document, reqLang, pageType, dir) {
+export default function handleUrls(document, reqLang, pageType) {
   const elements = document.querySelectorAll('a');
   if (!elements) return;
 
@@ -154,7 +130,10 @@ export default function handleUrls(document, reqLang, pageType, dir) {
     // remove extension and return
     if (!isAbsoluteExlUrl && !isSlashUrl) {
       // landing pages are an exception
-      if (pageType === DOCPAGETYPE.DOC_LANDING) {
+      if (
+        pageType === DOCPAGETYPE.DOC_LANDING ||
+        pageType === DOCPAGETYPE.SOLUTION_LANDING
+      ) {
         // landing page specifically can contain solution urls that look like this: "journey-optimizer.html" we need to transform that to the proper docs path.
         if (!pathToRewrite.includes('/') && pathToRewrite.endsWith('.html')) {
           pathToRewrite = `/${reqLang.toLowerCase()}/docs/${pathToRewrite.toLowerCase()}`;
@@ -171,8 +150,15 @@ export default function handleUrls(document, reqLang, pageType, dir) {
       pathToRewrite = pathToRewrite.replace(EXPERIENCE_LEAGE_BASE, '');
     }
 
+    // handle home path URLs
+    const { isHomePath, convertedHomePath } = rewriteHomePath(pathToRewrite);
+    if (isHomePath) {
+      el.href = convertedHomePath;
+      return;
+    }
+
     // handle redirects
-    pathToRewrite = getRedirect(pathToRewrite, dir);
+    pathToRewrite = getRedirect(pathToRewrite);
     // rewrite docs path to fix language path
     pathToRewrite = rewriteDocsPath(pathToRewrite, reqLang);
 

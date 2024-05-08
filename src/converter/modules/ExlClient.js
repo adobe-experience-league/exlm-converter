@@ -1,6 +1,9 @@
+import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
-import mappings from '../url-mapping.js';
-import { getMatchLanguage } from './utils/language-utils.js';
+import { getMatchLanguage } from '../../common/utils/language-utils.js';
+import stateLib from '../../common/utils/state-lib-util.js';
+
+export const aioLogger = Logger('ExlClient');
 
 /**
  * @typedef {object} ExlArticle
@@ -40,30 +43,19 @@ import { getMatchLanguage } from './utils/language-utils.js';
  */
 
 /**
- * @typedef {Object} ExlArticlesResponse
- * @property {ExlArticle[]} data
- * @property {string|null} error
- * @property {Array} links
- * @property {Number} status
+ * @typedef {Object} ExlClientOptions
+ * @property {string} domain
+ * @property {StateStore} state
  */
-
-const isInternal = (path) => path.startsWith('/docs/authoring-guide-exl');
-
-/**
- * lookup the id of a document by path from the maintained list.
- * This is temporary.
- */
-const lookupId = (path) => {
-  const noExtension = removeExtension(path);
-  const mapping = mappings.find(
-    (map) => map.path.trim() === noExtension.trim(),
-  );
-  return mapping?.id;
-};
 
 export default class ExlClient {
-  constructor({ domain = 'https://experienceleague.adobe.com' } = {}) {
+  /**
+   *
+   * @param {ExlClientOptions} options
+   */
+  constructor({ domain = 'https://experienceleague.adobe.com', state } = {}) {
     this.domain = domain;
+    this.state = state;
   }
 
   /**
@@ -92,21 +84,13 @@ export default class ExlClient {
   async getArticlesByPath(path, lang = 'en') {
     const langForApi = getMatchLanguage(lang) || lang;
     // handle internal paths
-    if (isInternal(path)) {
-      const id = lookupId(path);
-      const articleResponse = await this.getArticleById(id, langForApi);
-      // make it match the response from the API
-      return {
-        ...articleResponse,
-        data: [articleResponse.data],
-      };
-    }
     const finalPath = addExtension(path, '.html');
     let url = new URL(finalPath, this.domain);
     url.searchParams.set('lang', langForApi);
     url = encodeURIComponent(url.toString());
     url = url.toLowerCase(); // use lowercase when using `Search%20URL` query param
     const apiPath = `api/articles?Search%20URL=${url}&lang=${langForApi}`;
+    console.log(`Fetching article from ${apiPath}`);
     const response = await this.doFetch(apiPath);
 
     if (response.error) {
@@ -122,6 +106,27 @@ export default class ExlClient {
     apiUrl.searchParams.set('page_size', '100');
     const json = await this.doFetch(apiUrl.toString());
     return json?.data;
+  }
+
+  async getSolutions() {
+    const solutionsState = await this.state.get('solutions');
+    if (solutionsState && solutionsState.value) {
+      aioLogger.debug('Using cached solutions');
+      return JSON.parse(solutionsState.value);
+    }
+
+    aioLogger.debug('Fetching solutions from API');
+    const solutionsPath = '/api/solutions?page_size=1000&full=true';
+    const data = await this.doFetch(solutionsPath);
+    const solutions = data.data || [];
+    aioLogger.debug(`Fetched ${solutions.length} solutions and caching them.`);
+    if (solutions) {
+      // store for 24 hours (86400 seconds)
+      await this.state.put('solutions', JSON.stringify(solutions), {
+        ttl: 86400,
+      });
+    }
+    return solutions;
   }
 
   async getLandingPageByFileName(landingName, lang = 'en') {
@@ -156,6 +161,10 @@ export default class ExlClient {
   }
 }
 
-export const defaultExlClient = new ExlClient({
-  domain: 'https://experienceleague.adobe.com',
-});
+export const createDefaultExlClient = async () => {
+  const state = await stateLib.init();
+  return new ExlClient({
+    domain: 'https://experienceleague.adobe.com',
+    state,
+  });
+};

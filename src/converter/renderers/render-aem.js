@@ -1,18 +1,113 @@
 import jsdom from 'jsdom';
 import Logger from '@adobe/aio-lib-core-logging';
+import { isBinary, isHTML } from '../modules/utils/media-utils.js';
+import renderAemAsset from './render-aem-asset.js';
 import {
   isAbsoluteURL,
   relativeToAbsolute,
-} from '../modules/utils/link-utils.js';
-import { isBinary, isHTML } from '../modules/utils/media-utils.js';
-import renderAemAsset from './render-aem-asset.js';
+} from '../../common/utils/link-utils.js';
+import {
+  formatArticlePageMetaTags,
+  decodeBase64,
+  getMetadata,
+  setMetadata,
+} from './utils/aem-article-page-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
 /**
+ * Fetches data from Author bio page set in page metadata
+ */
+async function fetchAuthorBioPageData(document, authorBioPageURL, params) {
+  try {
+    // eslint-disable-next-line no-use-before-define
+    const authorBioPageData = await renderAem(authorBioPageURL, params);
+    const authorBioDOM = new jsdom.JSDOM(authorBioPageData.body);
+    const authorBioDocument = authorBioDOM.window.document;
+    const authorBioDiv = authorBioDocument.querySelector('.author-bio');
+    if (authorBioDiv) {
+      const authorName = authorBioDiv
+        .querySelector('div:nth-child(2)')
+        .textContent.trim();
+      const authorType = authorBioDiv
+        .querySelector('div:nth-child(4)')
+        .textContent.trim();
+      if (authorName) {
+        setMetadata(document, 'author-name', authorName);
+      }
+      if (authorType) {
+        setMetadata(document, 'author-type', authorType);
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching or parsing author bio page:', error);
+  }
+}
+
+/**
+ * Transforms metadata for Article pages
+ */
+async function transformArticlePageMetadata(htmlString, params) {
+  const dom = new jsdom.JSDOM(htmlString);
+  const { document } = dom.window;
+
+  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
+  const roleMeta = document.querySelector(`meta[name="role"]`);
+  const levelMeta = document.querySelector(`meta[name="level"]`);
+  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
+
+  if (solutionMeta) {
+    const solutions = formatArticlePageMetaTags(
+      getMetadata(document, 'coveo-solution'),
+    );
+
+    // Decode and split each solution into parts
+    const decodedSolutions = solutions.map((solution) => {
+      const parts = solution.split('/');
+      const decodedSolution = parts.map((part) => decodeBase64(part.trim()));
+      return decodedSolution;
+    });
+
+    // Set the content attribute of solutionMeta to the decoded solutions
+    setMetadata(
+      document,
+      'coveo-solution',
+      decodedSolutions.map((parts) => parts[0]),
+    );
+
+    // Adding version meta tag
+    decodedSolutions.forEach((parts) => {
+      if (parts.length > 1) {
+        const versionContent = parts[parts.length - 1];
+        setMetadata(document, 'version', versionContent);
+      }
+    });
+  }
+
+  if (roleMeta) {
+    const roles = formatArticlePageMetaTags(getMetadata(document, 'role'));
+    const decodedRoles = roles.map((role) => decodeBase64(role));
+    setMetadata(document, 'role', decodedRoles);
+  }
+
+  if (levelMeta) {
+    const levels = formatArticlePageMetaTags(getMetadata(document, 'level'));
+    const decodedLevels = levels.map((level) => decodeBase64(level));
+    setMetadata(document, 'level', decodedLevels);
+  }
+
+  if (authorMeta) {
+    const authorBioPageURL = getMetadata(document, 'author-bio-page');
+    await fetchAuthorBioPageData(document, authorBioPageURL, params);
+  }
+
+  return dom.serialize();
+}
+
+/**
  * @param {string} htmlString
  */
-function transformHTML(htmlString, aemAuthorUrl) {
+function transformHTML(htmlString, aemAuthorUrl, path) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -27,6 +122,11 @@ function transformHTML(htmlString, aemAuthorUrl) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
+  // no indexing rule for author bio pages
+  if (path.includes('/articles/authors')) {
+    setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
+  }
+
   return dom.serialize();
 }
 
@@ -92,7 +192,11 @@ export default async function renderAem(path, params) {
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = transformHTML(await resp.text(), aemAuthorUrl);
+    body = transformHTML(await resp.text(), aemAuthorUrl, path);
+    // Update page metadata for Article Pages
+    if (path.includes('/articles/') && !path.includes('/articles/authors/')) {
+      body = await transformArticlePageMetadata(body, params);
+    }
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {

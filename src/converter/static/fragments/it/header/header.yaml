@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Accedi'
 profileMenu:
   - title: Il mio profilo di apprendimento
-    url: '/home?lang=it#dashboard/learning'
+    url: '/home?lang=it#dashboard/profile'
   - title: Risultati
     url: '/home?lang=it#dashboard/awards'
   - title: Contenuto con segnalibri
@@ -46,30 +46,10 @@ nav:
       - title: Prodotti in primo piano
         url: '#'
         items:
-          - title: Analytics
-            url: '/it/browse/analytics'
-          - title: Campaign
-            url: '/it/browse/campaign'
-          - title: Commerce
-            url: '/it/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/it/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/it/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/it/browse/experience-manager'
-          - title: Experience Platform
-            url: '/it/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/it/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/it/browse/marketo-engage'
-          - title: Target
-            url: '/it/browse/target'
-          - title: Real-Time CDP
-            url: '/it/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/it/browse/workfront'
+          - title: Prodotti in primo piano
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: Tipi di contenuto
         items:
           - title: Corsi consigliati

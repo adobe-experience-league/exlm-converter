@@ -7,7 +7,7 @@ productGrid:
 signIn: '로그인'
 profileMenu:
   - title: 내 학습 프로필
-    url: '/home?lang=ko#dashboard/learning'
+    url: '/home?lang=ko#dashboard/profile'
   - title: 도전 과제
     url: '/home?lang=ko#dashboard/awards'
   - title: 책갈피가 표시된 콘텐츠
@@ -33,7 +33,7 @@ search:
       contenttype: Event
     - title: 문제 해결
       contenttype: Troubleshooting
-    - title: Tutorials
+    - title: 튜토리얼
       contenttype: Tutorial
 languageSelector:
   title: 지역 변경
@@ -46,30 +46,10 @@ nav:
       - title: 주요 제품
         url: '#'
         items:
-          - title: Analytics
-            url: '/ko/browse/analytics'
-          - title: Campaign
-            url: '/ko/browse/campaign'
-          - title: Commerce
-            url: '/ko/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/ko/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/ko/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/ko/browse/experience-manager'
-          - title: Experience Platform
-            url: '/ko/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/ko/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/ko/browse/marketo-engage'
-          - title: Target
-            url: '/ko/browse/target'
-          - title: Real-Time CDP
-            url: '/ko/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/ko/browse/workfront'
+          - title: 주요 제품
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: 콘텐츠 유형
         items:
           - title: 추천 과정
@@ -80,13 +60,13 @@ nav:
           - title: 전체 과정 찾아보기
             subtitle: 전문적으로 선별된 학습 컬렉션
             url: '/home?lang=ko#courses'
-          - title: Tutorials
+          - title: 튜토리얼
             subtitle: 솔루션별 비디오 및 사용 방법
             url: /ko/docs/home-tutorials
-          - title: Certification
+          - title: 인증
             subtitle: Adobe 마케팅 솔루션에 대한 검증된 전문 지식
             url: /ko/docs/certification/program/overview
-          - title: Instructor-led training
+          - title: 전문 강사 교육
             subtitle: Adobe 인증 강사가 진행하는 라이브 및 온디맨드 과정
             url: https://learning.adobe.com/
             urlOptions:
@@ -95,7 +75,7 @@ nav:
   - title: 설명서
     url: /ko/docs
 
-  - title: Events
+  - title: 이벤트
     url: /events?lang=ko
 
   - title: 커뮤니티
@@ -127,7 +107,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
           - title: Audience Manager
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
-          - title: Campaign Classic v7 & Campaign v8
+          - title: Campaign Classic v7 및 Campaign v8
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
           - title: Campaign Standard
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
@@ -135,7 +115,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
           - title: Experience Cloud
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
-          - title: Experience Manager Sites & More
+          - title: Experience Manager Sites 및 기타 제품
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
           - title: Experience Platform
             url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en

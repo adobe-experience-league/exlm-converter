@@ -13,6 +13,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
 import { main as khorosMain } from '../src/khoros/index.js';
+import { main as tocMain } from '../src/tocs/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
 
 const dotEnvFile = 'build/.local.env';
@@ -25,6 +26,11 @@ const {
   ACCESS_TOKEN,
   KHOROS_ORIGIN,
   KHOROS_API_SECRET,
+  IMS_ORIGIN,
+  IMS_CLIENT_ID,
+  IMS_CLIENT_SECRET,
+  IMS_AUTHORIZATION_CODE,
+  IPASS_API_KEY,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -93,16 +99,17 @@ const converterHandler = async (req, res) => {
 const khorosHandler = async (req, res) => {
   const { path: originalPath, query, headers } = req;
   const path = originalPath.replace('/khoros', '');
-
-  console.log({
-    query,
-  });
-
   const params = {
     __ow_path: path,
     __ow_headers: headers,
     khorosApiSecret: KHOROS_API_SECRET,
+    imsOrigin: IMS_ORIGIN,
+    imsClientId: IMS_CLIENT_ID,
+    imsClientSecret: IMS_CLIENT_SECRET,
+    imsAuthorizationCode: IMS_AUTHORIZATION_CODE,
+    ipassApiKey: IPASS_API_KEY,
     khorosOrigin: KHOROS_ORIGIN,
+    ...query,
   };
 
   const { body, statusCode } = await khorosMain(params);
@@ -110,7 +117,23 @@ const khorosHandler = async (req, res) => {
   res.send(body);
 };
 
+const tocHandler = async (req, res) => {
+  console.log('toc handler');
+  const { path: originalPath, query } = req;
+  const path = originalPath.replace('/toc', '');
+  const lang = query.lang || 'en';
+  const params = {
+    __ow_path: path,
+    lang,
+  };
+
+  const { body, statusCode } = await tocMain(params);
+  res.status(statusCode || 200);
+  res.send(body);
+};
+
 app.get('/khoros/**', khorosHandler);
+app.get('/toc/**', tocHandler);
 app.get('/**', converterHandler);
 
 app.listen(port, () => console.log(`Converter listening on port ${port}`));

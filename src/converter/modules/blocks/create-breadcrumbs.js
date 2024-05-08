@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 import { toBlock } from '../utils/dom-utils.js';
-import { rewriteDocsPath } from '../utils/link-utils.js';
-import { DOCPAGETYPE } from '../../doc-page-types.js';
+import { rewriteDocsPath } from '../../../common/utils/link-utils.js';
+import { DOCPAGETYPE } from '../../../common/utils/doc-page-types.js';
 import { DOCUMENTATION } from '../blocks-translated-labels.js';
 
 export default function createBreadcrumbs(document, meta, pageType, reqLang) {
@@ -20,7 +20,7 @@ export default function createBreadcrumbs(document, meta, pageType, reqLang) {
           if (href) {
             href = rewriteDocsPath(href, reqLang); // rewrite docs path to fix language path
             anchorTag.setAttribute('href', href);
-            anchorTag.textContent = breadcrumb.title;
+            anchorTag.innerHTML = breadcrumb.title;
             metaDivTag.append(anchorTag);
           }
         });

@@ -5,9 +5,9 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import { createMetaData, handleExternalUrl } from './utils/dom-utils.js';
-import { DOCPAGETYPE } from '../doc-page-types.js';
-import handleUrls from './utils/link-utils.js';
+import { handleExternalUrl } from './utils/dom-utils.js';
+import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
+import handleUrls from '../../common/utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
 import createBadge from './blocks/create-badge.js';
 import createRelatedArticles from './blocks/create-article.js';
@@ -25,7 +25,7 @@ import createArticleMetaDataTopics from './blocks/create-article-metadata-topics
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
-import createImgBlock from './blocks/create-img-block.js';
+import createImg from './blocks/create-img.js';
 import createAccordion from './blocks/create-accordion.js';
 import createTOC from './blocks/create-toc.js';
 import createBreadcrumbs from './blocks/create-breadcrumbs.js';
@@ -39,6 +39,8 @@ import { updateAnchors } from './utils/update-anchors.js';
 import createTargetInsertion from './blocks/create-target-insertion.js';
 import { createRecommendationMoreHelp } from './blocks/create-recommendation-more-help.js';
 import createDocsCards from './blocks/create-docs-cards.js';
+import { createMetaData } from './utils/metadata-util.js';
+import { createDefaultExlClient } from './ExlClient.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -59,7 +61,6 @@ export default async function md2html({
   data,
   pageType,
   reqLang,
-  dir,
 }) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
@@ -92,8 +93,10 @@ export default async function md2html({
   // Custom HTML transformations.
   const dom = new jsdom.JSDOM(html);
   const { document } = dom.window;
-  createMetaData(document, meta, data, pageType);
-  handleUrls(document, reqLang, pageType, dir);
+  const defaultExlClient = await createDefaultExlClient();
+  const solutions = await defaultExlClient.getSolutions();
+  createMetaData(document, meta, data, pageType, solutions);
+  handleUrls(document, reqLang, pageType);
   updateAnchors(document);
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
@@ -123,7 +126,7 @@ export default async function md2html({
     handleExternalUrl(document);
     createMiniTOC(document);
     createTOC(document, data);
-    createImgBlock(document);
+    createImg(document);
     createAccordion(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
     createDocActions(document);

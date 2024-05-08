@@ -6,11 +6,11 @@ productGrid:
     url: https://documentcloud.adobe.com/link/home/
 signIn: 'Se connecter'
 profileMenu:
-  - title: Mon profil d’apprentissage
-    url: '/home?lang=fr#dashboard/learning'
+  - title: Mon profil de formation
+    url: '/home?lang=fr#dashboard/profile'
   - title: Réalisations
     url: '/home?lang=fr#dashboard/awards'
-  - title: Contenu mis en signet
+  - title: Contenu marqué d’un signet
     url: /home?lang=fr#dashboard/bookmarks
   - title: Se déconnecter
     url: '#'
@@ -36,58 +36,38 @@ search:
     - title: Tutoriels
       contenttype: Tutorial
 languageSelector:
-  title: Changer de région
+  title: Modifier la région
 nav:
   - title: Formation
     secondaryItems:
-      - title: Parcourir tout le contenu
+      - title: Parcourir l’ensemble du contenu
         url: '/fr/browse'
     items:
-      - title: Produits vedettes
+      - title: Produits en vedette
         url: '#'
         items:
-          - title: Analytics
-            url: '/fr/browse/analytics'
-          - title: Campaign
-            url: '/fr/browse/campaign'
-          - title: Commerce
-            url: '/fr/browse/commerce'
-          - title: Customer Journey Analytics
-            url: '/fr/browse/customer-journey-analytics'
-          - title: Data Collection
-            url: '/fr/browse/experience-platform/data-collection'
-          - title: Experience Manager
-            url: '/fr/browse/experience-manager'
-          - title: Experience Platform
-            url: '/fr/browse/experience-platform'
-          - title: Journey Optimizer
-            url: '/fr/browse/journey-optimizer'
-          - title: Marketo Engage
-            url: '/fr/browse/marketo-engage'
-          - title: Target
-            url: '/fr/browse/target'
-          - title: Real-Time CDP
-            url: '/fr/browse/real-time-customer-data-platform'
-          - title: Workfront
-            url: '/fr/browse/workfront'
+          - title: Produits en vedette
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
       - title: Types de contenu
         items:
           - title: Cours recommandés
-            subtitle: Your expertly curated courses
+            subtitle: Vos cours soigneusement organisés
             url: '/home?lang=fr#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
+          - title: Parcourir l’ensemble des cours
+            subtitle: Ensembles de leçons organisées par des experts
             url: '/home?lang=fr#courses'
           - title: Tutoriels
-            subtitle: Solution-specific videos and how-tos
+            subtitle: Vidéos et procédures spécifiques aux solutions
             url: /fr/docs/home-tutorials
           - title: Certification
-            subtitle: Proven expertise of Adobe marketing solutions
+            subtitle: Expertise éprouvée des solutions marketing d’Adobe
             url: /fr/docs/certification/program/overview
           - title: Formation dirigée par un instructeur
-            subtitle: Live & on-demand courses led by Adobe-certified instructors
+            subtitle: Cours en direct et à la demande animés par des instructeurs certifiés Adobe
             url: https://learning.adobe.com/
             urlOptions:
               target: _blank
@@ -117,7 +97,7 @@ nav:
             subtitle: Lire les cas d’utilisation de produits Experience Cloud écrits par vos collègues
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=fr
           - title: Adobe Programme de commentaires
-            subtitle: Influence Adobe product development
+            subtitle: Influencer le développement des produits Adobe
             url: '/home?lang=fr#feedback'
       - title: Communautés par produit
         items:
