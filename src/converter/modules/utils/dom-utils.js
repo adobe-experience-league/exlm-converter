@@ -175,48 +175,106 @@ export const createNewSectionForBlock = (document, block) => {
 };
 
 /**
- *
- * @param {Document} document
+ * Organizes content within a document's main section into structured sections based on text length and headers, excluding any content within 'shade-box' areas.
+ * @param {Document} document - The DOM document to manipulate.
  */
 export const createSections = (document) => {
-  const main = document.body.querySelector('main');
-  if (!main) return;
+  // Abort processing if a 'shade-box' is present to avoid modifying shaded sections.
+  const shadeBox = document.body.querySelector('div.shade-box');
+  if (shadeBox) return;
+
+  // Find the main content area; if it doesn't exist, stop further execution.
+  const mainContent = document.body.querySelector('main');
+  if (!mainContent) return;
+
+  // Try to find the first division within the main content, usually containing primary blocks.
+  const firstDiv = mainContent.querySelector('div');
+  if (!firstDiv) return;
+
   const sections = [];
   let currentSection = [];
+  let currentSectionLength = 0;
 
-  const addToCurrentSection = (element, commit, isLast) => {
-    if (commit) {
-      if (currentSection.length) sections.push([...currentSection]);
-      currentSection = [element];
-    } else if (isLast) {
+  // Helper to finalize and reset the current section.
+  const finalizeCurrentSection = () => {
+    sections.push([...currentSection]);
+    currentSection = [];
+    currentSectionLength = 0;
+  };
+
+  // Helper to start a new section.
+  const createNewSection = (element, length) => {
+    finalizeCurrentSection();
+    currentSection.push(element);
+    currentSectionLength = length;
+  };
+
+  // Determine if an element is a header based on its tag level.
+  const isHeaderElement = (element) => getHeadingLevel(element) > -1;
+
+  // Special case to handle continuous addition until a break condition is met.
+  const addRemainingElements = (initialElement, initialLength) => {
+    let element = initialElement;
+    let length = initialLength;
+    let continueAdding = true;
+    while (continueAdding) {
       currentSection.push(element);
-      sections.push([...currentSection]);
-    } else {
-      currentSection.push(element);
+      currentSectionLength += length;
+      if (element.tagName === 'div' || isHeaderElement(element)) {
+        continueAdding = false;
+      } else if (element.nextElementSibling) {
+        element = element.nextElementSibling.cloneNode(true);
+        length = element.textContent.length;
+      } else {
+        break;
+      }
     }
   };
 
-  Array.from(main.children).forEach((child) => {
-    const childClone = child.cloneNode(true); // clone to avoid issues
-    const isHeading = getHeadingLevel(childClone) > -1; // get current child's heading level, or -1 of not a header
+  // Function to decide whether to add elements to the current section or start a new one.
+  const addElementToSection = (element, isHeader, isLastElement) => {
+    const elementTextLength = element.textContent.length;
 
-    // is last
-    const isLast = child === main.lastChild;
-    addToCurrentSection(childClone, isHeading, isLast);
-    child.remove(); // remove the child from the DOM
+    // Start a new section if adding the element exceeds the 1400 character limit.
+    if (currentSectionLength + elementTextLength > 1400) {
+      const lastElementIsHeader =
+        currentSection.length &&
+        isHeaderElement(currentSection[currentSection.length - 1]);
+
+      if (lastElementIsHeader && !isHeader) {
+        addRemainingElements(element, elementTextLength);
+      } else {
+        createNewSection(element, elementTextLength);
+      }
+    } else {
+      // If the section limit is not exceeded, simply add the element.
+      currentSection.push(element);
+      currentSectionLength += elementTextLength;
+    }
+
+    // Finalize the section if this is the last element or a header.
+    if (isHeader || isLastElement) {
+      finalizeCurrentSection();
+    }
+  };
+
+  // Iterate through children of the first division, cloning to avoid modifying the original elements.
+  Array.from(firstDiv.children).forEach((child) => {
+    const clonedChild = child.cloneNode(true);
+    const isHeading = isHeaderElement(clonedChild);
+    const isLast = child === firstDiv.lastChild;
+    addElementToSection(clonedChild, isHeading, isLast);
+    child.remove(); // Remove the original to prevent duplication.
   });
 
-  if (currentSection.length) {
-    sections.push([...currentSection]);
-  }
-
-  sections.forEach((section) => {
-    const $div = div(document);
-    // if array, oush all children
+  // Clear the original division and prepend new sections to the main content area.
+  firstDiv.remove();
+  sections.reverse().forEach((section) => {
+    const newDiv = document.createElement('div');
     section.forEach((child) => {
-      $div.appendChild(child);
+      newDiv.appendChild(child);
     });
-    main.appendChild($div);
+    mainContent.insertBefore(newDiv, mainContent.firstChild);
   });
 };
 

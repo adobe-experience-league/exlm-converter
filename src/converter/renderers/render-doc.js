@@ -1,8 +1,10 @@
+import jsdom from 'jsdom';
 import { createDefaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchDocsPath } from '../modules/utils/path-match-utils.js';
+import { createSections } from '../modules/utils/dom-utils.js';
 
 /**
  * handles a markdown doc path
@@ -38,8 +40,11 @@ export default async function renderDoc(path) {
       pageType: DOCPAGETYPE.DOC_ARTICLE,
       reqLang: lang,
     });
+    const dom = new jsdom.JSDOM(convertedHtml);
+    const { document } = dom.window;
+    createSections(document);
     return {
-      body: convertedHtml,
+      body: dom.serialize(),
       headers: {
         'Content-Type': 'text/html',
       },
