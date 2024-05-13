@@ -21,6 +21,8 @@ search:
   filters:
     - title: 全部
       contenttype: All
+    - title: 文章
+      contenttype: Article
     - title: 认证
       contenttype: Certification
     - title: 社区
