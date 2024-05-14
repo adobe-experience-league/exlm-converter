@@ -152,7 +152,14 @@ function sendError(code, message) {
  * Renders content from AEM UE pages
  */
 export default async function renderAem(path, params) {
-  const { aemAuthorUrl, aemOwner, aemRepo, aemBranch, authorization, sourceLocation } = params;
+  const {
+    aemAuthorUrl,
+    aemOwner,
+    aemRepo,
+    aemBranch,
+    authorization,
+    sourceLocation,
+  } = params;
 
   if (!authorization) {
     return sendError(401, 'Missing Authorization');
