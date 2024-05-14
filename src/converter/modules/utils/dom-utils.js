@@ -179,10 +179,6 @@ export const createNewSectionForBlock = (document, block) => {
  * @param {Document} document - The DOM document to manipulate.
  */
 export const createSections = (document) => {
-  // Abort processing if a 'shade-box' is present to avoid modifying shaded sections.
-  const shadeBox = document.body.querySelector('div.shade-box');
-  if (shadeBox) return;
-
   // Find the main content area; if it doesn't exist, stop further execution.
   const mainContent = document.body.querySelector('main');
   if (!mainContent) return;

@@ -5,7 +5,7 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import { handleExternalUrl } from './utils/dom-utils.js';
+import { handleExternalUrl, createSections } from './utils/dom-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import handleUrls from '../../common/utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
@@ -133,6 +133,7 @@ export default async function md2html({
     createTargetInsertion(document);
     createDocsCards(document);
     createBackToBrowsing(document);
+    createSections(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
