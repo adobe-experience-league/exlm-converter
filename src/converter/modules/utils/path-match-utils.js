@@ -1,6 +1,7 @@
 import { match } from 'path-to-regexp';
 
 const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
+const playlistsMatchPath = '/:lang/playlists/:playlistId';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
@@ -11,6 +12,15 @@ export const matchDocsPath = (path) => {
 };
 
 export const isDocsPath = (path) => matchDocsPath(path) !== false;
+
+export const matchPlaylistPath = (path) => {
+  const playlistsMatcher = match(playlistsMatchPath, {
+    decode: decodeURIComponent,
+  });
+  return playlistsMatcher(path);
+};
+
+export const isPlaylistsPath = (path) => matchPlaylistPath(path) !== false;
 
 export const matchCoursesPath = (path) => {
   const coursesMatcher = match(coursesMatchPath, {
