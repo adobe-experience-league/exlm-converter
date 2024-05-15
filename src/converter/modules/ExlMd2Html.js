@@ -134,9 +134,7 @@ export default async function md2html({
     createDocsCards(document);
     createBackToBrowsing(document);
     // leave this at the end - after creation and tranformation of blocks
-    if (pageType === DOCPAGETYPE.DOC_ARTICLE) {
-      createSections(document);
-    }
+    createSections(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
