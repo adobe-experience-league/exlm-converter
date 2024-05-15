@@ -377,3 +377,19 @@ export const getAllDecendantTextNodes = (document, element) => {
   }
   return textNodes;
 };
+
+/**
+ * creates an element from html string
+ * @param {Document} document
+ */
+export function htmlToElement(document) {
+  /**
+   * @param {string} html
+   */
+  return (html) => {
+    const template = document.createElement('template');
+    const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = trimmedHtml;
+    return template.content.firstElementChild;
+  };
+}

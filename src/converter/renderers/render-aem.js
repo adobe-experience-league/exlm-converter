@@ -68,12 +68,20 @@ async function transformArticlePageMetadata(htmlString, params) {
       return decodedSolution;
     });
 
-    // Set the content attribute of solutionMeta to the decoded solutions
-    setMetadata(
-      document,
-      'coveo-solution',
-      decodedSolutions.map((parts) => parts[0]),
-    );
+    // Transform the solutions to coveo compatible format
+    const transformedSolutions = decodedSolutions.map((parts) => {
+      if (parts.length > 1) {
+        const solution = parts[0];
+        const subSolution = parts[1];
+        return `${solution}|${solution} ${subSolution}`;
+        // eslint-disable-next-line no-else-return
+      } else {
+        return parts[0];
+      }
+    });
+
+    const coveoSolution = transformedSolutions.join(';');
+    setMetadata(document, 'coveo-solution', coveoSolution);
 
     // Adding version meta tag
     decodedSolutions.forEach((parts) => {
@@ -144,7 +152,14 @@ function sendError(code, message) {
  * Renders content from AEM UE pages
  */
 export default async function renderAem(path, params) {
-  const { aemAuthorUrl, aemOwner, aemRepo, aemBranch, authorization } = params;
+  const {
+    aemAuthorUrl,
+    aemOwner,
+    aemRepo,
+    aemBranch,
+    authorization,
+    sourceLocation,
+  } = params;
 
   if (!authorization) {
     return sendError(401, 'Missing Authorization');
@@ -159,6 +174,9 @@ export default async function renderAem(path, params) {
   const fetchHeaders = { 'cache-control': 'no-cache' };
   if (authorization) {
     fetchHeaders.authorization = authorization;
+  }
+  if (sourceLocation) {
+    fetchHeaders['x-content-source-location'] = sourceLocation;
   }
 
   let resp;
