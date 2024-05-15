@@ -1,0 +1,34 @@
+{
+    "project": {
+        "id": "4566206088345062904",
+        "name": "657FuchsiaZebra",
+        "title": "Exlm converter Ruhi",
+        "org": {
+            "id": "51837",
+            "name": "Adobe Marketing Cloud",
+            "ims_org_id": "8F99160E571FC0427F000101@AdobeOrg"
+        },
+        "workspace": {
+            "id": "4566206088345072577",
+            "name": "test",
+            "title": "test",
+            "action_url": "https://51837-657fuchsiazebra-test.adobeioruntime.net",
+            "app_url": "https://51837-657fuchsiazebra-test.adobeio-static.net",
+            "details": {
+                "credentials": [],
+                "services": [],
+                "runtime": {
+                    "namespaces": [
+                        {
+                            "name": "51837-657fuchsiazebra-test",
+                            "auth": "c999e385-5446-48a0-a2c0-8c98666254b0:vslVu1cRT34O14nXu5b505XmSHM8W180kKfpiL5Jg141d0M02XhYJS0Jdxf6eDw7"
+                        }
+                    ]
+                },
+                "events": {
+                    "registrations": []
+                }
+            }
+        }
+    }
+}
