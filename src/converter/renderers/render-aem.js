@@ -55,6 +55,13 @@ async function transformArticlePageMetadata(htmlString, params) {
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
+  const coveoContentTypeMeta = document.querySelector(
+    `meta[name="coveo-content-type"]`,
+  );
+
+  if (coveoContentTypeMeta) {
+    setMetadata(document, 'type', getMetadata(document, 'coveo-content-type'));
+  }
 
   if (solutionMeta) {
     const solutions = formatArticlePageMetaTags(
