@@ -39,7 +39,7 @@ function videoRow(document, Video) {
 
   const videoP = newPLink(URL);
   const videoTranscriptP = newPLink(TranscriptURL);
-  const thumbnailUrl = Thumbnail.find((url) => url.includes('420x236')) || '';
+  const thumbnailUrl = Thumbnail.find((url) => url.includes('960x540')) || '';
   const thumbnail = newEl(`<img src="${thumbnailUrl}" alt="${Title}">`);
   const title = newEl(`<h3>${Title}</h3>`);
   const desc = newEl(`<p>${Description}</p>`);
