@@ -21,7 +21,7 @@ search:
   filters:
     - title: 모두
       contenttype: All
-    - title: 문서
+    - title: 영감
       contenttype: Article
     - title: 인증
       contenttype: Certification
