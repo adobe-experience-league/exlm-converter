@@ -49,6 +49,8 @@ export const aioLogger = Logger('ExlClient');
  * @property {StateStore} state
  */
 
+const LABELS_FROM_ENDPOINTS = {};
+
 export default class ExlClient {
   /**
    *
@@ -91,6 +93,38 @@ export default class ExlClient {
       );
     }
     throw new Error(`Playlist with id: ${id} not found`);
+  }
+
+  /**
+   * Get non-English labels from EXL Config populated endpoints
+   * @param {string} api
+   * @param {string} id
+   * @param {string} lang
+   * @returns {string}
+   */
+  async getLabelFromEndpoint(endpoint, id, lang = 'en') {
+    if (LABELS_FROM_ENDPOINTS[endpoint] === undefined) {
+      LABELS_FROM_ENDPOINTS[endpoint] = {};
+    }
+
+    if (LABELS_FROM_ENDPOINTS.endpoint?.lang === undefined) {
+      const path = `api/${endpoint}?lang=${lang}`;
+      const response = await this.doFetch(path);
+
+      if (response.error) {
+        throw new Error(response.error);
+      } else {
+        LABELS_FROM_ENDPOINTS[endpoint][lang] = response.json()?.data;
+
+        if (LABELS_FROM_ENDPOINTS[endpoint][lang] === undefined) {
+          throw new Error(
+            `${endpoint} requested returned no labels for ${lang}`,
+          );
+        }
+      }
+    }
+
+    return LABELS_FROM_ENDPOINTS[endpoint][lang].find(lbl => lbl.Name_en === undefined ? lbl.Name === id : lbl.Name_en === id) || '';
   }
 
   /**

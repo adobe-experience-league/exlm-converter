@@ -1,11 +1,13 @@
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
 import { CREATED_FOR } from '../blocks-translated-labels.js';
+import { createDefaultExlClient } from '../ExlClient.js';
 
-export default function createArticleMetaDataCreatedBy(
+export default async function createArticleMetaDataCreatedBy(
   document,
   data,
   reqLang,
 ) {
+  const defaultExlClient = await createDefaultExlClient();
   // Article Metadata Created For
   const metaElement = document.querySelector('.article-metadata');
   const parentDiv = document.createElement('div');
@@ -26,16 +28,32 @@ export default function createArticleMetaDataCreatedBy(
         parentDiv.append(createdForDiv);
         const items = [];
 
-        levelsArray.forEach((tags) => {
+        /* eslint-disable-next-line no-restricted-syntax */
+        for (const tags in levelsArray) {
           if (tags.trim() !== '') {
-            items.push(tags.trim());
+            /* eslint-disable-next-line no-await-in-loop */
+            const label = await defaultExlClient.getLabelFromEndpoint(
+              'levels',
+              tags,
+              reqLang,
+            );
+            items.push(label);
           }
-        });
-        rolesArray.forEach((role) => {
+        }
+
+        /* eslint-disable-next-line no-restricted-syntax */
+        for (const role in rolesArray) {
           if (role.trim() !== '') {
-            items.push(role.trim());
+            /* eslint-disable-next-line no-await-in-loop */
+            const label = await defaultExlClient.getLabelFromEndpoint(
+              'roles',
+              role,
+              reqLang,
+            );
+            items.push(label);
           }
-        });
+        }
+        
         levelDivTag.append(
           newHtmlList(document, {
             tag: 'ul',
