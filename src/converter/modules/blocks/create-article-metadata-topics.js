@@ -15,17 +15,22 @@ export default async function createArticleMetaDataTopics(
   // Article Metadata Topics
   if (feature && feature.trim() !== '') {
     const topicMetadata = feature.split(', ').map((item) => item.trim());
+
+    if (topicMetadata.length === 1 && topicMetadata[0] === '') {
+      return;
+    }
+
     const featureDivTag = document.createElement('div');
     const items = [TOPICS[`${reqLang}`]];
 
     /* eslint-disable-next-line */
-    for (const tags in topicMetadata) {
+    for (const topic of topicMetadata) {
       const a = document.createElement('a');
       a.setAttribute('href', '#');
       /* eslint-disable-next-line no-await-in-loop */
       a.textContent = await defaultExlClient.getLabelFromEndpoint(
         'features',
-        tags,
+        topic,
         reqLang,
       );
       items.push(a);

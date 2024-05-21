@@ -105,30 +105,39 @@ export default class ExlClient {
   async getLabelFromEndpoint(endpoint, id, lang = 'en') {
     if (LABELS_FROM_ENDPOINTS[endpoint] === undefined) {
       LABELS_FROM_ENDPOINTS[endpoint] = {};
+      LABELS_FROM_ENDPOINTS[endpoint][lang] = {};
     }
 
     if (LABELS_FROM_ENDPOINTS.endpoint?.lang === undefined) {
-      const path = `api/${endpoint}?lang=${lang}`;
-      const response = await this.doFetch(path);
+      let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
 
-      if (response.error) {
-        throw new Error(response.error);
-      } else {
-        const raw = response.json()?.data;
+      do {
+        /* eslint-disable-next-line no-await-in-loop */
+        const response = await this.doFetch(next);
 
-        if (raw === undefined || raw?.length > 0) {
-          throw new Error(`${endpoint} request returned no labels for ${lang}`);
+        if (response.error) {
+          console.error(response.error);
+        } else {
+          const raw = response?.data;
+
+          if (raw === undefined || raw.length <= 0) {
+            console.error(`${endpoint} request returned no labels for ${lang}`);
+          }
+
+          raw.forEach((item) => {
+            const enLabel =
+              item.Name_en === undefined ? item?.Name : item?.Name_en;
+            LABELS_FROM_ENDPOINTS[endpoint][lang][enLabel] = item.Name;
+          });
         }
 
-        raw.forEach((item) => {
-          const enLabel =
-            item.Name_en === undefined ? item.Name === id : item.Name_en === id;
-          LABELS_FROM_ENDPOINTS[endpoint][lang][enLabel] = item.Name;
-        });
-      }
+        const nextObject = response?.links.find((link) => link.rel === 'next');
+
+        next = nextObject?.uri;
+      } while (next !== undefined);
     }
 
-    return LABELS_FROM_ENDPOINTS[endpoint][lang][id];
+    return LABELS_FROM_ENDPOINTS[endpoint][lang][id] || '';
   }
 
   /**
