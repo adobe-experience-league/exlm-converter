@@ -53,7 +53,7 @@ export default async function createArticleMetaDataCreatedBy(
             items.push(label);
           }
         }
-        
+
         levelDivTag.append(
           newHtmlList(document, {
             tag: 'ul',

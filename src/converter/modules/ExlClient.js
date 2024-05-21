@@ -97,7 +97,7 @@ export default class ExlClient {
 
   /**
    * Get non-English labels from EXL Config populated endpoints
-   * @param {string} api
+   * @param {string} endpoint
    * @param {string} id
    * @param {string} lang
    * @returns {string}
@@ -114,17 +114,21 @@ export default class ExlClient {
       if (response.error) {
         throw new Error(response.error);
       } else {
-        LABELS_FROM_ENDPOINTS[endpoint][lang] = response.json()?.data;
+        const raw = response.json()?.data;
 
-        if (LABELS_FROM_ENDPOINTS[endpoint][lang] === undefined) {
-          throw new Error(
-            `${endpoint} requested returned no labels for ${lang}`,
-          );
+        if (raw === undefined || raw?.length > 0) {
+          throw new Error(`${endpoint} request returned no labels for ${lang}`);
         }
+
+        raw.forEach((item) => {
+          const enLabel =
+            item.Name_en === undefined ? item.Name === id : item.Name_en === id;
+          LABELS_FROM_ENDPOINTS[endpoint][lang][enLabel] = item.Name;
+        });
       }
     }
 
-    return LABELS_FROM_ENDPOINTS[endpoint][lang].find(lbl => lbl.Name_en === undefined ? lbl.Name === id : lbl.Name_en === id) || '';
+    return LABELS_FROM_ENDPOINTS[endpoint][lang][id];
   }
 
   /**
