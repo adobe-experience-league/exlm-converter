@@ -138,7 +138,10 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   // no indexing rule for author bio pages
-  if (path.includes('/articles/authors')) {
+  if (
+    path.includes('/articles/authors') ||
+    path.includes('/signup-flow-modal')
+  ) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
