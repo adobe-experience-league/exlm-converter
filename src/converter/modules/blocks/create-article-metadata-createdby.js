@@ -14,18 +14,15 @@ export default async function createArticleMetaDataCreatedBy(
   const levelsArray = data?.Level || [];
   const rolesArray = data?.Role || [];
 
-  if (
-    !(levelsArray.length === 1 && levelsArray[0] === '') ||
-    !(rolesArray.length === 1 && rolesArray[0] === '')
-  ) {
-    const levelDivTag = document.createElement('div');
-    const createdForDiv = document.createElement('div');
-    const paragraph = document.createElement('p');
-    paragraph.textContent = CREATED_FOR[`${reqLang}`];
-    createdForDiv.append(paragraph);
-    parentDiv.append(createdForDiv);
-    const items = [];
+  const levelDivTag = document.createElement('div');
+  const createdForDiv = document.createElement('div');
+  const paragraph = document.createElement('p');
+  paragraph.textContent = CREATED_FOR[`${reqLang}`];
+  createdForDiv.append(paragraph);
+  parentDiv.append(createdForDiv);
+  const items = [];
 
+  if (!(levelsArray.length === 1 && levelsArray[0] === '')) {
     /* eslint-disable-next-line */
     for (const level of levelsArray) {
       if (level.trim() !== '') {
@@ -38,7 +35,9 @@ export default async function createArticleMetaDataCreatedBy(
         items.push(label);
       }
     }
+  }
 
+  if (!(rolesArray.length === 1 && rolesArray[0] === '')) {
     /* eslint-disable-next-line */
     for (const role of rolesArray) {
       if (role.trim() !== '') {
@@ -51,7 +50,9 @@ export default async function createArticleMetaDataCreatedBy(
         items.push(label);
       }
     }
+  }
 
+  if (items.length > 0) {
     levelDivTag.append(
       newHtmlList(document, {
         tag: 'ul',
@@ -59,9 +60,8 @@ export default async function createArticleMetaDataCreatedBy(
       }),
     );
     parentDiv.append(levelDivTag);
+    const cells = [[parentDiv]];
+    const block = toBlock('article-metadata-createdby', cells, document);
+    metaElement?.insertAdjacentElement('afterend', block);
   }
-
-  const cells = [[parentDiv]];
-  const block = toBlock('article-metadata-createdby', cells, document);
-  metaElement?.insertAdjacentElement('afterend', block);
 }
