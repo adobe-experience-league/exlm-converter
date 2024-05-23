@@ -6,6 +6,14 @@ import { placeholderPlaylist } from './placeholder-playlist.js';
 
 export const aioLogger = Logger('ExlClient');
 
+export const EXL_LABEL_ENDPOINTS = {
+  LABELS: 'labels',
+  LEVELS: 'levels',
+  FEATURES: 'features',
+  ROLES: 'roles',
+  TOPIS: 'topics',
+};
+
 /**
  * @typedef {object} ExlArticle
  * @property {string} ID
@@ -91,6 +99,66 @@ export default class ExlClient {
       );
     }
     throw new Error(`Playlist with id: ${id} not found`);
+  }
+
+  /**
+   * Get non-English labels from EXL Config populated endpoints
+   * @param {string} endpoint - EXL_LABEL_ENDPOINTS
+   * @param {string} id
+   * @param {string} lang
+   * @returns {string}
+   */
+  async getLabelFromEndpoint(endpoint, id, lang = 'en') {
+    if (lang === 'en') {
+      return id;
+    }
+
+    const key = `${endpoint}-${lang}`;
+    const labelState = await this.state.get(key);
+
+    if (labelState && labelState.value) {
+      aioLogger.debug(`Using cached value for ${key}`);
+      return JSON.parse(labelState.value)[id];
+    }
+
+    aioLogger.debug(`Fetching ${key} from API`);
+
+    let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
+    const results = {};
+
+    do {
+      /* eslint-disable-next-line no-await-in-loop */
+      const response = await this.doFetch(next);
+
+      if (response.error) {
+        aioLogger.error(response.error);
+      } else {
+        const raw = response?.data;
+
+        if (raw === undefined || raw.length <= 0) {
+          aioLogger.error(`${endpoint} request returned no labels for ${lang}`);
+        }
+
+        raw.forEach((item) => {
+          results[item.Name_en] = item.Name;
+        });
+      }
+
+      // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
+      const nextUriObject =
+        response?.links.find((link) => link.rel === 'next') ||
+        response?.links.find((link) => link.rel === 'last');
+      next = nextUriObject?.uri;
+    } while (next !== undefined);
+
+    if (Object.keys(results).length > 0) {
+      // store for 24 hours (86400 seconds)
+      await this.state.put(key, JSON.stringify(results), {
+        ttl: 86400,
+      });
+    }
+
+    return results[id] || id;
   }
 
   /**
