@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
 import { TOPICS } from '../blocks-translated-labels.js';
-import { createDefaultExlClient } from '../ExlClient.js';
+import { createDefaultExlClient, EXL_LABEL_ENDPOINTS } from '../ExlClient.js';
 
 export default async function createArticleMetaDataTopics(
   document,
@@ -29,7 +29,7 @@ export default async function createArticleMetaDataTopics(
       a.setAttribute('href', '#');
       /* eslint-disable-next-line no-await-in-loop */
       a.textContent = await defaultExlClient.getLabelFromEndpoint(
-        'features',
+        EXL_LABEL_ENDPOINTS.FEATURES,
         topic,
         reqLang,
       );

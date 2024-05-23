@@ -1,6 +1,6 @@
 import { toBlock, newHtmlList } from '../utils/dom-utils.js';
 import { CREATED_FOR } from '../blocks-translated-labels.js';
-import { createDefaultExlClient } from '../ExlClient.js';
+import { createDefaultExlClient, EXL_LABEL_ENDPOINTS } from '../ExlClient.js';
 
 export default async function createArticleMetaDataCreatedBy(
   document,
@@ -28,7 +28,7 @@ export default async function createArticleMetaDataCreatedBy(
       if (level.trim() !== '') {
         /* eslint-disable-next-line no-await-in-loop */
         const label = await defaultExlClient.getLabelFromEndpoint(
-          'levels',
+          EXL_LABEL_ENDPOINTS.LEVELS,
           level,
           reqLang,
         );
@@ -43,7 +43,7 @@ export default async function createArticleMetaDataCreatedBy(
       if (role.trim() !== '') {
         /* eslint-disable-next-line no-await-in-loop */
         const label = await defaultExlClient.getLabelFromEndpoint(
-          'roles',
+          EXL_LABEL_ENDPOINTS.ROLES,
           role,
           reqLang,
         );

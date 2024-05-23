@@ -6,6 +6,14 @@ import { placeholderPlaylist } from './placeholder-playlist.js';
 
 export const aioLogger = Logger('ExlClient');
 
+export const EXL_LABEL_ENDPOINTS = {
+  LABELS: 'labels',
+  LEVELS: 'levels',
+  FEATURES: 'features',
+  ROLES: 'roles',
+  TOPIS: 'topics',
+};
+
 /**
  * @typedef {object} ExlArticle
  * @property {string} ID
@@ -48,8 +56,6 @@ export const aioLogger = Logger('ExlClient');
  * @property {string} domain
  * @property {StateStore} state
  */
-
-const LABELS_FROM_ENDPOINTS = {};
 
 export default class ExlClient {
   /**
@@ -97,49 +103,64 @@ export default class ExlClient {
 
   /**
    * Get non-English labels from EXL Config populated endpoints
-   * @param {string} endpoint
+   * @param {string} endpoint - EXL_LABEL_ENDPOINTS
    * @param {string} id
    * @param {string} lang
    * @returns {string}
    */
   async getLabelFromEndpoint(endpoint, id, lang = 'en') {
-    if (LABELS_FROM_ENDPOINTS[endpoint] === undefined) {
-      LABELS_FROM_ENDPOINTS[endpoint] = {};
-      LABELS_FROM_ENDPOINTS[endpoint][lang] = {};
+    if (lang === 'en') {
+      return id;
     }
 
-    if (LABELS_FROM_ENDPOINTS.endpoint?.lang === undefined) {
-      let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
+    const key = `${endpoint}-${lang}`;
+    const labelState = await this.state.get();
 
-      do {
-        /* eslint-disable-next-line no-await-in-loop */
-        const response = await this.doFetch(next);
+    if (labelState && labelState.value) {
+      aioLogger.debug(`Using cached value for ${key}`);
+      return JSON.parse(labelState.value)[id];
+    }
 
-        if (response.error) {
-          console.error(response.error);
-        } else {
-          const raw = response?.data;
+    aioLogger.debug(`Fetching ${key} from API`);
 
-          if (raw === undefined || raw.length <= 0) {
-            console.error(`${endpoint} request returned no labels for ${lang}`);
-          }
+    let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
+    const results = {};
 
-          raw.forEach((item) => {
-            const enLabel =
-              item.Name_en === undefined ? item?.Name : item?.Name_en;
-            LABELS_FROM_ENDPOINTS[endpoint][lang][enLabel] = item.Name;
-          });
+    do {
+      /* eslint-disable-next-line no-await-in-loop */
+      const response = await this.doFetch(next);
+
+      if (response.error) {
+        aioLogger.error(response.error);
+      } else {
+        const raw = response?.data;
+
+        if (raw === undefined || raw.length <= 0) {
+          aioLogger.error(`${endpoint} request returned no labels for ${lang}`);
         }
 
-        // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
-        const nextUriObject =
-          response?.links.find((link) => link.rel === 'next') ||
-          response?.links.find((link) => link.rel === 'last');
-        next = nextUriObject?.uri;
-      } while (next !== undefined);
+        raw.forEach((item) => {
+          const enLabel =
+            item.Name_en === undefined ? item?.Name : item?.Name_en;
+          results[enLabel] = item.Name;
+        });
+      }
+
+      // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
+      const nextUriObject =
+        response?.links.find((link) => link.rel === 'next') ||
+        response?.links.find((link) => link.rel === 'last');
+      next = nextUriObject?.uri;
+    } while (next !== undefined);
+
+    if (Object.keys(results).length > 0) {
+      // store for 24 hours (86400 seconds)
+      await this.state.put(key, JSON.stringify(results), {
+        ttl: 86400,
+      });
     }
 
-    return LABELS_FROM_ENDPOINTS[endpoint][lang][id] || id;
+    return results[id] || id;
   }
 
   /**
