@@ -109,7 +109,7 @@ export default class ExlClient {
     }
 
     if (LABELS_FROM_ENDPOINTS.endpoint?.lang === undefined) {
-      let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
+      let next = `api/${endpoint}?lang=${lang}&page_size=200`;
 
       do {
         /* eslint-disable-next-line no-await-in-loop */
@@ -131,13 +131,15 @@ export default class ExlClient {
           });
         }
 
-        const nextObject = response?.links.find((link) => link.rel === 'next');
-
-        next = nextObject?.uri;
+        // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
+        const nextUriObject =
+          response?.links.find((link) => link.rel === 'next') ||
+          response?.links.find((link) => link.rel === 'last');
+        next = nextUriObject?.uri;
       } while (next !== undefined);
     }
 
-    return LABELS_FROM_ENDPOINTS[endpoint][lang][id] || '';
+    return LABELS_FROM_ENDPOINTS[endpoint][lang][id] || id;
   }
 
   /**

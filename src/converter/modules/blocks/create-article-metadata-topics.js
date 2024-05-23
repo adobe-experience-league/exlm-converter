@@ -33,6 +33,7 @@ export default async function createArticleMetaDataTopics(
         topic,
         reqLang,
       );
+      a.dataset.value = topic;
       items.push(a);
     }
     featureDivTag.append(newHtmlList(document, { tag: 'ul', items }));
