@@ -139,7 +139,9 @@ export default class ExlClient {
           aioLogger.error(`${endpoint} request returned no labels for ${lang}`);
         }
 
-        raw.forEach((item) => results[enLabel] = item.Name);
+        raw.forEach((item) => {
+          results[item.Name_en] = item.Name;
+        });
       }
 
       // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
