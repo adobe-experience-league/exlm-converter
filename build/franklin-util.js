@@ -17,6 +17,13 @@ export default async function publish({
   branch,
 }) {
   const url = `https://admin.hlx.page/${mode}/${owner}/${repo}/${branch}/${path}`;
-  console.log(`[FETCH] [POST]: ${url}`);
-  return fetch(url, { method: 'POST' });
+  const { API_KEY = null } = process.env;
+  console.log(
+    `[FETCH] [POST]: ${url} (API_KEY: ${String(API_KEY).substring(0, 5)}...)`,
+  );
+  const headers = {};
+  if (API_KEY) {
+    headers.authorization = `token ${API_KEY}`;
+  }
+  return fetch(url, { method: 'POST', headers });
 }

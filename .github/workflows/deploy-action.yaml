@@ -71,3 +71,4 @@ jobs:
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
           BRANCH: ${{ vars.BRANCH }}
+          API_KEY: ${{ secrets.HLX_API_KEY }}

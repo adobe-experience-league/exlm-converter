@@ -21,7 +21,9 @@ import {
   isDocsPath,
   isFragmentPath,
   isLandingPath,
+  isPlaylistsPath,
 } from './modules/utils/path-match-utils.js';
+import renderPlaylist from './renderers/render-playlist.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -65,6 +67,10 @@ export const render = async function render(path, params) {
   if (isDocsPath(path)) {
     return renderDoc(path, dir);
   }
+
+  if (isPlaylistsPath(path)) {
+    return renderPlaylist(path, dir);
+  }
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
     return renderFragment(path, dir);
@@ -81,9 +87,12 @@ export const main = async function main(params) {
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
   const authorization = __ow_headers?.authorization || '';
+  // eslint-disable-next-line camelcase
+  const sourceLocation = __ow_headers?.['x-content-source-location'] || '';
   const { body, headers, statusCode, error } = await render(path, {
     ...params,
     authorization,
+    sourceLocation,
   });
 
   if (!error) {

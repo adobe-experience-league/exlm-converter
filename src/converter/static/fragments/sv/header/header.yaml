@@ -21,6 +21,8 @@ search:
   filters:
     - title: Alla
       contenttype: All
+    - title: Artikel
+      contenttype: Article
     - title: Certifiering
       contenttype: Certification
     - title: Community

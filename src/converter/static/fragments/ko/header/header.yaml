@@ -21,6 +21,8 @@ search:
   filters:
     - title: 모두
       contenttype: All
+    - title: 문서
+      contenttype: Article
     - title: 인증
       contenttype: Certification
     - title: 커뮤니티

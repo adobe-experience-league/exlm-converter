@@ -21,6 +21,8 @@ search:
   filters:
     - title: すべて
       contenttype: All
+    - title: 記事
+      contenttype: Article
     - title: 認定制度
       contenttype: Certification
     - title: コミュニティ

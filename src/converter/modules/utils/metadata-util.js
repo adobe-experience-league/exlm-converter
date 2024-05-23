@@ -86,18 +86,16 @@ export const createMetaData = (
   solutions = [],
 ) => {
   const fragment = document.createDocumentFragment();
-  const fullMetadata = yaml.load(meta);
-
+  const fullMetadata = typeof meta === 'string' ? yaml.load(meta) : meta;
   // EXL API returns both "robots" and "ROBOTS" properties. Combine them into one.
   consolodateCSVProperties('robots', 'ROBOTS', fullMetadata, 'robots');
 
   //     result.push(`<meta name="coveo-solution" content="${}">`);
 
   // Metadata from data key API Response
-  const metaProperties = [
-    { name: 'id', content: data.id },
-    { name: 'keywords', content: data.Keywords || '' },
-  ];
+  const metaProperties = ['id', 'Keywords']
+    .filter((key) => data[key])
+    .map((key) => ({ name: key.toLowerCase(), content: data[key] }));
 
   if (fullMetadata.solution) {
     metaProperties.push({
