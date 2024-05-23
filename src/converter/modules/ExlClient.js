@@ -114,7 +114,7 @@ export default class ExlClient {
     }
 
     const key = `${endpoint}-${lang}`;
-    const labelState = await this.state.get();
+    const labelState = await this.state.get(key);
 
     if (labelState && labelState.value) {
       aioLogger.debug(`Using cached value for ${key}`);
