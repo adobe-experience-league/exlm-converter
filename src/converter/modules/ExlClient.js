@@ -109,7 +109,7 @@ export default class ExlClient {
     }
 
     if (LABELS_FROM_ENDPOINTS.endpoint?.lang === undefined) {
-      let next = `api/${endpoint}?lang=${lang}&page_size=200`;
+      let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
 
       do {
         /* eslint-disable-next-line no-await-in-loop */
