@@ -133,12 +133,12 @@ export default async function md2html({
     createTargetInsertion(document);
     createDocsCards(document);
     createBackToBrowsing(document);
-    // leave this at the end - after creation and tranformation of blocks
-    createSections(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
+    // leave this at the end - after creation and tranformation of blocks
+    createSections(document);
   }
 
   return {

@@ -174,33 +174,43 @@ export const createNewSectionForBlock = (document, block) => {
   return blockSection;
 };
 
+// Return the New Section from elements
+export const createNewSectionForElements = (document, elements) => {
+  const elementSection = document.createElement('div');
+  let nextPointer = elements[0];
+  // Iterate through the siblings and add current pointer element to the enclosing div
+  while (nextPointer) {
+    const next = nextPointer.nextElementSibling;
+    elementSection.appendChild(nextPointer);
+    nextPointer = next;
+  }
+  return elementSection;
+};
+
 /**
  * Organizes content within a document's main section into structured sections based on text length and headers, excluding any content within 'shade-box' areas.
  * @param {Document} document - The DOM document to manipulate.
  */
 export const createSections = (document) => {
-  // Find the main content area; if it doesn't exist, stop further execution.
   const mainContent = document.body.querySelector('main');
   if (!mainContent) return;
 
-  // Try to find the first division within the main content, usually containing primary blocks.
   const firstDiv = mainContent.querySelector('div');
   if (!firstDiv) return;
 
-  const sections = [];
+  // Fragement to store the sections
+  const finalizedSections = document.createDocumentFragment();
+
+  // Temporary Array to store elements
   let currentSection = [];
   let currentSectionLength = 0;
 
-  // Helper to finalize and reset the current section.
-  const finalizeCurrentSection = () => {
-    sections.push([...currentSection]);
+  // Fuction to finalise and reset the temporary Array elements and length
+  const resetSection = (element, length) => {
+    const newSection = createNewSectionForElements(document, currentSection);
+    finalizedSections.appendChild(newSection);
     currentSection = [];
     currentSectionLength = 0;
-  };
-
-  // Helper to start a new section.
-  const createNewSection = (element, length) => {
-    finalizeCurrentSection();
     currentSection.push(element);
     currentSectionLength = length;
   };
@@ -208,70 +218,49 @@ export const createSections = (document) => {
   // Determine if an element is a header based on its tag level.
   const isHeaderElement = (element) => getHeadingLevel(element) > -1;
 
-  // Special case to handle continuous addition until a break condition is met.
-  const addRemainingElements = (initialElement, initialLength) => {
-    let element = initialElement;
-    let length = initialLength;
-    let continueAdding = true;
-    while (continueAdding) {
-      currentSection.push(element);
-      currentSectionLength += length;
-      if (element.tagName === 'div' || isHeaderElement(element)) {
-        continueAdding = false;
-      } else if (element.nextElementSibling) {
-        element = element.nextElementSibling.cloneNode(true);
-        length = element.textContent.length;
-      } else {
-        break;
-      }
-    }
-  };
-
-  // Function to decide whether to add elements to the current section or start a new one.
-  const addElementToSection = (element, isHeader, isLastElement) => {
+  // Function to find the Elements for one Section based on 1400 Char Limit
+  const findElementsForSection = (element, isHeader, isLastElement) => {
     const elementTextLength = element.textContent.length;
 
-    // Start a new section if adding the element exceeds the 1400 character limit.
-    if (currentSectionLength + elementTextLength > 1400) {
-      const lastElementIsHeader =
-        currentSection.length &&
-        isHeaderElement(currentSection[currentSection.length - 1]);
-
-      if (lastElementIsHeader && !isHeader) {
-        addRemainingElements(element, elementTextLength);
-      } else {
-        createNewSection(element, elementTextLength);
-      }
-    } else {
-      // If the section limit is not exceeded, simply add the element.
+    // Add element to temp array if element char limit doesnot exceeds the 1400
+    if (currentSectionLength + elementTextLength < 1400) {
       currentSection.push(element);
       currentSectionLength += elementTextLength;
+    } else {
+      // If last element is header add it as part of new temp array and reset the temp array
+      const lastElement = currentSection[currentSection.length - 1];
+      const lastElementIsHeader =
+        currentSection.length && isHeaderElement(lastElement);
+      if (lastElementIsHeader) {
+        currentSection.pop();
+        resetSection(element, elementTextLength);
+        currentSection.push(lastElement);
+        currentSectionLength += lastElement.length;
+      }
     }
 
-    // Finalize the section if this is the last element or a header.
-    if (isHeader || isLastElement) {
-      finalizeCurrentSection();
+    // Finalize the section if this is the last element
+    if (isLastElement) {
+      const sectionElement = createNewSectionForElements(
+        document,
+        currentSection,
+      );
+      finalizedSections.appendChild(sectionElement);
+      currentSection = [];
+      currentSectionLength = 0;
     }
   };
 
-  // Iterate through children of the first division, cloning to avoid modifying the original elements.
+  // Iterate through children of the first division and process each element
   Array.from(firstDiv.children).forEach((child) => {
-    const clonedChild = child.cloneNode(true);
-    const isHeading = isHeaderElement(clonedChild);
+    const isHeading = isHeaderElement(child);
     const isLast = child === firstDiv.lastChild;
-    addElementToSection(clonedChild, isHeading, isLast);
-    child.remove(); // Remove the original to prevent duplication.
+    findElementsForSection(child, isHeading, isLast);
   });
 
-  // Clear the original division and prepend new sections to the main content area.
+  // Insert the finalized sections before the first child of the main content area and clear it's contents from DOM
+  mainContent.insertBefore(finalizedSections, mainContent.firstChild);
   firstDiv.remove();
-  sections.reverse().forEach((section) => {
-    const newDiv = document.createElement('div');
-    section.forEach((child) => {
-      newDiv.appendChild(child);
-    });
-    mainContent.insertBefore(newDiv, mainContent.firstChild);
-  });
 };
 
 /**
