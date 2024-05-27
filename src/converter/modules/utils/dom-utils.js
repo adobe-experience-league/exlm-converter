@@ -206,20 +206,18 @@ export const createSections = (document) => {
   let currentSectionLength = 0;
 
   // Fuction to finalise and reset the temporary Array elements and length
-  const resetSection = (element, length) => {
+  const resetSection = () => {
     const newSection = createNewSectionForElements(document, currentSection);
     finalizedSections.appendChild(newSection);
     currentSection = [];
     currentSectionLength = 0;
-    currentSection.push(element);
-    currentSectionLength = length;
   };
 
   // Determine if an element is a header based on its tag level.
   const isHeaderElement = (element) => getHeadingLevel(element) > -1;
 
   // Function to find the Elements for one Section based on 1400 Char Limit
-  const findElementsForSection = (element, isHeader, isLastElement) => {
+  const findElementsForSection = (element) => {
     const elementTextLength = element.textContent.length;
 
     // Add element to temp array if element char limit doesnot exceeds the 1400
@@ -233,29 +231,24 @@ export const createSections = (document) => {
         currentSection.length && isHeaderElement(lastElement);
       if (lastElementIsHeader) {
         currentSection.pop();
-        resetSection(element, elementTextLength);
+        resetSection();
         currentSection.push(lastElement);
         currentSectionLength += lastElement.length;
       }
-    }
+      currentSection.push(element);
+      currentSectionLength += elementTextLength;
 
-    // Finalize the section if this is the last element
-    if (isLastElement) {
-      const sectionElement = createNewSectionForElements(
-        document,
-        currentSection,
-      );
-      finalizedSections.appendChild(sectionElement);
-      currentSection = [];
-      currentSectionLength = 0;
+      // If this is last element to be processed then finalize the section
+      const isLastChild = element === firstDiv.lastChild;
+      if (isLastChild) {
+        resetSection();
+      }
     }
   };
 
   // Iterate through children of the first division and process each element
   Array.from(firstDiv.children).forEach((child) => {
-    const isHeading = isHeaderElement(child);
-    const isLast = child === firstDiv.lastChild;
-    findElementsForSection(child, isHeading, isLast);
+    findElementsForSection(child);
   });
 
   // Insert the finalized sections before the first child of the main content area and clear it's contents from DOM
