@@ -235,9 +235,9 @@ export const createSections = (document) => {
         currentSection.push(lastElement);
         currentSectionLength += lastElement.length;
       }
+      // Add element to temp array and update it's length
       currentSection.push(element);
       currentSectionLength += elementTextLength;
-
       // If this is last element to be processed then finalize the section
       const isLastChild = element === firstDiv.lastChild;
       if (isLastChild) {
