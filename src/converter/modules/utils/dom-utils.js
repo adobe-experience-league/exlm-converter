@@ -175,19 +175,6 @@ export const createNewSectionForBlock = (document, block) => {
   return blockSection;
 };
 
-// Return the New Section from elements
-export const createNewSectionForElements = (document, elements) => {
-  const elementSection = document.createElement('div');
-  let nextPointer = elements[0];
-  // Iterate through the siblings and add current pointer element to the enclosing div
-  while (nextPointer) {
-    const next = nextPointer.nextElementSibling;
-    elementSection.appendChild(nextPointer);
-    nextPointer = next;
-  }
-  return elementSection;
-};
-
 const SECTION_MAX_LENGTH = 1400;
 
 /**
