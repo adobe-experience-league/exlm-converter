@@ -5,7 +5,7 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
-import { handleExternalUrl } from './utils/dom-utils.js';
+import { handleExternalUrl, createSections } from './utils/dom-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import handleUrls from '../../common/utils/link-utils.js';
 import createVideo from './blocks/create-video.js';
@@ -121,8 +121,8 @@ export default async function md2html({
     createCodeBlock(document);
     createVideoTranscript(document);
     createList(document);
-    createArticleMetaDataCreatedBy(document, data, reqLang);
-    createArticleMetaDataTopics(document, meta, reqLang);
+    await createArticleMetaDataCreatedBy(document, data, reqLang);
+    await createArticleMetaDataTopics(document, meta, reqLang);
     handleExternalUrl(document);
     createMiniTOC(document);
     createTOC(document, data);
@@ -137,6 +137,8 @@ export default async function md2html({
     createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
+    // leave this at the end - EXLM 1442 1510 Splitting into multiple Sections
+    createSections(document);
   }
 
   return {
