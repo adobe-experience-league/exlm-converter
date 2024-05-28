@@ -137,7 +137,7 @@ export default async function md2html({
     createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
-    // leave this at the end - EXLM 1442 1510 Splitting into multiple Sections  
+    // leave this at the end - EXLM 1442 1510 Splitting into multiple Sections
     createSections(document);
   }
 
