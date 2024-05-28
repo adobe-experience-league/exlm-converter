@@ -21,7 +21,7 @@ search:
   filters:
     - title: すべて
       contenttype: All
-    - title: 記事
+    - title: インスピレーション
       contenttype: Article
     - title: 認定制度
       contenttype: Certification

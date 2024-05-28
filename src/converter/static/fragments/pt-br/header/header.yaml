@@ -21,7 +21,7 @@ search:
   filters:
     - title: Tudo
       contenttype: All
-    - title: Artigo
+    - title: Inspiração
       contenttype: Article
     - title: Certificação
       contenttype: Certification
