@@ -1,6 +1,8 @@
 import {
+  createNewSectionForBlock,
   getAllDecendantTextNodes,
   replaceElement,
+  toBlock,
 } from '../utils/dom-utils.js';
 
 /**
@@ -16,18 +18,52 @@ const toHighlightedEl = (document, textNode) => {
   return em;
 };
 
+/**
+ * @param  {Document} document
+ * @param  {Element} element
+ */
+const isSectionChild = (element) =>
+  element?.parentElement?.parentElement?.tagName?.toLowerCase() === 'main';
+
+/**
+ * @param {Document} document
+ * @param {Element} element
+ */
+const createHighlightSectionForElement = (document, element) => {
+  const shadeBoxSection = createNewSectionForBlock(document, element);
+
+  shadeBoxSection.append(...element.children);
+  shadeBoxSection.append(
+    toBlock('section-metadata', [['style', 'highlight']], document),
+  );
+  element.remove();
+};
+
+/**
+ * @param {Document} document
+ * @param {Element} element
+ */
+const inlineHighlight = (document, element) => {
+  getAllDecendantTextNodes(document, element).forEach((textNode) => {
+    const highlightEl = toHighlightedEl(document, textNode);
+    replaceElement(textNode, toHighlightedEl(document, highlightEl));
+  });
+  // move all the children of the preview element to the parent
+  // and then remove the preview element
+  while (element.firstChild) {
+    element.parentNode.insertBefore(element.firstChild, element);
+  }
+  element.remove();
+};
+
 export default function createHighlight(document) {
   [...document.querySelectorAll('.preview')].forEach((previewEl) => {
-    getAllDecendantTextNodes(document, previewEl).forEach((textNode) => {
-      const highlightEl = toHighlightedEl(document, textNode);
-      replaceElement(textNode, toHighlightedEl(document, highlightEl));
-    });
-
-    // move all the children of the preview element to the parent
-    // and then remove the preview element
-    while (previewEl.firstChild) {
-      previewEl.parentNode.insertBefore(previewEl.firstChild, previewEl);
+    if (isSectionChild(previewEl)) {
+      // highlighted section
+      createHighlightSectionForElement(document, previewEl);
+    } else {
+      // inlined highlight
+      inlineHighlight(document, previewEl);
     }
-    previewEl.remove();
   });
 }
