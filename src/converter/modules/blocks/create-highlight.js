@@ -34,7 +34,7 @@ const createHighlightSectionForElement = (document, element) => {
 
   shadeBoxSection.append(...element.children);
   shadeBoxSection.append(
-    toBlock('section-metadata', [['style', 'highlight']], document),
+    toBlock('section-metadata', [['style', 'highlighted']], document),
   );
   element.remove();
 };
