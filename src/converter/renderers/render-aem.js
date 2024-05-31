@@ -137,8 +137,11 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
-  // no indexing rule for author bio pages
-  if (path.includes('/articles/authors')) {
+  // no indexing rule for author bio and signup-flow-modal pages
+  if (
+    path.includes('/articles/authors') ||
+    path.includes('/signup-flow-modal')
+  ) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 

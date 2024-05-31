@@ -158,6 +158,7 @@ const getHeadingLevel = (element) => {
 export const createNewSectionForBlock = (document, block) => {
   const section = block.parentElement;
   const blockSection = document.createElement('div');
+  blockSection.classList.add('section'); // add class so that other functions can tell this is a section
   const subsequenSection = document.createElement('div');
   section.after(blockSection);
 
@@ -174,50 +175,66 @@ export const createNewSectionForBlock = (document, block) => {
   return blockSection;
 };
 
+const SECTION_MAX_LENGTH = 1400;
+
 /**
- *
+ * Split a section into smaller sections based on text length and headers.
+ * @param {Document} document
+ * @param {HTMLDivElement} section
+ */
+export const spiltSectionToSmallerSections = (document, section) => {
+  const splittable = section.textContent.length > SECTION_MAX_LENGTH;
+  const isAlreadySection = section.classList.contains('section');
+  const hasChildren = section.firstElementChild;
+  if (!splittable || isAlreadySection || !hasChildren) {
+    // ensure has section class
+    section.classList.add('section');
+    return; // exit.
+  }
+
+  // create a new section
+  const newSection = () => {
+    const divEl = document.createElement('div');
+    divEl.classList.add('section');
+    section.before(divEl);
+    return divEl;
+  };
+
+  // since the element will be moved to a new section, the next element is the first child of the section
+  const nextEl = () => section.firstElementChild;
+
+  // iterate over children of the section
+  let currentEl = nextEl();
+  let currentSection = newSection();
+  while (currentEl) {
+    const currentSectionReachedMaxLength =
+      currentSection.textContent.length >= SECTION_MAX_LENGTH;
+    const currentElIsHeader = getHeadingLevel(currentEl) !== -1;
+    if (currentSectionReachedMaxLength && currentElIsHeader) {
+      // if current section reached max length and current element is a header, create a new section
+      currentSection = newSection();
+    }
+    currentSection.append(currentEl);
+    // since the element is moved to a new section, the next element is the first child of the section
+    currentEl = nextEl();
+  }
+  // no more elements left, remove this section
+  section.remove();
+};
+
+/**
+ * Organizes content within a document's main section into structured sections based on text length and headers.
  * @param {Document} document
  */
 export const createSections = (document) => {
-  const main = document.body.querySelector('main');
-  if (!main) return;
-  const sections = [];
-  let currentSection = [];
+  const mainContent = document.body.querySelector('main');
+  if (!mainContent) return;
 
-  const addToCurrentSection = (element, commit, isLast) => {
-    if (commit) {
-      if (currentSection.length) sections.push([...currentSection]);
-      currentSection = [element];
-    } else if (isLast) {
-      currentSection.push(element);
-      sections.push([...currentSection]);
-    } else {
-      currentSection.push(element);
-    }
-  };
-
-  Array.from(main.children).forEach((child) => {
-    const childClone = child.cloneNode(true); // clone to avoid issues
-    const isHeading = getHeadingLevel(childClone) > -1; // get current child's heading level, or -1 of not a header
-
-    // is last
-    const isLast = child === main.lastChild;
-    addToCurrentSection(childClone, isHeading, isLast);
-    child.remove(); // remove the child from the DOM
-  });
-
-  if (currentSection.length) {
-    sections.push([...currentSection]);
-  }
-
-  sections.forEach((section) => {
-    const $div = div(document);
-    // if array, oush all children
-    section.forEach((child) => {
-      $div.appendChild(child);
-    });
-    main.appendChild($div);
-  });
+  // ignore last 2 sections (toc and mini-toc)
+  const sections = Array.from(mainContent.children).slice(0, -2);
+  sections.forEach((section) =>
+    spiltSectionToSmallerSections(document, section),
+  );
 };
 
 /**
