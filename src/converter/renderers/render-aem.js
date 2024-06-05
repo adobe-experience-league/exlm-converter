@@ -139,7 +139,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
   });
   // no indexing rule for author bio and signup-flow-modal pages
   if (
-    path.includes('/articles/authors') ||
+    path.includes('/actionable-insights/authors') ||
     path.includes('/signup-flow-modal')
   ) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
@@ -219,7 +219,10 @@ export default async function renderAem(path, params) {
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl, path);
     // Update page metadata for Article Pages
-    if (path.includes('/articles/') && !path.includes('/articles/authors/')) {
+    if (
+      path.includes('/actionable-insights/') &&
+      !path.includes('/actionable-insights/authors/')
+    ) {
       body = await transformArticlePageMetadata(body, params);
     }
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
