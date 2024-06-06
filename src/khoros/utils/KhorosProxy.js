@@ -3,7 +3,7 @@ import { sendError } from '../../common/utils/response-utils.js';
 
 export const aioLogger = Logger('KhorosProxy');
 
-const ALLOWED_PATHS = ['/profile-menu-list'];
+const ALLOWED_PATHS = ['/profile-menu-list', '/profile-details'];
 
 /**
  * Proxy request to khoros
