@@ -15,10 +15,10 @@ application:
               concurrency: 2
             inputs:
               LOG_LEVEL: debug
-              aemAuthorUrl: https://author-p122525-e1200861.adobeaemcloud.com
-              aemOwner: ruhisingh1
-              aemRepo: exlm
-              aemBranch: main
+              aemAuthorUrl: $AEM_AUTHOR_URL
+              aemOwner: $OWNER
+              aemRepo: $REPO
+              aemBranch: $BRANCH
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
