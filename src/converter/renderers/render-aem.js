@@ -52,6 +52,7 @@ async function transformArticlePageMetadata(htmlString, params) {
   const { document } = dom.window;
 
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
+  const featureMeta = document.querySelector(`meta[name="feature"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
@@ -99,6 +100,32 @@ async function transformArticlePageMetadata(htmlString, params) {
     });
   }
 
+  if (featureMeta) {
+    const features = formatArticlePageMetaTags(
+      getMetadata(document, 'feature'),
+    );
+
+    // Decode and split each feature into parts
+    const decodedFeatures = features.map((feature) => {
+      const parts = feature.split('/');
+      const decodedFeature = parts.map((part) => decodeBase64(part.trim()));
+      return decodedFeature;
+    });
+
+    // Transform the features to coveo compatible format
+    const transformedFeatures = decodedFeatures.map((parts) => {
+      if (parts.length > 1) {
+        const feature = parts[1];
+        return `${feature}`;
+        // eslint-disable-next-line no-else-return
+      } else {
+        return '';
+      }
+    });
+    const coveoFeature = transformedFeatures.join(',');
+    setMetadata(document, 'feature', coveoFeature);
+  }
+
   if (roleMeta) {
     const roles = formatArticlePageMetaTags(getMetadata(document, 'role'));
     const decodedRoles = roles.map((role) => decodeBase64(role));
@@ -138,10 +165,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   // no indexing rule for author bio and signup-flow-modal pages
-  if (
-    path.includes('/actionable-insights/authors') ||
-    path.includes('/signup-flow-modal')
-  ) {
+  if (path.includes('/authors/') || path.includes('/signup-flow-modal')) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
