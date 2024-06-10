@@ -36,16 +36,34 @@ export class KhorosProxy {
         params,
         additionalHeaders,
       });
-      const body = await response.json();
-      aioLogger.debug(`khoros response [${response.status}]`, body);
 
-      return {
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        statusCode: response.status,
-      };
+      if (!response.ok) {
+        const responseText = await response.text();
+        aioLogger.error(
+          `Error fetching khoros url: ${response.url} with status: ${response.status} and full response: \n ${responseText}`,
+        );
+        return sendError(
+          response.status,
+          'Bad Gateway, proxied service return unexpected response code. See logs for details',
+        );
+      }
+      const text = await response.text();
+      try {
+        const body = JSON.parse(text);
+        return {
+          body,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          statusCode: response.status,
+        };
+      } catch (e) {
+        aioLogger.error(`Error parsing response with body text: \n ${text}`, e);
+        return sendError(
+          502,
+          'Bad Gateway, proxied service return unexpected response. See logs for details',
+        );
+      }
     } catch (error) {
       aioLogger.error(error);
       return sendError(500, 'Internal Server Error');
