@@ -5,6 +5,13 @@ export const aioLogger = Logger('KhorosProxy');
 
 const ALLOWED_PATHS = ['/profile-menu-list', '/profile-details'];
 
+const DEFAULT_HEADERS = {
+  'Cache-Control': 'no-store', // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#no-store
+};
+
+const sendErrorWithDefaultHeaders = (code, message) =>
+  sendError(code, message, DEFAULT_HEADERS);
+
 /**
  * Proxy request to khoros
  */
@@ -26,7 +33,7 @@ export class KhorosProxy {
    */
   async proxyPath({ path, pathPrefix, params = {}, additionalHeaders = {} }) {
     if (!KhorosProxy.canHandle(path)) {
-      return sendError(404, 'Not Found');
+      return sendErrorWithDefaultHeaders(404, 'Not Found');
     }
 
     try {
@@ -42,7 +49,7 @@ export class KhorosProxy {
         aioLogger.error(
           `Error fetching khoros url: ${response.url} with status: ${response.status} and full response: \n ${responseText}`,
         );
-        return sendError(
+        return sendErrorWithDefaultHeaders(
           response.status,
           'Bad Gateway, proxied service return unexpected response code. See logs for details',
         );
@@ -54,19 +61,20 @@ export class KhorosProxy {
           body,
           headers: {
             'Content-Type': 'application/json',
+            ...DEFAULT_HEADERS,
           },
           statusCode: response.status,
         };
       } catch (e) {
         aioLogger.error(`Error parsing response with body text: \n ${text}`, e);
-        return sendError(
+        return sendErrorWithDefaultHeaders(
           502,
           'Bad Gateway, proxied service return unexpected response. See logs for details',
         );
       }
     } catch (error) {
       aioLogger.error(error);
-      return sendError(500, 'Internal Server Error');
+      return sendErrorWithDefaultHeaders(500, 'Internal Server Error');
     }
   }
 
