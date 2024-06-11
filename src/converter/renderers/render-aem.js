@@ -63,7 +63,7 @@ async function transformArticlePageMetadata(htmlString, params) {
   if (coveoContentTypeMeta) {
     setMetadata(document, 'type', getMetadata(document, 'coveo-content-type'));
   }
-
+  let coveoSolution = '';
   if (solutionMeta) {
     const solutions = formatArticlePageMetaTags(
       getMetadata(document, 'coveo-solution'),
@@ -88,7 +88,7 @@ async function transformArticlePageMetadata(htmlString, params) {
       }
     });
 
-    const coveoSolution = transformedSolutions.join(';');
+    coveoSolution = transformedSolutions.join(';');
     setMetadata(document, 'coveo-solution', coveoSolution);
 
     // Adding version meta tag
@@ -113,15 +113,26 @@ async function transformArticlePageMetadata(htmlString, params) {
     });
 
     // Transform the features to coveo compatible format
-    const transformedFeatures = decodedFeatures.map((parts) => {
-      if (parts.length > 1) {
-        const feature = parts[1];
-        return `${feature}`;
-        // eslint-disable-next-line no-else-return
-      } else {
-        return '';
-      }
-    });
+    const transformedFeatures = decodedFeatures
+      .map((parts) => {
+        if (parts.length > 1) {
+          const feature = parts[1];
+          if (!coveoSolution.includes(parts[0])) {
+            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
+            setMetadata(document, 'coveo-solution', coveoSolution);
+          }
+          return `${feature}`;
+          // eslint-disable-next-line no-else-return
+        } else {
+          // Append parts[0] to coveo-solution if it exists
+          if (parts[0] && !coveoSolution.includes(parts[0])) {
+            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
+            setMetadata(document, 'coveo-solution', coveoSolution);
+          }
+          return '';
+        }
+      })
+      .filter((feature) => feature !== '');
     const coveoFeature = transformedFeatures.join(',');
     setMetadata(document, 'feature', coveoFeature);
   }
@@ -244,8 +255,8 @@ export default async function renderAem(path, params) {
     body = transformHTML(await resp.text(), aemAuthorUrl, path);
     // Update page metadata for Article Pages
     if (
-      path.includes('/actionable-insights/') &&
-      !path.includes('/actionable-insights/authors/')
+      (path.includes('/actionable-insights/') || path.includes('/articles/')) &&
+      !path.includes('/authors/')
     ) {
       body = await transformArticlePageMetadata(body, params);
     }
