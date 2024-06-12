@@ -1,3 +1,6 @@
+import jsdom from 'jsdom';
+import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
+
 /**
  * Formats aem tagpicker data
  */
@@ -16,35 +19,111 @@ export function decodeBase64(encodedString) {
 }
 
 /**
- * Retrieves the content of metadata tags.
+ * @typedef {Object} AuthorBioData
+ * @property {string} authorName
+ * @property {string} authorType
  */
-export function getMetadata(document, name) {
-  const attr = name && name.includes(':') ? 'property' : 'name';
-  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)]
-    .map((m) => m.content)
-    .join(', ');
-  return meta || '';
+
+/**
+ *
+ * @param {string} authorBioHtml author bio html
+ * @returns {AuthorBioData}
+ */
+export function getAuthorBioData(authorBioHtml) {
+  const {
+    window: { document },
+  } = new jsdom.JSDOM(authorBioHtml);
+  const authorBioDiv = document.querySelector('.author-bio');
+  const getNthRowText = (n) =>
+    authorBioDiv.querySelector(`div:nth-child(${n})`).textContent.trim();
+  if (authorBioDiv) {
+    const authorName = getNthRowText(2);
+    const authorType = getNthRowText(4);
+    return { authorName, authorType };
+  }
+  return {};
 }
 
 /**
- * Sets the content of metadata tags.
+ * Decode and update metadata
+ * @param {Document} document
+ * @param {string} metaName
+ * @returns
  */
-export function setMetadata(document, name, content) {
-  const attr = name && name.includes(':') ? 'property' : 'name';
-  const existingMetaTags = [
-    ...document.head.querySelectorAll(`meta[${attr}="${name}"]`),
-  ];
+export function updateEncodedMetadata(document, metaName) {
+  const metaValues = getMetadata(document, metaName);
+  if (!metaValues || metaValues.length === 0) return;
+  const formattedMetaValues = formatArticlePageMetaTags(metaValues);
+  const decodedMetaValues = formattedMetaValues.map((m) => decodeBase64(m));
+  setMetadata(document, metaName, decodedMetaValues);
+}
 
-  if (existingMetaTags.length === 0) {
-    // Create a new meta tag if it doesn't exist
-    const newMetaTag = document.createElement('meta');
-    newMetaTag.setAttribute(attr, name);
-    newMetaTag.content = content;
-    document.head.appendChild(newMetaTag);
-  } else {
-    // Update existing meta tags
-    existingMetaTags.forEach((metaTag) => {
-      metaTag.content = content;
+/**
+ * Update Coveo Solution metadata
+ * @param {Document} document
+ */
+export function updateCoveoSolutionMetadata(document) {
+  const coveoSolutionMeta = getMetadata(document, 'coveo-solution');
+  const featureMeta = getMetadata(document, 'feature');
+
+  const decodeAEMTagValues = (values) =>
+    values
+      .map((val) => val.split('/'))
+      .map((parts) => parts.map((part) => decodeBase64(part.trim())));
+
+  let coveoSolution = '';
+  if (coveoSolutionMeta) {
+    const solutions = formatArticlePageMetaTags(coveoSolutionMeta);
+    // Decode and split each solution into parts
+    const decodedSolutions = decodeAEMTagValues(solutions);
+
+    // Transform the solutions to coveo compatible format
+    const transformedSolutions = decodedSolutions.map((parts) => {
+      if (parts.length > 1) {
+        const solution = parts[0];
+        const subSolution = parts[1];
+        return `${solution}|${solution} ${subSolution}`;
+      }
+      return parts[0];
     });
+
+    coveoSolution = transformedSolutions.join(';');
+    setMetadata(document, 'coveo-solution', coveoSolution);
+
+    // Adding version meta tag
+    decodedSolutions.forEach((parts) => {
+      if (parts.length > 1) {
+        const version = parts[parts.length - 1];
+        setMetadata(document, 'version', version);
+      }
+    });
+  }
+
+  if (featureMeta) {
+    const features = formatArticlePageMetaTags(featureMeta);
+    // Decode and split each feature into parts
+    const decodedFeatures = decodeAEMTagValues(features);
+
+    // Transform the features to coveo compatible format
+    const transformedFeatures = decodedFeatures
+      .map((parts) => {
+        if (parts.length > 1) {
+          const feature = parts[1];
+          if (!coveoSolution.includes(parts[0])) {
+            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
+            setMetadata(document, 'coveo-solution', coveoSolution);
+          }
+          return `${feature}`;
+        }
+        // Append parts[0] to coveo-solution if it exists
+        if (parts[0] && !coveoSolution.includes(parts[0])) {
+          coveoSolution += (coveoSolution ? ';' : '') + parts[0];
+          setMetadata(document, 'coveo-solution', coveoSolution);
+        }
+        return '';
+      })
+      .filter(Boolean);
+    const coveoFeature = transformedFeatures.join(',');
+    setMetadata(document, 'feature', coveoFeature);
   }
 }

@@ -7,42 +7,13 @@ import {
   relativeToAbsolute,
 } from '../../common/utils/link-utils.js';
 import {
-  formatArticlePageMetaTags,
-  decodeBase64,
-  getMetadata,
-  setMetadata,
+  getAuthorBioData,
+  updateEncodedMetadata,
+  updateCoveoSolutionMetadata,
 } from './utils/aem-article-page-utils.js';
+import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('render-aem');
-
-/**
- * Fetches data from Author bio page set in page metadata
- */
-async function fetchAuthorBioPageData(document, authorBioPageURL, params) {
-  try {
-    // eslint-disable-next-line no-use-before-define
-    const authorBioPageData = await renderAem(authorBioPageURL, params);
-    const authorBioDOM = new jsdom.JSDOM(authorBioPageData.body);
-    const authorBioDocument = authorBioDOM.window.document;
-    const authorBioDiv = authorBioDocument.querySelector('.author-bio');
-    if (authorBioDiv) {
-      const authorName = authorBioDiv
-        .querySelector('div:nth-child(2)')
-        .textContent.trim();
-      const authorType = authorBioDiv
-        .querySelector('div:nth-child(4)')
-        .textContent.trim();
-      if (authorName) {
-        setMetadata(document, 'author-name', authorName);
-      }
-      if (authorType) {
-        setMetadata(document, 'author-type', authorType);
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching or parsing author bio page:', error);
-  }
-}
 
 /**
  * Transforms metadata for Article pages
@@ -51,107 +22,20 @@ async function transformArticlePageMetadata(htmlString, params) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
-  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
-  const featureMeta = document.querySelector(`meta[name="feature"]`);
-  const roleMeta = document.querySelector(`meta[name="role"]`);
-  const levelMeta = document.querySelector(`meta[name="level"]`);
-  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
-  const coveoContentTypeMeta = document.querySelector(
-    `meta[name="coveo-content-type"]`,
-  );
+  updateEncodedMetadata(document, 'role');
+  updateEncodedMetadata(document, 'level');
+  updateCoveoSolutionMetadata(document);
 
-  if (coveoContentTypeMeta) {
-    setMetadata(document, 'type', getMetadata(document, 'coveo-content-type'));
-  }
-  let coveoSolution = '';
-  if (solutionMeta) {
-    const solutions = formatArticlePageMetaTags(
-      getMetadata(document, 'coveo-solution'),
-    );
+  const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
+  if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
 
-    // Decode and split each solution into parts
-    const decodedSolutions = solutions.map((solution) => {
-      const parts = solution.split('/');
-      const decodedSolution = parts.map((part) => decodeBase64(part.trim()));
-      return decodedSolution;
-    });
-
-    // Transform the solutions to coveo compatible format
-    const transformedSolutions = decodedSolutions.map((parts) => {
-      if (parts.length > 1) {
-        const solution = parts[0];
-        const subSolution = parts[1];
-        return `${solution}|${solution} ${subSolution}`;
-        // eslint-disable-next-line no-else-return
-      } else {
-        return parts[0];
-      }
-    });
-
-    coveoSolution = transformedSolutions.join(';');
-    setMetadata(document, 'coveo-solution', coveoSolution);
-
-    // Adding version meta tag
-    decodedSolutions.forEach((parts) => {
-      if (parts.length > 1) {
-        const versionContent = parts[parts.length - 1];
-        setMetadata(document, 'version', versionContent);
-      }
-    });
-  }
-
-  if (featureMeta) {
-    const features = formatArticlePageMetaTags(
-      getMetadata(document, 'feature'),
-    );
-
-    // Decode and split each feature into parts
-    const decodedFeatures = features.map((feature) => {
-      const parts = feature.split('/');
-      const decodedFeature = parts.map((part) => decodeBase64(part.trim()));
-      return decodedFeature;
-    });
-
-    // Transform the features to coveo compatible format
-    const transformedFeatures = decodedFeatures
-      .map((parts) => {
-        if (parts.length > 1) {
-          const feature = parts[1];
-          if (!coveoSolution.includes(parts[0])) {
-            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
-            setMetadata(document, 'coveo-solution', coveoSolution);
-          }
-          return `${feature}`;
-          // eslint-disable-next-line no-else-return
-        } else {
-          // Append parts[0] to coveo-solution if it exists
-          if (parts[0] && !coveoSolution.includes(parts[0])) {
-            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
-            setMetadata(document, 'coveo-solution', coveoSolution);
-          }
-          return '';
-        }
-      })
-      .filter((feature) => feature !== '');
-    const coveoFeature = transformedFeatures.join(',');
-    setMetadata(document, 'feature', coveoFeature);
-  }
-
-  if (roleMeta) {
-    const roles = formatArticlePageMetaTags(getMetadata(document, 'role'));
-    const decodedRoles = roles.map((role) => decodeBase64(role));
-    setMetadata(document, 'role', decodedRoles);
-  }
-
-  if (levelMeta) {
-    const levels = formatArticlePageMetaTags(getMetadata(document, 'level'));
-    const decodedLevels = levels.map((level) => decodeBase64(level));
-    setMetadata(document, 'level', decodedLevels);
-  }
-
-  if (authorMeta) {
-    const authorBioPageURL = getMetadata(document, 'author-bio-page');
-    await fetchAuthorBioPageData(document, authorBioPageURL, params);
+  const authorBioPage = getMetadata(document, 'author-bio-page');
+  if (authorBioPage) {
+    // eslint-disable-next-line no-use-before-define
+    const { body } = await renderAem(authorBioPage, params);
+    const { authorName, authorType } = getAuthorBioData(body);
+    if (authorName) setMetadata(document, 'author-name', authorName);
+    if (authorType) setMetadata(document, 'author-type', authorType);
   }
 
   return dom.serialize();

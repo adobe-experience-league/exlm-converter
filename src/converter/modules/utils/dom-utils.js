@@ -356,3 +356,39 @@ export function htmlToElement(document) {
     return template.content.firstElementChild;
   };
 }
+
+/**
+ * Retrieves the content of metadata tags.
+ * @param {string} name The metadata name (or property)
+ * @returns {string} The metadata value(s)
+ */
+export function getMetadata(document, name) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)]
+    .map((m) => m.content)
+    .join(', ');
+  return meta || '';
+}
+
+/**
+ * Sets the content of metadata tags.
+ */
+export function setMetadata(document, name, content) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const existingMetaTags = [
+    ...document.head.querySelectorAll(`meta[${attr}="${name}"]`),
+  ];
+
+  if (existingMetaTags.length === 0) {
+    // Create a new meta tag if it doesn't exist
+    const newMetaTag = document.createElement('meta');
+    newMetaTag.setAttribute(attr, name);
+    newMetaTag.content = content;
+    document.head.appendChild(newMetaTag);
+  } else {
+    // Update existing meta tags
+    existingMetaTags.forEach((metaTag) => {
+      metaTag.content = content;
+    });
+  }
+}
