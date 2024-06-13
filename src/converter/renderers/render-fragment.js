@@ -60,7 +60,8 @@ async function getStaticFragment(path, parentFolderPath) {
 }
 
 async function getDynamicFragment(path) {
-  return readFile(path);
+  const buffer = await readFile(path);
+  return buffer.toString();
 }
 
 /**

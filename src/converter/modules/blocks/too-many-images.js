@@ -1,3 +1,4 @@
+import openwhisk from 'openwhisk';
 import {
   createNewSectionForBlock,
   htmlFragmentToDoc,
@@ -88,7 +89,7 @@ class Fragments {
         el.remove();
       });
 
-      const fragmentPath = `/fragments${this.pagePath}/fragment-${this.currentFragmentIndex}.html`;
+      const fragmentPath = `/fragments${this.pagePath}/fragment-${this.currentFragmentIndex}`;
       a.href = fragmentPath;
       a.innerHTML = fragmentPath;
 
@@ -97,7 +98,16 @@ class Fragments {
         filePath: fragmentPath,
         arrayBuffer: new TextEncoder().encode(fragmentDoc),
       });
-      // this.currentElement.insertAdjacentElement('afterend', block.innerHTML);
+      const ow = openwhisk();
+      const result = await ow.actions.invoke({
+        name: 'main/publish', // the name of the action to invoke
+        blocking: false, // this is the flag that instructs to execute the worker asynchronous
+        result: true,
+        params: {
+          path: fragmentPath,
+        },
+      });
+      console.log(`result`, { result });
     }
   }
 }

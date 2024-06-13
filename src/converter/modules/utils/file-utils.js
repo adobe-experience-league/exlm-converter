@@ -1,5 +1,8 @@
+import Logger from '@adobe/aio-lib-core-logging';
 import Files from '@adobe/aio-lib-files';
 import LocalFiles from './local-files.js';
+
+export const aioLogger = Logger('file-utils');
 
 const PRESIGNURL_EXPIRY = 900;
 
@@ -24,11 +27,13 @@ export const writeFileAndGetPresignedURL = async ({
 };
 
 export const writeFile = async ({ filePath, arrayBuffer }) => {
+  console.log(`Writing file to ${filePath}`);
   const filesSdk = await getFilesSdk();
   return filesSdk.write(filePath, Buffer.from(arrayBuffer));
 };
 
 export const readFile = async (filePath) => {
+  console.log(`Reading file from ${filePath}`);
   const filesSdk = await getFilesSdk();
   return filesSdk.read(filePath);
 };
