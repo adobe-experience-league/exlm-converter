@@ -47,6 +47,7 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "mdast-util-to-hast": "12.3.0",
+    "openwhisk": "^3.21.8",
     "path-to-regexp": "^6.2.1",
     "rehype-format": "4.0.1",
     "unist-util-visit": "5.0.0"
