@@ -392,3 +392,20 @@ export function setMetadata(document, name, content) {
     });
   }
 }
+
+export function htmlFragmentToDoc(mainHTMLContentString) {
+  return `
+        <!doctype html>
+        <html>
+          <head>
+            <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+          </head>
+          <body>
+            <header></header>
+            <main>
+            ${mainHTMLContentString}
+            </main>
+            <footer></footer>
+          </body>
+        </html>`;
+}
