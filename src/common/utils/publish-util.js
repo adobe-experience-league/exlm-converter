@@ -6,6 +6,7 @@
  * @property {string} owner - GitHub owner
  * @property {string} repo - GitHub repo
  * @property {string} branch - GitHub branch
+ * @property {string} apiKey - Helix Pages API key
  * @param {PublishParams} param
  * @returns
  */
@@ -13,9 +14,9 @@
 export default async function publish({
   path,
   mode = 'live',
-  owner,
+  owner = 'dobe-experience-league',
   repo,
-  branch,
+  branch = 'main',
   apiKey,
 }) {
   const url = `https://admin.hlx.page/${mode}/${owner}/${repo}/${branch}/${path}`;

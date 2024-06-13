@@ -65,6 +65,7 @@ jobs:
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
           BRANCH: ${{ vars.BRANCH }}
+          HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:

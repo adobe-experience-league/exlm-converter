@@ -56,5 +56,6 @@ application:
               owner: $OWNER
               repo: $REPO
               branch: $BRANCH
+              apiKey: $HLX_API_KEY
             annotations:
               final: true
