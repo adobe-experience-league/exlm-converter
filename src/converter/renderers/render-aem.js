@@ -10,7 +10,7 @@ import {
   getAuthorBioData,
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
-} from './utils/aem-article-page-utils.js';
+} from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('render-aem');
@@ -18,7 +18,7 @@ export const aioLogger = Logger('render-aem');
 /**
  * Transforms metadata for Article pages
  */
-async function transformArticlePageMetadata(htmlString, params) {
+async function transformAemPageMetadata(htmlString, params) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
@@ -157,7 +157,7 @@ export default async function renderAem(path, params) {
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl, path);
     // Update page metadata for AEM Pages
-    body = await transformArticlePageMetadata(body, params);
+    body = await transformAemPageMetadata(body, params);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
