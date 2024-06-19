@@ -9,7 +9,10 @@
       "request": "launch",
       "name": "Debug Serve",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/build/serve.js"
+      "program": "${workspaceFolder}/build/serve.js",
+      "env": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }
