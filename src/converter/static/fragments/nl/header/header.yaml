@@ -21,7 +21,7 @@ search:
   filters:
     - title: Alle
       contenttype: All
-    - title: Inspiratie
+    - title: Actuele inzichten
       contenttype: Article
     - title: Certificering
       contenttype: Certification

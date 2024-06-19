@@ -21,7 +21,7 @@ search:
   filters:
     - title: Alle
       contenttype: All
-    - title: Inspiration
+    - title: Umsetzbare Erkenntnisse
       contenttype: Article
     - title: Zertifizierung
       contenttype: Certification
