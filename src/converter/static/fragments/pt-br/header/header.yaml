@@ -21,7 +21,7 @@ search:
   filters:
     - title: Tudo
       contenttype: All
-    - title: Inspiração
+    - title: Percepções acionáveis
       contenttype: Article
     - title: Certificação
       contenttype: Certification

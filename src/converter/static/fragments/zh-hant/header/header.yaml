@@ -21,7 +21,7 @@ search:
   filters:
     - title: 全部
       contenttype: All
-    - title: 靈感
+    - title: 可操作的見解
       contenttype: Article
     - title: 認證
       contenttype: Certification

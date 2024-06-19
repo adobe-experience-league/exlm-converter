@@ -21,7 +21,7 @@ search:
   filters:
     - title: 모두
       contenttype: All
-    - title: 영감
+    - title: 실행 가능한 통찰력
       contenttype: Article
     - title: 인증
       contenttype: Certification
