@@ -28,18 +28,21 @@ function videoRow(document, Video) {
   const {
     URL = '#',
     TranscriptURL = '#',
-    Thumbnail = [],
+    jsonLinkedData,
     Title = '',
     Description = '',
     Duration = 0,
   } = Video;
+
+  const thumbnailUrls = jsonLinkedData.thumbnailUrl || [];
 
   const newEl = htmlToElement(document);
   const newPLink = (u) => newEl(`<p><a href="${u}">${u}</a></p>`);
 
   const videoP = newPLink(URL);
   const videoTranscriptP = newPLink(TranscriptURL);
-  const thumbnailUrl = Thumbnail.find((url) => url.includes('960x540')) || '';
+  const thumbnailUrl =
+    thumbnailUrls.find((url) => url.includes('960x540')) || '';
   const thumbnail = newEl(`<img src="${thumbnailUrl}" alt="${Title}">`);
   const title = newEl(`<h3>${Title}</h3>`);
   const desc = newEl(`<p>${Description}</p>`);
@@ -76,7 +79,10 @@ export default async function renderPlaylist(path) {
   } = matchPlaylistPath(path);
 
   const defaultExlClient = await createDefaultExlClient();
-  const playlist = await defaultExlClient.getPlaylistById(playlistId, lang);
+  const { data: playlist } = await defaultExlClient.getPlaylistById(
+    playlistId,
+    lang,
+  );
 
   if (playlist) {
     const hast = h('html', [

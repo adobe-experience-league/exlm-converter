@@ -2,7 +2,6 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
 import stateLib from '../../common/utils/state-lib-util.js';
-import { placeholderPlaylist } from './placeholder-playlist.js';
 import { paramMemoryStore } from './utils/param-memory-store.js';
 
 export const aioLogger = Logger('ExlClient');
@@ -93,13 +92,13 @@ export default class ExlClient {
    */
   // eslint-disable-next-line class-methods-use-this
   async getPlaylistById(id, lang = 'en') {
-    if (id === 'sample-playlist') {
-      console.log(`fetching playlist with id: ${id} and lang: ${lang}`);
-      return Promise.resolve(
-        this.removeSpacesFromKeysRecursively(placeholderPlaylist),
-      );
+    const path = `api/playlists/${id}?lang=${lang}`;
+    const response = await this.doFetch(path);
+    if (response.error) {
+      throw new Error(response.error);
+    } else {
+      return this.removeSpacesFromKeysRecursively(response);
     }
-    throw new Error(`Playlist with id: ${id} not found`);
   }
 
   /**
