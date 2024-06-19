@@ -19,6 +19,7 @@ application:
               aemOwner: $OWNER
               aemRepo: $REPO
               aemBranch: $BRANCH
+              exlApiHost: $EXL_API_HOST
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

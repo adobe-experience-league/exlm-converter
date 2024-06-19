@@ -24,6 +24,7 @@ import {
   isPlaylistsPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
+import { paramMemoryStore } from './modules/utils/param-memory-store.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -51,6 +52,8 @@ try {
  * @returns
  */
 export const render = async function render(path, params) {
+  paramMemoryStore.set(params);
+
   // specifically return 404 for courses, untill they are migrated.
   if (isCoursesPath(path)) {
     return {
