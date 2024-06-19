@@ -73,10 +73,32 @@ function createPlaylist(document, playlist) {
   firstSection.append(createPlaylistBlock(document, Videos));
 }
 
+function renderPlaylistIndex() {
+  const hast = h('html', [
+    h('body', [h('header', []), h('main', [h('div')]), h('footer', [])]),
+  ]);
+  raw(hast);
+  rehypeFormat()(hast);
+  const html = toHtml(hast, { upperDoctype: true });
+
+  return {
+    body: html,
+    headers: {
+      'Content-Type': 'text/html',
+    },
+    md: '',
+    original: html,
+  };
+}
+
 export default async function renderPlaylist(path) {
   const {
     params: { lang, playlistId },
   } = matchPlaylistPath(path);
+
+  if (!playlistId) {
+    return renderPlaylistIndex();
+  }
 
   const defaultExlClient = await createDefaultExlClient();
   const { data: playlist } = await defaultExlClient.getPlaylistById(
