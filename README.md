@@ -100,6 +100,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `IMS_CLIENT_SECRET`      | secret | no                 | the IMS client secret to use for IMS authentication          |
 | `IMS_AUTHORIZATION_CODE` | secret | no                 | the IMS auth code to use for IMS authentication              |
 | `IPASS_API_KEY`          | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments |
+| `EXL_API_HOST`           | var    | no                 | `https://experienceleague.adobe.com`                         |
 
 > `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
 > for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication

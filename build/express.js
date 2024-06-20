@@ -31,6 +31,7 @@ const {
   IMS_CLIENT_SECRET,
   IMS_AUTHORIZATION_CODE,
   IPASS_API_KEY,
+  EXL_API_HOST,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -68,6 +69,7 @@ const converterHandler = async (req, res) => {
     aemRepo: REPO,
     aemBranch: BRANCH,
     authorization: `Bearer ${ACCESS_TOKEN}`,
+    exlApiHost: EXL_API_HOST,
   };
 
   const { body, headers, md, original, error, statusCode } = await render(

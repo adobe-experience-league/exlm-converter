@@ -30,7 +30,7 @@ export const createEsbuildOptions = (overrides) => ({
   platform: 'node',
   format: 'cjs', // needs to be cjs to support  __dirname and __filename for fragment serving
   target: 'node18', // this is the version in app.config.yaml
-  external: ['canvas', 'bufferutil', 'utf-8-validate'],
+  external: ['canvas', 'bufferutil', 'utf-8-validate', 'openwhisk'],
   plugins: [jsdomPatch],
   logLevel: 'info',
   keepNames: true, // needed because of: https://github.com/node-fetch/node-fetch/issues/784#issuecomment-1014768204
