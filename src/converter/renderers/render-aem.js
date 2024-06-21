@@ -31,10 +31,14 @@ async function transformAemPageMetadata(htmlString, params) {
 
   const authorBioPages = getMetadata(document, 'author-bio-page');
   if (authorBioPages) {
-    const authorBioUrls = authorBioPages
-      .split(',')
-      .map((url) => url.trim())
-      .filter((url) => url);
+    const authorBioUrls = Array.from(
+      new Set(
+        authorBioPages
+          .split(',')
+          .map((url) => url.trim())
+          .filter((url) => url),
+      ),
+    );
 
     const promises = authorBioUrls.map(async (authorBioUrl) => {
       // eslint-disable-next-line no-use-before-define
