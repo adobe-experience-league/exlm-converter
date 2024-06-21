@@ -10,7 +10,7 @@ import {
   getAuthorBioData,
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
-} from './utils/aem-article-page-utils.js';
+} from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('render-aem');
@@ -18,7 +18,7 @@ export const aioLogger = Logger('render-aem');
 /**
  * Transforms metadata for Article pages
  */
-async function transformArticlePageMetadata(htmlString, params) {
+async function transformAemPageMetadata(htmlString, params) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
@@ -29,15 +29,34 @@ async function transformArticlePageMetadata(htmlString, params) {
   const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
   if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
 
-  const authorBioPage = getMetadata(document, 'author-bio-page');
-  if (authorBioPage) {
-    // eslint-disable-next-line no-use-before-define
-    const { body } = await renderAem(authorBioPage, params);
-    const { authorName, authorType } = getAuthorBioData(body);
-    if (authorName) setMetadata(document, 'author-name', authorName);
-    if (authorType) setMetadata(document, 'author-type', authorType);
-  }
+  const authorBioPages = getMetadata(document, 'author-bio-page');
+  if (authorBioPages) {
+    const authorBioUrls = authorBioPages.split(',').map((url) => url.trim());
 
+    const promises = authorBioUrls.map(async (authorBioUrl) => {
+      // eslint-disable-next-line no-use-before-define
+      const { body } = await renderAem(authorBioUrl, params);
+      return getAuthorBioData(body);
+    });
+
+    const results = await Promise.all(promises);
+
+    const authorNames = results
+      .map((result) => result.authorName)
+      .filter(Boolean);
+    const authorTypes = results
+      .map((result) => result.authorType)
+      .filter(Boolean);
+
+    if (authorNames.length > 0)
+      setMetadata(document, 'author-name', authorNames.join(','));
+
+    if (authorTypes.includes('External')) {
+      setMetadata(document, 'author-type', 'External');
+    } else if (authorTypes.length > 0) {
+      setMetadata(document, 'author-type', authorTypes.join(','));
+    }
+  }
   return dom.serialize();
 }
 
@@ -137,13 +156,8 @@ export default async function renderAem(path, params) {
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl, path);
-    // Update page metadata for Article Pages
-    if (
-      (path.includes('/actionable-insights/') || path.includes('/articles/')) &&
-      !path.includes('/authors/')
-    ) {
-      body = await transformArticlePageMetadata(body, params);
-    }
+    // Update page metadata for AEM Pages
+    body = await transformAemPageMetadata(body, params);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
