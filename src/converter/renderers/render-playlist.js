@@ -73,22 +73,26 @@ function createPlaylist(document, playlist) {
   firstSection.append(createPlaylistBlock(document, Videos));
 }
 
-function renderPlaylistIndex() {
-  const hast = h('html', [
-    h('body', [h('header', []), h('main', [h('div')]), h('footer', [])]),
-  ]);
-  raw(hast);
-  rehypeFormat()(hast);
-  const html = toHtml(hast, { upperDoctype: true });
+function createPlaylistBrowse(document, playlist) {
+  const firstSection = document.querySelector('main > div:first-child');
+  const { Title = '', Description = '' } = playlist;
+  const newEl = htmlToElement(document);
 
-  return {
-    body: html,
-    headers: {
-      'Content-Type': 'text/html',
-    },
-    md: '',
-    original: html,
-  };
+  firstSection.append(
+    toBlock(
+      'playlist-browse',
+      [
+        [
+          [
+            newEl(`<img src="${playlist.FullMeta.image}">`),
+            newEl(`<h1>${Title}</h1>`),
+            newEl(`<p>${Description}</p>`),
+          ],
+        ],
+      ],
+      document,
+    ),
+  );
 }
 
 export default async function renderPlaylist(path) {
@@ -96,15 +100,28 @@ export default async function renderPlaylist(path) {
     params: { lang, playlistId },
   } = matchPlaylistPath(path);
 
-  if (!playlistId) {
-    return renderPlaylistIndex();
-  }
-
   const defaultExlClient = await createDefaultExlClient();
-  const { data: playlist } = await defaultExlClient.getPlaylistById(
-    playlistId,
-    lang,
-  );
+
+  let playlist;
+
+  if (!playlistId) {
+    // TODO: Get Index page details from the API
+    playlist = {
+      Title: 'Courses from Adobe experts, designed just for you.',
+      Description:
+        'In Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+      FullMeta: {
+        title: 'Courses from Adobe experts, designed just for you.',
+        description:
+          'In Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+        image:
+          'https://experienceleague.adobe.com/assets/img/courses/courses-marquee-right.png',
+      },
+    };
+  } else {
+    const { data } = await defaultExlClient.getPlaylistById(playlistId, lang);
+    playlist = data;
+  }
 
   if (playlist) {
     const hast = h('html', [
@@ -124,7 +141,13 @@ export default async function renderPlaylist(path) {
       'playlist',
       solutions,
     );
-    createPlaylist(document, playlist);
+
+    if (playlistId) {
+      createPlaylist(document, playlist);
+    } else {
+      createPlaylistBrowse(document, playlist);
+    }
+
     return {
       body: dom.serialize(),
       headers: {
