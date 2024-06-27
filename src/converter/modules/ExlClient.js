@@ -14,6 +14,23 @@ export const EXL_LABEL_ENDPOINTS = {
   TOPIS: 'topics',
 };
 
+const PLAYLIST_INDEX_RESPONSE = {
+  data: {
+    Title: 'Courses from Adobe experts, designed just for you.',
+    Description:
+      'In Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+    FullMeta: {
+      title: 'Courses from Adobe experts, designed just for you.',
+      description:
+        'In Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+      image:
+        'https://experienceleague.adobe.com/assets/img/courses/courses-marquee-right.png',
+    },
+    FullBody:
+      '# Courses from Adobe experts, designed just for you.\nIn Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+  },
+};
+
 /**
  * @typedef {object} ExlArticle
  * @property {string} ID
@@ -92,9 +109,12 @@ export default class ExlClient {
    */
   // eslint-disable-next-line class-methods-use-this
   async getPlaylistById(id, lang = 'en') {
+    const isIndex = id === 'index';
     const path = `api/playlists/${id}?lang=${lang}`;
     const response = await this.doFetch(path);
     if (response.error) {
+      // TODO - remove this default
+      if (isIndex) return PLAYLIST_INDEX_RESPONSE;
       throw new Error(response.error);
     } else {
       return this.removeSpacesFromKeysRecursively(response);
