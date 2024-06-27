@@ -7,6 +7,7 @@ import { createDefaultExlClient } from '../modules/ExlClient.js';
 import { matchPlaylistPath } from '../modules/utils/path-match-utils.js';
 import { createMetaData } from '../modules/utils/metadata-util.js';
 import { htmlToElement, toBlock } from '../modules/utils/dom-utils.js';
+import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 
 /**
  * @typedef {Object} Video
@@ -49,9 +50,14 @@ function videoRow(document, Video) {
 
   const duration = document.createElement('p');
   duration.innerHTML = Duration;
+
+  const jsonLd = document.createElement('code');
+  jsonLd.innerHTML = JSON.stringify(jsonLinkedData, null, 2);
+
   return [
     [videoP, thumbnail],
     [title, desc, duration, videoTranscriptP],
+    [jsonLd],
   ];
 }
 
@@ -138,7 +144,7 @@ export default async function renderPlaylist(path) {
       document,
       playlist.FullMeta,
       playlist,
-      'playlist',
+      DOCPAGETYPE.DOC_PLAYLIST,
       solutions,
     );
 
