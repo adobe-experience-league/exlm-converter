@@ -148,7 +148,7 @@ export default async function renderAem(path, params) {
     return sendError(resp.status, 'Internal Server Error');
   }
   // note that this can contain charset, example 'text/html; charset=utf-8'
-  const contentType = resp.headers.get('Content-Type');
+  const contentType = resp.headers.get('Content-Type ');
 
   let body;
   let headers = { 'Content-Type': contentType };
