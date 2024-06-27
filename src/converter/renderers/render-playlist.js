@@ -50,9 +50,14 @@ function videoRow(document, Video) {
 
   const duration = document.createElement('p');
   duration.innerHTML = Duration;
+
+  const jsonLd = document.createElement('code');
+  jsonLd.innerHTML = JSON.stringify(jsonLinkedData, null, 2);
+
   return [
     [videoP, thumbnail],
     [title, desc, duration, videoTranscriptP],
+    [jsonLd],
   ];
 }
 
