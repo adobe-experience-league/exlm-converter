@@ -21,7 +21,7 @@ search:
   filters:
     - title: 全部
       contenttype: All
-    - title: 透視
+    - title: 觀點
       contenttype: Perspective
     - title: 認證
       contenttype: Certification

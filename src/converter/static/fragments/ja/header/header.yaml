@@ -21,7 +21,7 @@ search:
   filters:
     - title: すべて
       contenttype: All
-    - title: 視点
+    - title: 展望
       contenttype: Perspective
     - title: 認定制度
       contenttype: Certification

@@ -21,7 +21,7 @@ search:
   filters:
     - title: Alle
       contenttype: All
-    - title: Perspektive
+    - title: Perspektiven
       contenttype: Perspective
     - title: Zertifizierung
       contenttype: Certification
