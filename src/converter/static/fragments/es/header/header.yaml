@@ -21,8 +21,8 @@ search:
   filters:
     - title: Todos
       contenttype: All
-    - title: Información procesable
-      contenttype: Article
+    - title: Perspectiva
+      contenttype: Perspective
     - title: Certificación
       contenttype: Certification
     - title: Comunidad

@@ -21,8 +21,8 @@ search:
   filters:
     - title: Alle
       contenttype: All
-    - title: Actuele inzichten
-      contenttype: Article
+    - title: Perspectief
+      contenttype: Perspective
     - title: Certificering
       contenttype: Certification
     - title: Community

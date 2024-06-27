@@ -21,8 +21,8 @@ search:
   filters:
     - title: All
       contenttype: All
-    - title: Actionable Insights
-      contenttype: Article
+    - title: Perspectives
+      contenttype: Perspective
     - title: Certification
       contenttype: Certification
     - title: Community

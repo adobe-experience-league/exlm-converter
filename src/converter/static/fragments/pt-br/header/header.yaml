@@ -21,8 +21,8 @@ search:
   filters:
     - title: Tudo
       contenttype: All
-    - title: Percepções acionáveis
-      contenttype: Article
+    - title: Perspectiva
+      contenttype: Perspective
     - title: Certificação
       contenttype: Certification
     - title: Comunidade

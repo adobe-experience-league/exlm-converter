@@ -21,8 +21,8 @@ search:
   filters:
     - title: Alla
       contenttype: All
-    - title: Handlingsbara insikter
-      contenttype: Article
+    - title: Perspektiv
+      contenttype: Perspective
     - title: Certifiering
       contenttype: Certification
     - title: Community

@@ -21,8 +21,8 @@ search:
   filters:
     - title: すべて
       contenttype: All
-    - title: 実行可能な洞察
-      contenttype: Article
+    - title: 視点
+      contenttype: Perspective
     - title: 認定制度
       contenttype: Certification
     - title: コミュニティ

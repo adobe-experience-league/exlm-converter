@@ -21,8 +21,8 @@ search:
   filters:
     - title: 모두
       contenttype: All
-    - title: 실행 가능한 통찰력
-      contenttype: Article
+    - title: 원근감
+      contenttype: Perspective
     - title: 인증
       contenttype: Certification
     - title: 커뮤니티

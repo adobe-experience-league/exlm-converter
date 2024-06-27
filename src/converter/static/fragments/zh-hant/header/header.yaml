@@ -21,8 +21,8 @@ search:
   filters:
     - title: 全部
       contenttype: All
-    - title: 可操作的見解
-      contenttype: Article
+    - title: 透視
+      contenttype: Perspective
     - title: 認證
       contenttype: Certification
     - title: 社群

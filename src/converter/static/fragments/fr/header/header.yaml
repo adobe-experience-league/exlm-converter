@@ -21,8 +21,8 @@ search:
   filters:
     - title: Tout
       contenttype: All
-    - title: Informations exploitables
-      contenttype: Article
+    - title: Perspective
+      contenttype: Perspective
     - title: Certification
       contenttype: Certification
     - title: Communauté

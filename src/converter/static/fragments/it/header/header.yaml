@@ -21,8 +21,8 @@ search:
   filters:
     - title: Tutto
       contenttype: All
-    - title: Informazioni attuabili
-      contenttype: Article
+    - title: Prospettiva
+      contenttype: Perspective
     - title: Certificazione
       contenttype: Certification
     - title: Community

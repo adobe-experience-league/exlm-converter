@@ -21,8 +21,8 @@ search:
   filters:
     - title: 全部
       contenttype: All
-    - title: 可操作的见解
-      contenttype: Article
+    - title: 透视
+      contenttype: Perspective
     - title: 认证
       contenttype: Certification
     - title: 社区

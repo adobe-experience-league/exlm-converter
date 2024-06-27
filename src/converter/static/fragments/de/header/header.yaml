@@ -21,8 +21,8 @@ search:
   filters:
     - title: Alle
       contenttype: All
-    - title: Umsetzbare Erkenntnisse
-      contenttype: Article
+    - title: Perspektive
+      contenttype: Perspective
     - title: Zertifizierung
       contenttype: Certification
     - title: Community
