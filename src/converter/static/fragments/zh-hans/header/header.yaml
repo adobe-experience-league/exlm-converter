@@ -21,8 +21,6 @@ search:
   filters:
     - title: 全部
       contenttype: All
-    - title: 观点
-      contenttype: Perspective
     - title: 认证
       contenttype: Certification
     - title: 社区
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: 事件
       contenttype: Event
+    - title: 观点
+      contenttype: Perspective
     - title: 疑难解答
       contenttype: Troubleshooting
     - title: 教程

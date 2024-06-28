@@ -21,8 +21,6 @@ search:
   filters:
     - title: Alla
       contenttype: All
-    - title: Perspektiv
-      contenttype: Perspective
     - title: Certifiering
       contenttype: Certification
     - title: Community
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: Event
       contenttype: Event
+    - title: Perspektiv
+      contenttype: Perspective
     - title: Felsökning
       contenttype: Troubleshooting
     - title: Självstudiekurser
