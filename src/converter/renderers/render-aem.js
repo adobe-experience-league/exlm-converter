@@ -29,6 +29,13 @@ async function transformAemPageMetadata(htmlString, params) {
   const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
   if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
 
+  // TEMP: Updated Article content type to Perspective
+  if (coveoContentTypeMeta && coveoContentTypeMeta === 'Article') {
+    const updatedCoveoContentType = 'Perspective';
+    setMetadata(document, 'coveo-content-type', updatedCoveoContentType);
+    setMetadata(document, 'type', updatedCoveoContentType);
+  }
+
   const authorBioPages = getMetadata(document, 'author-bio-page');
   if (authorBioPages) {
     const authorBioUrls = Array.from(
