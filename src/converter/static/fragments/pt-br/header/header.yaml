@@ -21,8 +21,6 @@ search:
   filters:
     - title: Tudo
       contenttype: All
-    - title: Percepções acionáveis
-      contenttype: Article
     - title: Certificação
       contenttype: Certification
     - title: Comunidade
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: Eventos
       contenttype: Event
+    - title: Perspectivas
+      contenttype: Perspective
     - title: Solução de problemas
       contenttype: Troubleshooting
     - title: Tutoriais

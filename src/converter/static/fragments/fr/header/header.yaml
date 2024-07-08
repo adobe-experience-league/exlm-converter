@@ -21,8 +21,6 @@ search:
   filters:
     - title: Tout
       contenttype: All
-    - title: Informations exploitables
-      contenttype: Article
     - title: Certification
       contenttype: Certification
     - title: Communauté
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: Événements
       contenttype: Event
+    - title: Perspectives
+      contenttype: Perspective
     - title: Dépannage
       contenttype: Troubleshooting
     - title: Tutoriels

@@ -21,8 +21,6 @@ search:
   filters:
     - title: Alle
       contenttype: All
-    - title: Umsetzbare Erkenntnisse
-      contenttype: Article
     - title: Zertifizierung
       contenttype: Certification
     - title: Community
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: Events
       contenttype: Event
+    - title: Perspektiven
+      contenttype: Perspective
     - title: Fehlerbehebung
       contenttype: Troubleshooting
     - title: Tutorials
