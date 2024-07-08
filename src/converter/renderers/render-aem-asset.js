@@ -1,7 +1,5 @@
-import Files from '@adobe/aio-lib-files';
 import { AioCoreSDKError } from '@adobe/aio-lib-core-errors';
-
-const PRESIGNURL_EXPIRY = 600;
+import { writeFileAndGetPresignedURL } from '../modules/utils/file-utils.js';
 
 /**
  * @param {ArrayBuffer} arrayBuffer
@@ -12,16 +10,6 @@ function toBase64String(arrayBuffer) {
 }
 
 const OneMB = 1024 * 1024 - 1024; // -1024 for good measure :)
-
-const writeFileAndGetPresignedURL = async (filePath, arrayBuffer) => {
-  const filesSdk = await Files.init();
-
-  await filesSdk.write(filePath, Buffer.from(arrayBuffer));
-  return filesSdk.generatePresignURL(filePath, {
-    expiryInSeconds: PRESIGNURL_EXPIRY,
-    permissions: 'r',
-  });
-};
 
 /**
  *
@@ -45,10 +33,10 @@ export default async function renderAemAsset(path, response) {
     // Adobe runtime actions have a response limit of 1MB.
     // so if the asset is larger, write to AIO Files and return a redirect to the presigned URL
     try {
-      const location = await writeFileAndGetPresignedURL(
-        path,
-        await response.arrayBuffer(),
-      );
+      const location = await writeFileAndGetPresignedURL({
+        filePath: path,
+        arrayBuffer: await response.arrayBuffer(),
+      });
       assetHeaders = {
         location,
       };

@@ -19,6 +19,7 @@ application:
               aemOwner: $OWNER
               aemRepo: $REPO
               aemBranch: $BRANCH
+              exlApiHost: $EXL_API_HOST
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
@@ -46,4 +47,16 @@ application:
               LOG_LEVEL: debug
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          publish:
+            function: dist/publish # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'no'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+              owner: $OWNER
+              repo: $REPO
+              branch: $BRANCH
+              apiKey: $HLX_API_KEY
+            annotations:
               final: true

@@ -2,7 +2,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
 import stateLib from '../../common/utils/state-lib-util.js';
-import { placeholderPlaylist } from './placeholder-playlist.js';
+import { paramMemoryStore } from './utils/param-memory-store.js';
 
 export const aioLogger = Logger('ExlClient');
 
@@ -12,6 +12,23 @@ export const EXL_LABEL_ENDPOINTS = {
   FEATURES: 'features',
   ROLES: 'roles',
   TOPIS: 'topics',
+};
+
+const PLAYLIST_INDEX_RESPONSE = {
+  data: {
+    Title: 'Courses from Adobe experts, designed just for you.',
+    Description:
+      'In Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+    FullMeta: {
+      title: 'Courses from Adobe experts, designed just for you.',
+      description:
+        'In Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+      image:
+        'https://experienceleague.adobe.com/assets/img/courses/courses-marquee-right.png',
+    },
+    FullBody:
+      '# Courses from Adobe experts, designed just for you.\nIn Experience League, a course is an expertly curated collection of lessons designed to quickly help you gain the skills and knowledge you seek. Get personalized course recommendations by completing your profile.',
+  },
 };
 
 /**
@@ -53,7 +70,7 @@ export const EXL_LABEL_ENDPOINTS = {
 
 /**
  * @typedef {Object} ExlClientOptions
- * @property {string} domain
+ * @property {string} host
  * @property {StateStore} state
  */
 
@@ -62,8 +79,8 @@ export default class ExlClient {
    *
    * @param {ExlClientOptions} options
    */
-  constructor({ domain = 'https://experienceleague.adobe.com', state } = {}) {
-    this.domain = domain;
+  constructor({ host = 'https://experienceleague.adobe.com', state } = {}) {
+    this.host = host;
     this.state = state;
   }
 
@@ -92,13 +109,16 @@ export default class ExlClient {
    */
   // eslint-disable-next-line class-methods-use-this
   async getPlaylistById(id, lang = 'en') {
-    if (id === 'sample-playlist') {
-      console.log(`fetching playlist with id: ${id} and lang: ${lang}`);
-      return Promise.resolve(
-        this.removeSpacesFromKeysRecursively(placeholderPlaylist),
-      );
+    const isIndex = id === 'index';
+    const path = `api/playlists/${id}?lang=${lang}`;
+    const response = await this.doFetch(path);
+    if (response.error) {
+      // TODO - remove this default
+      if (isIndex) return PLAYLIST_INDEX_RESPONSE;
+      throw new Error(response.error);
+    } else {
+      return this.removeSpacesFromKeysRecursively(response);
     }
-    throw new Error(`Playlist with id: ${id} not found`);
   }
 
   /**
@@ -171,7 +191,7 @@ export default class ExlClient {
     const langForApi = getMatchLanguage(lang) || lang;
     // handle internal paths
     const finalPath = addExtension(path, '.html');
-    let url = new URL(finalPath, this.domain);
+    let url = new URL(finalPath, 'https://experienceleague.adobe.com');
     url.searchParams.set('lang', langForApi);
     url = encodeURIComponent(url.toString());
     url = url.toLowerCase(); // use lowercase when using `Search%20URL` query param
@@ -187,7 +207,7 @@ export default class ExlClient {
   }
 
   async getLandingPages(lang = 'en') {
-    const apiUrl = new URL('/api/landing-pages', this.domain);
+    const apiUrl = new URL('/api/landing-pages', this.host);
     apiUrl.searchParams.set('lang', lang);
     apiUrl.searchParams.set('page_size', '100');
     const json = await this.doFetch(apiUrl.toString());
@@ -227,7 +247,7 @@ export default class ExlClient {
   }
 
   async doFetch(path) {
-    const url = new URL(path, this.domain);
+    const url = new URL(path, this.host);
     const response = await fetch(url);
     return response.json();
   }
@@ -248,9 +268,11 @@ export default class ExlClient {
 }
 
 export const createDefaultExlClient = async () => {
+  const params = paramMemoryStore.get();
+  const { exlApiHost } = params;
   const state = await stateLib.init();
   return new ExlClient({
-    domain: 'https://experienceleague.adobe.com',
+    host: exlApiHost,
     state,
   });
 };

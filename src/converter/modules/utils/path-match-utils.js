@@ -1,7 +1,7 @@
 import { match } from 'path-to-regexp';
 
 const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
-const playlistsMatchPath = '/:lang/playlists/:playlistId';
+const playlistsMatchPath = '/:lang/playlists/:playlistId?';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';

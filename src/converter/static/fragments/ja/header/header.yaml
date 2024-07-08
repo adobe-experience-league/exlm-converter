@@ -21,8 +21,6 @@ search:
   filters:
     - title: すべて
       contenttype: All
-    - title: インスピレーション
-      contenttype: Article
     - title: 認定制度
       contenttype: Certification
     - title: コミュニティ
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: イベント
       contenttype: Event
+    - title: 展望
+      contenttype: Perspective
     - title: トラブルシューティング
       contenttype: Troubleshooting
     - title: チュートリアル

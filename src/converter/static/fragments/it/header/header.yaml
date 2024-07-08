@@ -21,8 +21,6 @@ search:
   filters:
     - title: Tutto
       contenttype: All
-    - title: Ispirazione
-      contenttype: Article
     - title: Certificazione
       contenttype: Certification
     - title: Community
@@ -33,6 +31,8 @@ search:
       contenttype: Documentation
     - title: Eventi
       contenttype: Event
+    - title: Prospettive
+      contenttype: Perspective
     - title: Risoluzione dei problemi
       contenttype: Troubleshooting
     - title: Tutorials

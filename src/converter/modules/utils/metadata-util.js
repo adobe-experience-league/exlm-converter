@@ -122,7 +122,7 @@ export const createMetaData = (
 
     // Handle title and solution combination
     if (
-      pageType === DOCPAGETYPE.DOC_ARTICLE &&
+      [DOCPAGETYPE.DOC_ARTICLE, DOCPAGETYPE.DOC_PLAYLIST].includes(pageType) &&
       key === 'title' &&
       fullMetadata.solution
     ) {
