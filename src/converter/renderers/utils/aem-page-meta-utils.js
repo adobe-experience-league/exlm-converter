@@ -4,7 +4,7 @@ import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
 /**
  * Formats aem tagpicker data
  */
-export function formatArticlePageMetaTags(inputString) {
+export function formatPageMetaTags(inputString) {
   return inputString
     .replace(/exl:[^/]*\/*/g, '')
     .split(',')
@@ -53,9 +53,27 @@ export function getAuthorBioData(authorBioHtml) {
 export function updateEncodedMetadata(document, metaName) {
   const metaValues = getMetadata(document, metaName);
   if (!metaValues || metaValues.length === 0) return;
-  const formattedMetaValues = formatArticlePageMetaTags(metaValues);
+  const formattedMetaValues = formatPageMetaTags(metaValues);
   const decodedMetaValues = formattedMetaValues.map((m) => decodeBase64(m));
   setMetadata(document, metaName, decodedMetaValues);
+}
+
+/**
+ * Decode cq-meta metadata in AEM Page properties
+ * @param {Document} document
+ * @param {string} metaName
+ * @returns
+ */
+export function decodeCQMetadata(document, metaName) {
+  const metaValues = getMetadata(document, metaName);
+  if (!metaValues || metaValues.length === 0) return;
+  const segments = metaValues.split(', ');
+  const decodedCQTags = segments.map((segment) => {
+    const parts = segment.split('/');
+    const decodedPart = decodeBase64(parts[1]);
+    return `${parts[0]}/${decodedPart}`;
+  });
+  setMetadata(document, metaName, decodedCQTags);
 }
 
 /**
@@ -73,7 +91,7 @@ export function updateCoveoSolutionMetadata(document) {
 
   let coveoSolution = '';
   if (coveoSolutionMeta) {
-    const solutions = formatArticlePageMetaTags(coveoSolutionMeta);
+    const solutions = formatPageMetaTags(coveoSolutionMeta);
     // Decode and split each solution into parts
     const decodedSolutions = decodeAEMTagValues(solutions);
 
@@ -100,7 +118,7 @@ export function updateCoveoSolutionMetadata(document) {
   }
 
   if (featureMeta) {
-    const features = formatArticlePageMetaTags(featureMeta);
+    const features = formatPageMetaTags(featureMeta);
     // Decode and split each feature into parts
     const decodedFeatures = decodeAEMTagValues(features);
 
