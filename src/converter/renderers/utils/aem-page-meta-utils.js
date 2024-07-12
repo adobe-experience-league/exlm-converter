@@ -67,11 +67,11 @@ export function updateEncodedMetadata(document, metaName) {
 export function decodeCQMetadata(document, metaName) {
   const metaValues = getMetadata(document, metaName);
   if (!metaValues || metaValues.length === 0) return;
-  const segments = metaValues.split(', ');
-  const decodedCQTags = segments.map((segment) => {
+  const decodedCQTags = metaValues.split(', ').map((segment) => {
     const parts = segment.split('/');
-    const decodedPart = decodeBase64(parts[1]);
-    return `${parts[0]}/${decodedPart}`;
+    return parts
+      .map((part, index) => (index > 0 ? decodeBase64(part) : part))
+      .join('/');
   });
   setMetadata(document, metaName, decodedCQTags.join(', '));
 }
