@@ -73,7 +73,7 @@ export function decodeCQMetadata(document, metaName) {
     const decodedPart = decodeBase64(parts[1]);
     return `${parts[0]}/${decodedPart}`;
   });
-  setMetadata(document, metaName, decodedCQTags);
+  setMetadata(document, metaName, decodedCQTags.join(', '));
 }
 
 /**
