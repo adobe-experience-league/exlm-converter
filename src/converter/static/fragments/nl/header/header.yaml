@@ -68,6 +68,8 @@ nav:
           - title: Perspectieven
             subtitle: Bruikbare inzichten van Experience Cloud-klanten en Adobe-experts
             url: /nl/perspectives
+            urlOptions:
+              feature-flags: perspectives
           - title: Certificering
             subtitle: Bewezen expertise in Adobe-marketingoplossingen
             url: /nl/docs/certification/program/overview
