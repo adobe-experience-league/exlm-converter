@@ -68,6 +68,8 @@ nav:
           - title: Perspectives
             subtitle: Actionable insights from Experience Cloud customers and Adobe experts
             url: /en/perspectives
+            urlOptions:
+              feature-flags: perspectives
           - title: Certification
             subtitle: Proven expertise of Adobe marketing solutions
             url: /en/docs/certification/program/overview

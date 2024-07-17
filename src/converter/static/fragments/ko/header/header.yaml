@@ -68,6 +68,8 @@ nav:
           - title: 관점
             subtitle: Experience Cloud 고객 및 Adobe 전문가의 실행 가능한 인사이트
             url: /ko/perspectives
+            urlOptions:
+              feature-flags: perspectives
           - title: 인증
             subtitle: Adobe 마케팅 솔루션에 대한 검증된 전문 지식
             url: /ko/docs/certification/program/overview
