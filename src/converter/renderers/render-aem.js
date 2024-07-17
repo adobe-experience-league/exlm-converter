@@ -30,6 +30,10 @@ async function transformAemPageMetadata(htmlString, params) {
   const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
   if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
 
+  const publishedTime = getMetadata(document, 'published-time');
+  const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
+  setMetadata(document, 'last-update', lastUpdate);
+
   const authorBioPages = getMetadata(document, 'author-bio-page');
   if (authorBioPages) {
     const authorBioUrls = Array.from(

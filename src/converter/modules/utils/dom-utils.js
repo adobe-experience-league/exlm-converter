@@ -383,7 +383,7 @@ export function setMetadata(document, name, content) {
     // Create a new meta tag if it doesn't exist
     const newMetaTag = document.createElement('meta');
     newMetaTag.setAttribute(attr, name);
-    newMetaTag.content = content;
+    newMetaTag.setAttribute('content', content);
     document.head.appendChild(newMetaTag);
   } else {
     // Update existing meta tags
