@@ -30,6 +30,36 @@ async function transformAemPageMetadata(htmlString, params) {
   const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
   if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
 
+  const PublishedTimeMeta = getMetadata(document, 'published-time');
+  if (PublishedTimeMeta) {
+    const date = new Date(PublishedTimeMeta);
+    date.setUTCHours(0, 0, 0, 0);
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const dayOfWeek = weekdays[date.getUTCDay()];
+    const month = months[date.getUTCMonth()];
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+    const dateString = `${dayOfWeek} ${month} ${day} ${year} ${hours}:${minutes}:${seconds} GMT+0000 (Coordinated Universal Time)`;
+    setMetadata(document, 'last-update', dateString);
+  }
+
   const authorBioPages = getMetadata(document, 'author-bio-page');
   if (authorBioPages) {
     const authorBioUrls = Array.from(
