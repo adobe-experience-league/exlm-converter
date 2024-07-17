@@ -91,6 +91,38 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
+  if (path.includes('/perspectives')) {
+    const ModifiedTimeMeta = getMetadata(document, 'modified-time');
+    if (ModifiedTimeMeta) {
+      const date = new Date(ModifiedTimeMeta);
+      date.setUTCHours(0, 0, 0, 0);
+      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      const dayOfWeek = weekdays[date.getUTCDay()];
+      const month = months[date.getUTCMonth()];
+      const day = date.getUTCDate().toString().padStart(2, '0');
+      const year = date.getUTCFullYear();
+      const hours = date.getUTCHours().toString().padStart(2, '0');
+      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+      const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+      const dateString = `${dayOfWeek} ${month} ${day} ${year} ${hours}:${minutes}:${seconds} GMT+0000 (Coordinated Universal Time)`;
+      setMetadata(document, 'last-update', dateString);
+    }
+  }
+
   return dom.serialize();
 }
 
