@@ -52,7 +52,7 @@ nav:
             url: '#'
             urlOptions:
               featured-products: 'true'
-      - title: 콘텐츠 유형
+      - title: 리소스
         items:
           - title: 추천 과정
             subtitle: 전문적으로 선별된 교육 과정
@@ -65,6 +65,11 @@ nav:
           - title: 튜토리얼
             subtitle: 솔루션별 비디오 및 사용 방법
             url: /ko/docs/home-tutorials
+          - title: 관점
+            subtitle: Experience Cloud 고객 및 Adobe 전문가의 실행 가능한 인사이트
+            url: /ko/perspectives
+            urlOptions:
+              feature-flags: perspectives
           - title: 인증
             subtitle: Adobe 마케팅 솔루션에 대한 검증된 전문 지식
             url: /ko/docs/certification/program/overview

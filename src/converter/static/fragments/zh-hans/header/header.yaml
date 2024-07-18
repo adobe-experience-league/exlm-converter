@@ -52,7 +52,7 @@ nav:
             url: '#'
             urlOptions:
               featured-products: 'true'
-      - title: 内容类型
+      - title: 资源
         items:
           - title: 推荐课程
             subtitle: 专业策划的课程
@@ -65,6 +65,11 @@ nav:
           - title: 教程
             subtitle: 特定于解决方案的视频和操作说明
             url: /zh-hans/docs/home-tutorials
+          - title: 专业视角
+            subtitle: 来自 Experience Cloud 客户和 Adobe 专家的可指导行动的洞察
+            url: /zh-hans/perspectives
+            urlOptions:
+              feature-flags: perspectives
           - title: 认证
             subtitle: 久经考验的 Adobe 营销解决方案专业知识
             url: /zh-hans/docs/certification/program/overview

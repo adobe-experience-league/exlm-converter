@@ -10,24 +10,29 @@ import {
   getAuthorBioData,
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
+  decodeCQMetadata,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
 /**
- * Transforms metadata for Article pages
+ * Transforms page metadata
  */
 async function transformAemPageMetadata(htmlString, params) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
-
+  decodeCQMetadata(document, 'cq-tags');
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
 
   const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
   if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
+
+  const publishedTime = getMetadata(document, 'published-time');
+  const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
+  setMetadata(document, 'last-update', lastUpdate);
 
   const authorBioPages = getMetadata(document, 'author-bio-page');
   if (authorBioPages) {

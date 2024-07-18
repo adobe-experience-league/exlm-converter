@@ -52,7 +52,7 @@ nav:
             url: '#'
             urlOptions:
               featured-products: 'true'
-      - title: Tipos de conteúdo
+      - title: Recursos
         items:
           - title: Cursos recomendados
             subtitle: Seus cursos com curadoria especializada
@@ -65,6 +65,11 @@ nav:
           - title: Tutoriais
             subtitle: Vídeos específicos da solução e instruções
             url: /pt-br/docs/home-tutorials
+          - title: Perspectivas
+            subtitle: Insights acionáveis de clientes da Experience Cloud e especialistas da Adobe
+            url: /pt-br/perspectives
+            urlOptions:
+              feature-flags: perspectives
           - title: Certificação
             subtitle: Experiência comprovada em soluções de marketing da Adobe
             url: /pt-br/docs/certification/program/overview
