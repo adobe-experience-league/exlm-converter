@@ -84,7 +84,7 @@ const converterHandler = async (req, res) => {
   }
   // set headers as they are.
   Object.entries(headers).forEach(([key, value]) => res.setHeader(key, value));
-  res.status(200);
+  res.status(statusCode || 200);
   if (path.endsWith('.md')) {
     res.setHeader('Content-Type', 'text/plain');
     res.send(md);

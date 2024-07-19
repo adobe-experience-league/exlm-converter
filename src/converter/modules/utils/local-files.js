@@ -26,9 +26,11 @@ export default class LocalFiles {
   }
 
   async write(filePath, buffer) {
+    console.log(`Writing temp file for path ${filePath}`);
     const writePath = this.getTempPath(filePath);
     fs.mkdirSync(path.dirname(writePath), { recursive: true });
     fs.writeFileSync(writePath, buffer);
+    console.log(`File written to ${writePath}`);
   }
 
   /**
@@ -36,11 +38,10 @@ export default class LocalFiles {
    * @param {*} options
    * @returns
    */
-  async generatePresignURL(filePath, options) {
-    return this.filesSdk.generatePresignURL(
-      this.getTempPath(filePath),
-      options,
-    );
+  async generatePresignURL(filePath, options = {}) {
+    const presignedUrl = this.getTempPath(filePath, options);
+    console.log(`Generating presign URL: ${presignedUrl}`);
+    return `file://${presignedUrl}`;
   }
 
   async read(filePath) {
