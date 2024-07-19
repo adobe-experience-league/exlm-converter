@@ -26,6 +26,19 @@ export const writeFileAndGetPresignedURL = async ({
   });
 };
 
+export const writeStringToFileAndGetPresignedURL = async ({
+  filePath,
+  str,
+}) => {
+  const filesSdk = await getFilesSdk();
+
+  await filesSdk.write(filePath, str);
+  return filesSdk.generatePresignURL(filePath, {
+    expiryInSeconds: PRESIGNURL_EXPIRY,
+    permissions: 'r',
+  });
+};
+
 export const writeFile = async ({ filePath, arrayBuffer }) => {
   console.log(`Writing file to ${filePath}`);
   const filesSdk = await getFilesSdk();

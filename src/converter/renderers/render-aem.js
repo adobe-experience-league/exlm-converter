@@ -1,5 +1,6 @@
 import jsdom from 'jsdom';
 import Logger from '@adobe/aio-lib-core-logging';
+import { AioCoreSDKError } from '@adobe/aio-lib-core-errors';
 import { isBinary, isHTML } from '../modules/utils/media-utils.js';
 import renderAemAsset from './render-aem-asset.js';
 import {
@@ -13,8 +14,12 @@ import {
   decodeCQMetadata,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
+import { writeStringToFileAndGetPresignedURL } from '../modules/utils/file-utils.js';
 
 export const aioLogger = Logger('render-aem');
+
+const byteSize = (str) => new Blob([str]).size;
+const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 for good measure :)
 
 /**
  * Transforms page metadata
@@ -174,7 +179,29 @@ export default async function renderAem(path, params) {
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
     body = await resp.text();
+    if (!isLessThanOneMB(body)) {
+      try {
+        const location = await writeStringToFileAndGetPresignedURL({
+          filePath: path,
+          str: body,
+        });
+        body = '';
+        headers = { ...headers, location };
+        statusCode = 302;
+      } catch (e) {
+        if (e instanceof AioCoreSDKError) {
+          body = `Error while serving this path: ${path}. See error logs.`;
+          headers = { 'Content-Type': 'text/plain' };
+          statusCode = 500;
+          console.error(e);
+        } else {
+          throw e;
+        }
+      }
+    }
   }
+
+  // handle AEM response larger than 1MB, for example redirects json
 
   // passthrough the same content type from AEM.
   return { body, headers, statusCode };
