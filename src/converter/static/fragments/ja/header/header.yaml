@@ -68,8 +68,6 @@ nav:
           - title: 展望
             subtitle: Experience Cloud の顧客や  Adobe Expert による施策につながるインサイト
             url: /ja/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: 認定制度
             subtitle: アドビのマーケティングソリューションの確かな専門知識
             url: /ja/docs/certification/program/overview
