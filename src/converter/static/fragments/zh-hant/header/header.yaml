@@ -68,8 +68,6 @@ nav:
           - title: 觀點
             subtitle: 來自 Experience Cloud 客戶和 Adobe 專家的可操作分析
             url: /zh-hant/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: 認證
             subtitle: 經過驗證的 Adobe 行銷解決方案專業知識
             url: /zh-hant/docs/certification/program/overview
