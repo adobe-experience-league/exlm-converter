@@ -2,6 +2,7 @@ export const LANDING_IDS = {
   LISTS_DOCUMENTATION: 'lists-documentation',
   TILES_TUTORIALS: 'tiles-tutorials',
   LISTS_RESOURCES: 'lists-resources',
+  LISTS_RELEASE: 'lists-release',
 };
 
 export const dedupeAnchors = (mdString, anchorNames) => {
