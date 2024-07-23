@@ -68,8 +68,6 @@ nav:
           - title: Perspektiv
             subtitle: Insikter som kan åtgärdas från Experience Cloud-kunder och Adobe-experter
             url: /sv/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Certifiering
             subtitle: Beprövad expertis i Adobes marknadsföringslösningar
             url: /sv/docs/certification/program/overview
