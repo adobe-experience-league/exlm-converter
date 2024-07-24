@@ -144,4 +144,13 @@ export function updateCoveoSolutionMetadata(document) {
     const coveoFeature = transformedFeatures.join(',');
     setMetadata(document, 'feature', coveoFeature);
   }
+  // Add "solution" meta tag
+  if (coveoSolution) {
+    const solutionParts = coveoSolution.split(';');
+    const solutionsMeta = solutionParts.map((part) =>
+      part.includes('|') ? part.split('|')[1] : part,
+    );
+    setMetadata(document, 'solution', solutionsMeta.join(','));
+    setMetadata(document, 'original-solution', solutionsMeta.join(', '));
+  }
 }
