@@ -59,8 +59,8 @@ nav:
             url: '/home#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
+          - title: Browse all playlists
+            subtitle: Expertly curated collections of videos
             url: '/home#courses'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
