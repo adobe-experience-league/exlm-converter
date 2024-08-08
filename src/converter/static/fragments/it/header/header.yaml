@@ -9,9 +9,9 @@ profileMenu:
   - title: Il mio profilo di apprendimento
     url: '/it/profile'
   - title: Risultati
-    url: '/it/profile/bookmarks-and-achievments#my-awards'
+    url: '/it/profile/bookmarks-and-achievements#my-awards'
   - title: Contenuto con segnalibri
-    url: '/it/profile/bookmarks-and-achievments#my-bookmarks'
+    url: '/it/profile/bookmarks-and-achievements#my-bookmarks'
   - title: Esci
     url: '#'
 search:

@@ -9,9 +9,9 @@ profileMenu:
   - title: Min studieprofil
     url: '/sv/profile'
   - title: Achievements
-    url: '/sv/profile/bookmarks-and-achievments#my-awards'
+    url: '/sv/profile/bookmarks-and-achievements#my-awards'
   - title: Bokmärkt innehåll
-    url: '/sv/profile/bookmarks-and-achievments#my-bookmarks'
+    url: '/sv/profile/bookmarks-and-achievements#my-bookmarks'
   - title: Logga ut
     url: '#'
 search:

@@ -9,9 +9,9 @@ profileMenu:
   - title: マイ学習プロファイル
     url: '/ja/profile'
   - title: 成果
-    url: '/ja/profile/bookmarks-and-achievments#my-awards'
+    url: '/ja/profile/bookmarks-and-achievements#my-awards'
   - title: ブックマークしたコンテンツ
-    url: '/ja/profile/bookmarks-and-achievments#my-bookmarks'
+    url: '/ja/profile/bookmarks-and-achievements#my-bookmarks'
   - title: ログアウト
     url: '#'
 search:

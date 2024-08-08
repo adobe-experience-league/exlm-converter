@@ -9,9 +9,9 @@ profileMenu:
   - title: Mijn leerprofiel
     url: '/nl/profile'
   - title: Successen
-    url: '/nl/profile/bookmarks-and-achievments#my-awards'
+    url: '/nl/profile/bookmarks-and-achievements#my-awards'
   - title: Gebookmarkte content
-    url: '/nl/profile/bookmarks-and-achievments#my-bookmarks'
+    url: '/nl/profile/bookmarks-and-achievements#my-bookmarks'
   - title: Afmelden
     url: '#'
 search:

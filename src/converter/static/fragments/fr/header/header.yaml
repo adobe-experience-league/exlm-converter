@@ -9,9 +9,9 @@ profileMenu:
   - title: Mon profil de formation
     url: '/fr/profile'
   - title: Réalisations
-    url: '/fr/profile/bookmarks-and-achievments#my-awards'
+    url: '/fr/profile/bookmarks-and-achievements#my-awards'
   - title: Contenu marqué d’un signet
-    url: '/fr/profile/bookmarks-and-achievments#my-bookmarks'
+    url: '/fr/profile/bookmarks-and-achievements#my-bookmarks'
   - title: Se déconnecter
     url: '#'
 search:
