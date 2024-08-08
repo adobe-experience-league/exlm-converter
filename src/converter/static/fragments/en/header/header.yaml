@@ -37,6 +37,11 @@ search:
       contenttype: Troubleshooting
     - title: Tutorials
       contenttype: Tutorial
+community:
+  - title: Notifications
+    url: /t5/notificationfeed/page
+  - title: Messages
+    url: /t5/notes/privatenotespage
 languageSelector:
   title: Change Region
 nav:
