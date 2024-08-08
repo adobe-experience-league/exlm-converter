@@ -9,9 +9,9 @@ profileMenu:
   - title: My learning profile
     url: '/en/profile'
   - title: Achievements
-    url: '/en/profile/bookmarks-and-achievements#my-awards'
+    url: '/en/profile/bookmarks-and-achievements'
   - title: Bookmarked content
-    url: '/en/profile/bookmarks-and-achievements#my-bookmarks'
+    url: '/en/profile/bookmarks-and-achievements'
   - title: Sign out
     url: '#'
 search:

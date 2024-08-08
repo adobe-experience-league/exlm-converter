@@ -9,9 +9,9 @@ profileMenu:
   - title: 내 학습 프로필
     url: '/ko/profile'
   - title: 도전 과제
-    url: '/ko/profile/bookmarks-and-achievements#my-awards'
+    url: '/ko/profile/bookmarks-and-achievements'
   - title: 책갈피가 표시된 콘텐츠
-    url: '/ko/profile/bookmarks-and-achievements#my-bookmarks'
+    url: '/ko/profile/bookmarks-and-achievements'
   - title: 로그아웃
     url: '#'
 search:

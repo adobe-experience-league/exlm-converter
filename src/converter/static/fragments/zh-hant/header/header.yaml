@@ -9,9 +9,9 @@ profileMenu:
   - title: 我的學習個人資料
     url: '/zh-hant/profile'
   - title: 成就
-    url: '/zh-hant/profile/bookmarks-and-achievements#my-awards'
+    url: '/zh-hant/profile/bookmarks-and-achievements'
   - title: 已建立書籤的內容
-    url: '/zh-hant/profile/bookmarks-and-achievements#my-bookmarks'
+    url: '/zh-hant/profile/bookmarks-and-achievements'
   - title: 登出
     url: '#'
 search:
