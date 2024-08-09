@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: 社区
       contenttype: Community
-    - title: 课程
-      contenttype: Course
+    - title: 播放列表
+      contenttype: Playlist
     - title: 文档
       contenttype: Documentation
     - title: 事件
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=zh-Hans#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: 浏览所有课程
-            subtitle: 专业策划的课程合集
-            url: '/home?lang=zh-Hans#courses'
+          - title: 浏览所有播放列表
+            subtitle: 专业策划的视频合集
+            url: '/zh-hans/playlists'
           - title: 教程
             subtitle: 特定于解决方案的视频和操作说明
             url: /zh-hans/docs/home-tutorials

@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: 社群
       contenttype: Community
-    - title: 課程
-      contenttype: Course
+    - title: 播放清單
+      contenttype: Playlist
     - title: 檔案
       contenttype: Documentation
     - title: 事件
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=zh-Hant#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: 瀏覽所有課程
-            subtitle: 精選的課程集合
-            url: '/home?lang=zh-Hant#courses'
+          - title: 瀏覽所有播放清單
+            subtitle: 精選的影片集合
+            url: '/zh-hant/playlists'
           - title: 教學課程
             subtitle: 解決方案特定視訊和操作說明
             url: /zh-hant/docs/home-tutorials
