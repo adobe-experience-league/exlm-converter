@@ -61,7 +61,7 @@ nav:
               auth-only: 'true'
           - title: Browse all playlists
             subtitle: Expertly curated collections of videos
-            url: '/home#courses'
+            url: '/en/playlists'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /en/docs/home-tutorials

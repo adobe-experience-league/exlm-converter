@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=pt-BR#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Procurar todos os cursos
-            subtitle: Coleções de lições com curadoria especializada
-            url: '/home?lang=pt-BR#courses'
+          - title: Explorar todas as listas de reprodução
+            subtitle: Coleções de vídeos cuidadosamente selecionadas
+            url: '/pt-br/playlists'
           - title: Tutoriais
             subtitle: Vídeos específicos da solução e instruções
             url: /pt-br/docs/home-tutorials

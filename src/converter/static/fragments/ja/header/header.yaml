@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=ja#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: すべてのコースを参照
-            subtitle: エキスパートが厳選したレッスン集
-            url: '/home?lang=ja#courses'
+          - title: すべてのプレイリストを参照
+            subtitle: エキスパートが厳選したビデオ集
+            url: '/ja/playlists'
           - title: チュートリアル
             subtitle: ソリューション固有のビデオとハウツー
             url: /ja/docs/home-tutorials

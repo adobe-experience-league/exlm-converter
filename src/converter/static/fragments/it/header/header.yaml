@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=it#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Sfoglia tutti i corsi
-            subtitle: Raccolte di lezioni curate da esperti
-            url: '/home?lang=it#courses'
+          - title: Sfoglia tutte le playlist
+            subtitle: Raccolte di video curate da esperti
+            url: '/it/playlists'
           - title: Tutorials
             subtitle: Video e guide pratiche per specifiche soluzioni
             url: /it/docs/home-tutorials
