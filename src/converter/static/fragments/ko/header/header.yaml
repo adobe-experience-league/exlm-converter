@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: 커뮤니티
       contenttype: Community
-    - title: 재생목록
-      contenttype: Playlist
     - title: 설명서
       contenttype: Documentation
     - title: 이벤트
       contenttype: Event
     - title: 관점
       contenttype: Perspective
+    - title: 재생목록
+      contenttype: Playlist
     - title: 문제 해결
       contenttype: Troubleshooting
     - title: 튜토리얼

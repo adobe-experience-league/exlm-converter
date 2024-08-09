@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Spellistor
-      contenttype: Playlist
     - title: Dokumentation
       contenttype: Documentation
     - title: Event
       contenttype: Event
     - title: Perspektiv
       contenttype: Perspective
+    - title: Spellistor
+      contenttype: Playlist
     - title: Felsökning
       contenttype: Troubleshooting
     - title: Självstudiekurser
