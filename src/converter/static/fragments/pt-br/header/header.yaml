@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Fazer logon'
 profileMenu:
   - title: Meu perfil de aprendizagem
-    url: '/home?lang=pt-BR#dashboard/profile'
+    url: '/pt-br/profile'
   - title: Conquistas
-    url: '/home?lang=pt-BR#dashboard/awards'
+    url: '/pt-br/profile/bookmarks-and-achievements'
   - title: Conteúdo marcado
-    url: /home?lang=pt-BR#dashboard/bookmarks
+    url: '/pt-br/profile/bookmarks-and-achievements'
   - title: Fazer logoff
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Comunidade
       contenttype: Community
-    - title: Cursos
-      contenttype: Course
     - title: Documentação
       contenttype: Documentation
     - title: Eventos
       contenttype: Event
     - title: Perspectivas
       contenttype: Perspective
+    - title: Listas de reprodução
+      contenttype: Playlist
     - title: Solução de problemas
       contenttype: Troubleshooting
     - title: Tutoriais
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=pt-BR#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Procurar todos os cursos
-            subtitle: Coleções de lições com curadoria especializada
-            url: '/home?lang=pt-BR#courses'
+          - title: Explorar todas as listas de reprodução
+            subtitle: Coleções de vídeos cuidadosamente selecionadas
+            url: '/pt-br/playlists'
           - title: Tutoriais
             subtitle: Vídeos específicos da solução e instruções
             url: /pt-br/docs/home-tutorials

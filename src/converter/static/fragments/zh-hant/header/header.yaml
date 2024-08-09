@@ -7,11 +7,11 @@ productGrid:
 signIn: '登入'
 profileMenu:
   - title: 我的學習個人資料
-    url: '/home?lang=zh-Hant#dashboard/profile'
+    url: '/zh-hant/profile'
   - title: 成就
-    url: '/home?lang=zh-Hant#dashboard/awards'
+    url: '/zh-hant/profile/bookmarks-and-achievements'
   - title: 已建立書籤的內容
-    url: /home?lang=zh-Hant#dashboard/bookmarks
+    url: '/zh-hant/profile/bookmarks-and-achievements'
   - title: 登出
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: 社群
       contenttype: Community
-    - title: 課程
-      contenttype: Course
     - title: 檔案
       contenttype: Documentation
     - title: 事件
       contenttype: Event
     - title: 觀點
       contenttype: Perspective
+    - title: 播放清單
+      contenttype: Playlist
     - title: 疑難排解
       contenttype: Troubleshooting
     - title: 教學課程
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=zh-Hant#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: 瀏覽所有課程
-            subtitle: 精選的課程集合
-            url: '/home?lang=zh-Hant#courses'
+          - title: 瀏覽所有播放清單
+            subtitle: 精選的影片集合
+            url: '/zh-hant/playlists'
           - title: 教學課程
             subtitle: 解決方案特定視訊和操作說明
             url: /zh-hant/docs/home-tutorials

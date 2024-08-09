@@ -7,11 +7,11 @@ productGrid:
 signIn: '로그인'
 profileMenu:
   - title: 내 학습 프로필
-    url: '/home?lang=ko#dashboard/profile'
+    url: '/ko/profile'
   - title: 도전 과제
-    url: '/home?lang=ko#dashboard/awards'
+    url: '/ko/profile/bookmarks-and-achievements'
   - title: 책갈피가 표시된 콘텐츠
-    url: /home?lang=ko#dashboard/bookmarks
+    url: '/ko/profile/bookmarks-and-achievements'
   - title: 로그아웃
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: 커뮤니티
       contenttype: Community
-    - title: 교육 과정
-      contenttype: Course
     - title: 설명서
       contenttype: Documentation
     - title: 이벤트
       contenttype: Event
     - title: 관점
       contenttype: Perspective
+    - title: 재생목록
+      contenttype: Playlist
     - title: 문제 해결
       contenttype: Troubleshooting
     - title: 튜토리얼
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=ko#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: 전체 과정 찾아보기
-            subtitle: 전문적으로 선별된 학습 컬렉션
-            url: '/home?lang=ko#courses'
+          - title: 모든 재생목록 찾아보기
+            subtitle: 전문가가 엄선한 비디오 컬렉션
+            url: '/ko/playlists'
           - title: 튜토리얼
             subtitle: 솔루션별 비디오 및 사용 방법
             url: /ko/docs/home-tutorials
