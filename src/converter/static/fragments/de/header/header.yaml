@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Kurse
-      contenttype: Course
+    - title: Playlists
+      contenttype: Playlist
     - title: Dokumentation
       contenttype: Documentation
     - title: Events
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=de#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Alle Kurse durchsuchen
-            subtitle: Von Fachleuten kuratierte Sammlungen von Lektionen
-            url: '/home?lang=de#courses'
+          - title: Alle Playlists durchsuchen
+            subtitle: Von Fachleuten kuratierte Sammlungen von Videos
+            url: '/de/playlists'
           - title: Tutorials
             subtitle: Lösungsspezifische Videos und Anleitungen
             url: /de/docs/home-tutorials

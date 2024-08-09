@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Kurser
-      contenttype: Course
+    - title: Spellistor
+      contenttype: Playlist
     - title: Dokumentation
       contenttype: Documentation
     - title: Event
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=sv#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Bläddra bland alla kurser
-            subtitle: Samlingar med lektioner som satts samman av experter
-            url: '/home?lang=sv#courses'
+          - title: Bläddra i alla spellistor
+            subtitle: Videosamlingar som tagits fram av experter
+            url: '/sv/playlists'
           - title: Självstudiekurser
             subtitle: Lösningsspecifika videor och instruktioner
             url: /sv/docs/home-tutorials

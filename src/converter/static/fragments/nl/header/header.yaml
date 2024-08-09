@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Cursussen
-      contenttype: Course
+    - title: Afspeellijsten
+      contenttype: Playlist
     - title: Documentatie
       contenttype: Documentation
     - title: Evenementen
@@ -59,9 +59,9 @@ nav:
             url: '/home?lang=nl#dashboard/learning'
             urlOptions:
               auth-only: 'true'
-          - title: Door alle cursussen bladeren
-            subtitle: Deskundig samengestelde verzamelingen van lessen
-            url: '/home?lang=nl#courses'
+          - title: Door alle afspeellijsten bladeren
+            subtitle: Deskundig gecureerde verzamelingen video's
+            url: '/nl/playlists'
           - title: Tutorials
             subtitle: Oplossingsspecifieke video's en instructies
             url: /nl/docs/home-tutorials
