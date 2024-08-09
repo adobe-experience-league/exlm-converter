@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: 社群
       contenttype: Community
-    - title: 播放清單
-      contenttype: Playlist
     - title: 檔案
       contenttype: Documentation
     - title: 事件
       contenttype: Event
     - title: 觀點
       contenttype: Perspective
+    - title: 播放清單
+      contenttype: Playlist
     - title: 疑難排解
       contenttype: Troubleshooting
     - title: 教學課程

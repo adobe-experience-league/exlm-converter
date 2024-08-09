@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Communauté
       contenttype: Community
-    - title: Listes de lecture
-      contenttype: Playlist
     - title: Documentation
       contenttype: Documentation
     - title: Événements
       contenttype: Event
     - title: Perspectives
       contenttype: Perspective
+    - title: Listes de lecture
+      contenttype: Playlist
     - title: Dépannage
       contenttype: Troubleshooting
     - title: Tutoriels

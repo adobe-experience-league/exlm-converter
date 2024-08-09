@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Comunidade
       contenttype: Community
-    - title: Listas de reprodução
-      contenttype: Playlist
     - title: Documentação
       contenttype: Documentation
     - title: Eventos
       contenttype: Event
     - title: Perspectivas
       contenttype: Perspective
+    - title: Listas de reprodução
+      contenttype: Playlist
     - title: Solução de problemas
       contenttype: Troubleshooting
     - title: Tutoriais

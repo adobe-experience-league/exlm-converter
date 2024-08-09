@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Afspeellijsten
-      contenttype: Playlist
     - title: Documentatie
       contenttype: Documentation
     - title: Evenementen
       contenttype: Event
     - title: Perspectieven
       contenttype: Perspective
+    - title: Afspeellijsten
+      contenttype: Playlist
     - title: Problemen oplossen
       contenttype: Troubleshooting
     - title: Tutorials

@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: コミュニティ
       contenttype: Community
-    - title: プレイリスト
-      contenttype: Playlist
     - title: ドキュメント
       contenttype: Documentation
     - title: イベント
       contenttype: Event
     - title: 展望
       contenttype: Perspective
+    - title: プレイリスト
+      contenttype: Playlist
     - title: トラブルシューティング
       contenttype: Troubleshooting
     - title: チュートリアル
