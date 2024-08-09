@@ -7,11 +7,11 @@ productGrid:
 signIn: '登录'
 profileMenu:
   - title: 我的学习个人资料
-    url: '/home?lang=zh-Hans#dashboard/profile'
+    url: '/zh-hans/profile'
   - title: 成就
-    url: '/home?lang=zh-Hans#dashboard/awards'
+    url: '/zh-hans/profile/bookmarks-and-achievements'
   - title: 已添加书签的内容
-    url: /home?lang=zh-Hans#dashboard/bookmarks
+    url: '/zh-hans/profile/bookmarks-and-achievements'
   - title: 注销
     url: '#'
 search:
