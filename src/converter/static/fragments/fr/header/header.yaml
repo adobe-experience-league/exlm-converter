@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: Communauté
       contenttype: Community
-    - title: Formations
-      contenttype: Course
+    - title: Listes de lecture
+      contenttype: Playlist
     - title: Documentation
       contenttype: Documentation
     - title: Événements

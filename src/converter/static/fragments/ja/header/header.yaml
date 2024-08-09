@@ -25,8 +25,8 @@ search:
       contenttype: Certification
     - title: コミュニティ
       contenttype: Community
-    - title: コース
-      contenttype: Course
+    - title: プレイリスト
+      contenttype: Playlist
     - title: ドキュメント
       contenttype: Documentation
     - title: イベント
