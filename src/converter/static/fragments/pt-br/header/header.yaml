@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: Recursos
         items:
-          - title: Cursos recomendados
-            subtitle: Seus cursos com curadoria especializada
-            url: '/home?lang=pt-BR#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Explorar todas as listas de reprodução
-            subtitle: Coleções de vídeos cuidadosamente selecionadas
+          - title: Listas de reprodução
+            subtitle: Coleções de vídeos organizadas por especialistas
             url: '/pt-br/playlists'
           - title: Tutoriais
             subtitle: Vídeos específicos da solução e instruções

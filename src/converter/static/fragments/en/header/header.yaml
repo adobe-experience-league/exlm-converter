@@ -54,12 +54,7 @@ nav:
               featured-products: 'true'
       - title: Resources
         items:
-          - title: Recommended courses
-            subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Browse all playlists
+          - title: Playlists
             subtitle: Expertly curated collections of videos
             url: '/en/playlists'
           - title: Tutorials
