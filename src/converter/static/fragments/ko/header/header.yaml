@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: 리소스
         items:
-          - title: 추천 과정
-            subtitle: 전문적으로 선별된 교육 과정
-            url: '/home?lang=ko#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: 모든 재생목록 찾아보기
-            subtitle: 전문가가 엄선한 비디오 컬렉션
+          - title: 재생 목록
+            subtitle: 전문적으로 엄선된 비디오 컬렉션
             url: '/ko/playlists'
           - title: 튜토리얼
             subtitle: 솔루션별 비디오 및 사용 방법

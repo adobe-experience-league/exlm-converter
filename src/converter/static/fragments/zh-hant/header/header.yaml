@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: 資源
         items:
-          - title: 建議課程
-            subtitle: 您精選的課程
-            url: '/home?lang=zh-Hant#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: 瀏覽所有播放清單
-            subtitle: 精選的影片集合
+          - title: 播放清單
+            subtitle: 精編影片集合
             url: '/zh-hant/playlists'
           - title: 教學課程
             subtitle: 解決方案特定視訊和操作說明

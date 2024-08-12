@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: Ressources
         items:
-          - title: Cours recommandés
-            subtitle: Vos cours soigneusement organisés
-            url: '/home?lang=fr#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Parcourir toutes les listes de lecture
-            subtitle: Des collections de vidéos savamment élaborées
+          - title: Listes de lecture
+            subtitle: Collections de vidéos sélectionnées avec soin
             url: '/fr/playlists'
           - title: Tutoriels
             subtitle: Vidéos et procédures spécifiques aux solutions
