@@ -54,12 +54,7 @@ nav:
               featured-products: 'true'
       - title: 资源
         items:
-          - title: 推荐课程
-            subtitle: 专业策划的课程
-            url: '/home?lang=zh-Hans#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: 浏览所有播放列表
+          - title: 播放列表
             subtitle: 专业策划的视频合集
             url: '/zh-hans/playlists'
           - title: 教程

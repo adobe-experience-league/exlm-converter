@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: リソース
         items:
-          - title: おすすめのコース
-            subtitle: エキスパートが厳選したコース
-            url: '/home?lang=ja#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: すべてのプレイリストを参照
-            subtitle: エキスパートが厳選したビデオ集
+          - title: プレイリスト
+            subtitle: エキスパートが厳選したビデオコレクション
             url: '/ja/playlists'
           - title: チュートリアル
             subtitle: ソリューション固有のビデオとハウツー

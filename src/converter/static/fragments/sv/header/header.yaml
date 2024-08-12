@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: Resurser
         items:
-          - title: Rekommenderade kurser
-            subtitle: Dina kurser som satts samman av experter
-            url: '/home?lang=sv#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Bläddra i alla spellistor
-            subtitle: Videosamlingar som tagits fram av experter
+          - title: Spellistor
+            subtitle: Videosamlingar framtagna av experter
             url: '/sv/playlists'
           - title: Självstudiekurser
             subtitle: Lösningsspecifika videor och instruktioner

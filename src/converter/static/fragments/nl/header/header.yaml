@@ -54,12 +54,7 @@ nav:
               featured-products: 'true'
       - title: Resources
         items:
-          - title: Aanbevolen cursussen
-            subtitle: Uw deskundig samengestelde cursussen
-            url: '/home?lang=nl#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Door alle afspeellijsten bladeren
+          - title: Afspeellijsten
             subtitle: Deskundig gecureerde verzamelingen video's
             url: '/nl/playlists'
           - title: Tutorials

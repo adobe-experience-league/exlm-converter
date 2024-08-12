@@ -54,12 +54,7 @@ nav:
               featured-products: 'true'
       - title: Risorse
         items:
-          - title: Corsi consigliati
-            subtitle: I tuoi corsi curati da esperti
-            url: '/home?lang=it#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Sfoglia tutte le playlist
+          - title: Playlist
             subtitle: Raccolte di video curate da esperti
             url: '/it/playlists'
           - title: Tutorials

@@ -54,13 +54,8 @@ nav:
               featured-products: 'true'
       - title: Ressourcen
         items:
-          - title: Empfohlene Kurse
-            subtitle: Ihre von Fachleuten kuratierten Kurse
-            url: '/home?lang=de#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Alle Playlists durchsuchen
-            subtitle: Von Fachleuten kuratierte Sammlungen von Videos
+          - title: Playlists
+            subtitle: Von Expertinnen und Experten kuratierte Videosammlungen
             url: '/de/playlists'
           - title: Tutorials
             subtitle: Lösungsspezifische Videos und Anleitungen
