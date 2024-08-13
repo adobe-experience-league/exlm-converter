@@ -9,9 +9,9 @@ profileMenu:
   - title: 我的学习个人资料
     url: '/zh-hans/profile'
   - title: 成就
-    url: '/zh-hans/profile/bookmarks-and-achievements'
+    url: '/zh-hans/profile/bookmarks-and-achievements#my-awards'
   - title: 已添加书签的内容
-    url: '/zh-hans/profile/bookmarks-and-achievements'
+    url: '/zh-hans/profile/bookmarks-and-achievements#my-bookmarks'
   - title: 注销
     url: '#'
 search:

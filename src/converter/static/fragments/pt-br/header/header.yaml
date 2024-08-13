@@ -9,9 +9,9 @@ profileMenu:
   - title: Meu perfil de aprendizagem
     url: '/pt-br/profile'
   - title: Conquistas
-    url: '/pt-br/profile/bookmarks-and-achievements'
+    url: '/pt-br/profile/bookmarks-and-achievements#my-awards'
   - title: Conteúdo marcado
-    url: '/pt-br/profile/bookmarks-and-achievements'
+    url: '/pt-br/profile/bookmarks-and-achievements#my-bookmarks'
   - title: Fazer logoff
     url: '#'
 search:

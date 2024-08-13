@@ -9,9 +9,9 @@ profileMenu:
   - title: Mein Lernprofil
     url: '/de/profile'
   - title: Erfolge
-    url: '/de/profile/bookmarks-and-achievements'
+    url: '/de/profile/bookmarks-and-achievements#my-awards'
   - title: Inhalt mit Lesezeichen
-    url: '/de/profile/bookmarks-and-achievements'
+    url: '/de/profile/bookmarks-and-achievements#my-bookmarks'
   - title: Abmelden
     url: '#'
 search:
