@@ -38,7 +38,12 @@ function getThumbnail(thumbnailUrls, widths = [960, 1920, 720, 666, 640]) {
   const targetSize = potentialSizes[0];
 
   // find the thumbnail with the target size
-  return thumbnailUrls.find((url) => url.includes(targetSize.join('x')));
+  const targetThumbnail = thumbnailUrls.find((url) =>
+    url.includes(targetSize.join('x')),
+  );
+
+  // return the target thumbnail if found, otherwise return the last thumbnail
+  return targetThumbnail || thumbnailUrls[thumbnailUrls.size - 1];
 }
 
 /**
