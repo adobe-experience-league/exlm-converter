@@ -1,28 +1,44 @@
 import { htmlToElement, toBlock } from '../../modules/utils/dom-utils.js';
 
+function removeDashUnderscore(str) {
+  return str?.replace(/[-_]/g, '') || '';
+}
+
 /**
- * Thumbnail urls are expecte to have -<number>x<number>
+ * Thumbnail urls are expecte to have -<number>x<number> OR _<number>x<number>
  * Example: https://images-tv.adobe.com/<long hash>-960x491.jpg
  * which means the image is 960px width and 491px height
- * This function will get the thumbnail url that is just above 900px width
- * if there is no thumbnail above 900px width, it will get the largest thumbnail
+ * This function will get the thumbnail url with the matcing provided widths
  * @param {string[]} thumbnailUrls
+ * @param {number[]} widths the widths whose order is the preference of desired widths
+ * @returns {string} the thumbnail url with the best matching width
  */
-function getThumbnail(thumbnailUrls, minWidth = 900) {
-  const sizes = thumbnailUrls
-    .map((url) => url.match(/-\d+x\d+/g))
-    .map((url) => (url[0] ? url[0].replace('-', '') : ''))
-    .filter((size) => size)
-    // parse sizes to width and height
-    .map((size) => size.split('x').map(Number))
-    // sort by width
-    .sort((a, b) => a[0] - b[0]);
+function getThumbnail(thumbnailUrls, widths = [960, 1920, 720, 666, 640]) {
+  const sizes =
+    thumbnailUrls
+      .map((url) => url.match(/[-_]\d+x\d+/g))
+      .filter((matchArray) => matchArray?.length > 0)
+      .map((matchArray) =>
+        matchArray.length ? removeDashUnderscore(matchArray[0]) : '',
+      )
+      .filter((size) => size && size.length > 0)
+      // parse sizes to width and height
+      .map((size) => size.split('x').map(Number))
+      // sort by width
+      .sort((a, b) => a[0] - b[0]) || [];
 
-  // get the value just above 900 width
-  const [width, height] =
-    sizes.find((size) => size[0] > minWidth) || sizes.pop();
+  // Find matching thumbnails with the provided widths array
+  const potentialSizes = widths
+    .map((w) => sizes.find((s) => s[0] === w))
+    .filter((t) => t);
+  // add largest tsize to potentialSizes
+  potentialSizes.push(sizes[sizes.length - 1]);
 
-  return thumbnailUrls.find((url) => url.includes(`${width}x${height}`)) || '';
+  // the first in the array is the target size
+  const targetSize = potentialSizes[0];
+
+  // find the thumbnail with the target size
+  return thumbnailUrls.find((url) => url.includes(targetSize.join('x')));
 }
 
 /**
