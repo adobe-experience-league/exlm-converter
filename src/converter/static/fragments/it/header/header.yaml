@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Accedi'
 profileMenu:
   - title: Il mio profilo di apprendimento
-    url: '/home?lang=it#dashboard/profile'
+    url: '/it/profile'
   - title: Risultati
-    url: '/home?lang=it#dashboard/awards'
+    url: '/it/profile/bookmarks-and-achievements'
   - title: Contenuto con segnalibri
-    url: /home?lang=it#dashboard/bookmarks
+    url: '/it/profile/bookmarks-and-achievements'
   - title: Esci
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Corsi
-      contenttype: Course
     - title: Documentazione
       contenttype: Documentation
     - title: Eventi
       contenttype: Event
     - title: Prospettive
       contenttype: Perspective
+    - title: Playlist
+      contenttype: Playlist
     - title: Risoluzione dei problemi
       contenttype: Troubleshooting
     - title: Tutorials
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: Risorse
         items:
-          - title: Corsi consigliati
-            subtitle: I tuoi corsi curati da esperti
-            url: '/home?lang=it#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Sfoglia tutti i corsi
-            subtitle: Raccolte di lezioni curate da esperti
-            url: '/home?lang=it#courses'
+          - title: Playlist
+            subtitle: Raccolte di video curate da esperti
+            url: '/it/playlists'
           - title: Tutorials
             subtitle: Video e guide pratiche per specifiche soluzioni
             url: /it/docs/home-tutorials
           - title: Prospettive
             subtitle: Informazioni actionable dai clienti Experience Cloud e dagli esperti Adobe
             url: /it/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Certificazione
             subtitle: Esperienza comprovata nelle soluzioni Adobe per il marketing
             url: /it/docs/certification/program/overview

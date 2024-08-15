@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Se connecter'
 profileMenu:
   - title: Mon profil de formation
-    url: '/home?lang=fr#dashboard/profile'
+    url: '/fr/profile'
   - title: Réalisations
-    url: '/home?lang=fr#dashboard/awards'
+    url: '/fr/profile/bookmarks-and-achievements'
   - title: Contenu marqué d’un signet
-    url: /home?lang=fr#dashboard/bookmarks
+    url: '/fr/profile/bookmarks-and-achievements'
   - title: Se déconnecter
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Communauté
       contenttype: Community
-    - title: Formations
-      contenttype: Course
     - title: Documentation
       contenttype: Documentation
     - title: Événements
       contenttype: Event
     - title: Perspectives
       contenttype: Perspective
+    - title: Listes de lecture
+      contenttype: Playlist
     - title: Dépannage
       contenttype: Troubleshooting
     - title: Tutoriels
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: Ressources
         items:
-          - title: Cours recommandés
-            subtitle: Vos cours soigneusement organisés
-            url: '/home?lang=fr#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Parcourir l’ensemble des cours
-            subtitle: Ensembles de leçons organisées par des experts
-            url: '/home?lang=fr#courses'
+          - title: Listes de lecture
+            subtitle: Collections de vidéos sélectionnées avec soin
+            url: '/fr/playlists'
           - title: Tutoriels
             subtitle: Vidéos et procédures spécifiques aux solutions
             url: /fr/docs/home-tutorials
           - title: Perspectives
             subtitle: Informations exploitables fournies par les clientes et clients Experience Cloud, ainsi que par les spécialistes Adobe
             url: /fr/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Certification
             subtitle: Expertise éprouvée des solutions marketing d’Adobe
             url: /fr/docs/certification/program/overview

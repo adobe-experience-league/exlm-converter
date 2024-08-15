@@ -7,11 +7,11 @@ productGrid:
 signIn: 'ログイン'
 profileMenu:
   - title: マイ学習プロファイル
-    url: '/home?lang=ja#dashboard/profile'
+    url: '/ja/profile'
   - title: 成果
-    url: '/home?lang=ja#dashboard/awards'
+    url: '/ja/profile/bookmarks-and-achievements'
   - title: ブックマークしたコンテンツ
-    url: /home?lang=ja#dashboard/bookmarks
+    url: '/ja/profile/bookmarks-and-achievements'
   - title: ログアウト
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: コミュニティ
       contenttype: Community
-    - title: コース
-      contenttype: Course
     - title: ドキュメント
       contenttype: Documentation
     - title: イベント
       contenttype: Event
     - title: 展望
       contenttype: Perspective
+    - title: プレイリスト
+      contenttype: Playlist
     - title: トラブルシューティング
       contenttype: Troubleshooting
     - title: チュートリアル
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: リソース
         items:
-          - title: おすすめのコース
-            subtitle: エキスパートが厳選したコース
-            url: '/home?lang=ja#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: すべてのコースを参照
-            subtitle: エキスパートが厳選したレッスン集
-            url: '/home?lang=ja#courses'
+          - title: プレイリスト
+            subtitle: エキスパートが厳選したビデオコレクション
+            url: '/ja/playlists'
           - title: チュートリアル
             subtitle: ソリューション固有のビデオとハウツー
             url: /ja/docs/home-tutorials
           - title: 展望
             subtitle: Experience Cloud の顧客や  Adobe Expert による施策につながるインサイト
             url: /ja/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: 認定制度
             subtitle: アドビのマーケティングソリューションの確かな専門知識
             url: /ja/docs/certification/program/overview

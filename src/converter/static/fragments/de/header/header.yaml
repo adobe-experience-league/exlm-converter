@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Anmelden'
 profileMenu:
   - title: Mein Lernprofil
-    url: '/home?lang=de#dashboard/profile'
+    url: '/de/profile'
   - title: Erfolge
-    url: '/home?lang=de#dashboard/awards'
+    url: '/de/profile/bookmarks-and-achievements'
   - title: Inhalt mit Lesezeichen
-    url: /home?lang=de#dashboard/bookmarks
+    url: '/de/profile/bookmarks-and-achievements'
   - title: Abmelden
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Kurse
-      contenttype: Course
     - title: Dokumentation
       contenttype: Documentation
     - title: Events
       contenttype: Event
     - title: Perspektiven
       contenttype: Perspective
+    - title: Playlists
+      contenttype: Playlist
     - title: Fehlerbehebung
       contenttype: Troubleshooting
     - title: Tutorials
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: Ressourcen
         items:
-          - title: Empfohlene Kurse
-            subtitle: Ihre von Fachleuten kuratierten Kurse
-            url: '/home?lang=de#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Alle Kurse durchsuchen
-            subtitle: Von Fachleuten kuratierte Sammlungen von Lektionen
-            url: '/home?lang=de#courses'
+          - title: Playlists
+            subtitle: Von Expertinnen und Experten kuratierte Videosammlungen
+            url: '/de/playlists'
           - title: Tutorials
             subtitle: Lösungsspezifische Videos und Anleitungen
             url: /de/docs/home-tutorials
           - title: Perspektiven
             subtitle: Verwertbare Erkenntnisse von Experience Cloud-Kundinnen und -Kunden sowie Adobe-Expertinnen und -Experten
             url: /de/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Zertifizierung
             subtitle: Bewährte Kompetenz von Adobe-Marketing-Lösungen
             url: /de/docs/certification/program/overview

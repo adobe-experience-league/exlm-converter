@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Iniciar sesión'
 profileMenu:
   - title: Mi perfil de aprendizaje
-    url: '/home?lang=es#dashboard/profile'
+    url: '/es/profile'
   - title: Logros
-    url: '/home?lang=es#dashboard/awards'
+    url: '/es/profile/bookmarks-and-achievements'
   - title: Contenido con marcador
-    url: /home?lang=es#dashboard/bookmarks
+    url: '/es/profile/bookmarks-and-achievements'
   - title: Cerrar sesión
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Comunidad
       contenttype: Community
-    - title: Cursos
-      contenttype: Course
     - title: Documentación
       contenttype: Documentation
     - title: Eventos
       contenttype: Event
     - title: Perspectivas
       contenttype: Perspective
+    - title: Listas de reproducción
+      contenttype: Playlist
     - title: Resolución de problemas
       contenttype: Troubleshooting
     - title: Tutorials
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: Recursos
         items:
-          - title: Cursos recomendados
-            subtitle: Sus cursos seleccionados por expertos
-            url: '/home?lang=es#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Examinar todos los cursos
-            subtitle: Colecciones de lecciones seleccionadas por expertos
-            url: '/home?lang=es#courses'
+          - title: Listas de reproducción
+            subtitle: Colecciones de vídeos elaboradas por expertos
+            url: '/es/playlists'
           - title: Tutorials
             subtitle: Vídeos y procedimientos específicos de la solución
             url: /es/docs/home-tutorials
           - title: Perspectives
             subtitle: Perspectivas procesables de clientes de Experience Cloud y expertos de Adobe
             url: /es/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Certificación
             subtitle: Experiencia demostrada de las soluciones de marketing de Adobe
             url: /es/docs/certification/program/overview

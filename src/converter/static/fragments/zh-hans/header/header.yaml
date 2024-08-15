@@ -7,11 +7,11 @@ productGrid:
 signIn: '登录'
 profileMenu:
   - title: 我的学习个人资料
-    url: '/home?lang=zh-Hans#dashboard/profile'
+    url: '/zh-hans/profile'
   - title: 成就
-    url: '/home?lang=zh-Hans#dashboard/awards'
+    url: '/zh-hans/profile/bookmarks-and-achievements'
   - title: 已添加书签的内容
-    url: /home?lang=zh-Hans#dashboard/bookmarks
+    url: '/zh-hans/profile/bookmarks-and-achievements'
   - title: 注销
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: 社区
       contenttype: Community
-    - title: 课程
-      contenttype: Course
     - title: 文档
       contenttype: Documentation
     - title: 事件
       contenttype: Event
     - title: 观点
       contenttype: Perspective
+    - title: 播放列表
+      contenttype: Playlist
     - title: 疑难解答
       contenttype: Troubleshooting
     - title: 教程
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: 资源
         items:
-          - title: 推荐课程
-            subtitle: 专业策划的课程
-            url: '/home?lang=zh-Hans#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: 浏览所有课程
-            subtitle: 专业策划的课程合集
-            url: '/home?lang=zh-Hans#courses'
+          - title: 播放列表
+            subtitle: 专业策划的视频合集
+            url: '/zh-hans/playlists'
           - title: 教程
             subtitle: 特定于解决方案的视频和操作说明
             url: /zh-hans/docs/home-tutorials
           - title: 专业视角
             subtitle: 来自 Experience Cloud 客户和 Adobe 专家的可指导行动的洞察
             url: /zh-hans/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: 认证
             subtitle: 久经考验的 Adobe 营销解决方案专业知识
             url: /zh-hans/docs/certification/program/overview

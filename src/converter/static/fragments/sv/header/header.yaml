@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Logga in'
 profileMenu:
   - title: Min studieprofil
-    url: '/home?lang=sv#dashboard/profile'
+    url: '/sv/profile'
   - title: Achievements
-    url: '/home?lang=sv#dashboard/awards'
+    url: '/sv/profile/bookmarks-and-achievements'
   - title: Bokmärkt innehåll
-    url: /home?lang=sv#dashboard/bookmarks
+    url: '/sv/profile/bookmarks-and-achievements'
   - title: Logga ut
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Kurser
-      contenttype: Course
     - title: Dokumentation
       contenttype: Documentation
     - title: Event
       contenttype: Event
     - title: Perspektiv
       contenttype: Perspective
+    - title: Spellistor
+      contenttype: Playlist
     - title: Felsökning
       contenttype: Troubleshooting
     - title: Självstudiekurser
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: Resurser
         items:
-          - title: Rekommenderade kurser
-            subtitle: Dina kurser som satts samman av experter
-            url: '/home?lang=sv#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Bläddra bland alla kurser
-            subtitle: Samlingar med lektioner som satts samman av experter
-            url: '/home?lang=sv#courses'
+          - title: Spellistor
+            subtitle: Videosamlingar framtagna av experter
+            url: '/sv/playlists'
           - title: Självstudiekurser
             subtitle: Lösningsspecifika videor och instruktioner
             url: /sv/docs/home-tutorials
           - title: Perspektiv
             subtitle: Insikter som kan åtgärdas från Experience Cloud-kunder och Adobe-experter
             url: /sv/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Certifiering
             subtitle: Beprövad expertis i Adobes marknadsföringslösningar
             url: /sv/docs/certification/program/overview

@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
-    url: '/home#dashboard/profile'
+    url: '/en/profile'
   - title: Achievements
-    url: '/home#dashboard/awards'
+    url: '/en/profile/bookmarks-and-achievements'
   - title: Bookmarked content
-    url: /home#dashboard/bookmarks
+    url: '/en/profile/bookmarks-and-achievements'
   - title: Sign out
     url: '#'
 search:
@@ -25,14 +25,14 @@ search:
       contenttype: Certification
     - title: Community
       contenttype: Community
-    - title: Courses
-      contenttype: Course
     - title: Documentation
       contenttype: Documentation
     - title: Events
       contenttype: Event
     - title: Perspectives
       contenttype: Perspective
+    - title: Playlists
+      contenttype: Playlist
     - title: Troubleshooting
       contenttype: Troubleshooting
     - title: Tutorials
@@ -54,22 +54,15 @@ nav:
               featured-products: 'true'
       - title: Resources
         items:
-          - title: Recommended courses
-            subtitle: Your expertly curated courses
-            url: '/home#dashboard/learning'
-            urlOptions:
-              auth-only: 'true'
-          - title: Browse all courses
-            subtitle: Expertly curated collections of lessons
-            url: '/home#courses'
+          - title: Playlists
+            subtitle: Expertly curated collections of videos
+            url: '/en/playlists'
           - title: Tutorials
             subtitle: Solution-specific videos and how-tos
             url: /en/docs/home-tutorials
           - title: Perspectives
             subtitle: Actionable insights from Experience Cloud customers and Adobe experts
             url: /en/perspectives
-            urlOptions:
-              feature-flags: perspectives
           - title: Certification
             subtitle: Proven expertise of Adobe marketing solutions
             url: /en/docs/certification/program/overview
