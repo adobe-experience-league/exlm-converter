@@ -32,9 +32,6 @@ async function transformAemPageMetadata(htmlString, params) {
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
 
-  const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
-  if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
-
   const publishedTime = getMetadata(document, 'published-time');
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
   setMetadata(document, 'last-update', lastUpdate);
@@ -102,6 +99,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
 
   if (path.includes('/perspectives/')) {
     setMetadata(document, 'coveo-content-type', 'Perspective');
+    setMetadata(document, 'type', 'Perspective');
   }
 
   return dom.serialize();
