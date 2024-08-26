@@ -102,7 +102,6 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
 
   if (path.includes('/perspectives/')) {
     setMetadata(document, 'coveo-content-type', 'Perspective');
-    setMetadata(document, 'type', 'Perspective');
   }
 
   return dom.serialize();
