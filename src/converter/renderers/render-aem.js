@@ -100,6 +100,11 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
+  if (path.includes('/perspectives/')) {
+    setMetadata(document, 'coveo-content-type', 'Perspective');
+    setMetadata(document, 'type', 'Perspective');
+  }
+
   return dom.serialize();
 }
 
