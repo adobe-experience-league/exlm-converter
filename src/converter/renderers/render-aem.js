@@ -99,7 +99,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
 
   if (
     path.includes('/perspectives/') &&
-    !path.includes('/perspectives/authors/')
+    !path.includes('/perspectives/authors')
   ) {
     setMetadata(document, 'coveo-content-type', 'Perspective');
     setMetadata(document, 'type', 'Perspective');
