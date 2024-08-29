@@ -32,9 +32,6 @@ async function transformAemPageMetadata(htmlString, params) {
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
 
-  const coveoContentTypeMeta = getMetadata(document, 'coveo-content-type');
-  if (coveoContentTypeMeta) setMetadata(document, 'type', coveoContentTypeMeta);
-
   const publishedTime = getMetadata(document, 'published-time');
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
   setMetadata(document, 'last-update', lastUpdate);
@@ -98,6 +95,14 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
   // no indexing rule for author bio and signup-flow-modal pages
   if (path.includes('/authors/') || path.includes('/signup-flow-modal')) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
+  }
+
+  if (
+    path.includes('/perspectives/') &&
+    !path.includes('/perspectives/authors')
+  ) {
+    setMetadata(document, 'coveo-content-type', 'Perspective');
+    setMetadata(document, 'type', 'Perspective');
   }
 
   return dom.serialize();
