@@ -409,3 +409,17 @@ export function htmlFragmentToDoc(mainHTMLContentString) {
           </body>
         </html>`;
 }
+
+/**
+ * Removes all attributes from an element except those in the keepAttributes array
+ * @param {HTMLElement} element
+ * @param {string[]} keepAttributes
+ */
+export function removeAllAttributesExcept(element, keepAttributes = []) {
+  const attributes = Array.from(element.attributes);
+  attributes.forEach((attr) => {
+    if (!keepAttributes.includes(attr.name)) {
+      element.removeAttribute(attr.name);
+    }
+  });
+}
