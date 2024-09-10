@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Accedi'
 profileMenu:
   - title: Il mio profilo di apprendimento
-    url: '/it/profile'
+    url: '/it/home'
   - title: Risultati
-    url: '/it/profile/bookmarks-and-achievements'
+    url: '/it/home/awards'
   - title: Contenuto con segnalibri
-    url: '/it/profile/bookmarks-and-achievements'
+    url: '/it/home/bookmarks'
   - title: Esci
     url: '#'
 search:
