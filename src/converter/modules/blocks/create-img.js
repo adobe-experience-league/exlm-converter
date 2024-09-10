@@ -1,3 +1,5 @@
+import { removeAllAttributesExcept } from '../utils/dom-utils.js';
+
 const ALLOWED_ALIGN_VALUES = ['left', 'right', 'center'];
 
 /**
@@ -42,19 +44,23 @@ export default function createImg(document) {
     const attributes = getImageAttributes(img);
     const hasAttributes = Object.keys(attributes).length > 0;
 
-    const newImg = document.createElement('img');
-    newImg.src = img.src;
     if (hasAttributes) {
       // add text node after img
       const attributesAsText = Object.entries(attributes)
         .map(([key, value]) => `${key}="${value}"`)
         .join(' ');
       const text = document.createTextNode(`{${attributesAsText}}`);
+      // ensure the image is within a paragraph
+      // the frontend expects a text node to be after the image within a paragraph (also avoids issue where Edge Delivery puts images and text in separate paragraphs)
+      if (img.parentNode.tagName.toLowerCase() !== 'p') {
+        const p = document.createElement('p');
+        img.parentNode.insertBefore(p, img.nextSibling);
+        p.append(img);
+      }
+      // insert text after img
       img.parentNode.insertBefore(text, img.nextSibling);
     }
-    if (img.alt) newImg.alt = img.alt;
-    if (img.title) newImg.title = img.title;
-    // replace img with newImg
-    img.parentNode.replaceChild(newImg, img);
+    // remove all attributes except src, alt, title
+    removeAllAttributesExcept(img, ['src', 'alt', 'title']);
   });
 }

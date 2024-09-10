@@ -52,6 +52,14 @@ export const EXL_LABEL_ENDPOINTS = {
  */
 
 /**
+ * @typedef {Object} ExlArticlesResponse
+ * @property {ExlArticle[]} data
+ * @property {string|null} error
+ * @property {Array} links
+ * @property {Number} status
+ */
+
+/**
  * @typedef {Object} ExlClientOptions
  * @property {string} host
  * @property {StateStore} state
@@ -176,7 +184,6 @@ export default class ExlClient {
     url = encodeURIComponent(url.toString());
     url = url.toLowerCase(); // use lowercase when using `Search%20URL` query param
     const apiPath = `api/articles?Search%20URL=${url}&lang=${langForApi}`;
-    console.log(`Fetching article from ${apiPath}`);
     const response = await this.doFetch(apiPath);
 
     if (response.error) {
@@ -228,6 +235,7 @@ export default class ExlClient {
 
   async doFetch(path) {
     const url = new URL(path, this.host);
+    console.log(`[FETCH] ${url.toString()}`);
     const response = await fetch(url);
     return response.json();
   }
