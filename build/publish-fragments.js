@@ -57,12 +57,29 @@ const previewThenPublish = async (path) => {
 };
 
 const files = await readdirRecursive(FRAGMENTS_PATH);
-// Publish all fragments asynchronously
-await Promise.all(
-  files
-    .filter((file) => file.endsWith('.html'))
-    .map((file) => {
-      const path = relative(SRC_PATH, file);
-      return previewThenPublish(path);
-    }),
-);
+
+const pathsToPublish = files
+  .filter((file) => file.endsWith('.html'))
+  .map((file) => relative(SRC_PATH, file));
+
+const delay = (ms) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const BATCH_SIZE = 5;
+const API_RATE_LIMIT_TIME = 1000;
+
+// Publish 5 at a time, ensuring at-least 1 second has elapsed between each batch to avoid API rate limit: https://www.aem.live/docs/limits#admin-api-limits
+for (let i = 0; i < pathsToPublish.length; i += BATCH_SIZE) {
+  const batch = pathsToPublish.slice(i, i + BATCH_SIZE);
+  const timeBefore = Date.now();
+  // eslint-disable-next-line no-await-in-loop
+  await Promise.allSettled(batch.map(previewThenPublish));
+  const timeAfter = Date.now();
+  const timeElapsed = timeAfter - timeBefore;
+  const delayBetweenBatches = Math.max(API_RATE_LIMIT_TIME - timeElapsed, 0);
+  console.log(`Delaying ${delayBetweenBatches}ms before next batch`);
+  // eslint-disable-next-line no-await-in-loop
+  await delay(delayBetweenBatches);
+}
