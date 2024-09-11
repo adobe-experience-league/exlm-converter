@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
-    url: '/en/profile'
+    url: '/en/home'
   - title: Achievements
-    url: '/en/profile/bookmarks-and-achievements'
+    url: '/en/home/awards'
   - title: Bookmarked content
-    url: '/en/profile/bookmarks-and-achievements'
+    url: '/en/home/bookmarks'
   - title: Sign out
     url: '#'
 search:
