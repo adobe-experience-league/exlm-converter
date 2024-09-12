@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
-    url: '/en/home'
+    url: '/en/home/profile-settings'
   - title: Achievements
     url: '/en/home/awards'
   - title: Bookmarked content
