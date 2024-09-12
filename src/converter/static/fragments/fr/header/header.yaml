@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Se connecter'
 profileMenu:
   - title: Mon profil de formation
-    url: '/fr/profile'
+    url: '/fr/home'
   - title: Réalisations
-    url: '/fr/profile/bookmarks-and-achievements'
+    url: '/fr/home/awards'
   - title: Contenu marqué d’un signet
-    url: '/fr/profile/bookmarks-and-achievements'
+    url: '/fr/home/bookmarks'
   - title: Se déconnecter
     url: '#'
 search:

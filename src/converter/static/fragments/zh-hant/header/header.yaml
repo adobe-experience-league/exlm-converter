@@ -7,11 +7,11 @@ productGrid:
 signIn: '登入'
 profileMenu:
   - title: 我的學習個人資料
-    url: '/zh-hant/profile'
+    url: '/zh-hant/home'
   - title: 成就
-    url: '/zh-hant/profile/bookmarks-and-achievements'
+    url: '/zh-hant/home/awards'
   - title: 已建立書籤的內容
-    url: '/zh-hant/profile/bookmarks-and-achievements'
+    url: '/zh-hant/home/bookmarks'
   - title: 登出
     url: '#'
 search:

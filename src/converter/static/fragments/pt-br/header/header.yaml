@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Fazer logon'
 profileMenu:
   - title: Meu perfil de aprendizagem
-    url: '/pt-br/profile'
+    url: '/pt-br/home'
   - title: Conquistas
-    url: '/pt-br/profile/bookmarks-and-achievements'
+    url: '/pt-br/home/awards'
   - title: Conteúdo marcado
-    url: '/pt-br/profile/bookmarks-and-achievements'
+    url: '/pt-br/home/bookmarks'
   - title: Fazer logoff
     url: '#'
 search:

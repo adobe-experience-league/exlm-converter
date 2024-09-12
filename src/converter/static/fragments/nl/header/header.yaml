@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
-    url: '/nl/profile'
+    url: '/nl/home'
   - title: Successen
-    url: '/nl/profile/bookmarks-and-achievements'
+    url: '/nl/home/awards'
   - title: Gebookmarkte content
-    url: '/nl/profile/bookmarks-and-achievements'
+    url: '/nl/home/bookmarks'
   - title: Afmelden
     url: '#'
 search:

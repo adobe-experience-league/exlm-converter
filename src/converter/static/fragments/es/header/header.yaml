@@ -7,11 +7,11 @@ productGrid:
 signIn: 'Iniciar sesión'
 profileMenu:
   - title: Mi perfil de aprendizaje
-    url: '/es/profile'
+    url: '/es/home'
   - title: Logros
-    url: '/es/profile/bookmarks-and-achievements'
+    url: '/es/home/awards'
   - title: Contenido con marcador
-    url: '/es/profile/bookmarks-and-achievements'
+    url: '/es/home/bookmarks'
   - title: Cerrar sesión
     url: '#'
 search:
