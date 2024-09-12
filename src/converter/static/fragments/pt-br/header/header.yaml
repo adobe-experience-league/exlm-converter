@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Fazer logon'
 profileMenu:
   - title: Meu perfil de aprendizagem
-    url: '/pt-br/home'
+    url: '/pt-br/home/profile-settings'
   - title: Conquistas
     url: '/pt-br/home/awards'
   - title: Conteúdo marcado

@@ -7,7 +7,7 @@ productGrid:
 signIn: 'Anmelden'
 profileMenu:
   - title: Mein Lernprofil
-    url: '/de/home'
+    url: '/de/home/profile-settings'
   - title: Erfolge
     url: '/de/home/awards'
   - title: Inhalt mit Lesezeichen
