@@ -8,8 +8,6 @@ signIn: 'Se connecter'
 profileMenu:
   - title: Mon profil de formation
     url: '/fr/home/profile-settings'
-  - title: Réalisations
-    url: '/fr/home/awards'
   - title: Contenu marqué d’un signet
     url: '/fr/home/bookmarks'
   - title: Se déconnecter
