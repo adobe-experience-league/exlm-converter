@@ -8,8 +8,6 @@ signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
     url: '/nl/home/profile-settings'
-  - title: Successen
-    url: '/nl/home/awards'
   - title: Gebookmarkte content
     url: '/nl/home/bookmarks'
   - title: Afmelden
