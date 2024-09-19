@@ -8,8 +8,6 @@ signIn: 'ログイン'
 profileMenu:
   - title: マイ学習プロファイル
     url: '/ja/home/profile-settings'
-  - title: 成果
-    url: '/ja/home/awards'
   - title: ブックマークしたコンテンツ
     url: '/ja/home/bookmarks'
   - title: ログアウト

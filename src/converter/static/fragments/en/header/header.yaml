@@ -8,8 +8,6 @@ signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
     url: '/en/home/profile-settings'
-  - title: Achievements
-    url: '/en/home/awards'
   - title: Bookmarked content
     url: '/en/home/bookmarks'
   - title: Sign out
