@@ -7,9 +7,7 @@ productGrid:
 signIn: 'Logga in'
 profileMenu:
   - title: Min studieprofil
-    url: '/sv/home'
-  - title: Achievements
-    url: '/sv/home/awards'
+    url: '/sv/home/profile-settings'
   - title: Bokmärkt innehåll
     url: '/sv/home/bookmarks'
   - title: Logga ut
