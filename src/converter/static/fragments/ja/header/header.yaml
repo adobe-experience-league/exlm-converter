@@ -7,11 +7,9 @@ productGrid:
 signIn: 'ログイン'
 profileMenu:
   - title: マイ学習プロファイル
-    url: '/ja/profile'
-  - title: 成果
-    url: '/ja/profile/bookmarks-and-achievements'
+    url: '/ja/home/profile-settings'
   - title: ブックマークしたコンテンツ
-    url: '/ja/profile/bookmarks-and-achievements'
+    url: '/ja/home/bookmarks'
   - title: ログアウト
     url: '#'
 search:
