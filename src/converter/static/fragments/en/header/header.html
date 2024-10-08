@@ -17,6 +17,11 @@
   <p>${header.search.placeholder}</p>
   `, ul(header.search.filters.map(filter =>
   `${filter.title}:${filter.contenttype}`))] ]) %>
+  <!-- Community Block -->
+  <%- block("community", [ [ ul(header.community.map(link => `<a
+    href="${link.url}"
+    >${link.title}</a
+  >`) )] ]) %>
   <!-- Language Selector -->
   <%- block("language-selector", [[ `
   <p>${header.languageSelector.title}</p>
