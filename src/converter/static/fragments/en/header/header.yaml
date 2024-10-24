@@ -7,11 +7,9 @@ productGrid:
 signIn: 'Sign in'
 profileMenu:
   - title: My learning profile
-    url: '/en/profile'
-  - title: Achievements
-    url: '/en/profile/bookmarks-and-achievements'
+    url: '/en/home/profile-settings'
   - title: Bookmarked content
-    url: '/en/profile/bookmarks-and-achievements'
+    url: '/en/home/bookmarks'
   - title: Sign out
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /en/perspectives
           - title: Certification
             subtitle: Proven expertise of Adobe marketing solutions
-            url: /en/docs/certification/program/overview
+            url: /en/certification-home
           - title: Instructor-led training
             subtitle: Live & on-demand courses led by Adobe-certified instructors
             url: https://learning.adobe.com/

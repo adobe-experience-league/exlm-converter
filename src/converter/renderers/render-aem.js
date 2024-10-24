@@ -93,7 +93,12 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   // no indexing rule for author bio and signup-flow-modal pages
-  if (path.includes('/authors/') || path.includes('/signup-flow-modal')) {
+  if (
+    path.includes('/authors/') ||
+    path.includes('/signup-flow-modal') ||
+    path.includes('/home-fragment') ||
+    path.includes('/home/nav')
+  ) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 

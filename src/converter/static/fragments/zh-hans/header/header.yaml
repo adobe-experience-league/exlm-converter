@@ -7,11 +7,9 @@ productGrid:
 signIn: '登录'
 profileMenu:
   - title: 我的学习个人资料
-    url: '/zh-hans/profile'
-  - title: 成就
-    url: '/zh-hans/profile/bookmarks-and-achievements'
+    url: '/zh-hans/home/profile-settings'
   - title: 已添加书签的内容
-    url: '/zh-hans/profile/bookmarks-and-achievements'
+    url: '/zh-hans/home/bookmarks'
   - title: 注销
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /zh-hans/perspectives
           - title: 认证
             subtitle: 久经考验的 Adobe 营销解决方案专业知识
-            url: /zh-hans/docs/certification/program/overview
+            url: /zh-hans/certification-home
           - title: 讲师指导的培训
             subtitle: 由 Adobe 认证讲师主持的实时和点播课程
             url: https://learning.adobe.com/
