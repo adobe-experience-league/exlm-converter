@@ -12,6 +12,7 @@ import {
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
   decodeCQMetadata,
+  generateHash,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../modules/utils/file-utils.js';
@@ -106,8 +107,11 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     path.includes('/perspectives/') &&
     !path.includes('/perspectives/authors')
   ) {
+    const pagePath = path.substring(path.lastIndexOf('/') + 1);
+    const perspectiveID = generateHash(pagePath);
     setMetadata(document, 'coveo-content-type', 'Perspective');
     setMetadata(document, 'type', 'Perspective');
+    setMetadata(document, 'perspectiveID', perspectiveID);
   }
 
   return dom.serialize();
