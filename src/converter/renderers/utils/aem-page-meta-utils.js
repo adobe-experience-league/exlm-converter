@@ -3,14 +3,12 @@ import crypto from 'crypto';
 import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
 
 /**
- * Generates a unique hash for a given input string and truncates it to 50 characters.
+ * Generates a unique immutable hash for a given input string and truncates it under 50 characters.
  */
 export function generateHash(input) {
-  return crypto
-    .createHash('sha256')
-    .update(input)
-    .digest('hex')
-    .substring(0, 50);
+  return Object.freeze(
+    crypto.createHash('sha256').update(input).digest('hex').substring(0, 49),
+  );
 }
 
 /**
