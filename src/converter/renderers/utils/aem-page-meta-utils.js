@@ -1,5 +1,17 @@
 import jsdom from 'jsdom';
+import crypto from 'crypto';
 import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
+
+/**
+ * Generates a unique hash for a given input string and truncates it to 50 characters.
+ */
+export function generateHash(input) {
+  return crypto
+    .createHash('sha256')
+    .update(input)
+    .digest('hex')
+    .substring(0, 50);
+}
 
 /**
  * Formats aem tagpicker data
