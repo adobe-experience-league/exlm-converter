@@ -111,7 +111,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     const perspectiveID = generateHash(pagePath);
     setMetadata(document, 'coveo-content-type', 'Perspective');
     setMetadata(document, 'type', 'Perspective');
-    setMetadata(document, 'perspectiveID', perspectiveID);
+    setMetadata(document, 'perspective-id', perspectiveID);
   }
 
   return dom.serialize();
