@@ -107,7 +107,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     path.includes('/perspectives/') &&
     !path.includes('/perspectives/authors')
   ) {
-    const pagePath = path.substring(path.lastIndexOf('/') + 1);
+    const pagePath = path.substring(path.indexOf('/perspectives/'));
     const perspectiveID = generateHash(pagePath);
     setMetadata(document, 'coveo-content-type', 'Perspective');
     setMetadata(document, 'type', 'Perspective');
