@@ -15,7 +15,7 @@ import {
   generateHash,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
-import { writeStringToFileAndGetPresignedURL } from '../modules/utils/file-utils.js';
+import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
