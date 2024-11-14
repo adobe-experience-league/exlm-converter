@@ -14,7 +14,7 @@
 export default async function publish({
   path,
   mode = 'live',
-  owner = 'dobe-experience-league',
+  owner = 'adobe-experience-league',
   repo,
   branch = 'main',
   apiKey,
