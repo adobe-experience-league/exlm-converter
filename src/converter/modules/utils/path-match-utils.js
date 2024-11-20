@@ -5,6 +5,7 @@ const playlistsMatchPath = '/:lang/playlists/:playlistId?';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
+const ioFiles = ['/redirects.json'];
 
 export const matchDocsPath = (path) => {
   const docsMatcher = match(docsMatchPath, { decode: decodeURIComponent });
@@ -48,3 +49,5 @@ export const matchFragmentPath = (path) => {
 };
 
 export const isFragmentPath = (path) => matchFragmentPath(path) !== false;
+
+export const isIoFile = (path) => ioFiles.includes(path);
