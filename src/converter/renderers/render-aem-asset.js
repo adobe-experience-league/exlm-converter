@@ -1,5 +1,5 @@
 import { AioCoreSDKError } from '@adobe/aio-lib-core-errors';
-import { writeFileAndGetPresignedURL } from '../modules/utils/file-utils.js';
+import { writeFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 
 /**
  * @param {ArrayBuffer} arrayBuffer

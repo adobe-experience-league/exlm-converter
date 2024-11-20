@@ -5,6 +5,29 @@ export const sendError = (code, message, headers = {}) => ({
       message,
     },
   },
-  headers,
+  headers: {
+    'Content-Type': 'application/json',
+    ...headers,
+  },
   statusCode: code,
+});
+
+export const sendSuccess = (body, headers = {}) => ({
+  body,
+  headers,
+  statusCode: 200,
+});
+
+export const sendSuccessJson = (body, headers = {}) =>
+  sendSuccess(body, {
+    ...headers,
+    'Content-Type': 'application/json',
+  });
+
+export const sendRedirect = (Location, headers = {}) => ({
+  headers: {
+    Location,
+    ...headers,
+  },
+  statusCode: 301,
 });

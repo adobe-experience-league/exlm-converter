@@ -6,7 +6,7 @@ import { addExtension } from '../modules/utils/path-utils.js';
 import ejsUtils from './utils/ejs-utils.js';
 import { formatHtml } from '../modules/utils/prettier-utils.js';
 import { htmlFragmentToDoc } from '../modules/utils/dom-utils.js';
-import { readFile } from '../modules/utils/file-utils.js';
+import { readFile } from '../../common/utils/file-utils.js';
 
 /**
  * Parse all YAML files in the given directory and return an object where each entry is the yaml file name and the value is the parsed yaml

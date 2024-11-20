@@ -4,7 +4,7 @@ import {
   htmlFragmentToDoc,
   toBlock,
 } from '../utils/dom-utils.js';
-import { writeFile } from '../utils/file-utils.js';
+import { writeFile } from '../../../common/utils/file-utils.js';
 
 const MAX_IMAGE_COUNT = 100;
 
