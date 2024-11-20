@@ -7,11 +7,9 @@ productGrid:
 signIn: 'Se connecter'
 profileMenu:
   - title: Mon profil de formation
-    url: '/fr/profile'
-  - title: Réalisations
-    url: '/fr/profile/bookmarks-and-achievements'
+    url: '/fr/home/profile-settings'
   - title: Contenu marqué d’un signet
-    url: '/fr/profile/bookmarks-and-achievements'
+    url: '/fr/home/bookmarks'
   - title: Se déconnecter
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /fr/perspectives
           - title: Certification
             subtitle: Expertise éprouvée des solutions marketing d’Adobe
-            url: /fr/docs/certification/program/overview
+            url: /fr/certification-home
           - title: Formation dirigée par un instructeur
             subtitle: Cours en direct et à la demande animés par des instructeurs certifiés Adobe
             url: https://learning.adobe.com/

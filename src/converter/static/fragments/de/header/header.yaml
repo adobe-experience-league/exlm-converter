@@ -7,11 +7,9 @@ productGrid:
 signIn: 'Anmelden'
 profileMenu:
   - title: Mein Lernprofil
-    url: '/de/profile'
-  - title: Erfolge
-    url: '/de/profile/bookmarks-and-achievements'
+    url: '/de/home/profile-settings'
   - title: Inhalt mit Lesezeichen
-    url: '/de/profile/bookmarks-and-achievements'
+    url: '/de/home/bookmarks'
   - title: Abmelden
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /de/perspectives
           - title: Zertifizierung
             subtitle: Bewährte Kompetenz von Adobe-Marketing-Lösungen
-            url: /de/docs/certification/program/overview
+            url: /de/certification-home
           - title: Schulungen mit Kursleiter
             subtitle: Live- und On-Demand-Kurse unter Leitung von Adobe-zertifizierten Lehrkräften
             url: https://learning.adobe.com/

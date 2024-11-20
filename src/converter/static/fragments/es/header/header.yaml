@@ -7,11 +7,9 @@ productGrid:
 signIn: 'Iniciar sesión'
 profileMenu:
   - title: Mi perfil de aprendizaje
-    url: '/es/profile'
-  - title: Logros
-    url: '/es/profile/bookmarks-and-achievements'
+    url: '/es/home/profile-settings'
   - title: Contenido con marcador
-    url: '/es/profile/bookmarks-and-achievements'
+    url: '/es/home/bookmarks'
   - title: Cerrar sesión
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /es/perspectives
           - title: Certificación
             subtitle: Experiencia demostrada de las soluciones de marketing de Adobe
-            url: /es/docs/certification/program/overview
+            url: /es/certification-home
           - title: Formación guiada por el instructor
             subtitle: Cursos en directo y a la carta dirigidos por instructores certificados por Adobe
             url: https://learning.adobe.com/

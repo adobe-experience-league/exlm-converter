@@ -7,11 +7,9 @@ productGrid:
 signIn: 'Aanmelden'
 profileMenu:
   - title: Mijn leerprofiel
-    url: '/nl/profile'
-  - title: Successen
-    url: '/nl/profile/bookmarks-and-achievements'
+    url: '/nl/home/profile-settings'
   - title: Gebookmarkte content
-    url: '/nl/profile/bookmarks-and-achievements'
+    url: '/nl/home/bookmarks'
   - title: Afmelden
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /nl/perspectives
           - title: Certificering
             subtitle: Bewezen expertise in Adobe-marketingoplossingen
-            url: /nl/docs/certification/program/overview
+            url: /nl/certification-home
           - title: Training onder leiding van instructeurs
             subtitle: Live en on demand-cursussen onder leiding van Adobe Certified Instructors
             url: https://learning.adobe.com/

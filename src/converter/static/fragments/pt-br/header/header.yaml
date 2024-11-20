@@ -7,11 +7,9 @@ productGrid:
 signIn: 'Fazer logon'
 profileMenu:
   - title: Meu perfil de aprendizagem
-    url: '/pt-br/profile'
-  - title: Conquistas
-    url: '/pt-br/profile/bookmarks-and-achievements'
+    url: '/pt-br/home/profile-settings'
   - title: Conteúdo marcado
-    url: '/pt-br/profile/bookmarks-and-achievements'
+    url: '/pt-br/home/bookmarks'
   - title: Fazer logoff
     url: '#'
 search:
@@ -65,7 +63,7 @@ nav:
             url: /pt-br/perspectives
           - title: Certificação
             subtitle: Experiência comprovada em soluções de marketing da Adobe
-            url: /pt-br/docs/certification/program/overview
+            url: /pt-br/certification-home
           - title: Treinamento com instrutor
             subtitle: Cursos ao vivo e sob demanda com instrutores certificados pela Adobe
             url: https://learning.adobe.com/

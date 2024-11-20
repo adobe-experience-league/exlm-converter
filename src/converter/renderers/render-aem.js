@@ -12,9 +12,10 @@ import {
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
   decodeCQMetadata,
+  generateHash,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
-import { writeStringToFileAndGetPresignedURL } from '../modules/utils/file-utils.js';
+import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -93,7 +94,12 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   // no indexing rule for author bio and signup-flow-modal pages
-  if (path.includes('/authors/') || path.includes('/signup-flow-modal')) {
+  if (
+    path.includes('/authors/') ||
+    path.includes('/signup-flow-modal') ||
+    path.includes('/home-fragment') ||
+    path.includes('/home/nav')
+  ) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
@@ -101,8 +107,11 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     path.includes('/perspectives/') &&
     !path.includes('/perspectives/authors')
   ) {
+    const pagePath = path.substring(path.indexOf('/perspectives/'));
+    const perspectiveID = generateHash(pagePath);
     setMetadata(document, 'coveo-content-type', 'Perspective');
     setMetadata(document, 'type', 'Perspective');
+    setMetadata(document, 'perspective-id', perspectiveID);
   }
 
   return dom.serialize();
