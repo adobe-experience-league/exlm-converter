@@ -132,6 +132,13 @@ export function updateCoveoSolutionMetadata(document) {
     // Decode and split each feature into parts
     const decodedFeatures = decodeAEMTagValues(features);
 
+    // Flatten the decoded features and join them with '|'
+    const flattenedDecodedFeatures = decodedFeatures
+      .map((parts) => parts.join('|'))
+      .join(',');
+
+    setMetadata(document, 'feature-solution', flattenedDecodedFeatures);
+
     // Transform the features to coveo compatible format
     const transformedFeatures = decodedFeatures
       .map((parts) => {
