@@ -126,6 +126,9 @@ export async function getPresignedUploadURL(filePath, expiryInSeconds) {
  * @param {*} expiryInSeconds url expiration in seconds
  * @returns
  */
-export async function getPresignedDownloadURL(filePath, expiryInSeconds) {
+export async function getPresignedDownloadURL(
+  filePath,
+  expiryInSeconds = PRESIGNURL_EXPIRY,
+) {
   return getPresignedUrl(filePath, expiryInSeconds, 'r');
 }

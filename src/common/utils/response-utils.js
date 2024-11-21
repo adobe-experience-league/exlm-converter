@@ -26,6 +26,7 @@ export const sendSuccessJson = (body, headers = {}) =>
 
 export const sendRedirect = (Location, headers = {}) => ({
   headers: {
+    body: '',
     Location,
     ...headers,
   },

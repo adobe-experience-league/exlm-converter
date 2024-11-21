@@ -20,11 +20,13 @@ import {
   isCoursesPath,
   isDocsPath,
   isFragmentPath,
+  isIoFile,
   isLandingPath,
   isPlaylistsPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
 import { paramMemoryStore } from './modules/utils/param-memory-store.js';
+import renderIoFile from './renderers/render-io-file.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -77,6 +79,10 @@ export const render = async function render(path, params) {
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
     return renderFragment(path, dir);
+  }
+
+  if (isIoFile(path)) {
+    return renderIoFile(path);
   }
 
   // Handle AEM UE Pages by default
