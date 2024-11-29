@@ -76,21 +76,28 @@ async function fetchTaxonomyData(pagePath, params, taxonomy) {
   const taxonomyPath = `/${taxonomy}.json`;
   const lang = pagePath.split('/')[1];
   const language = lang ? getMatchLanguageForTag(lang) : 'default';
-
-  // eslint-disable-next-line no-use-before-define
-  const data = await renderAem(taxonomyPath, params);
-
   let result;
-  if (data.headers?.location) {
-    // Handle AEM response larger than 1MB
-    const filePath = data.headers.location;
-    const fileName = path.basename(filePath);
-    const largeResponse = await readFile(fileName);
-    const parsedLargeResponse = JSON.parse(largeResponse);
-    result = parsedLargeResponse?.[language]?.data || [];
-  } else {
-    const parsedData = JSON.parse(data.body);
-    result = parsedData?.[language]?.data || [];
+  try {
+    // eslint-disable-next-line no-use-before-define
+    const data = await renderAem(taxonomyPath, params);
+
+    if (data?.headers?.location) {
+      // Handle AEM response larger than 1MB
+      const filePath = data.headers.location;
+      const fileName = path.basename(filePath);
+      const largeResponse = await readFile(fileName);
+      const parsedLargeResponse = JSON.parse(largeResponse);
+      result = parsedLargeResponse?.[language]?.data || [];
+    } else if (data?.body) {
+      const parsedData = JSON.parse(data.body);
+      result = parsedData?.[language]?.data || [];
+    } else {
+      aioLogger.error(`Unexpected response format for ${taxonomy}:`, data);
+      result = [];
+    }
+  } catch (error) {
+    aioLogger.error(`Error fetching ${taxonomy} data:`, error);
+    result = [];
   }
 
   aioLogger.debug(
