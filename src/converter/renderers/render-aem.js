@@ -1,4 +1,5 @@
 import jsdom from 'jsdom';
+import path from 'path';
 import Logger from '@adobe/aio-lib-core-logging';
 import { AioCoreSDKError } from '@adobe/aio-lib-core-errors';
 import { isBinary, isHTML } from '../modules/utils/media-utils.js';
@@ -14,20 +15,124 @@ import {
   decodeCQMetadata,
   generateHash,
 } from './utils/aem-page-meta-utils.js';
+import { getMatchLanguageForTag } from '../../common/utils/language-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
-import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
+import {
+  writeStringToFileAndGetPresignedURL,
+  readFile,
+} from '../../common/utils/file-utils.js';
+import stateLib from '../../common/utils/state-lib-util.js';
 
 export const aioLogger = Logger('render-aem');
 
 const byteSize = (str) => new Blob([str]).size;
 const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 for good measure :)
 
+const mapTagsToTitles = (meta, taxonomyData) => {
+  let locTitles = [];
+  if (!meta || meta.length === 0) return [];
+
+  const tags = meta.split(',').map((tag) => tag.trim());
+  if (
+    !taxonomyData ||
+    !Array.isArray(taxonomyData) ||
+    taxonomyData.length === 0
+  ) {
+    aioLogger.error('Invalid or empty taxonomy data:', taxonomyData);
+    return [];
+  }
+
+  locTitles = tags
+    .map((tag) => {
+      const match = taxonomyData.find((item) => item.tag.trim() === tag);
+      return match ? match.title : null;
+    })
+    .filter(Boolean);
+
+  if (locTitles.length > 0) {
+    locTitles = locTitles.join(', ');
+  } else {
+    locTitles = [];
+  }
+  return locTitles;
+};
+
+// Fetch tags data from AEM taxonomy sheets
+async function fetchTaxonomyData(pagePath, params, taxonomy) {
+  const state = await stateLib.init();
+  const taxonomyState = await state.get(taxonomy);
+  if (taxonomyState?.value) {
+    aioLogger.debug(`Using cached ${taxonomy}`);
+    try {
+      const cachedData = JSON.parse(taxonomyState.value);
+      if (Array.isArray(cachedData)) return cachedData;
+      aioLogger.warn(`Cached ${taxonomy} is not an array, ignoring.`);
+    } catch (error) {
+      aioLogger.error(`Error parsing cached ${taxonomy} data:`, error);
+    }
+  }
+
+  aioLogger.debug(`Fetching ${taxonomy} data from AEM taxonomy sheet`);
+  const taxonomyPath = `/${taxonomy}.json`;
+  const lang = pagePath.split('/')[1];
+  const language = lang ? getMatchLanguageForTag(lang) : 'default';
+
+  // eslint-disable-next-line no-use-before-define
+  const data = await renderAem(taxonomyPath, params);
+
+  let result;
+  if (data.headers?.location) {
+    // Handle AEM response larger than 1MB
+    const filePath = data.headers.location;
+    const fileName = path.basename(filePath);
+    const largeResponse = await readFile(fileName);
+    const parsedLargeResponse = JSON.parse(largeResponse);
+    result = parsedLargeResponse?.[language]?.data || [];
+  } else {
+    const parsedData = JSON.parse(data.body);
+    result = parsedData?.[language]?.data || [];
+  }
+
+  aioLogger.debug(
+    `Fetched ${result.length} ${taxonomy} items and caching them.`,
+  );
+  if (result?.length) {
+    // store for 24 hours (86400 seconds)
+    await state.put(taxonomy, JSON.stringify(result), { ttl: 86400 });
+  }
+  return result;
+}
+
 /**
  * Transforms page metadata
  */
-async function transformAemPageMetadata(htmlString, params) {
+async function transformAemPageMetadata(htmlString, params, pagePath) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
+
+  const roles = await fetchTaxonomyData(pagePath, params, 'roles');
+  const levels = await fetchTaxonomyData(pagePath, params, 'levels');
+  const features = await fetchTaxonomyData(pagePath, params, 'features');
+
+  const roleMeta = getMetadata(document, 'role');
+  const levelMeta = getMetadata(document, 'level');
+  const featureMeta = getMetadata(document, 'feature');
+
+  const roleTitles = mapTagsToTitles(roleMeta, roles);
+  if (roleTitles && roleTitles.length > 0) {
+    setMetadata(document, 'loc-role', roleTitles);
+  }
+
+  const levelTitles = mapTagsToTitles(levelMeta, levels);
+  if (levelTitles && levelTitles.length > 0) {
+    setMetadata(document, 'loc-level', levelTitles);
+  }
+
+  const featureTitles = mapTagsToTitles(featureMeta, features);
+  if (featureTitles && featureTitles.length > 0) {
+    setMetadata(document, 'loc-feature', featureTitles);
+  }
+
   decodeCQMetadata(document, 'cq-tags');
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
@@ -78,7 +183,7 @@ async function transformAemPageMetadata(htmlString, params) {
 /**
  * @param {string} htmlString
  */
-function transformHTML(htmlString, aemAuthorUrl, path) {
+function transformHTML(htmlString, aemAuthorUrl, pagePath) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -95,20 +200,22 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
   });
   // no indexing rule for author bio and signup-flow-modal pages
   if (
-    path.includes('/authors/') ||
-    path.includes('/signup-flow-modal') ||
-    path.includes('/home-fragment') ||
-    path.includes('/home/nav')
+    pagePath.includes('/authors/') ||
+    pagePath.includes('/signup-flow-modal') ||
+    pagePath.includes('/home-fragment') ||
+    pagePath.includes('/home/nav')
   ) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
   if (
-    path.includes('/perspectives/') &&
-    !path.includes('/perspectives/authors')
+    pagePath.includes('/perspectives/') &&
+    !pagePath.includes('/perspectives/authors')
   ) {
-    const pagePath = path.substring(path.indexOf('/perspectives/'));
-    const perspectiveID = generateHash(pagePath);
+    const currentPagePath = pagePath.substring(
+      pagePath.indexOf('/perspectives/'),
+    );
+    const perspectiveID = generateHash(currentPagePath);
     setMetadata(document, 'coveo-content-type', 'Perspective');
     setMetadata(document, 'type', 'Perspective');
     setMetadata(document, 'perspective-id', perspectiveID);
@@ -130,7 +237,7 @@ function sendError(code, message) {
 /**
  * Renders content from AEM UE pages
  */
-export default async function renderAem(path, params) {
+export default async function renderAem(pagePath, params) {
   const {
     aemAuthorUrl,
     aemOwner,
@@ -147,7 +254,7 @@ export default async function renderAem(path, params) {
     return sendError(500, 'Missing AEM configuration');
   }
 
-  const aemURL = `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${path}?wcmmode=disabled`;
+  const aemURL = `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${pagePath}?wcmmode=disabled`;
   const url = new URL(aemURL);
 
   const fetchHeaders = { 'cache-control': 'no-cache' };
@@ -179,16 +286,16 @@ export default async function renderAem(path, params) {
   let statusCode = resp.status;
   if (isBinary(contentType)) {
     const { assetBody, assetHeaders, assetStatusCode } = await renderAemAsset(
-      path,
+      pagePath,
       resp,
     );
     body = assetBody; // convert to base64 string, see: https://github.com/apache/openwhisk/blob/master/docs/webactions.md
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = transformHTML(await resp.text(), aemAuthorUrl, path);
+    body = transformHTML(await resp.text(), aemAuthorUrl, pagePath);
     // Update page metadata for AEM Pages
-    body = await transformAemPageMetadata(body, params);
+    body = await transformAemPageMetadata(body, params, pagePath);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
@@ -196,7 +303,7 @@ export default async function renderAem(path, params) {
     if (!isLessThanOneMB(body)) {
       try {
         const location = await writeStringToFileAndGetPresignedURL({
-          filePath: path,
+          filePath: pagePath,
           str: body,
         });
         body = '';
@@ -204,7 +311,7 @@ export default async function renderAem(path, params) {
         statusCode = 302;
       } catch (e) {
         if (e instanceof AioCoreSDKError) {
-          body = `Error while serving this path: ${path}. See error logs.`;
+          body = `Error while serving this path: ${pagePath}. See error logs.`;
           headers = { 'Content-Type': 'text/plain' };
           statusCode = 500;
           console.error(e);
