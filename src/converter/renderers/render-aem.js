@@ -30,18 +30,13 @@ const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 fo
 
 const mapTagsToTitles = (meta, taxonomyData) => {
   let locTitles = [];
-  if (!meta || meta.length === 0) return [];
-
-  const tags = meta.split(',').map((tag) => tag.trim());
-  if (
-    !taxonomyData ||
-    !Array.isArray(taxonomyData) ||
-    taxonomyData.length === 0
-  ) {
+  if (!meta?.length) return [];
+  if (!Array.isArray(taxonomyData) || !taxonomyData?.length) {
     aioLogger.error('Invalid or empty taxonomy data:', taxonomyData);
     return [];
   }
 
+  const tags = meta.split(',').map((tag) => tag.trim());
   locTitles = tags
     .map((tag) => {
       const match = taxonomyData.find((item) => item.tag.trim() === tag);
@@ -49,10 +44,8 @@ const mapTagsToTitles = (meta, taxonomyData) => {
     })
     .filter(Boolean);
 
-  if (locTitles.length > 0) {
+  if (locTitles.length) {
     locTitles = locTitles.join(', ');
-  } else {
-    locTitles = [];
   }
   return locTitles;
 };

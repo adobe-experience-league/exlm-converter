@@ -35,9 +35,5 @@ export const getMatchLanguage = (lang) => {
   return lang;
 };
 
-export const getMatchLanguageForTag = (lang) => {
-  if (lang) {
-    return TAG_LANGUAGES[lang] || 'default';
-  }
-  return 'default';
-};
+export const getMatchLanguageForTag = (lang) =>
+  TAG_LANGUAGES[lang] || 'default';
