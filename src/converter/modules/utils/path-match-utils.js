@@ -5,7 +5,12 @@ const playlistsMatchPath = '/:lang/playlists/:playlistId?';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
-const ioFiles = ['/redirects.json'];
+const ioFiles = [
+  '/redirects.json',
+  '/features.json',
+  '/roles.json',
+  '/levels.json',
+];
 
 export const matchDocsPath = (path) => {
   const docsMatcher = match(docsMatchPath, { decode: decodeURIComponent });
