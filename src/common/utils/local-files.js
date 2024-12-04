@@ -2,6 +2,25 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
+/**
+ *
+ * @param {fs.Stats} stat
+ * @returns {import('@adobe/aio-lib-files').RemoteFileProperties}
+ */
+function statToRemoteFileProperties(stats) {
+  return {
+    creationTime: stats.birthtime.toISOString(),
+    lastModified: stats.mtime.toISOString(),
+    etag: `${stats.ino}-${stats.mtimeMs}`,
+    contentLength: stats.size,
+    contentType: '',
+    isDirectory: stats.isDirectory(),
+    isPublic: false,
+    url: '',
+    internalUrl: '',
+  };
+}
+
 export default class LocalFiles {
   constructor() {
     this.tmpDir = os.tmpdir();
@@ -46,5 +65,20 @@ export default class LocalFiles {
 
   async read(filePath) {
     return fs.readFileSync(this.getTempPath(filePath));
+  }
+
+  /**
+   * @param {string} filePath
+   * @returns {Promise<Array<import('@adobe/aio-lib-files').RemoteFileProperties>>}
+   */
+  async list(filePath) {
+    const folderPath = this.getTempPath(filePath);
+    // get all files in directory and return type {import('@adobe/aio-lib-files').RemoteFileProperties}
+    return (
+      fs.readdirSync(folderPath)?.map((file) => ({
+        name: filePath,
+        ...statToRemoteFileProperties(fs.statSync(path.join(folderPath, file))),
+      })) || []
+    );
   }
 }
