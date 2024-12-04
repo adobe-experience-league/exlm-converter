@@ -18,6 +18,7 @@ import {
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
+import { getMatchLanguageForTag } from '../../common/utils/language-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -27,44 +28,45 @@ const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 fo
 /**
  * Transforms page metadata
  */
-async function transformAemPageMetadata(htmlString, params, path) {
+async function transformAemPageMetadata(htmlString, params, pagePath) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
+  const lang = pagePath.split('/')[1];
+  const language = lang ? getMatchLanguageForTag(lang) : 'default';
+
   const client = new FranklinServletClient(params);
   const taxonomyTypes = ['roles', 'levels', 'features'];
-  const taxonomyResults = await Promise.allSettled(
-    taxonomyTypes.map((type) => client.fetchAndCache(path, type)),
+
+  const fetchTaxonomy = async (type) => {
+    const res = await client.fetchFromServlet(`/${type}.json`);
+    const json = await res.json();
+    return json[language]?.data;
+  };
+
+  const taxanomyJsons = await Promise.allSettled(
+    taxonomyTypes.map(fetchTaxonomy),
   );
 
-  const taxonomyData = taxonomyTypes.reduce((acc, type, index) => {
-    acc[type] =
-      taxonomyResults[index].status === 'fulfilled'
-        ? taxonomyResults[index].value
-        : [];
+  const taxonomyData = taxanomyJsons.reduce((acc, curr, index) => {
+    if (curr.status === 'fulfilled') acc[taxonomyTypes[index]] = curr.value;
     return acc;
   }, {});
 
   const { roles, levels, features } = taxonomyData;
 
-  const roleMeta = getMetadata(document, 'role');
-  const levelMeta = getMetadata(document, 'level');
-  const featureMeta = getMetadata(document, 'feature');
+  const createLocMetadata = (metaName, metaTaxonomyData) => {
+    const meta = getMetadata(document, metaName);
+    const titles = mapTagsToTitles(meta, metaTaxonomyData);
+    if (titles && titles.length > 0) {
+      // why are these named `loc-`? why not the actual name?
+      setMetadata(document, `loc-${metaName}`, titles);
+    }
+  };
 
-  const roleTitles = mapTagsToTitles(roleMeta, roles);
-  if (roleTitles && roleTitles.length > 0) {
-    setMetadata(document, 'loc-role', roleTitles);
-  }
-
-  const levelTitles = mapTagsToTitles(levelMeta, levels);
-  if (levelTitles && levelTitles.length > 0) {
-    setMetadata(document, 'loc-level', levelTitles);
-  }
-
-  const featureTitles = mapTagsToTitles(featureMeta, features);
-  if (featureTitles && featureTitles.length > 0) {
-    setMetadata(document, 'loc-feature', featureTitles);
-  }
+  createLocMetadata('role', roles);
+  createLocMetadata('level', levels);
+  createLocMetadata('feature', features);
 
   decodeCQMetadata(document, 'cq-tags');
   updateEncodedMetadata(document, 'role');
@@ -185,22 +187,10 @@ export default async function renderAem(path, params) {
     return sendError(500, 'Missing AEM configuration');
   }
 
-  const aemURL = `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${path}?wcmmode=disabled`;
-  const url = new URL(aemURL);
-
-  const fetchHeaders = { 'cache-control': 'no-cache' };
-  if (authorization) {
-    fetchHeaders.authorization = authorization;
-  }
-  if (sourceLocation) {
-    fetchHeaders['x-content-source-location'] = sourceLocation;
-  }
-
   let resp;
-
   try {
-    aioLogger.info('fetching AEM content', url);
-    resp = await fetch(url, { headers: fetchHeaders });
+    const client = new FranklinServletClient(params);
+    resp = await client.fetchFromServlet(path, sourceLocation);
   } catch (e) {
     aioLogger.error('Error fetching AEM content', e);
     return sendError(500, 'Internal Server Error');
