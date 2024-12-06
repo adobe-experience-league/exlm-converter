@@ -171,3 +171,31 @@ export function updateCoveoSolutionMetadata(document) {
     setMetadata(document, 'original-solution', solutionsMeta.join(', '));
   }
 }
+
+/**
+ * Utility function to map meta tags to titles based on a taxonomy data set.
+ *
+ * @param {string} meta
+ * @param {Array} taxonomyData
+ * @returns {string[]}
+ */
+export const mapTagsToTitles = (meta, taxonomyData) => {
+  let locTitles = [];
+  if (!meta?.length) return [];
+  if (!Array.isArray(taxonomyData) || !taxonomyData?.length) {
+    return [];
+  }
+
+  const tags = meta.split(',').map((tag) => tag.trim());
+  locTitles = tags
+    .map((tag) => {
+      const match = taxonomyData.find((item) => item.tag.trim() === tag);
+      return match ? match.title : null;
+    })
+    .filter(Boolean);
+
+  if (locTitles.length) {
+    locTitles = locTitles.join(', ');
+  }
+  return locTitles;
+};

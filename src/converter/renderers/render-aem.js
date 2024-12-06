@@ -13,9 +13,12 @@ import {
   updateCoveoSolutionMetadata,
   decodeCQMetadata,
   generateHash,
+  mapTagsToTitles,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
+import FranklinServletClient from './utils/franklin-servlet-client.js';
+import { getMatchLanguageForTag } from '../../common/utils/language-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -25,9 +28,45 @@ const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 fo
 /**
  * Transforms page metadata
  */
-async function transformAemPageMetadata(htmlString, params) {
+async function transformAemPageMetadata(htmlString, params, path) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
+
+  const lang = path.split('/')[1];
+  const language = lang ? getMatchLanguageForTag(lang) : 'default';
+
+  const client = new FranklinServletClient(params);
+  const taxonomyTypes = ['roles', 'levels', 'features'];
+
+  const fetchTaxonomy = async (type) => {
+    const res = await client.fetchFromServlet(`/${type}.json`);
+    const json = await res.json();
+    return json[language]?.data;
+  };
+
+  const taxanomyJsons = await Promise.allSettled(
+    taxonomyTypes.map(fetchTaxonomy),
+  );
+
+  const taxonomyData = taxanomyJsons.reduce((acc, curr, index) => {
+    if (curr.status === 'fulfilled') acc[taxonomyTypes[index]] = curr.value;
+    return acc;
+  }, {});
+
+  const { roles, levels, features } = taxonomyData;
+
+  const createLocMetadata = (metaName, metaTaxonomyData) => {
+    const meta = getMetadata(document, metaName);
+    const titles = mapTagsToTitles(meta, metaTaxonomyData);
+    if (titles && titles.length > 0) {
+      setMetadata(document, `loc-${metaName}`, titles);
+    }
+  };
+
+  createLocMetadata('role', roles);
+  createLocMetadata('level', levels);
+  createLocMetadata('feature', features);
+
   decodeCQMetadata(document, 'cq-tags');
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
@@ -147,22 +186,10 @@ export default async function renderAem(path, params) {
     return sendError(500, 'Missing AEM configuration');
   }
 
-  const aemURL = `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${path}?wcmmode=disabled`;
-  const url = new URL(aemURL);
-
-  const fetchHeaders = { 'cache-control': 'no-cache' };
-  if (authorization) {
-    fetchHeaders.authorization = authorization;
-  }
-  if (sourceLocation) {
-    fetchHeaders['x-content-source-location'] = sourceLocation;
-  }
-
   let resp;
-
   try {
-    aioLogger.info('fetching AEM content', url);
-    resp = await fetch(url, { headers: fetchHeaders });
+    const client = new FranklinServletClient(params);
+    resp = await client.fetchFromServlet(path, sourceLocation);
   } catch (e) {
     aioLogger.error('Error fetching AEM content', e);
     return sendError(500, 'Internal Server Error');
@@ -188,7 +215,7 @@ export default async function renderAem(path, params) {
   } else if (isHTML(contentType)) {
     body = transformHTML(await resp.text(), aemAuthorUrl, path);
     // Update page metadata for AEM Pages
-    body = await transformAemPageMetadata(body, params);
+    body = await transformAemPageMetadata(body, params, path);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {
