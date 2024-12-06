@@ -65,8 +65,8 @@ export const main = async function main(params) {
       }
     } else {
       const responseText = await resp.text();
-      console.log(`Response Text:`, responseText);
-      console.log(`Response Headers:`, ...resp.headers);
+      console.log(`Response Text 2:`, responseText);
+      console.log(`Response Headers 2:`, ...resp.headers);
     }
   } catch (e) {
     return sendError(500, 'Internal Server Error');
