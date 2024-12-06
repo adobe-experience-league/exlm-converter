@@ -35,7 +35,7 @@ export const main = async function main(params) {
   const path = __ow_path || '';
 
   try {
-    const url = `https://experienceleague.adobe.com/api/tocs${path}?lang=${lang}`;
+    const url = `https://experienceleague.adobe.com/api/tocs${path}?lang=${lang}&cachebust=${Date.now()}`;
     console.log(`Fetching TOC from ${url}`);
     const resp = await fetch(url, {
       headers: {
