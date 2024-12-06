@@ -48,6 +48,15 @@ application:
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
+          testapi:
+            function: dist/testapi # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
           files:
             function: dist/files # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
