@@ -37,7 +37,12 @@ export const main = async function main(params) {
   try {
     const url = `https://experienceleague.adobe.com/api/tocs${path}?lang=${lang}`;
     console.log(`Fetching TOC from ${url}`);
-    const resp = await fetch(url);
+    const resp = await fetch(url, {
+      headers: {
+        Pragma:
+          'akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-check-cacheable, akamai-x-get-cache-key, akamai-x-get-extracted-values, akamai-x-get-nonces, akamai-x-get-ssl-client-session-id, akamai-x-get-true-cache-key, akamai-x-serial-no',
+      },
+    });
     console.log(`Response: ${resp}`);
     console.log(`Response: ${resp.status}`);
     if (resp.ok) {
