@@ -58,6 +58,10 @@ export const main = async function main(params) {
           statusCode: 200,
         };
       }
+    } else {
+      const responseText = await resp.text();
+      console.log(`Response Text:`, responseText);
+      console.log(`Response Headers:`, ...resp.headers);
     }
   } catch (e) {
     return sendError(500, 'Internal Server Error');
