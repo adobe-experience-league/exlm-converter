@@ -45,6 +45,7 @@ export const main = async function main(params) {
     });
     console.log(`Response: ${resp}`);
     console.log(`Response: ${resp.status}`);
+    console.log(`Response Headers:`, ...resp.headers);
     if (resp.ok) {
       const json = await resp.json();
       console.log(`JSON: ${JSON.stringify(json)}`);
@@ -66,7 +67,6 @@ export const main = async function main(params) {
     } else {
       const responseText = await resp.text();
       console.log(`Response Text 2:`, responseText);
-      console.log(`Response Headers 2:`, ...resp.headers);
     }
   } catch (e) {
     return sendError(500, 'Internal Server Error');
