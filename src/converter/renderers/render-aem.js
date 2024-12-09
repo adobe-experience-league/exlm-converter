@@ -39,9 +39,14 @@ async function transformAemPageMetadata(htmlString, params, path) {
   const taxonomyTypes = ['roles', 'levels', 'features'];
 
   const fetchTaxonomy = async (type) => {
-    const res = await client.fetchFromServlet(`/${type}.json`);
-    const json = await res.json();
-    return json[language]?.data;
+    try {
+      const res = await client.fetchFromServlet(`/${type}.json`);
+      const json = await res.json();
+      return json[language]?.data;
+    } catch (e) {
+      aioLogger.error(`Failed to fetch taxonomy data for : ${type}`, e);
+      return [];
+    }
   };
 
   const taxanomyJsons = await Promise.allSettled(
