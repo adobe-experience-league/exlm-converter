@@ -114,7 +114,7 @@ export default class ExlClient {
    * @param {string} endpoint - EXL_LABEL_ENDPOINTS
    * @param {string} id
    * @param {string} lang
-   * @returns {string}
+   * @returns {Promise<string>}
    */
   async getLabelFromEndpoint(endpoint, id, lang = 'en') {
     if (lang === 'en') {

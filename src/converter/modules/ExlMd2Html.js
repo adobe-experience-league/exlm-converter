@@ -100,6 +100,7 @@ export default async function md2html({
   createMetaData(document, meta, data, pageType, solutions);
   handleUrls(document, reqLang, pageType);
   updateAnchors(document);
+  const asyncDecorationPromises = [];
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
@@ -110,7 +111,8 @@ export default async function md2html({
     createLandingLists(document);
   } else {
     createArticleMetaData(document, meta);
-    createVideo(document);
+    // we dont want to block the rendering of the page
+    asyncDecorationPromises.push(createVideo(document));
     createBadge(document);
     createRelatedArticles(document);
     createNote(document);
@@ -143,6 +145,8 @@ export default async function md2html({
     handleTooManyImages(document, path);
     // leave this at the end - EXLM 1442 1510 Splitting into multiple Sections
     createSections(document);
+    // wait till all async blocks are done rendering
+    await Promise.allSettled(asyncDecorationPromises);
   }
 
   return {
