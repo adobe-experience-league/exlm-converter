@@ -132,6 +132,13 @@ export function updateCoveoSolutionMetadata(document) {
     // Decode and split each feature into parts
     const decodedFeatures = decodeAEMTagValues(features);
 
+    // Flatten the decoded features and join them with '|'
+    const flattenedDecodedFeatures = decodedFeatures
+      .map((parts) => parts.join('|'))
+      .join(',');
+
+    setMetadata(document, 'feature-solution', flattenedDecodedFeatures);
+
     // Transform the features to coveo compatible format
     const transformedFeatures = decodedFeatures
       .map((parts) => {
@@ -164,3 +171,31 @@ export function updateCoveoSolutionMetadata(document) {
     setMetadata(document, 'original-solution', solutionsMeta.join(', '));
   }
 }
+
+/**
+ * Utility function to map meta tags to titles based on a taxonomy data set.
+ *
+ * @param {string} meta
+ * @param {Array} taxonomyData
+ * @returns {string[]}
+ */
+export const mapTagsToTitles = (meta, taxonomyData) => {
+  let locTitles = [];
+  if (!meta?.length) return [];
+  if (!Array.isArray(taxonomyData) || !taxonomyData?.length) {
+    return [];
+  }
+
+  const tags = meta.split(',').map((tag) => tag.trim());
+  locTitles = tags
+    .map((tag) => {
+      const match = taxonomyData.find((item) => item.tag.trim() === tag);
+      return match ? match.title : null;
+    })
+    .filter(Boolean);
+
+  if (locTitles.length) {
+    locTitles = locTitles.join(', ');
+  }
+  return locTitles;
+};
