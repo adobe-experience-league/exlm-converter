@@ -1,6 +1,10 @@
 import jsdom from 'jsdom';
 import crypto from 'crypto';
 import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
+import {
+  createDefaultExlClient,
+  EXL_LABEL_ENDPOINTS,
+} from '../../modules/ExlClient.js';
 
 /**
  * Generates a unique immutable hash for a given input string and truncates it under 50 characters.
@@ -198,4 +202,55 @@ export const mapTagsToTitles = (meta, taxonomyData) => {
     locTitles = locTitles.join(', ');
   }
   return locTitles;
+};
+
+/**
+ * Creates translated metadata for role, level, and feature meta types.
+ *
+ * @param {Document} document
+ * @param {string} lang
+ * @returns {Promise<void>} A promise that resolves once all metadata is updated.
+ */
+export const createTranslatedMetadata = async (document, lang) => {
+  const defaultExlClient = await createDefaultExlClient();
+
+  const metaTypes = {
+    roles: 'role',
+    levels: 'level',
+    features: 'feature',
+  };
+
+  await Promise.all(
+    Object.keys(metaTypes).map(async (type) => {
+      const metaContent = getMetadata(document, metaTypes[type]);
+
+      if (metaContent) {
+        const ids = metaContent.split(',');
+
+        const translatedLabels = await Promise.all(
+          ids.map(async (id) => {
+            try {
+              return await defaultExlClient.getLabelFromEndpoint(
+                EXL_LABEL_ENDPOINTS[type.toUpperCase()],
+                id.trim(),
+                lang,
+              );
+            } catch (e) {
+              console.log(
+                `Failed to fetch translated label for ${type}: ${id.trim()}`,
+                e,
+              );
+              return id.trim();
+            }
+          }),
+        );
+
+        setMetadata(
+          document,
+          `loc-${metaTypes[type]}`,
+          translatedLabels.join(','),
+        );
+      }
+    }),
+  );
 };
