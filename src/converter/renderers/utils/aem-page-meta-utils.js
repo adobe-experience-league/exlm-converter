@@ -221,35 +221,36 @@ export const createTranslatedMetadata = async (document, lang) => {
   };
 
   await Promise.all(
-    Object.keys(metaTypes).map(async (type) => {
-      const metaContent = getMetadata(document, metaTypes[type]);
+    Object.keys(metaTypes).map(async (key) => {
+      const metaType = metaTypes[key];
+      const metaContent = getMetadata(document, metaType);
 
       if (metaContent) {
-        const ids = metaContent.split(',');
+        const tags = metaContent.split(',').map((tag) => tag.trim());
 
-        const translatedLabels = await Promise.all(
-          ids.map(async (id) => {
-            try {
-              return await defaultExlClient.getLabelFromEndpoint(
-                EXL_LABEL_ENDPOINTS[type.toUpperCase()],
-                id.trim(),
+        const translatedLabels = await Promise.allSettled(
+          tags.map((tag) =>
+            defaultExlClient
+              .getLabelFromEndpoint(
+                EXL_LABEL_ENDPOINTS[key.toUpperCase()],
+                tag,
                 lang,
-              );
-            } catch (e) {
-              console.log(
-                `Failed to fetch translated label for ${type}: ${id.trim()}`,
-                e,
-              );
-              return id.trim();
-            }
-          }),
+              )
+              .catch((error) => {
+                console.error(
+                  `Error fetching translated label for ${metaType} with Tag: ${tag}`,
+                  error,
+                );
+                return tag;
+              }),
+          ),
         );
 
-        setMetadata(
-          document,
-          `loc-${metaTypes[type]}`,
-          translatedLabels.join(','),
+        const localizedLabels = translatedLabels.map((result, index) =>
+          result.status === 'fulfilled' ? result.value : tags[index],
         );
+
+        setMetadata(document, `loc-${metaType}`, localizedLabels.join(','));
       }
     }),
   );
