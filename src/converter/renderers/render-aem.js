@@ -98,9 +98,10 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
-  // no indexing rule for author bio and signup-flow-modal pages
+  // no indexing rule for templates, author bio and signup-flow-modal pages
   if (
     path.includes('/authors/') ||
+    path.includes('/perspectives/templates') ||
     path.includes('/signup-flow-modal') ||
     path.includes('/home-fragment') ||
     path.includes('/home/nav')
@@ -110,7 +111,10 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
 
   if (
     path.includes('/perspectives/') &&
-    !path.includes('/perspectives/authors')
+    !(
+      path.includes('/perspectives/authors') ||
+      path.includes('/perspectives/templates')
+    )
   ) {
     const pagePath = path.substring(path.indexOf('/perspectives/'));
     const perspectiveID = generateHash(pagePath);
