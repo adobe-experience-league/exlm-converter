@@ -98,7 +98,7 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
-  // no indexing rule for author bio and signup-flow-modal pages
+  // no indexing rule for author bio, templates, signup-flow-modal, nav and fragment pages
   if (
     path.includes('/authors/') ||
     path.includes('/templates/') ||
