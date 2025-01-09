@@ -18,6 +18,7 @@ import {
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
+import { translateBlockTags } from './utils/tag-translation-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -83,7 +84,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
 /**
  * @param {string} htmlString
  */
-function transformHTML(htmlString, aemAuthorUrl, path) {
+async function transformHTML(htmlString, aemAuthorUrl, path) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -119,6 +120,9 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     setMetadata(document, 'type', 'Perspective');
     setMetadata(document, 'perspective-id', perspectiveID);
   }
+
+  const lang = path.split('/')[1];
+  await translateBlockTags(document, lang);
 
   return dom.serialize();
 }
@@ -180,7 +184,7 @@ export default async function renderAem(path, params) {
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = transformHTML(await resp.text(), aemAuthorUrl, path);
+    body = await transformHTML(await resp.text(), aemAuthorUrl, path);
     // Update page metadata for AEM Pages
     body = await transformAemPageMetadata(body, params, path);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
