@@ -88,13 +88,13 @@ export const translateBlockTags = async (document, lang) => {
         }),
       );
 
-      // Create the tags string in format : [ feature : tag_en : tag_translated : solution if present ]
+      // Create the tags string in format :[ key / solution /  tag_en : tag_translated ]
       const tags = translatedTags
         .map((translatedTag) => {
           const { solution, key, tag, result } = translatedTag;
           return solution
-            ? `${key}/${solution}/${tag}:${result}:`
-            : `${key}/${tag}:${result}:`;
+            ? `${key}/${solution}/${tag}:${result}`
+            : `${key}/${tag}:${result}`;
         })
         .join(',');
 
