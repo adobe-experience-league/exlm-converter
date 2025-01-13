@@ -61,12 +61,12 @@ function formattedTags(inputString) {
  * @summary This function adds a new div with the translated tags to the block.
  */
 export const translateBlockTags = async (document, lang) => {
+  const defaultExlClient = await createDefaultExlClient();
   await Promise.all(
     MAPPING_TO_TRANSLATE.map(async (blockDetails) => {
       const block = document.querySelector(`.${blockDetails.name}`);
       if (!block) return;
 
-      const defaultExlClient = await createDefaultExlClient();
       const rawTags =
         block.children[blockDetails.tagsPosition].firstElementChild.textContent;
 
