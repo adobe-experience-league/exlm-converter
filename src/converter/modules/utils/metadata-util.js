@@ -107,7 +107,10 @@ export const createMetaData = (
     });
   }
 
-  if (!fullMetadata['last-update']) {
+  if (
+    !fullMetadata['last-update'] ||
+    Number.isNaN(new Date(fullMetadata['last-update']).getTime())
+  ) {
     metaProperties.push({
       name: 'last-update',
       content: new Date(0),
