@@ -113,7 +113,7 @@ export const createMetaData = (
   ) {
     metaProperties.push({
       name: 'last-update',
-      content: new Date(0),
+      content: new Date(1),
     });
   }
 
