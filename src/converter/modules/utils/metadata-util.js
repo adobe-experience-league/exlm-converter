@@ -107,6 +107,16 @@ export const createMetaData = (
     });
   }
 
+  if (
+    !fullMetadata['last-update'] ||
+    Number.isNaN(new Date(fullMetadata['last-update']).getTime())
+  ) {
+    metaProperties.push({
+      name: 'last-update',
+      content: new Date(1),
+    });
+  }
+
   metaProperties.forEach((property) => {
     const metaTag = document.createElement('meta');
     Object.entries(property).forEach(([key, value]) => {
