@@ -17,7 +17,6 @@ import createTabs from './blocks/create-tabs.js';
 import createTables from './blocks/create-tables.js';
 import createShadeBox from './blocks/create-shade-box.js';
 import createCodeBlock from './blocks/create-code-block.js';
-import createVideoTranscript from './blocks/create-video-transcript.js';
 import handleNestedBlocks from './blocks/nested-blocks.js';
 import createList from './blocks/create-list.js';
 import createArticleMetaData from './blocks/create-article-metadata.js';
@@ -100,7 +99,6 @@ export default async function md2html({
   createMetaData(document, meta, data, pageType, solutions);
   handleUrls(document, reqLang, pageType);
   updateAnchors(document);
-  const asyncDecorationPromises = [];
   if (pageType === DOCPAGETYPE.DOC_LANDING) {
     createCloudSolutions(document);
     handleExternalUrl(document);
@@ -110,33 +108,38 @@ export default async function md2html({
     createBreadcrumbs(document, meta, pageType, reqLang);
     createLandingLists(document);
   } else {
-    createArticleMetaData(document, meta);
-    // we dont want to block the rendering of the page
-    asyncDecorationPromises.push(createVideo(document));
+    // start with blocks that can contain other decoratable elements/blocks
     createBadge(document);
-    createRelatedArticles(document);
     createNote(document);
     createHighlight(document);
     createTabs(document);
     createStaffPicksBlock(document);
-    createUpcomingEventsBlock(document);
     createTables(document);
     createShadeBox(document);
-    createCodeBlock(document);
-    createVideoTranscript(document);
     createList(document);
+    createAccordion(document);
+
+    // metatda - oder is important for now.
+    createArticleMetaData(document, meta);
     await createArticleMetaDataCreatedBy(document, data, reqLang);
     await createArticleMetaDataTopics(document, meta, reqLang);
-    handleExternalUrl(document);
+
+    // blocks that cannot contain other blocks
+    createRelatedArticles(document);
+    createUpcomingEventsBlock(document);
+    createCodeBlock(document);
     createMiniTOC(document);
     createTOC(document, data);
     createImg(document);
-    createAccordion(document);
     createBreadcrumbs(document, meta, pageType, reqLang);
     createDocActions(document);
     createTargetInsertion(document);
     createDocsCards(document);
     createBackToBrowsing(document);
+    await createVideo(document);
+
+    // decorate external urls
+    handleExternalUrl(document);
     // leave this at the end - UGP-10241
     createRecommendationMoreHelp(document);
     // leave this at the end
@@ -145,8 +148,6 @@ export default async function md2html({
     handleTooManyImages(document, path);
     // leave this at the end - EXLM 1442 1510 Splitting into multiple Sections
     createSections(document);
-    // wait till all async blocks are done rendering
-    await Promise.allSettled(asyncDecorationPromises);
   }
 
   return {
