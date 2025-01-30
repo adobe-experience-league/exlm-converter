@@ -1,6 +1,26 @@
 import { getMpcVideoDetailsByUrl } from '../../../common/utils/mpc-util.js';
 import { toBlock, replaceElement } from '../utils/dom-utils.js';
 
+export function createVideoTranscript(videoBlock, document) {
+  const videoSibling = videoBlock.nextElementSibling;
+  if (videoSibling?.tagName?.toLowerCase() !== 'details') return;
+  const cells = [];
+
+  Array.from(videoSibling.children).forEach((el) => {
+    const div = document.createElement('div');
+    div.append(el.textContent);
+    cells.push([div]);
+  });
+
+  const block = toBlock(`video-transcript`, cells, document);
+  replaceElement(videoSibling, block);
+}
+
+/**
+ * create videoblock
+ * @param {HTMLElement} videoElement
+ * @param {Document} document
+ */
 async function createVideoBlockFromElement(videoElement, document) {
   const iframe = videoElement.querySelector('iframe');
   // If iframe exists, get the src attribute else iframe source will be passed as empty
@@ -10,22 +30,17 @@ async function createVideoBlockFromElement(videoElement, document) {
   const videoDetails = await getMpcVideoDetailsByUrl(href);
   const poster = videoDetails?.video?.poster;
   const videoImg = poster ? `<img src="${poster}" alt="video poster">` : '';
-  console.log('poster', poster);
   div.innerHTML = `<p>${videoImg}</p><p>${videoA}</p>`;
   // create the embed block and append it to the main element
   const cells = [[div]];
   const block = toBlock('embed', cells, document);
-
   replaceElement(videoElement, block);
+  createVideoTranscript(block, document);
 }
 
-export default async function createVideo(document) {
-  const videoElements = Array.from(
+export default function createVideo(document) {
+  const videoPromises = Array.from(
     document.getElementsByClassName('extension video'),
-  );
-  await Promise.allSettled(
-    videoElements.map((videoElement) =>
-      createVideoBlockFromElement(videoElement, document),
-    ),
-  );
+  ).map((videoEl) => createVideoBlockFromElement(videoEl, document));
+  return Promise.allSettled(videoPromises);
 }
