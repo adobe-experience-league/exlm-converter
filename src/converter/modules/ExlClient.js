@@ -173,7 +173,7 @@ export default class ExlClient {
    * Get an article by path
    * @param {string} path
    * @param {string} lang
-   * @returns {ExlArticlesResponse}
+   * @returns {Promise<ExlArticlesResponse>}
    */
   async getArticlesByPath(path, lang = 'en') {
     const langForApi = getMatchLanguage(lang) || lang;
