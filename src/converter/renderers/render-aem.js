@@ -13,12 +13,12 @@ import {
   updateCoveoSolutionMetadata,
   decodeCQMetadata,
   generateHash,
-  // mapTagsToTitles,
+  createTranslatedMetadata,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
-// import { getMatchLanguageForTag } from '../../common/utils/language-utils.js';
+import { translateBlockTags } from './utils/tag-translation-utils.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -28,54 +28,16 @@ const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 fo
 /**
  * Transforms page metadata
  */
-async function transformAemPageMetadata(htmlString, params) {
+async function transformAemPageMetadata(htmlString, params, path) {
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
 
-  // const lang = path.split('/')[1];
-  // const language = lang ? getMatchLanguageForTag(lang) : 'default';
-
-  // const client = new FranklinServletClient(params);
-  // const taxonomyTypes = ['roles', 'levels', 'features'];
-
-  // const fetchTaxonomy = async (type) => {
-  //   try {
-  //     const res = await client.fetchFromServlet(`/${type}.json`);
-  //     const json = await res.json();
-  //     return json[language]?.data;
-  //   } catch (e) {
-  //     aioLogger.error(`Failed to fetch taxonomy data for : ${type}`, e);
-  //     return [];
-  //   }
-  // };
-
-  // const taxanomyJsons = await Promise.allSettled(
-  //   taxonomyTypes.map(fetchTaxonomy),
-  // );
-
-  // const taxonomyData = taxanomyJsons.reduce((acc, curr, index) => {
-  //   if (curr.status === 'fulfilled') acc[taxonomyTypes[index]] = curr.value;
-  //   return acc;
-  // }, {});
-
-  // const { roles, levels, features } = taxonomyData;
-
-  // const createLocMetadata = (metaName, metaTaxonomyData) => {
-  //   const meta = getMetadata(document, metaName);
-  //   const titles = mapTagsToTitles(meta, metaTaxonomyData);
-  //   if (titles && titles.length > 0) {
-  //     setMetadata(document, `loc-${metaName}`, titles);
-  //   }
-  // };
-
-  // createLocMetadata('role', roles);
-  // createLocMetadata('level', levels);
-  // createLocMetadata('feature', features);
-
+  const lang = path.split('/')[1];
   decodeCQMetadata(document, 'cq-tags');
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
+  await createTranslatedMetadata(document, lang);
 
   const publishedTime = getMetadata(document, 'published-time');
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
@@ -122,7 +84,7 @@ async function transformAemPageMetadata(htmlString, params) {
 /**
  * @param {string} htmlString
  */
-function transformHTML(htmlString, aemAuthorUrl, path) {
+async function transformHTML(htmlString, aemAuthorUrl, path) {
   // FIXME: Converting images from AEM to absolue path. Revert once product fix in place.
   const dom = new jsdom.JSDOM(htmlString);
   const { document } = dom.window;
@@ -137,9 +99,10 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     if (uri.startsWith('/') && !isAbsoluteURL(uri))
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
-  // no indexing rule for author bio and signup-flow-modal pages
+  // no indexing rule for author bio, templates, signup-flow-modal, nav and fragment pages
   if (
     path.includes('/authors/') ||
+    path.includes('/templates/') ||
     path.includes('/signup-flow-modal') ||
     path.includes('/home-fragment') ||
     path.includes('/home/nav')
@@ -157,6 +120,9 @@ function transformHTML(htmlString, aemAuthorUrl, path) {
     setMetadata(document, 'type', 'Perspective');
     setMetadata(document, 'perspective-id', perspectiveID);
   }
+
+  const lang = path.split('/')[1];
+  await translateBlockTags(document, lang);
 
   return dom.serialize();
 }
@@ -218,9 +184,9 @@ export default async function renderAem(path, params) {
     headers = { ...headers, ...assetHeaders };
     statusCode = assetStatusCode;
   } else if (isHTML(contentType)) {
-    body = transformHTML(await resp.text(), aemAuthorUrl, path);
+    body = await transformHTML(await resp.text(), aemAuthorUrl, path);
     // Update page metadata for AEM Pages
-    body = await transformAemPageMetadata(body, params);
+    body = await transformAemPageMetadata(body, params, path);
     // add custom header `x-html2md-img-src` to let helix know to use authentication with images with that src domain
     headers = { ...headers, 'x-html2md-img-src': aemAuthorUrl };
   } else {

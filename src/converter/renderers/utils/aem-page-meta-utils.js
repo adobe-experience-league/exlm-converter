@@ -1,6 +1,10 @@
 import jsdom from 'jsdom';
 import crypto from 'crypto';
 import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
+import {
+  createDefaultExlClient,
+  EXL_LABEL_ENDPOINTS,
+} from '../../modules/ExlClient.js';
 
 /**
  * Generates a unique immutable hash for a given input string and truncates it under 50 characters.
@@ -198,4 +202,56 @@ export const mapTagsToTitles = (meta, taxonomyData) => {
     locTitles = locTitles.join(', ');
   }
   return locTitles;
+};
+
+/**
+ * Creates translated metadata for role, level, and feature meta types.
+ *
+ * @param {Document} document
+ * @param {string} lang
+ * @returns {Promise<void>} A promise that resolves once all metadata is updated.
+ */
+export const createTranslatedMetadata = async (document, lang) => {
+  const defaultExlClient = await createDefaultExlClient();
+
+  const metaTypes = {
+    roles: 'role',
+    levels: 'level',
+    features: 'feature',
+  };
+
+  await Promise.all(
+    Object.keys(metaTypes).map(async (key) => {
+      const metaType = metaTypes[key];
+      const metaContent = getMetadata(document, metaType);
+
+      if (metaContent) {
+        const tags = metaContent.split(',').map((tag) => tag.trim());
+
+        const translatedLabels = await Promise.allSettled(
+          tags.map((tag) =>
+            defaultExlClient
+              .getLabelFromEndpoint(
+                EXL_LABEL_ENDPOINTS[key.toUpperCase()],
+                tag,
+                lang,
+              )
+              .catch((error) => {
+                console.error(
+                  `Error fetching translated label for ${metaType} with Tag: ${tag}`,
+                  error,
+                );
+                return tag;
+              }),
+          ),
+        );
+
+        const localizedLabels = translatedLabels.map((result, index) =>
+          result.status === 'fulfilled' ? result.value : tags[index],
+        );
+
+        setMetadata(document, `loc-${metaType}`, localizedLabels.join(','));
+      }
+    }),
+  );
 };
