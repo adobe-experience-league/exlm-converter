@@ -323,6 +323,10 @@ export const groupWithParagraphs = (document, nodes) => {
  * @param {Document} document
  * @param {HTMLElement} element
  * @returns {Node[]}
+ * NOTE: This function is not directly used by `inlineHighlight` in its current implementation.
+ * `inlineHighlight` iterates directly over the element's `childNodes` for more robust
+ * handling of DOM mutations during processing. This approach avoids potential issues
+ * with stale text node collections if the DOM is modified while iterating.
  */
 export const getAllDecendantTextNodes = (document, element) => {
   const walker = document.createTreeWalker(
@@ -332,12 +336,14 @@ export const getAllDecendantTextNodes = (document, element) => {
     false,
   );
   const textNodes = [];
-  while (walker.nextNode()) {
-    const { currentNode } = walker;
-    if (currentNode.textContent.trim().length !== 0) {
-      textNodes.push(walker.currentNode);
-    }
+
+  let node = walker.nextNode();
+
+  while (node) {
+    textNodes.push(node);
+    node = walker.nextNode();
   }
+
   return textNodes;
 };
 
