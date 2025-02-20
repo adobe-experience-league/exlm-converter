@@ -55,10 +55,10 @@ nav:
           - title: Listas de reproducción
             subtitle: Colecciones de vídeos elaboradas por expertos
             url: '/es/playlists'
-          - title: Tutorials
+          - title: Tutoriales
             subtitle: Vídeos y procedimientos específicos de la solución
             url: /es/docs/home-tutorials
-          - title: Perspectives
+          - title: Perspectivas
             subtitle: Perspectivas procesables de clientes de Experience Cloud y expertos de Adobe
             url: /es/perspectives
           - title: Certificación
