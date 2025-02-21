@@ -74,7 +74,14 @@ nav:
     url: /ja/docs
 
   - title: イベント
-    url: /events?lang=ja
+    items:
+      - title: Quick Links
+        items:
+          - title: All Future events
+            url: /events?lang=ja
+          - title: Experience League at Summit
+            subtitle: Maximize your Adobe Summit with Experience League.
+            url: /ja/experience-league-at-summit
 
   - title: コミュニティ
     items:

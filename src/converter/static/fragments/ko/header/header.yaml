@@ -74,7 +74,14 @@ nav:
     url: /ko/docs
 
   - title: 이벤트
-    url: /events?lang=ko
+    items:
+      - title: Quick Links
+        items:
+          - title: All Future events
+            url: /events?lang=ko
+          - title: Experience League at Summit
+            subtitle: Maximize your Adobe Summit with Experience League.
+            url: /ko/experience-league-at-summit
 
   - title: 커뮤니티
     items:

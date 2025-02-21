@@ -74,7 +74,14 @@ nav:
     url: /nl/docs
 
   - title: Evenementen
-    url: /events?lang=nl
+    items:
+      - title: Quick Links
+        items:
+          - title: All Future events
+            url: /events?lang=nl
+          - title: Experience League at Summit
+            subtitle: Maximize your Adobe Summit with Experience League.
+            url: /nl/experience-league-at-summit
 
   - title: Community
     items:
