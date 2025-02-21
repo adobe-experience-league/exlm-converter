@@ -74,7 +74,14 @@ nav:
     url: /zh-hans/docs
 
   - title: 事件
-    url: /events?lang=zh-Hans
+    items:
+      - title: Quick Links
+        items:
+          - title: All Future events
+            url: /events?lang=zh-Hans
+          - title: Experience League at Summit
+            subtitle: Maximize your Adobe Summit with Experience League.
+            url: /zh-hans/experience-league-at-summit
 
   - title: 社区
     items:
