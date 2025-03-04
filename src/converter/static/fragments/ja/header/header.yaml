@@ -74,7 +74,7 @@ nav:
     url: /ja/docs
 
   - title: イベント
-    url: /ja/events
+    url: /events?lang=ja
 
   - title: コミュニティ
     items:
@@ -87,7 +87,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=ja
           - title: イベント
             subtitle: ローカルおよびバーチャルのイベントに出席
-            url: '/ja/events'
+            url: '/events?lang=ja'
           - title: スタッフアドバイザー
             subtitle: エキスパートとつながる
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=ja
