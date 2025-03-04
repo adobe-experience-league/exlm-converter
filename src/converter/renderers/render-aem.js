@@ -100,13 +100,17 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
       el.setAttribute('content', relativeToAbsolute(uri, aemAuthorUrl));
   });
   // no indexing rule for author bio, templates, signup-flow-modal, nav and fragment pages
-  if (
-    path.includes('/authors/') ||
-    path.includes('/templates/') ||
-    path.includes('/signup-flow-modal') ||
-    path.includes('/home-fragment') ||
-    path.includes('/home/nav')
-  ) {
+  const noIndexPaths = [
+    '/authors/',
+    '/templates/',
+    '/signup-flow-modal',
+    '/home-fragment',
+    '/home/nav',
+    '/global-fragments',
+    '/event-fragment',
+  ];
+
+  if (noIndexPaths.some((segment) => path.includes(segment))) {
     setMetadata(document, 'robots', 'NOINDEX, NOFOLLOW, NOARCHIVE, NOSNIPPET');
   }
 
