@@ -74,7 +74,7 @@ nav:
     url: /sv/docs
 
   - title: Event
-    url: /events?lang=sv
+    url: /sv/events
 
   - title: Community
     items:
@@ -87,7 +87,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Event
             subtitle: Gå på lokala och virtuella event
-            url: '/events?lang=sv'
+            url: '/sv/events'
           - title: Rådgivare för anställda
             subtitle: Få kontakt med en av våra experter
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
