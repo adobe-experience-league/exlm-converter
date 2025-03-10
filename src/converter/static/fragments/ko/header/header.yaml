@@ -74,7 +74,7 @@ nav:
     url: /ko/docs
 
   - title: 이벤트
-    url: /ko/events
+    url: /events?lang=ko
 
   - title: 커뮤니티
     items:
@@ -87,7 +87,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: 이벤트
             subtitle: 로컬 및 가상 이벤트 참석
-            url: '/ko/events'
+            url: '/events?lang=ko'
           - title: 직원 어드바이저
             subtitle: 전문가 중 한 명과 연결
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en

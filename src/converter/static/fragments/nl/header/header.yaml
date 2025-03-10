@@ -74,7 +74,7 @@ nav:
     url: /nl/docs
 
   - title: Evenementen
-    url: /nl/events
+    url: /events?lang=nl
 
   - title: Community
     items:
@@ -87,7 +87,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Evenementen
             subtitle: Lokale en virtuele evenementen bijwonen
-            url: '/nl/events'
+            url: '/events?lang=nl'
           - title: Adobe-adviseurs
             subtitle: Leg contact met een van onze experts
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en

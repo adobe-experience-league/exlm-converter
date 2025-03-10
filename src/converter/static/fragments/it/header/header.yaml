@@ -74,7 +74,7 @@ nav:
     url: /it/docs
 
   - title: Eventi
-    url: /it/events
+    url: /events?lang=it
 
   - title: Community
     items:
@@ -87,7 +87,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
           - title: Eventi
             subtitle: Partecipa a eventi locali e virtuali
-            url: '/it/events'
+            url: '/events?lang=it'
           - title: Esperti interni
             subtitle: Entra in contatto con il nostro personale esperto
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
