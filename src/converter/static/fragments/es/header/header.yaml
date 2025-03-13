@@ -97,6 +97,9 @@ nav:
           - title: Adobe Programa de comentarios
             subtitle: Influencia en el desarrollo de productos de Adobe
             url: '/home?lang=es#feedback'
+          - title: Grupos de Usuarios de Adobe
+            subtitle: Únete a un grupo de usuarios y conéctate con personas afines.
+            url: '/es/user-groups'
       - title: Comunidades por producto
         items:
           - title: Advertising Cloud

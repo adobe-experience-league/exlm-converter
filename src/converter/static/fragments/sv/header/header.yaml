@@ -97,6 +97,9 @@ nav:
           - title: Adobe Feedbackprogram
             subtitle: Påverka Adobes produktutveckling
             url: '/home?lang=sv#feedback'
+          - title: Adobe Användargrupper
+            subtitle: Gå med i en användargrupp och anslut med likasinnade.
+            url: '/sv/user-groups'
       - title: Communities efter produkt
         items:
           - title: Advertising Cloud

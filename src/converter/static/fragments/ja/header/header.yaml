@@ -97,6 +97,9 @@ nav:
           - title: Adobe フィードバックプログラム
             subtitle: アドビ製品開発への影響力
             url: '/home?lang=ja#feedback'
+          - title: Adobe ユーザーグループ
+            subtitle: ユーザーグループに参加して、同じ考えを持つ仲間とつながりましょう。
+            url: '/ja/user-groups'
       - title: 製品別コミュニティ
         items:
           - title: Advertising Cloud

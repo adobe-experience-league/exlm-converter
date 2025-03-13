@@ -97,6 +97,9 @@ nav:
           - title: Adobe Feedback-Programm
             subtitle: Einfluss auf die Produktentwicklung von Adobe
             url: '/home?lang=de#feedback'
+          - title: Adobe-Benutzergruppen
+            subtitle: Treten Sie einer Benutzergruppe bei und vernetzen Sie sich mit Gleichgesinnten.
+            url: '/de/user-groups'
       - title: Communities nach Produkt
         items:
           - title: Advertising Cloud

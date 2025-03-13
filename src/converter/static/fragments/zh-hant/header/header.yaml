@@ -97,6 +97,9 @@ nav:
           - title: Adobe 回饋方案
             subtitle: 影響 Adobe 產品開發
             url: '/home?lang=zh-Hant#feedback'
+          - title: Adobe 使用者群組
+            subtitle: 加入使用者群組，與志同道合的夥伴聯繫。
+            url: '/zh-hant/user-groups'
       - title: 各產品的社群
         items:
           - title: Advertising Cloud
