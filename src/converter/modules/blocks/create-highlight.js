@@ -46,7 +46,9 @@ const createHighlightSectionForElement = (document, element) => {
 const inlineHighlight = (document, element) => {
   getAllDecendantTextNodes(document, element).forEach((textNode) => {
     const highlightEl = toHighlightedEl(document, textNode);
-    replaceElement(textNode, toHighlightedEl(document, highlightEl));
+
+    // replaceElement(textNode, toHighlightedEl(document, highlightEl));
+    replaceElement(textNode, highlightEl);
   });
   // move all the children of the preview element to the parent
   // and then remove the preview element

@@ -1,0 +1,5 @@
+{
+  "require": "./test/setup-env.esm.mjs",
+  "extension": ["js", "mjs"],
+  "spec": "./test/**/*.test.js"
+}
