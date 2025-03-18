@@ -82,6 +82,9 @@ nav:
         items:
           - title: コミュニティホーム
             url: https://experienceleaguecommunities.adobe.com/?profile.language=ja
+          - title: お知らせ
+            subtitle: Adobeの最新のアップデートをチェックしましょう
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=ja
           - title: Experience Cloud アドボケート
             subtitle: コミュニティのカスタマーアドボケートに会う
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=ja
