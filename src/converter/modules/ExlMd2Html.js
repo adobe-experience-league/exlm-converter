@@ -43,16 +43,41 @@ import { createDefaultExlClient } from './ExlClient.js';
 import handleTooManyImages from './blocks/too-many-images.js';
 
 const doAmf = (md) => {
+  if (!md) return md;
+  let encodedMd = md;
+  let decodedMd = md;
+
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
   // it assumes ALL backticks are the start/end of a code block.
   // in some doc markdowns, we saw a few ``` in the middle of a sentence.
   // code below fixes that by encoding the backticks that are not preceded with a new line
   // before passing to AMF, and then decoding them after.
   // this: `(?<!\n)` means not preceded by a new line
-  if (!md) return md;
-  const backTickEncoded = md.replace(/(?<!\n)```/g, '&grave;&grave;&grave;');
-  const amfProcessed = afm(backTickEncoded, 'extension');
-  return amfProcessed.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
+  encodedMd = encodedMd.replace(/(?<!\n)```/g, '&grave;&grave;&grave;');
+
+  // encode and save the custom LANDINGCARD admonition as an HTML
+  // comment otherwise AMF malforms the markdown as it doesn't
+  // handle this admonition syntax correctly
+  encodedMd = encodedMd.replace(
+    />\[!LANDINGCARD\]\n(?:>.*(?:\n|$))*/gm,
+    (match) =>
+      `<!--LANDINGCARD-START-->${encodeURIComponent(
+        match,
+      )}<!--LANDINGCARD-END-->`,
+  );
+
+  const amfProcessed = afm(encodedMd, 'extension');
+
+  // restore the custom LANDINGCARD admonition from the HTML comment
+  decodedMd = amfProcessed.replace(
+    /<!--LANDINGCARD-START-->(.*?)<!--LANDINGCARD-END-->/g,
+    (_, encoded) => decodeURIComponent(encoded),
+  );
+
+  // restore the backticks that were encoded
+  decodedMd = decodedMd.replace(/(?<!\n)&grave;&grave;&grave;/g, '```');
+
+  return decodedMd;
 };
 
 export default async function md2html({
@@ -64,6 +89,7 @@ export default async function md2html({
   path,
 }) {
   const amfProcessed = doAmf(mdString, 'extension');
+  // console.log('>>>>amfProcessed', amfProcessed);
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
 
