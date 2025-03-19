@@ -56,7 +56,7 @@ const doAmf = (md) => {
   encodedMd = encodedMd.replace(/(?<!\n)```/g, '&grave;&grave;&grave;');
 
   // encode and save the custom LANDINGCARD admonition as an HTML
-  // comment otherwise AMF malforms the markdown as it doesn't
+  // comment otherwise AFM malforms the markdown as it doesn't
   // handle this admonition syntax correctly
   encodedMd = encodedMd.replace(
     />\[!LANDINGCARD\]\n(?:>.*(?:\n|$))*/gm,
@@ -89,7 +89,6 @@ export default async function md2html({
   path,
 }) {
   const amfProcessed = doAmf(mdString, 'extension');
-  // console.log('>>>>amfProcessed', amfProcessed);
   const convertedHtml = markdownItToHtml(amfProcessed);
   const main = fromHtml(convertedHtml, { fragment: true });
 
