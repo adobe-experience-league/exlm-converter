@@ -13,8 +13,13 @@ import {
 const toHighlightedEl = (document, textNode) => {
   const em = document.createElement('em');
   const u = document.createElement('u');
+  const { textContent } = textNode;
+  const prefixSpaces = (textContent.match(/^\s*/) || [''])[0];
+  const suffixSpaces = (textContent.match(/\s*$/) || [''])[0];
+  u.innerHTML = textContent.trim();
+  em.appendChild(document.createTextNode(prefixSpaces));
   em.appendChild(u);
-  u.innerHTML = textNode.textContent;
+  em.appendChild(document.createTextNode(suffixSpaces));
   return em;
 };
 
