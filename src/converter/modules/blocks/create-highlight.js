@@ -3,6 +3,7 @@ import {
   getAllDecendantTextNodes,
   replaceElement,
   toBlock,
+  isInlineElement,
 } from '../utils/dom-utils.js';
 
 /**
@@ -49,16 +50,25 @@ const createHighlightSectionForElement = (document, element) => {
  * @param {Element} element
  */
 const inlineHighlight = (document, element) => {
-  getAllDecendantTextNodes(document, element).forEach((textNode) => {
-    const highlightEl = toHighlightedEl(document, textNode);
-    replaceElement(textNode, toHighlightedEl(document, highlightEl));
-  });
-  // move all the children of the preview element to the parent
-  // and then remove the preview element
-  while (element.firstChild) {
-    element.parentNode.insertBefore(element.firstChild, element);
+  // if element has all inline decendants, wrap it in an em and u tag to highlight it.
+  const allDecendantsAreInline = Array.from(
+    element.querySelectorAll('*'),
+  ).every(isInlineElement);
+  if (allDecendantsAreInline) {
+    element.outerHTML = `<em><u>${element.innerHTML}</u></em>`;
+  } else {
+    // if element has any non-inline decendants, highlight the text nodes one by one
+    getAllDecendantTextNodes(document, element).forEach((textNode) => {
+      const highlightEl = toHighlightedEl(document, textNode);
+      replaceElement(textNode, toHighlightedEl(document, highlightEl));
+    });
+    // move all the children of the preview element to the parent
+    // and then remove the preview element
+    while (element.firstChild) {
+      element.parentNode.insertBefore(element.firstChild, element);
+    }
+    element.remove();
   }
-  element.remove();
 };
 
 export default function createHighlight(document) {
