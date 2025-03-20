@@ -32,5 +32,6 @@ export default function markdownItToHtml(mdString) {
     .use(sub)
     .use(sup)
     .use(landingCardContainerPlugin)
+    .use(container, '')
     .render(mdString);
 }
