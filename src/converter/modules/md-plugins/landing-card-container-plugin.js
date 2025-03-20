@@ -22,10 +22,4 @@ export default function landingCardContainerPlugin(md) {
       return '</div>\n</div>\n';
     },
   });
-
-  md.use(container, 'landing-card-description');
-
-  md.use(container, 'landing-card-body');
-
-  md.use(container, 'landing-card-header-image');
 }
