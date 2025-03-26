@@ -82,6 +82,9 @@ nav:
         items:
           - title: 社区主页
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+          - title: 公告
+            subtitle: 发现 Adobe 的最新更新
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=en
           - title: Experience Cloud 倡导者
             subtitle: 认识我们的客户倡导者社区
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
@@ -97,6 +100,9 @@ nav:
           - title: Adobe 反馈项目
             subtitle: 影响 Adobe 产品开发
             url: '/home?lang=zh-Hans#feedback'
+          - title: Adobe 用户组
+            subtitle: 加入用户组，与志同道合的同伴联系。
+            url: '/zh-hans/user-groups'
       - title: 社区（按产品）
         items:
           - title: Advertising Cloud

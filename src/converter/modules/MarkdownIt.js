@@ -10,6 +10,7 @@ import ins from 'markdown-it-ins';
 import mark from 'markdown-it-mark';
 import sub from 'markdown-it-sub';
 import sup from 'markdown-it-sup';
+import landingCardContainerPlugin from './md-plugins/landing-card-container-plugin.js';
 
 export default function markdownItToHtml(mdString) {
   return markdownit({
@@ -30,5 +31,7 @@ export default function markdownItToHtml(mdString) {
     .use(mark)
     .use(sub)
     .use(sup)
+    .use(landingCardContainerPlugin)
+    .use(container, '')
     .render(mdString);
 }
