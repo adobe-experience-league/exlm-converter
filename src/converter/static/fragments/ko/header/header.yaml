@@ -82,6 +82,9 @@ nav:
         items:
           - title: 제품별 커뮤니티
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+          - title: 공지사항
+            subtitle: Adobe의 최신 업데이트를 확인하세요
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=en
           - title: Experience Cloud 지지자
             subtitle: 고객 지지자 커뮤니티를 만나보십시오.
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en

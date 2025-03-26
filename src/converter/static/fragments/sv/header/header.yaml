@@ -82,6 +82,9 @@ nav:
         items:
           - title: Startsida för community
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+          - title: Meddelanden
+            subtitle: Upptäck de senaste uppdateringarna från Adobe
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=en
           - title: Experience Cloud-förespråkare
             subtitle: Möt vår community av kundförespråkare
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en

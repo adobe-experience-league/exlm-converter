@@ -82,6 +82,9 @@ nav:
         items:
           - title: Página inicial da Comunidade
             url: https://experienceleaguecommunities.adobe.com/?profile.language=pt
+          - title: Anúncios
+            subtitle: Descubra as últimas atualizações da Adobe
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=pt
           - title: Defensores da Experience Cloud
             subtitle: Conheça nossa comunidade de defensores do cliente
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=pt
