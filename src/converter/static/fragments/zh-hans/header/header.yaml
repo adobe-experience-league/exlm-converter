@@ -97,6 +97,9 @@ nav:
           - title: Adobe 反馈项目
             subtitle: 影响 Adobe 产品开发
             url: '/home?lang=zh-Hans#feedback'
+          - title: Adobe 用户组
+            subtitle: 加入用户组，与志同道合的同伴联系。
+            url: '/zh-hans/user-groups'
       - title: 社区（按产品）
         items:
           - title: Advertising Cloud
