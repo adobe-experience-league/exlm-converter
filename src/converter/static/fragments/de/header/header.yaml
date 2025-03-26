@@ -82,6 +82,9 @@ nav:
         items:
           - title: Community-Startseite
             url: https://experienceleaguecommunities.adobe.com/?profile.language=de
+          - title: Ankündigungen
+            subtitle: Entdecken Sie die neuesten Updates von Adobe
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=de
           - title: Fürsprecherinnen und Fürsprecher für Experience Cloud
             subtitle: Lernen Sie unsere Community von Kundenfürsprecherinnen und -fürsprechern kennen
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=de
@@ -97,6 +100,9 @@ nav:
           - title: Adobe Feedback-Programm
             subtitle: Einfluss auf die Produktentwicklung von Adobe
             url: '/home?lang=de#feedback'
+          - title: Adobe-Benutzergruppen
+            subtitle: Treten Sie einer Benutzergruppe bei und vernetzen Sie sich mit Gleichgesinnten.
+            url: '/de/user-groups'
       - title: Communities nach Produkt
         items:
           - title: Advertising Cloud

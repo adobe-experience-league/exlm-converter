@@ -82,6 +82,9 @@ nav:
         items:
           - title: 社群首頁
             url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+          - title: 公告
+            subtitle: 發現 Adobe 的最新更新
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=en
           - title: Experience Cloud擁護者
             subtitle: 與客戶擁護者社群見面
             url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
@@ -97,6 +100,9 @@ nav:
           - title: Adobe 回饋方案
             subtitle: 影響 Adobe 產品開發
             url: '/home?lang=zh-Hant#feedback'
+          - title: Adobe 使用者群組
+            subtitle: 加入使用者群組，與志同道合的夥伴聯繫。
+            url: '/zh-hant/user-groups'
       - title: 各產品的社群
         items:
           - title: Advertising Cloud
