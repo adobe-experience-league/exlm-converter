@@ -281,7 +281,7 @@ const INLINE_ELEMENTS = new Set(
   ),
 );
 
-const isInlineElement = (element) =>
+export const isInlineElement = (element) =>
   INLINE_ELEMENTS.has(element.tagName.toLowerCase());
 
 /**
