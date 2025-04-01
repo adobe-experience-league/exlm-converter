@@ -21,6 +21,17 @@ export function isAbsoluteURL(url) {
   }
 }
 
+// because clue is a wondeful tool, we need to support all the different ways to link to the docs home page
+function isDocsHome(path) {
+  if (!path) return false;
+  return [
+    '/docs/home',
+    '/docs/home.html',
+    '/docs/home/',
+    '/docs/home.md',
+  ].includes(path);
+}
+
 export function isAssetPath(docsPath) {
   // A docs asset is any path that has an extension, but that extension is not .html or .md
   const match = docsPath.match(/\.([a-zA-Z0-9]+)(\?.*)?$/);
@@ -50,11 +61,7 @@ export function rewriteDocsPath(docsPath, reqLang) {
   }
 
   const url = new URL(docsPath, TEMP_BASE);
-  if (
-    url.pathname === '/docs/home' ||
-    url.pathname === '/docs/home.html' ||
-    url.pathname === '/docs/home/'
-  ) {
+  if (isDocsHome(url.pathname)) {
     url.pathname = '/docs';
   }
 
