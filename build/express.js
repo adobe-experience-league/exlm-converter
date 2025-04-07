@@ -138,4 +138,11 @@ app.get('/khoros/**', khorosHandler);
 app.get('/toc/**', tocHandler);
 app.get('/**', converterHandler);
 
-app.listen(port, () => console.log(`Converter listening on port ${port}`));
+app.listen(port, () =>
+  console.log(`
+  
+  Converter: http://localhost:${port}/en/docs
+  Khoros: http://localhost:${port}/khoros
+  Toc: http://localhost:${port}/toc
+`),
+);
