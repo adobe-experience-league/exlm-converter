@@ -1,0 +1,34 @@
+{
+  "project": {
+    "id": "4566206088345062895",
+    "name": "converter",
+    "title": "exlm converter noor",
+    "org": {
+      "id": "51837",
+      "name": "Adobe Marketing Cloud",
+      "ims_org_id": "8F99160E571FC0427F000101@AdobeOrg"
+    },
+    "workspace": {
+      "id": "4566206088345072351",
+      "name": "Dev",
+      "title": "Dev",
+      "description": "Dev",
+      "action_url": "https://51837-converter-dev.adobeioruntime.net",
+      "app_url": "https://51837-converter-dev.adobeio-static.net",
+      "details": {
+        "credentials": [],
+        "services": [],
+        "runtime": {
+          "namespaces": [
+            {
+              "name": "51837-converter-dev",
+              "auth": "9452ba7a-2c6d-49ac-ab70-cc2ac96595d4:2QIyIOLYgy8nf368b0mQ8P6as7o18liqUJKXUy6b4oTil3AhW4n8P7qu54xlq84x"
+            }
+          ]
+        },
+        "events": { "registrations": [] },
+        "mesh": {}
+      }
+    }
+  }
+}
