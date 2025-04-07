@@ -8,7 +8,6 @@ npm run build
 
 ### Running the dev server
 
-
 ```
 npm run serve
 ```
@@ -19,13 +18,13 @@ npm run serve
 
 > These are pages that match `/<lang>/docs/*` or `/<lang>/playlists/*`
 
-At a minimum, you need to create a file at `build/.local.env` in this repo, that contails below, then run  `npm run serve`
+At a minimum, you need to create a file at `build/.local.env` in this repo, that contails below, then run `npm run serve`
 
 ```
 EXL_API_HOST=https://experienceleague.adobe.com
 ```
-> see description of this env variables in the `Application environment variables` section.
 
+> see description of this env variables in the `Application environment variables` section.
 
 ### Serving AEM Pages Locally
 
@@ -36,7 +35,7 @@ This setup simulates an authenticated request, coming from Edge Delivery Service
 
 1. get your local development access token from Cloud Manager Developer Console (see docs below)
 2. Add file `build/.local.env` that should have the contents below (replace `<token>` with your token and `<aem author>` with the author url)
-  > see description of these env variables in the `Application environment variables` section.
+   > see description of these env variables in the `Application environment variables` section.
 
 ```
 AEM_AUTHOR_URL=<aem author>
@@ -106,11 +105,10 @@ The action requires the follwoing environment variables/secrets to be set:
 
 #### for IO deployment
 
-| Name                     | Type   | required for Prod? | description                                                  |
-| ------------------------ | ------ | ------------------ | ------------------------------------------------------------ |
-| `AIO_RUNTIME_AUTH`       | secret | yes                | used to deploy the action                                    |
-| `AIO_RUNTIME_NAMESPACE`  | secret | yes                | used to deploy the action                                    |
-
+| Name                    | Type   | required for Prod? | description               |
+| ----------------------- | ------ | ------------------ | ------------------------- |
+| `AIO_RUNTIME_AUTH`      | secret | yes                | used to deploy the action |
+| `AIO_RUNTIME_NAMESPACE` | secret | yes                | used to deploy the action |
 
 ## Application environment variables
 
