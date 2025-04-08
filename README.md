@@ -4,24 +4,38 @@
 npm run build
 ```
 
-## Development
+## Local Development
 
-To run the action locally run
+### Running the dev server
 
 ```
 npm run serve
 ```
 
-That will build the action code inside an express app, with [src/express.js](src/express.js) as entry point watching any changes. In parallel it will rerun the express server if src files change.
+> That will build the action code inside an express app, with [src/express.js](src/express.js) as entry point watching any changes. In parallel it will rerun the express server if src files change.
 
-The express app listens on port 3030 and handles incoming requests for _.html and _.md files, applying the html transformations.
+### Serving Doc/Playlist pages locally
+
+> These are pages that match `/<lang>/docs/*` or `/<lang>/playlists/*`
+
+At a minimum, you need to create a file at `build/.local.env` in this repo, that contails below, then run `npm run serve`
+
+```
+EXL_API_HOST=https://experienceleague.adobe.com
+```
+
+> see description of this env variables in the `Application environment variables` section.
 
 ### Serving AEM Pages Locally
 
-> This simulates an authenticated request, coming from Edge Delivery Services intended to render from AEM.
+> These are pages from AEMaaCS, like homepage, perspectives ..etc. AKA non-docs and non-playlist pages.
+> You DO NOT need this if you are just working on docs or playlists.
+
+This setup simulates an authenticated request, coming from Edge Delivery Services intended to render from AEM.
 
 1. get your local development access token from Cloud Manager Developer Console (see docs below)
 2. Add file `build/.local.env` that should have the contents below (replace `<token>` with your token and `<aem author>` with the author url)
+   > see description of these env variables in the `Application environment variables` section.
 
 ```
 AEM_AUTHOR_URL=<aem author>
@@ -45,7 +59,9 @@ ACCESS_TOKEN=<token>
 
 > Developer tokens are short lived and should only be used for local testing/debugging.
 
-### working with the khoros API (and action locally)
+### Working with the khoros API (and action locally)
+
+> This is specifically for the khoros action.
 
 in local, and lower environments, iPaaS is used to proxy to khoros services.
 
@@ -64,6 +80,8 @@ IMS_CLIENT_SECRET=<the ims client secret used to obtain a token to access iPaaS>
 IMS_AUTHORIZATION_CODET=<the ims client auth code used to obtain a token to access iPaaS>
 IPASS_API_KEY=<the ipass api key for dev iPaaS service for the given KHOROS_ORIGIN>
 ```
+
+> see description of these env variables in the `Application environment variables` section.
 
 > Please note, on Prod, iPaaS is not used, the khoros endpoint is called directly.
 
@@ -85,10 +103,17 @@ The action requires the follwoing environment variables/secrets to be set:
 
 > see github docs for how to add those: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
 
+#### for IO deployment
+
+| Name                    | Type   | required for Prod? | description               |
+| ----------------------- | ------ | ------------------ | ------------------------- |
+| `AIO_RUNTIME_AUTH`      | secret | yes                | used to deploy the action |
+| `AIO_RUNTIME_NAMESPACE` | secret | yes                | used to deploy the action |
+
+## Application environment variables
+
 | Name                     | Type   | required for Prod? | description                                                  |
 | ------------------------ | ------ | ------------------ | ------------------------------------------------------------ |
-| `AIO_RUNTIME_AUTH`       | secret | yes                | used to deploy the action                                    |
-| `AIO_RUNTIME_NAMESPACE`  | secret | yes                | used to deploy the action                                    |
 | `OWNER`                  | var    | yes                | this repo owner, sent to AEM for AEM content                 |
 | `REPO`                   | var    | yes                | this repo name, sent to AEM for AEM content                  |
 | `BRANCH`                 | var    | yes                | this repo branch, sent to AEM for AEM content                |
