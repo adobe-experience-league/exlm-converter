@@ -22,6 +22,7 @@ import createList from './blocks/create-list.js';
 import createArticleMetaData from './blocks/create-article-metadata.js';
 import createArticleMetaDataTopics from './blocks/create-article-metadata-topics.js';
 import createArticleMetaDataCreatedBy from './blocks/create-article-metadata-createdby.js';
+import createArticleMetaDataAppliesTo from './blocks/create-article-metadata-appliesto.js';
 import markdownItToHtml from './MarkdownIt.js';
 import createMiniTOC from './blocks/create-mini-toc.js';
 import createImg from './blocks/create-img.js';
@@ -123,6 +124,7 @@ export default async function md2html({
     createArticleMetaData(document, meta);
     await createArticleMetaDataCreatedBy(document, data, reqLang);
     await createArticleMetaDataTopics(document, meta, reqLang);
+    await createArticleMetaDataAppliesTo(document, meta, reqLang);
 
     // blocks that cannot contain other blocks
     createRelatedArticles(document);
