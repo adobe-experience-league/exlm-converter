@@ -1,4 +1,5 @@
 import Logger from '@adobe/aio-lib-core-logging';
+import { getDefaultRockwellService } from './RockwellAuthService.js';
 import { sendError } from '../../common/utils/response-utils.js';
 
 export const aioLogger = Logger('RockwellProxy');
@@ -13,8 +14,9 @@ const sendErrorWithDefaultHeaders = (code, message) =>
   sendError(code, message, DEFAULT_HEADERS);
 
 export class RockwellProxy {
-  constructor({ rockwellOrigin }) {
-    this.rockwellOrigin = rockwellOrigin;
+  constructor(config) {
+    this.config = config;
+    this.rockwellService = getDefaultRockwellService(config);
   }
 
   static canHandle(path) {
@@ -28,19 +30,31 @@ export class RockwellProxy {
 
     const query = queryParams ? `?${queryParams}` : '';
     const pathWithQuery = [path, query].filter(Boolean).join('');
-    const rockwellUrl = `${this.rockwellOrigin}${pathWithQuery}`;
+    const rockwellUrl = `${this.config.origin}${pathWithQuery}`;
     return fetch(rockwellUrl, {
       headers,
     });
   }
 
-  async proxyPath({ path, params, headers }) {
+  async proxyPath({ path, params }, retryCount = 0, forceRefresh = false) {
     try {
+      const MAX_HITS = 5;
+      const tokenResponse =
+        await this.rockwellService.getAccessToken(forceRefresh);
+      const headers = {
+        Authorization: `${tokenResponse.token_type} ${tokenResponse.access_token}`,
+      };
       const response = await this.fetchRockwell({
         path,
         params,
         headers,
       });
+
+      if (response.status === 401 && retryCount < MAX_HITS) {
+        aioLogger.debug('Access token expired, fetching new one...');
+        return this.proxyPath({ path, params }, retryCount + 1, true);
+      }
+
       if (!response.ok) {
         const responseText = await response.text();
         aioLogger.error(
@@ -51,6 +65,7 @@ export class RockwellProxy {
           'Bad Gateway, proxied service return unexpected response code. See logs for details',
         );
       }
+
       const body = await response.json();
       return {
         body,

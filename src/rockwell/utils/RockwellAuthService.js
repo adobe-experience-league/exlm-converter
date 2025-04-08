@@ -1,20 +1,19 @@
 import Logger from '@adobe/aio-lib-core-logging';
+import { RockwellTokenResponseStore } from './RockwellTokenResponseStore.js';
 
 export const aioLogger = Logger('RockWellAuthService');
 
 const TOKEN_PATH = '/access_token';
 
 export class RockWellAuthService {
-  constructor(
-    {
-      origin = 'https://certification-api.rockinfo.com', // update the default url with stage
-      clientId,
-      clientSecret,
-      grantType = 'client_credentials',
-    },
-    store = '',
-  ) {
-    this.store = store;
+  constructor({
+    origin = 'https://certification-api.rockinfo.com', // update the default url with stage
+    clientId,
+    clientSecret,
+    grantType = 'client_credentials',
+    storeName = 'rockwell',
+  }) {
+    this.store = new RockwellTokenResponseStore(storeName);
     this.config = {
       origin,
       clientId,
@@ -31,7 +30,6 @@ export class RockWellAuthService {
       client_secret: clientSecret,
       grant_type: grantType,
     };
-    aioLogger.debug(`Fetching access token from Rockwell: ${url}`);
 
     return fetch(url, {
       method: 'POST',
@@ -40,7 +38,22 @@ export class RockWellAuthService {
     });
   }
 
-  async getAccessToken() {
+  async getAccessToken(forceRefresh = false) {
+    if (!forceRefresh) {
+      const existingResponse = await this.store.getRockwellResponse();
+      if (existingResponse !== undefined) {
+        aioLogger.debug(
+          'A local stored access token was found and is still valid. using it.',
+        );
+        return existingResponse;
+      }
+      aioLogger.debug(
+        'No stored access token was found or it has expired. Getting a new one.',
+      );
+    }
+
+    aioLogger.debug(`Fetching new access token from Rockwell API...`);
+
     try {
       const response = await this.fetchAuth();
 
@@ -49,8 +62,13 @@ export class RockWellAuthService {
         throw new Error(`HTTP error: ${response.status}, ${errorMsg}`);
       }
 
-      const responseData = await response.json();
-      return responseData;
+      const data = await response.json();
+      aioLogger.debug(
+        'Access Token successfully retrieved from Rockwell. Caching it for further use.',
+      );
+
+      await this.store.setRockwellResponse(data);
+      return data;
     } catch (error) {
       aioLogger.error(`Error getting access token: ${error.message}`);
       throw error;
