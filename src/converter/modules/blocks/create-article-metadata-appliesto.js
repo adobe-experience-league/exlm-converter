@@ -19,7 +19,7 @@ export default async function createArticleMetaDataAppliesTo(
     appliesToDiv.append(paragraph);
     versionDivTag.append(appliesToDiv);
 
-    const items = [version.trim()];
+    const items = version.split(',').map((item) => item.trim());
 
     versionDivTag.append(
       newHtmlList(document, {
