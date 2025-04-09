@@ -15,6 +15,7 @@ application:
               rockwellOrigin: $ROCKWELL_ORIGIN
               rockwellClientId: $ROCKWELL_CLIENT_ID
               rockwellClientSecret: $ROCKWELL_CLIENT_SECRET
+              imsOrigin: $IMS_ORIGIN
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

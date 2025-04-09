@@ -4,7 +4,7 @@ import { sendError } from '../../common/utils/response-utils.js';
 
 export const aioLogger = Logger('RockwellProxy');
 
-const ALLOWED_PATHS = ['/certifications', '/courses'];
+const ALLOWED_PATHS = ['/certifications'];
 
 const DEFAULT_HEADERS = {
   'Cache-Control': 'no-store', // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#no-store
