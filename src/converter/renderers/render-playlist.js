@@ -8,17 +8,18 @@ import { matchPlaylistPath } from '../modules/utils/path-match-utils.js';
 import { createMetaData } from '../modules/utils/metadata-util.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { createPlaylist } from './playlists/create-playlist.js';
-import { createPlaylistBrowse } from './playlists/create-playlist-browse.js';
-
-const INDEX_PLAYLIST_ID = 'index';
 
 export default async function renderPlaylist(path) {
   const match = matchPlaylistPath(path);
   const {
-    params: { lang, playlistId = INDEX_PLAYLIST_ID },
+    params: { lang, playlistId },
   } = match;
 
-  const isIndex = playlistId === INDEX_PLAYLIST_ID;
+  if (!playlistId) {
+    return {
+      error: new Error(`playlist id is required but none was provided`),
+    };
+  }
 
   const defaultExlClient = await createDefaultExlClient();
 
@@ -46,11 +47,7 @@ export default async function renderPlaylist(path) {
       solutions,
     );
 
-    if (isIndex) {
-      createPlaylistBrowse(document, playlist);
-    } else {
-      createPlaylist(document, playlist);
-    }
+    createPlaylist(document, playlist);
 
     return {
       body: dom.serialize(),
