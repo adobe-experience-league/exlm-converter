@@ -5,6 +5,7 @@ import { IMSTokenResponseStore } from './IMSTokenResponseStore.js';
 export const aioLogger = Logger('IMSService');
 
 const GET_TOKEN_PATH = '/ims/token';
+const GET_PROFILE_PATH = '/ims/profile/v1';
 const VALIDATE_TOKEN_PATH = '/ims/validate_token/v1';
 
 export class IMSService {
@@ -147,6 +148,28 @@ export class IMSService {
       method: 'POST',
       body: formData,
     });
+  }
+
+  async getUserProfile(token) {
+    const { imsOrigin } = this.config;
+    // eslint-disable-next-line camelcase
+    const { client_id } = jwtDecode(token);
+    // eslint-disable-next-line camelcase
+    const profileUrl = `${imsOrigin}${GET_PROFILE_PATH}?client_id=${client_id}`;
+
+    const response = await fetch(profileUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    try {
+      const json = await response.json();
+      return json;
+    } catch (e) {
+      aioLogger.error(e);
+      return false;
+    }
   }
 }
 

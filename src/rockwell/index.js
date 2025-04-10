@@ -35,23 +35,26 @@ export const main = async function main(params) {
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
   const imsToken = __ow_headers['x-ims-token'] || '';
+  let profileData = {}; // Initialize profile data object
 
-  // check if request and env are valid
+  // Validate request and environment configurations
   if (!RockwellProxy.canHandle(path)) return sendError(404, 'Not Found');
   if (!rockwellClientSecret)
     return sendError(401, 'Missing Rockwell Client Secret Token');
   if (!rockwellOrigin) return sendError(500, 'Missing Config: Rockwell Origin');
   if (!imsOrigin) return sendError(500, 'Missing Config: IMS Origin');
-  if (!imsToken) return sendError(401, 'Missing IMS Token');
 
-  const imsService = getDefaultImsService({
-    imsOrigin,
-  });
+  if (imsToken) {
+    const imsService = getDefaultImsService({ imsOrigin });
 
-  // validate provided ims token
-  const isValidToken = await imsService.isValidImsToken(imsToken);
-  if (!isValidToken) {
-    return sendError(401, 'Invalid IMS Token');
+    // Validate provided IMS token
+    const isValidToken = await imsService.isValidImsToken(imsToken);
+    if (!isValidToken) {
+      return sendError(401, 'Invalid IMS Token');
+    }
+
+    // Obtain user profile data using valid IMS token
+    profileData = await imsService.getUserProfile(imsToken);
   }
 
   const rockwellProxy = getDefaultRockwellProxy({
@@ -60,20 +63,20 @@ export const main = async function main(params) {
     clientSecret: rockwellClientSecret,
   });
 
-  function removeEmpty(obj) {
-    return Object.fromEntries(
-      Object.entries(obj).filter(([, value]) => value != null),
-    );
-  }
+  // Function to remove attributes with null or undefined values from an object
+  const removeEmptyValues = (obj) =>
+    Object.fromEntries(Object.entries(obj).filter(([, v]) => v != null));
 
-  const rawParams = {
-    email: params.email,
+  // Filter out empty values from rawParams object
+  const rawParams = removeEmptyValues({
+    email: profileData.email,
     modifiedBefore: params.modifiedBefore,
     modifiedAfter: params.modifiedAfter,
-  };
+  });
 
+  // Proxy the path request to Rockwell services with filtered parameters
   return rockwellProxy.proxyPath({
     path,
-    params: removeEmpty(rawParams),
+    params: rawParams,
   });
 };
