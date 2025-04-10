@@ -13,20 +13,12 @@ export default async function createArticleMetaDataAppliesTo(
   // Article Metadata Applies To
   if (version && version.trim() !== '') {
     const versionDivTag = document.createElement('div');
-    const appliesToDiv = document.createElement('div');
-    const paragraph = document.createElement('p');
-    paragraph.textContent = APPLIES_TO[reqLang];
-    appliesToDiv.append(paragraph);
-    versionDivTag.append(appliesToDiv);
+    const items = [APPLIES_TO[reqLang]];
 
-    const items = version.split(',').map((item) => item.trim());
+    // Add version items to the list
+    items.push(...version.split(',').map((item) => item.trim()));
 
-    versionDivTag.append(
-      newHtmlList(document, {
-        tag: 'ul',
-        items,
-      }),
-    );
+    versionDivTag.append(newHtmlList(document, { tag: 'ul', items }));
     const cells = [[versionDivTag]];
     const block = toBlock('article-metadata-appliesto', cells, document);
     metaElement?.insertAdjacentElement('afterend', block);
