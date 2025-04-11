@@ -86,10 +86,12 @@ export class RockwellProxy {
    * @param {Object} options - Options for proxy path requests.
    * @param {string} options.path - Path for the proxy request.
    * @param {Object} options.params - Query parameters for the proxy request.
+   * @param {number} [retryCount=0] - Number of retry attempts, defaults to 0.
    * @param {boolean} [forceRefresh=false] - Option to force token refresh, defaults to false.
    * @returns {Promise<Object>} - Response object or error message.
    */
-  async proxyPath({ path, params }, forceRefresh = false) {
+  async proxyPath({ path, params }, retryCount = 0, forceRefresh = false) {
+    const MAX_HITS = 1;
     try {
       const tokenResponse =
         await this.rockwellService.getAccessToken(forceRefresh);
@@ -98,9 +100,9 @@ export class RockwellProxy {
       };
       const response = await this.fetchRockwell({ path, params, headers });
 
-      if (response.status === 401) {
+      if (response.status === 401 && retryCount < MAX_HITS) {
         aioLogger.debug('Access token expired, fetching new one...');
-        return this.proxyPath({ path, params }, true); // Retry with token refresh
+        return this.proxyPath({ path, params }, retryCount + 1, true); // Retry with token refresh
       }
 
       if (!response.ok) {
