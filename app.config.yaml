@@ -6,16 +6,76 @@ application:
       main:
         license: Apache-2.0
         actions:
+          convert:
+            function: dist/converter # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'yes'
+            runtime: 'nodejs:18'
+            limits:
+              memory: 1024
+              concurrency: 2
+            inputs:
+              LOG_LEVEL: debug
+              aemAuthorUrl: https://author-p122525-e1200861.adobeaemcloud.com
+              aemOwner: ruhisingh1
+              aemRepo: exlm
+              aemBranch: main
+              exlApiHost: $EXL_API_HOST
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          khoros:
+            function: dist/khoros # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+              khorosApiSecret: $KHOROS_API_SECRET
+              khorosOrigin: $KHOROS_ORIGIN
+              imsOrigin: $IMS_ORIGIN
+              imsClientId: $IMS_CLIENT_ID
+              imsClientSecret: $IMS_CLIENT_SECRET
+              imsAuthorizationCode: $IMS_AUTHORIZATION_CODE
+              ipassApiKey: $IPASS_API_KEY
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
           rockwell:
             function: dist/rockwell
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:
               LOG_LEVEL: debug
-              rockwellOrigin: $ROCKWELL_ORIGIN
-              rockwellClientId: $ROCKWELL_CLIENT_ID
-              rockwellClientSecret: $ROCKWELL_CLIENT_SECRET
               imsOrigin: $IMS_ORIGIN
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          tocs:
+            function: dist/tocs # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          files:
+            function: dist/files # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          publish:
+            function: dist/publish # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            web: 'no'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+              owner: $OWNER
+              repo: $REPO
+              branch: $BRANCH
+              apiKey: $HLX_API_KEY
+            annotations:
               final: true

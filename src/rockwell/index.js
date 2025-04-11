@@ -74,9 +74,12 @@ export const main = async function main(params) {
     modifiedAfter: params.modifiedAfter,
   });
 
-  // Proxy the path request to Rockwell services with filtered parameters
-  return rockwellProxy.proxyPath({
+  // Build the proxy config conditionally
+  const proxyConfig = {
     path,
-    params: rawParams,
-  });
+    ...(Object.keys(rawParams).length > 0 && { params: rawParams }),
+  };
+
+  // Proxy the path request to Rockwell services
+  return rockwellProxy.proxyPath(proxyConfig);
 };
