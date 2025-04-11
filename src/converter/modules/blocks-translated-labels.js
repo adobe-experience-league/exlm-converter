@@ -28,6 +28,21 @@ export const CREATED_FOR = {
   'zh-hans': '创建对象：',
 };
 
+export const APPLIES_TO = {
+  en: 'Applies to:',
+  de: 'Gilt für:',
+  fr: "S'applique à :",
+  it: 'Si applica a:',
+  sv: 'Gäller:',
+  es: 'Se aplica a:',
+  nl: 'Van toepassing op:',
+  ko: '적용 대상:',
+  ja: '適用対象：',
+  'pt-br': 'Aplica-se a:',
+  'zh-hant': '適用對象：',
+  'zh-hans': '适用对象：',
+};
+
 export const TOPICS = {
   en: 'Topics:',
   de: 'Themen:',
