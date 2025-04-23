@@ -96,17 +96,12 @@ export default class ExlClient {
    * Get Playlist By ID
    * @param {string} id
    * @param {string} lang
-   * @returns
+   * @returns {Promise<string>}
    */
   // eslint-disable-next-line class-methods-use-this
-  async getPlaylistById(id, lang = 'en') {
-    const path = `api/playlists/${id}?lang=${lang}`;
-    const response = await this.doFetch(path);
-    if (response.error) {
-      throw new Error(response.error);
-    } else {
-      return this.removeSpacesFromKeysRecursively(response);
-    }
+  async getPlaylistHtmlById(id, lang = 'en') {
+    const path = `api/v2/playlists/${id}?lang=${lang}`;
+    return this.doFetchHtml(path);
   }
 
   /**
@@ -238,6 +233,17 @@ export default class ExlClient {
     console.log(`[FETCH] ${url.toString()}`);
     const response = await fetch(url);
     return response.json();
+  }
+
+  async doFetchHtml(path) {
+    const url = new URL(path, this.host);
+    console.log(`[FETCH] ${url.toString()}`);
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'text/html',
+      },
+    });
+    return response.text();
   }
 
   removeSpacesFromKeysRecursively(obj) {
