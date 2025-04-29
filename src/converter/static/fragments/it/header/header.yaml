@@ -99,7 +99,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe Programma di feedback
             subtitle: Influenza lo sviluppo dei prodotti Adobe
-            url: '/home?lang=it#feedback'
+            url: '/it/feedback-program'
           - title: Gruppi di Utenti Adobe
             subtitle: Unisciti a un gruppo di utenti e connettiti con persone che la pensano allo stesso modo.
             url: '/it/user-groups'
