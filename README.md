@@ -126,6 +126,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `IMS_AUTHORIZATION_CODE` | secret | no                 | the IMS auth code to use for IMS authentication              |
 | `IPASS_API_KEY`          | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments |
 | `EXL_API_HOST`           | var    | no                 | `https://experienceleague.adobe.com`                         |
+| `FEATURE_FLAGS`          | var    | no                 | comma separated feature flags that affect converter behavior |
 
 > `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
 > for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication

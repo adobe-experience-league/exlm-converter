@@ -8,19 +8,10 @@ import { matchPlaylistPath } from '../modules/utils/path-match-utils.js';
 import { createMetaData } from '../modules/utils/metadata-util.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { createPlaylist } from './playlists/create-playlist.js';
+import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
+import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 
-export default async function renderPlaylist(path) {
-  const match = matchPlaylistPath(path);
-  const {
-    params: { lang, playlistId },
-  } = match;
-
-  if (!playlistId) {
-    return {
-      error: new Error(`playlist id is required but none was provided`),
-    };
-  }
-
+async function renderPlaylistV1({ path, playlistId, lang }) {
   const defaultExlClient = await createDefaultExlClient();
 
   const { data: playlist } = await defaultExlClient.getPlaylistById(
@@ -61,4 +52,40 @@ export default async function renderPlaylist(path) {
   return {
     error: new Error(`No Page found for: ${path}`),
   };
+}
+
+async function renderPlaylistV2({ playlistId, lang }) {
+  const defaultExlClientv2 = await createDefaultExlClientV2();
+
+  const playlistHtml = await defaultExlClientv2.getPlaylistHtmlById(
+    playlistId,
+    lang,
+  );
+
+  return {
+    body: playlistHtml,
+    headers: {
+      'Content-Type': 'text/html',
+    },
+    md: '',
+    original: playlistHtml,
+  };
+}
+
+export default async function renderPlaylist(path) {
+  const match = matchPlaylistPath(path);
+  const {
+    params: { lang, playlistId },
+  } = match;
+
+  if (!playlistId) {
+    return {
+      error: new Error(`playlist id is required but none was provided`),
+    };
+  }
+
+  if (paramMemoryStore.hasFeatureFlag('playlists-v2')) {
+    return renderPlaylistV2({ path, playlistId, lang });
+  }
+  return renderPlaylistV1({ path, playlistId, lang });
 }
