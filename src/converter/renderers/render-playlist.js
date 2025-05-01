@@ -1,5 +1,13 @@
+import { h } from 'hastscript';
+import { raw } from 'hast-util-raw';
+import rehypeFormat from 'rehype-format';
+import { toHtml } from 'hast-util-to-html';
+import jsdom from 'jsdom';
 import { createDefaultExlClient } from '../modules/ExlClient.js';
 import { matchPlaylistPath } from '../modules/utils/path-match-utils.js';
+import { createMetaData } from '../modules/utils/metadata-util.js';
+import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
+import { createPlaylist } from './playlists/create-playlist.js';
 
 export default async function renderPlaylist(path) {
   const match = matchPlaylistPath(path);
@@ -15,17 +23,42 @@ export default async function renderPlaylist(path) {
 
   const defaultExlClient = await createDefaultExlClient();
 
-  const playlistHtml = await defaultExlClient.getPlaylistHtmlById(
+  const { data: playlist } = await defaultExlClient.getPlaylistById(
     playlistId,
     lang,
   );
 
+  if (playlist) {
+    const hast = h('html', [
+      h('body', [h('header', []), h('main', [h('div')]), h('footer', [])]),
+    ]);
+    raw(hast);
+    rehypeFormat()(hast);
+    const html = toHtml(hast, { upperDoctype: true });
+
+    const dom = new jsdom.JSDOM(html);
+    const { document } = dom.window;
+    const solutions = await defaultExlClient.getSolutions();
+    createMetaData(
+      document,
+      playlist.FullMeta,
+      playlist,
+      DOCPAGETYPE.DOC_PLAYLIST,
+      solutions,
+    );
+
+    createPlaylist(document, playlist);
+
+    return {
+      body: dom.serialize(),
+      headers: {
+        'Content-Type': 'text/html',
+      },
+      md: '',
+      original: html,
+    };
+  }
   return {
-    body: playlistHtml,
-    headers: {
-      'Content-Type': 'text/html',
-    },
-    md: '',
-    original: playlistHtml,
+    error: new Error(`No Page found for: ${path}`),
   };
 }
