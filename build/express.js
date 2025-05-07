@@ -32,6 +32,7 @@ const {
   IMS_AUTHORIZATION_CODE,
   IPASS_API_KEY,
   EXL_API_HOST,
+  FEATURE_FLAGS,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -70,6 +71,7 @@ const converterHandler = async (req, res) => {
     aemBranch: BRANCH,
     authorization: `Bearer ${ACCESS_TOKEN}`,
     exlApiHost: EXL_API_HOST,
+    featureFlags: FEATURE_FLAGS,
   };
 
   const { body, headers, md, original, error, statusCode } = await render(
@@ -138,4 +140,11 @@ app.get('/khoros/**', khorosHandler);
 app.get('/toc/**', tocHandler);
 app.get('/**', converterHandler);
 
-app.listen(port, () => console.log(`Converter listening on port ${port}`));
+app.listen(port, () =>
+  console.log(`
+  
+  Converter: http://localhost:${port}/en/docs
+  Khoros: http://localhost:${port}/khoros
+  Toc: http://localhost:${port}/toc
+`),
+);

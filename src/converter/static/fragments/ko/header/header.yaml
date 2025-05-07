@@ -99,7 +99,7 @@ nav:
             url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
           - title: Adobe 피드백 프로그램
             subtitle: Adobe 제품 개발에 영향
-            url: '/home?lang=ko#feedback'
+            url: '/ko/feedback-program'
           - title: Adobe 사용자 그룹
             subtitle: 사용자 그룹에 가입하여 비슷한 생각을 가진 사람들과 연결하세요.
             url: '/ko/user-groups'

@@ -67,6 +67,7 @@ jobs:
           REPO: ${{ vars.REPO }}
           BRANCH: ${{ vars.BRANCH }}
           HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
+          FEATURE_FLAGS: ${{ vars.FEATURE_FLAGS }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:

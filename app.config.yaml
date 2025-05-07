@@ -20,6 +20,7 @@ application:
               aemRepo: $REPO
               aemBranch: $BRANCH
               exlApiHost: $EXL_API_HOST
+              featureFlags: $FEATURE_FLAGS
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
