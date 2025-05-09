@@ -54,7 +54,18 @@ try {
  * @returns
  */
 export const render = async function render(path, params) {
-  paramMemoryStore.set(params);
+  // eslint-disable-next-line camelcase
+  const { __ow_headers, authorization: authorizationParam } = params;
+  // eslint-disable-next-line camelcase
+  const authorization = __ow_headers?.authorization || authorizationParam || '';
+  // eslint-disable-next-line camelcase
+  const sourceLocation = __ow_headers?.['x-content-source-location'] || '';
+
+  paramMemoryStore.set({
+    ...params,
+    authorization,
+    sourceLocation,
+  });
 
   // specifically return 404 for courses, untill they are migrated.
   if (isCoursesPath(path)) {
@@ -74,7 +85,7 @@ export const render = async function render(path, params) {
   }
 
   if (isPlaylistsPath(path)) {
-    return renderPlaylist(path, dir);
+    return renderPlaylist(path, authorization);
   }
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
@@ -91,18 +102,10 @@ export const render = async function render(path, params) {
 
 export const main = async function main(params) {
   // eslint-disable-next-line camelcase
-  const { __ow_path, __ow_headers } = params;
+  const { __ow_path } = params;
   // eslint-disable-next-line camelcase
   const path = __ow_path || '';
-  // eslint-disable-next-line camelcase
-  const authorization = __ow_headers?.authorization || '';
-  // eslint-disable-next-line camelcase
-  const sourceLocation = __ow_headers?.['x-content-source-location'] || '';
-  const { body, headers, statusCode, error } = await render(path, {
-    ...params,
-    authorization,
-    sourceLocation,
-  });
+  const { body, headers, statusCode, error } = await render(path, params);
 
   if (!error) {
     return {
