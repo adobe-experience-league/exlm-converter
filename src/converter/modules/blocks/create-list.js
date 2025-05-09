@@ -4,7 +4,7 @@ export const createListBlock = (document, listEl) => {
   const tag = listEl.tagName.toLowerCase();
   const cloneList = document.createElement(tag);
   cloneList.innerHTML = listEl.innerHTML;
-  const block = toBlock('list ol', [[cloneList]], document);
+  const block = toBlock('list', [[cloneList]], document);
   replaceElement(listEl, block);
 };
 
