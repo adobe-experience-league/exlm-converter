@@ -32,6 +32,7 @@ const {
   IMS_AUTHORIZATION_CODE,
   IPASS_API_KEY,
   EXL_API_HOST,
+  FEATURE_FLAGS,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -60,16 +61,18 @@ const port = 3030;
  * @returns
  */
 const converterHandler = async (req, res) => {
-  const { path, query } = req;
+  const { path, query, headers: reqHeaders } = req;
 
   const params = {
     ...query,
+    __ow_headers: reqHeaders,
     aemAuthorUrl: AEM_AUTHOR_URL,
     aemOwner: OWNER,
     aemRepo: REPO,
     aemBranch: BRANCH,
     authorization: `Bearer ${ACCESS_TOKEN}`,
     exlApiHost: EXL_API_HOST,
+    featureFlags: FEATURE_FLAGS,
   };
 
   const { body, headers, md, original, error, statusCode } = await render(

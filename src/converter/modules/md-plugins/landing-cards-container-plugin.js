@@ -1,13 +1,13 @@
 import container from 'markdown-it-container';
 
-export default function landingCardContainerPlugin(md) {
-  md.use(container, 'landing-card-container', {
+export default function landingCardsContainerPlugin(md) {
+  md.use(container, 'landing-cards-container', {
     validate(params) {
-      return params.trim().match(/^landing-card-container\s*(.*)$/);
+      return params.trim().match(/^landing-cards-container\s*(.*)$/);
     },
     render(tokens, idx) {
       if (tokens[idx].nesting === 1) {
-        let html = '<div class="landing-card-container">\n';
+        let html = '<div class="landing-cards-container">\n';
         html += '<div>\n';
         return html;
       }
