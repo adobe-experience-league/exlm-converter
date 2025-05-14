@@ -1,0 +1,152 @@
+---
+productGrid:
+  - title: Adobe Experience Cloud
+    url: https://experience.adobe.com/
+  - title: Adobe Document Cloud
+    url: https://documentcloud.adobe.com/link/home/
+signIn: '로그인'
+profileMenu:
+  - title: 내 학습 프로필
+    url: '/ko/home/profile-settings'
+  - title: 책갈피가 표시된 콘텐츠
+    url: '/ko/home/bookmarks'
+  - title: 로그아웃
+    url: '#'
+search:
+  title: 검색
+  placeholder: 'Experience League 검색'
+  url: /search.html
+  filters:
+    - title: 모두
+      contenttype: All
+    - title: 인증
+      contenttype: Certification
+    - title: 커뮤니티
+      contenttype: Community
+    - title: 설명서
+      contenttype: Documentation
+    - title: 이벤트
+      contenttype: Event
+    - title: 관점
+      contenttype: Perspective
+    - title: 재생목록
+      contenttype: Playlist
+    - title: 문제 해결
+      contenttype: Troubleshooting
+    - title: 튜토리얼
+      contenttype: Tutorial
+languageSelector:
+  title: 지역 변경
+nav:
+  - title: 학습
+    secondaryItems:
+      - title: 전체 콘텐츠 찾아보기
+        url: '/ko/browse'
+    items:
+      - title: 주요 제품
+        url: '#'
+        items:
+          - title: 주요 제품
+            url: '#'
+            urlOptions:
+              featured-products: 'true'
+      - title: 리소스
+        items:
+          - title: 재생 목록
+            subtitle: 전문적으로 엄선된 비디오 컬렉션
+            url: '/ko/playlists'
+          - title: 튜토리얼
+            subtitle: 솔루션별 비디오 및 사용 방법
+            url: /ko/docs/home-tutorials
+          - title: 관점
+            subtitle: Experience Cloud 고객 및 Adobe 전문가의 실행 가능한 인사이트
+            url: /ko/perspectives
+          - title: 인증
+            subtitle: Adobe 마케팅 솔루션에 대한 검증된 전문 지식
+            url: /ko/certification-home
+          - title: 전문 강사 교육
+            subtitle: Adobe 인증 강사가 진행하는 라이브 및 온디맨드 과정
+            url: https://learning.adobe.com/
+            urlOptions:
+              target: _blank
+
+  - title: 설명서
+    url: /ko/docs
+
+  - title: 이벤트
+    url: /ko/events
+
+  - title: 커뮤니티
+    items:
+      - title: 빠른 링크
+        items:
+          - title: 제품별 커뮤니티
+            url: https://experienceleaguecommunities.adobe.com/?profile.language=en
+          - title: 공지사항
+            subtitle: Adobe의 최신 업데이트를 확인하세요
+            url: https://experienceleaguecommunities.adobe.com/t5/community-announcements/ct-p/adobe-experience-cloud-community?profile.language=en
+          - title: Experience Cloud 지지자
+            subtitle: 고객 지지자 커뮤니티를 만나보십시오.
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/MeetTheAdvocates?profile.language=en
+          - title: 이벤트
+            subtitle: 로컬 및 가상 이벤트 참석
+            url: '/ko/events'
+          - title: 직원 어드바이저
+            subtitle: 전문가 중 한 명과 연결
+            url: https://experienceleaguecommunities.adobe.com/t5/custom/page/page-id/employeeadvisors?profile.language=en
+          - title: Experience League 쇼케이스
+            subtitle: 동료가 작성한 Experience Cloud 제품의 실제 사용 사례 읽기
+            url: https://experienceleaguecommunities.adobe.com/t5/experience-league-showcase-2022/con-p/exl-showcase-2022/tab/entries/?profile.language=en
+          - title: Adobe 피드백 프로그램
+            subtitle: Adobe 제품 개발에 영향
+            url: '/ko/feedback-program'
+          - title: Adobe 사용자 그룹
+            subtitle: 사용자 그룹에 가입하여 비슷한 생각을 가진 사람들과 연결하세요.
+            url: '/ko/user-groups'
+      - title: 제품별 커뮤니티
+        items:
+          - title: Advertising Cloud
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-advertising-cloud/ct-p/adobe-advertising-cloud-community?profile.language=en
+          - title: Analytics
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-analytics/ct-p/adobe-analytics-community?profile.language=en
+          - title: Audience Manager
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-audience-manager/ct-p/adobe-audience-manager-community?profile.language=en
+          - title: Campaign Classic v7 및 Campaign v8
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign/ct-p/adobe-campaign-classic-community?profile.language=en
+          - title: Campaign Standard
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-campaign-standard/ct-p/adobe-campaign-standard-community?profile.language=en
+          - title: Developer
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-developer-cloud/ct-p/adobe-io?profile.language=en
+          - title: Experience Cloud
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-cloud/ct-p/adobe-experience-cloud-community?profile.language=en
+          - title: Experience Manager Sites 및 기타 제품
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community?profile.language=en
+          - title: Experience Platform
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-experience-platform/ct-p/adobe-experience-platform-community?profile.language=en
+          - title: Journey Optimizer
+            url: https://experienceleaguecommunities.adobe.com/t5/adobe-journey-optimizer/ct-p/journey-optimizer?profile.language=en
+          - title: Target
+            url: https:///experienceleaguecommunities.adobe.com/t5/adobe-target/ct-p/adobe-target-community?profile.language=en
+          - title: Real-Time CDP
+            url: https://experienceleaguecommunities.adobe.com/t5/real-time-customer-data-platform/ct-p/Real-time-CDP?profile.language=en
+          - title: Workfront
+            url: https://experienceleaguecommunities.adobe.com/t5/workfront/ct-p/workfront?profile.language=en
+          - title: Creative Cloud
+            url: 'https://community.adobe.com'
+            urlOptions:
+              target: _blank
+          - title: Document Cloud
+            url: 'https://community.adobe.com/t5/acrobat/ct-p/ct-acrobat?profile.language=en&page=1&sort=latest_replies&filter=all&lang=all&tabid=discussions'
+            urlOptions:
+              target: _blank
+          - title: Commerce
+            url: 'https://community.magento.com'
+            urlOptions:
+              target: _blank
+          - title: Marketo Engage
+            url: 'https://nation.marketo.com'
+            urlOptions:
+              target: _blank
+
+  - title: 지원
+    url: '/home?lang=ko#support'

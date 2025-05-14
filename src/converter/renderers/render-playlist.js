@@ -54,17 +54,12 @@ async function renderPlaylistV1({ path, playlistId, lang }) {
   };
 }
 
-async function renderPlaylistV2({ playlistId, lang, authorization }) {
+async function renderPlaylistV2({ playlistId, lang }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
 
   const playlistHtml = await defaultExlClientv2.getPlaylistHtmlById(
     playlistId,
     lang,
-    {
-      headers: {
-        authorization,
-      },
-    },
   );
 
   return {
@@ -77,7 +72,7 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
   };
 }
 
-export default async function renderPlaylist(path, authorization) {
+export default async function renderPlaylist(path) {
   const match = matchPlaylistPath(path);
   const {
     params: { lang, playlistId },
@@ -90,7 +85,7 @@ export default async function renderPlaylist(path, authorization) {
   }
 
   if (paramMemoryStore.hasFeatureFlag('playlists-v2')) {
-    return renderPlaylistV2({ path, playlistId, lang, authorization });
+    return renderPlaylistV2({ path, playlistId, lang });
   }
   return renderPlaylistV1({ path, playlistId, lang });
 }
