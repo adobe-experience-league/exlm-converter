@@ -61,11 +61,10 @@ const port = 3030;
  * @returns
  */
 const converterHandler = async (req, res) => {
-  const { path, query, headers: reqHeaders } = req;
+  const { path, query } = req;
 
   const params = {
     ...query,
-    __ow_headers: reqHeaders,
     aemAuthorUrl: AEM_AUTHOR_URL,
     aemOwner: OWNER,
     aemRepo: REPO,
