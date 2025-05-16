@@ -89,7 +89,7 @@ export default async function renderPlaylist(path, authorization) {
     };
   }
 
-  if (paramMemoryStore.hasFeatureFlag('playlists-v2')) {
+  if (paramMemoryStore.hasFeatureFlag('playlists-v2') && authorization) {
     return renderPlaylistV2({ path, playlistId, lang, authorization });
   }
   return renderPlaylistV1({ path, playlistId, lang });
