@@ -16,12 +16,14 @@ import renderDoc from './renderers/render-doc.js';
 import renderFragment from './renderers/render-fragment.js';
 import renderAem from './renderers/render-aem.js';
 import renderLanding from './renderers/render-landing.js';
+import renderSlides from './renderers/render-slides.js';
 import {
   isCoursesPath,
   isDocsPath,
   isFragmentPath,
   isIoFile,
   isLandingPath,
+  isSlidesPath,
   isPlaylistsPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
@@ -67,6 +69,10 @@ export const render = async function render(path, params) {
 
   if (isLandingPath(path)) {
     return renderLanding(path, dir);
+  }
+
+  if (isSlidesPath(path)) {
+    return renderSlides(path, dir);
   }
 
   if (isDocsPath(path)) {

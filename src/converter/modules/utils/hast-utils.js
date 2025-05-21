@@ -11,6 +11,7 @@
  */
 
 import { EXIT, visit } from 'unist-util-visit';
+import { h } from 'hastscript';
 
 export function replace(tree, oldNode, newNode) {
   // $table.parentNode.replaceChild($div, $table);
@@ -28,4 +29,32 @@ export function childNodes(node) {
 export function wrapContent($parent, $node) {
   $parent.children.push(...$node.children);
   $node.children = [$parent];
+}
+
+/**
+ * @typedef {Object} EdsHastDocOptions
+ * @property {Nodes} mainHast
+ * @property {string} htmlLang
+ * @property {Nodes} [head]
+ */
+
+/**
+ * @param {EdsHastDocOptions} options
+ * @returns {Root}
+ */
+export function toEdsHast(options) {
+  return {
+    type: 'root',
+    children: [
+      { type: 'doctype' },
+      h('html', { lang: options.htmlLang }, [
+        h('head', options.head || []),
+        h('body', [
+          h('header', []),
+          h('main', options.mainHast),
+          h('footer', []),
+        ]),
+      ]),
+    ],
+  };
 }

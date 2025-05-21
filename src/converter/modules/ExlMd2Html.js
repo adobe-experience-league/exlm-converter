@@ -5,6 +5,8 @@ import { raw } from 'hast-util-raw';
 import rehypeFormat from 'rehype-format';
 import { toHtml } from 'hast-util-to-html';
 import jsdom from 'jsdom';
+import { toEdsHast } from './utils/hast-utils.js';
+import { md2mdast, mdast2hast } from './utils/markdown-utils.js';
 import { handleExternalUrl, createSections } from './utils/dom-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import handleUrls from '../../common/utils/link-utils.js';
@@ -157,3 +159,22 @@ export default async function md2html({
     originalHtml: html,
   };
 }
+
+/**
+ * @param {string} documentationMd
+ * @param {{ htmlLang: string }} options
+ */
+export const convertDocumentation = async (documentationMd, options) => {
+  const mdast = await md2mdast(documentationMd);
+
+  const edsHast = toEdsHast({
+    htmlLang: options.htmlLang,
+    mainHast: mdast2hast(mdast),
+  });
+
+  rehypeFormat()(edsHast);
+
+  return toHtml(edsHast, {
+    upperDoctype: true,
+  });
+};

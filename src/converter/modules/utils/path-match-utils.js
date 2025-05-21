@@ -4,6 +4,7 @@ const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
 const playlistsMatchPath = '/:lang/playlists/:playlistId';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
+const slidesMatchPath = '/:lang/test-slides';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
 const ioFiles = ['/redirects.json'];
 
@@ -40,6 +41,15 @@ export const matchLandingPath = (path) => {
 };
 
 export const isLandingPath = (path) => matchLandingPath(path) !== false;
+
+export const matchSlidesPath = (path) => {
+  const slidesMatcher = match(slidesMatchPath, {
+    decode: decodeURIComponent,
+  });
+  return slidesMatcher(path);
+};
+
+export const isSlidesPath = (path) => matchSlidesPath(path) !== false;
 
 export const matchFragmentPath = (path) => {
   const fragmentMatcher = match(fragmentMatchPath, {
