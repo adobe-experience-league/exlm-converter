@@ -19,7 +19,7 @@ export default async function renderSlides(path, parentFolderPath) {
     params: { lang },
   } = matchSlidesPath(path);
 
-  const landingName = 'test-slides';
+  const landingName = 'how-to-slides';
 
   const landingMdFilePath = join(
     parentFolderPath,

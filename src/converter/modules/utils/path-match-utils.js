@@ -4,7 +4,7 @@ const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
 const playlistsMatchPath = '/:lang/playlists/:playlistId';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
-const slidesMatchPath = '/:lang/test-slides';
+const slidesMatchPath = '/:lang/how-to-slides';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
 const ioFiles = ['/redirects.json'];
 
