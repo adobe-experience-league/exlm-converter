@@ -1,8 +1,10 @@
+import { JSDOM } from 'jsdom';
 import { join } from 'path';
 import { readFileSync } from 'fs';
 import { convertDocumentation } from '../modules/ExlMd2Html.js';
 import { addExtension } from '../modules/utils/path-utils.js';
 import { matchSlidesPath } from '../modules/utils/path-match-utils.js';
+import createSlidesBlock from '../modules/blocks/create-slides-block.js';
 
 function splitMD(mdString) {
   const parts = mdString.split('---');
@@ -32,12 +34,17 @@ export default async function renderSlides(path, parentFolderPath) {
   const convertedHtml = await convertDocumentation(md, {
     htmlLang: lang,
   });
+
+  const dom = new JSDOM(convertedHtml);
+  const { document } = dom.window;
+  createSlidesBlock(document);
+
   return {
-    body: convertedHtml,
+    body: dom.serialize(),
     headers: {
       'Content-Type': 'text/html',
     },
     md,
-    original: convertedHtml,
+    original: dom.serialize(),
   };
 }
