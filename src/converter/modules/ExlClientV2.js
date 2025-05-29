@@ -22,9 +22,24 @@ export default class ExlClientV2 {
    * @returns {Promise<string>}
    */
   // eslint-disable-next-line class-methods-use-this
-  async getPlaylistHtmlById(id, lang = 'en', reauestOptions = {}) {
+  async getPlaylistHtmlById(id, lang = 'en', requestOptions = {}) {
     const path = `api/v2/playlists/${id}?lang=${lang}`;
-    return this.doFetchHtml(path, reauestOptions);
+    return this.doFetchHtml(path, requestOptions);
+  }
+
+  /**
+   * Get Slide By ID
+   * @param {string} id
+   * @param {string} lang
+   * @param {RequestInit} requestOptions
+   * @returns {Promise<string>}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async getSlideHtmlById(id, lang = 'en', requestOptions = {}) {
+    const path = `api/v2/slides/${id}?lang=${lang}`;
+    console.log(`[FETCH] ${path}`);
+    console.log(requestOptions);
+    return this.doFetchHtml(path, requestOptions);
   }
 
   async doFetchHtml(path, requestOptions = {}) {

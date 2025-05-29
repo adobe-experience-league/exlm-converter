@@ -23,10 +23,12 @@ import {
   isIoFile,
   isLandingPath,
   isPlaylistsPath,
+  isSlidesPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
 import { paramMemoryStore } from './modules/utils/param-memory-store.js';
 import renderIoFile from './renderers/render-io-file.js';
+import renderSlide from './renderers/render-slide.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -76,6 +78,11 @@ export const render = async function render(path, params) {
   if (isPlaylistsPath(path)) {
     return renderPlaylist(path, params?.authorization);
   }
+
+  if (isSlidesPath(path)) {
+    return renderSlide(path, params?.authorization);
+  }
+
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
     return renderFragment(path, dir);

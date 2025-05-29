@@ -2,6 +2,7 @@ import { match } from 'path-to-regexp';
 
 const docsMatchPath = '/:lang/docs/:solution/:docRelPath*';
 const playlistsMatchPath = '/:lang/playlists/:playlistId';
+const slidesMatchPath = '/:lang/slides/:slideId';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
@@ -22,6 +23,15 @@ export const matchPlaylistPath = (path) => {
 };
 
 export const isPlaylistsPath = (path) => matchPlaylistPath(path) !== false;
+
+export const matchSlidePath = (path) => {
+  const slidesMatcher = match(slidesMatchPath, {
+    decode: decodeURIComponent,
+  });
+  return slidesMatcher(path);
+};
+
+export const isSlidesPath = (path) => matchSlidePath(path) !== false;
 
 export const matchCoursesPath = (path) => {
   const coursesMatcher = match(coursesMatchPath, {

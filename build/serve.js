@@ -54,5 +54,5 @@ await Promise.all(buildPromises);
 const nodeMon = join(currentDirectory, '..', 'node_modules', '.bin', 'nodemon');
 const express = join(currentDirectory, 'express.js');
 const dist = join(currentDirectory, '..', 'dist');
-const command = `${nodeMon} ${express} --watch ${dist}`;
+const command = `${nodeMon} ${express} --watch ${dist} --watch ${express}`;
 execute(command, 'nodemon');
