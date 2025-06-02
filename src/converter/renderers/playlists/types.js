@@ -20,7 +20,6 @@
  * @typedef {Object} Video
  * @property {string} Title
  * @property {string} Description
- * @property {string[]} Thumbnail
  * @property {string} URL
  * @property {number} Duration
  * @property {string} TranscriptURL
