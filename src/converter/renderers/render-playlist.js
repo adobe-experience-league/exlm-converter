@@ -62,7 +62,7 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
     lang,
     {
       headers: {
-        authorization,
+        ...(authorization && { authorization }),
       },
     },
   );
