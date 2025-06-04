@@ -119,5 +119,5 @@ export const main = async function main(params) {
     };
   }
 
-  return { statusCode: 404, body: error.message };
+  return { statusCode: statusCode || 404, body: error.message };
 };
