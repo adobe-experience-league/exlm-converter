@@ -61,15 +61,21 @@ const port = 3030;
  * @returns
  */
 const converterHandler = async (req, res) => {
-  const { path, query } = req;
+  const { path, query, headers: reqHeaders } = req;
+
+  let { authorization } = reqHeaders;
+  if (!authorization && ACCESS_TOKEN) {
+    authorization = `Bearer ${ACCESS_TOKEN}`;
+  }
 
   const params = {
     ...query,
+    __ow_headers: reqHeaders,
     aemAuthorUrl: AEM_AUTHOR_URL,
     aemOwner: OWNER,
     aemRepo: REPO,
     aemBranch: BRANCH,
-    authorization: `Bearer ${ACCESS_TOKEN}`,
+    authorization,
     exlApiHost: EXL_API_HOST,
     featureFlags: FEATURE_FLAGS,
   };

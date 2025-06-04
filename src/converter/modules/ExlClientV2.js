@@ -18,20 +18,38 @@ export default class ExlClientV2 {
    * Get Playlist By ID
    * @param {string} id
    * @param {string} lang
+   * @param {RequestInit} requestOptions
    * @returns {Promise<string>}
    */
   // eslint-disable-next-line class-methods-use-this
-  async getPlaylistHtmlById(id, lang = 'en') {
+  async getPlaylistHtmlById(id, lang = 'en', requestOptions = {}) {
     const path = `api/v2/playlists/${id}?lang=${lang}`;
-    return this.doFetchHtml(path);
+    return this.doFetchHtml(path, requestOptions);
   }
 
-  async doFetchHtml(path) {
+  /**
+   * Get Slide By ID
+   * @param {string} id
+   * @param {string} lang
+   * @param {RequestInit} requestOptions
+   * @returns {Promise<string>}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async getSlideHtmlById(id, lang = 'en', requestOptions = {}) {
+    const path = `api/v2/slides/${id}?lang=${lang}`;
+    console.log(`[FETCH] ${path}`);
+    console.log(requestOptions);
+    return this.doFetchHtml(path, requestOptions);
+  }
+
+  async doFetchHtml(path, requestOptions = {}) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);
     const response = await fetch(url, {
+      ...requestOptions,
       headers: {
         Accept: 'text/html',
+        ...requestOptions.headers,
       },
     });
     return response.text();

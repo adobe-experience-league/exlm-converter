@@ -23,10 +23,12 @@ import {
   isIoFile,
   isLandingPath,
   isPlaylistsPath,
+  isSlidesPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
 import { paramMemoryStore } from './modules/utils/param-memory-store.js';
 import renderIoFile from './renderers/render-io-file.js';
+import renderSlide from './renderers/render-slide.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -74,8 +76,13 @@ export const render = async function render(path, params) {
   }
 
   if (isPlaylistsPath(path)) {
-    return renderPlaylist(path, dir);
+    return renderPlaylist(path, params?.authorization);
   }
+
+  if (isSlidesPath(path)) {
+    return renderSlide(path, params?.authorization);
+  }
+
   // Handle fragments as static content (eg: header, footer ...etc.)
   if (isFragmentPath(path)) {
     return renderFragment(path, dir);
@@ -91,11 +98,11 @@ export const render = async function render(path, params) {
 
 export const main = async function main(params) {
   // eslint-disable-next-line camelcase
-  const { __ow_path, __ow_headers } = params;
+  const { __ow_path, __ow_headers, authorization: authorizationParam } = params;
   // eslint-disable-next-line camelcase
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
-  const authorization = __ow_headers?.authorization || '';
+  const authorization = __ow_headers?.authorization || authorizationParam || '';
   // eslint-disable-next-line camelcase
   const sourceLocation = __ow_headers?.['x-content-source-location'] || '';
   const { body, headers, statusCode, error } = await render(path, {
