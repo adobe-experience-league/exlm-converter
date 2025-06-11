@@ -4,11 +4,13 @@ import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 async function renderSlideV2({ slideId, lang, authorization }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
 
-  const slideHtml = await defaultExlClientv2.getSlideHtmlById(slideId, lang, {
+  const response = await defaultExlClientv2.getSlideHtmlById(slideId, lang, {
     headers: {
       ...(authorization && { authorization }),
     },
   });
+
+  const slideHtml = await response.text();
 
   return {
     body: slideHtml,
