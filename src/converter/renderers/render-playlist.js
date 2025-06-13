@@ -57,7 +57,7 @@ async function renderPlaylistV1({ path, playlistId, lang }) {
 async function renderPlaylistV2({ playlistId, lang, authorization }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
 
-  const playlistHtml = await defaultExlClientv2.getPlaylistHtmlById(
+  const playlistHtmlResponse = await defaultExlClientv2.getPlaylistHtmlById(
     playlistId,
     lang,
     {
@@ -67,13 +67,24 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
     },
   );
 
+  if (!playlistHtmlResponse.ok) {
+    return {
+      statusCode: playlistHtmlResponse.status,
+      error: new Error(
+        `Failed to fetch playlist HTML: ${playlistHtmlResponse.statusText}`,
+      ),
+    };
+  }
+
+  const html = await playlistHtmlResponse.text();
+
   return {
-    body: playlistHtml,
+    body: html,
     headers: {
       'Content-Type': 'text/html',
     },
     md: '',
-    original: playlistHtml,
+    original: html,
   };
 }
 

@@ -32,7 +32,7 @@ export default class ExlClientV2 {
    * @param {string} id
    * @param {string} lang
    * @param {RequestInit} requestOptions
-   * @returns {Promise<string>}
+   * @returns {Promise<Response>}
    */
   // eslint-disable-next-line class-methods-use-this
   async getSlideHtmlById(id, lang = 'en', requestOptions = {}) {
@@ -45,14 +45,13 @@ export default class ExlClientV2 {
   async doFetchHtml(path, requestOptions = {}) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);
-    const response = await fetch(url, {
+    return fetch(url, {
       ...requestOptions,
       headers: {
         Accept: 'text/html',
         ...requestOptions.headers,
       },
     });
-    return response.text();
   }
 }
 

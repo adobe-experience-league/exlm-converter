@@ -79,7 +79,7 @@ const MPC_ORIGIN = 'https://video.tv.adobe.com';
  * @param {string} url mpc video url
  * @returns {boolean} true if the url is a valid MPC video url matching https://video.tv.adobe.com/v/{videoId}
  */
-function isMpcVideoUrl(url) {
+export function isMpcVideoUrl(url) {
   try {
     const urlObj = new URL(url);
     const hasMpcOrigin = urlObj.origin === MPC_ORIGIN;
@@ -111,27 +111,3 @@ function isMpcVideoUrl(url) {
 //     return undefined;
 //   }
 // }
-
-/**
- * Extracts the video id from an MPC video url
- * @param {string} url mpc video url
- * @returns {Promise<MPCVideo|undefined>} the video id if the url is a valid MPC video url, undefined otherwise
- */
-export async function getMpcVideoDetailsByUrl(url) {
-  if (!isMpcVideoUrl(url)) {
-    return undefined;
-  }
-  try {
-    const urlObj = new URL(url);
-    urlObj.searchParams.set('format', 'json');
-    const response = await fetch(urlObj.href);
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    aioLogger.log(
-      'Error fetching MPC video details, not critical, resuming',
-      e,
-    );
-    return undefined;
-  }
-}

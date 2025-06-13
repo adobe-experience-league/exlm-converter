@@ -1,4 +1,3 @@
-import { getMpcVideoDetailsByUrl } from '../../../common/utils/mpc-util.js';
 import { toBlock, replaceElement } from '../utils/dom-utils.js';
 
 export function createVideoTranscript(videoBlock, document) {
@@ -27,10 +26,7 @@ async function createVideoBlockFromElement(videoElement, document) {
   const href = iframe ? iframe.src : '';
   const div = document.createElement('div');
   const videoA = `<a href="${href}">${href}</a>`;
-  const videoDetails = await getMpcVideoDetailsByUrl(href);
-  const poster = videoDetails?.video?.poster;
-  const videoImg = poster ? `<img src="${poster}" alt="video poster">` : '';
-  div.innerHTML = `<p>${videoImg}</p><p>${videoA}</p>`;
+  div.innerHTML = `<p>${videoA}</p>`;
   // create the embed block and append it to the main element
   const cells = [[div]];
   const block = toBlock('embed', cells, document);
