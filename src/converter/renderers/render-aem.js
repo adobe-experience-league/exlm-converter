@@ -11,6 +11,7 @@ import {
   getAuthorBioData,
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
+  updateTQTagsMetadata,
   decodeCQMetadata,
   generateHash,
   createTranslatedMetadata,
@@ -33,6 +34,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
   const { document } = dom.window;
 
   const lang = path.split('/')[1];
+  updateTQTagsMetadata(document);
   decodeCQMetadata(document, 'cq-tags');
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
