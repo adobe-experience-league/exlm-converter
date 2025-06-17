@@ -90,6 +90,55 @@ export function decodeCQMetadata(document, metaName) {
   setMetadata(document, metaName, decodedCQTags.join(', '));
 }
 
+// HTML entity decoder utility
+function decodeHtmlEntities(str) {
+  if (!str || typeof str !== 'string') return str;
+
+  const { JSDOM } = jsdom;
+  const dom = new JSDOM();
+  const textarea = dom.window.document.createElement('textarea');
+  textarea.innerHTML = str;
+  return textarea.value;
+}
+
+/**
+ * Update TQ Tags metadata
+ * @param {Document} document
+ */
+export function updateTQTagsMetadata(document) {
+  const keysToUpdate = [
+    'tq-role',
+    'tq-level',
+    'tq-products',
+    'tq-features',
+    'tq-industries',
+    'tq-topics',
+  ];
+
+  keysToUpdate.forEach((key) => {
+    const metaTag = getMetadata(document, key);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag);
+
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const labels = parsed
+          .map((item) => item.label)
+          .filter(Boolean)
+          .join(', ');
+        if (labels) {
+          setMetadata(document, `${key}-labels`, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${key}:`, e);
+    }
+  });
+}
+
 /**
  * Update Coveo Solution metadata
  * @param {Document} document
