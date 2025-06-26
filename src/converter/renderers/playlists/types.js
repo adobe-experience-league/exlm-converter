@@ -17,10 +17,15 @@
  */
 
 /**
+ * @typedef {Object} JSONLinkedData
+ * @property {string[]} thumbnailUrl
+ */
+
+/**
  * @typedef {Object} Video
  * @property {string} Title
  * @property {string} Description
  * @property {string} URL
  * @property {number} Duration
- * @property {string} TranscriptURL
+ * @property {JSONLinkedData} jsonLinkedData
  */
