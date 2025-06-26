@@ -48,13 +48,16 @@ export function getThumbnail(
 
 /**
  *
- * @param {import('./types').Video[]} videos
+ * @param {import('./types').Playlist[]} playlist
  * @returns
  */
-function getPlaylistImage(videos) {
-  /** @type {Video} */
-  const firstVideo = videos?.[0];
+function getPlaylistImage(playlist) {
+  const firstVideo = playlist.Videos?.[0];
   const firstVideoThumbnailUrls = firstVideo?.jsonLinkedData?.thumbnailUrl;
+
+  if (!firstVideoThumbnailUrls) {
+    return '';
+  }
 
   return getThumbnail(firstVideoThumbnailUrls);
 }
@@ -111,7 +114,11 @@ export function createPlaylist(document, playlist) {
   firstSection.append(newEl(`<h3>${Title}</h3>`));
   firstSection.append(newEl(`<p>${Description}</p>`));
   firstSection.append(createPlaylistBlock(document, Videos));
-  document.head.appendChild(
-    newEl(`<meta name="image" content="${getPlaylistImage(playlist)}">`),
-  );
+
+  const playlistImage = getPlaylistImage(playlist);
+  if (playlistImage) {
+    document.head.appendChild(
+      newEl(`<meta name="image" content="${playlistImage}">`),
+    );
+  }
 }
