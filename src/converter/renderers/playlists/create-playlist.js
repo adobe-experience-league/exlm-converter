@@ -72,7 +72,6 @@ function videoRow(document, Video) {
   const {
     URL = '#',
     TranscriptURL = '#',
-    jsonLinkedData,
     Title = '',
     Description = '',
     Duration = 0,
@@ -90,15 +89,26 @@ function videoRow(document, Video) {
   const duration = document.createElement('p');
   duration.innerHTML = Duration;
 
-  const jsonLd = document.createElement('code');
-  jsonLd.innerHTML = JSON.stringify(jsonLinkedData, null, 2);
-
-  return [[videoP], [title, desc, duration, videoTranscriptP], [jsonLd]];
+  return [[videoP], [title, desc, duration, videoTranscriptP]];
 }
 
 export function createPlaylistBlock(document, Videos) {
-  const rows = Videos.map((video) => videoRow(document, video));
-  return toBlock('playlist', rows, document);
+  const newEl = htmlToElement(document);
+  const jsonData = Videos.filter((v) => v.jsonLinkedData).map(
+    (v) => v.jsonLinkedData,
+  );
+
+  const jsonDivs = jsonData.map((jsonItem) =>
+    newEl(`<code>${JSON.stringify(jsonItem, null, 2)}</code>`),
+  );
+
+  const jsonContainer = newEl('<div class="playlist-jsonld"></div>');
+  jsonDivs.forEach((div) => jsonContainer.appendChild(div));
+  const rows = Videos.map((video) => {
+    const [videoCell, infoCell] = videoRow(document, video);
+    return [videoCell, infoCell];
+  });
+  return toBlock('playlist', [[jsonContainer], ...rows], document);
 }
 
 /**
