@@ -3,31 +3,47 @@ import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchLandingPath } from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClient } from '../modules/ExlClient.js';
 import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
+import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
+import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 
-/**
- * handles a markdown doc path
- */
-export default async function renderLanding(path) {
-  const {
-    params: { lang, solution },
-  } = matchLandingPath(path);
+export async function renderLandingV2({ landingName, lang, authorization }) {
+  const defaultExlClientv2 = await createDefaultExlClientV2();
 
-  if (solution === 'home') {
+  const landingHtmlResponse = await defaultExlClientv2.getLandingPageById(
+    landingName,
+    lang,
+    {
+      headers: {
+        ...(authorization && { authorization }),
+      },
+    },
+  );
+
+  if (!landingHtmlResponse.ok) {
     return {
+      statusCode: landingHtmlResponse.status,
       error: new Error(
-        `this path is invalid: ${path}, please use /<lang>/docs instead for home page.`,
+        `Failed to fetch landing HTML: ${landingHtmlResponse.statusText}`,
       ),
     };
   }
 
-  // default to landing page (in case solution is not provided)
-  let landingName = 'home';
-  let pageType = DOCPAGETYPE.DOC_LANDING;
-  if (lang && solution && solution !== 'home') {
-    landingName = solution;
-    pageType = DOCPAGETYPE.SOLUTION_LANDING;
-  }
+  const html = await landingHtmlResponse.text();
 
+  return {
+    body: html,
+    headers: {
+      'Content-Type': 'text/html',
+    },
+    md: '',
+    original: html,
+  };
+}
+
+/**
+ * handles a markdown doc path
+ */
+async function renderLandingv1({ path, pageType, landingName, lang }) {
   const defaultExlClient = await createDefaultExlClient();
   const landingPage = await defaultExlClient.getLandingPageByFileName(
     landingName,
@@ -59,4 +75,31 @@ export default async function renderLanding(path) {
   return {
     error: new Error(`No Page found for: ${path}`),
   };
+}
+
+export default async function renderLanding(path, authorization) {
+  const {
+    params: { lang, solution },
+  } = matchLandingPath(path);
+
+  if (solution === 'home') {
+    return {
+      error: new Error(
+        `this path is invalid: ${path}, please use /<lang>/docs instead for home page.`,
+      ),
+    };
+  }
+
+  // default to landing page (in case solution is not provided)
+  let landingName = 'home';
+  let pageType = DOCPAGETYPE.DOC_LANDING;
+  if (lang && solution && solution !== 'home') {
+    landingName = solution;
+    pageType = DOCPAGETYPE.SOLUTION_LANDING;
+  }
+
+  if (paramMemoryStore.hasFeatureFlag('landing-v2')) {
+    return renderLandingV2({ path, landingName, lang, authorization });
+  }
+  return renderLandingv1({ path, pageType, landingName, lang });
 }
