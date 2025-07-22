@@ -124,14 +124,14 @@ export function updateTQTagsMetadata(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const pairs = parsed
+        const updatedTags = parsed
           .map((item) =>
             item.uri && item.label ? `${item.uri}:${item.label}` : null,
           )
           .filter(Boolean)
           .join(', ');
-        if (pairs) {
-          setMetadata(document, `${key}-labels`, pairs);
+        if (updatedTags) {
+          setMetadata(document, `${key}-labels`, updatedTags);
         }
       }
     } catch (e) {
