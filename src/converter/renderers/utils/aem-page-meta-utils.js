@@ -126,7 +126,7 @@ export function updateTQTagsMetadata(document) {
       if (Array.isArray(parsed)) {
         const updatedTags = parsed
           .map((item) =>
-            item.uri && item.label ? `${item.uri}:${item.label}` : null,
+            item.uri && item.label ? `${item.uri}|${item.label}` : null,
           )
           .filter(Boolean)
           .join(', ');
