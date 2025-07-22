@@ -107,8 +107,8 @@ function decodeHtmlEntities(str) {
  */
 export function updateTQTagsMetadata(document) {
   const keysToUpdate = [
-    'tq-role',
-    'tq-level',
+    'tq-roles',
+    'tq-levels',
     'tq-products',
     'tq-features',
     'tq-industries',
@@ -121,16 +121,17 @@ export function updateTQTagsMetadata(document) {
 
     try {
       const decoded = decodeHtmlEntities(metaTag);
-
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const labels = parsed
-          .map((item) => item.label)
+        const pairs = parsed
+          .map((item) =>
+            item.uri && item.label ? `${item.uri}:${item.label}` : null,
+          )
           .filter(Boolean)
           .join(', ');
-        if (labels) {
-          setMetadata(document, `${key}-labels`, labels);
+        if (pairs) {
+          setMetadata(document, `${key}-labels`, pairs);
         }
       }
     } catch (e) {
