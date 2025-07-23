@@ -68,7 +68,7 @@ export const render = async function render(path, params) {
   }
 
   if (isLandingPath(path)) {
-    return renderLanding(path, dir);
+    return renderLanding(path, params?.authorization);
   }
 
   if (isDocsPath(path)) {

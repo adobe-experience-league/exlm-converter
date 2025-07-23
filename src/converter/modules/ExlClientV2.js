@@ -42,6 +42,21 @@ export default class ExlClientV2 {
     return this.doFetchHtml(path, requestOptions);
   }
 
+  /**
+   * Get Landing Page By ID
+   * @param {string} id
+   * @param {string} lang
+   * @param {RequestInit} requestOptions
+   * @returns {Promise<Response>}
+   */
+  async getLandingPageById(id, lang = 'en', requestOptions = {}) {
+    if (!id) {
+      throw new Error('landing id is required');
+    }
+    const path = `api/v2/landing/${id}?lang=${lang}`;
+    return this.doFetchHtml(path, requestOptions);
+  }
+
   async doFetchHtml(path, requestOptions = {}) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);
