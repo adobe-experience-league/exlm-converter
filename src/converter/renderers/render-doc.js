@@ -3,15 +3,10 @@ import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchDocsPath } from '../modules/utils/path-match-utils.js';
+import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
+import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 
-/**
- * handles a markdown doc path
- */
-export default async function renderDoc(path) {
-  const {
-    params: { lang, solution, docRelPath },
-  } = matchDocsPath(path);
-
+async function renderDocV1({ path, lang, solution, docRelPath }) {
   // construct the path in the articles API
   let apiArticlePath = `/docs/${solution}/${docRelPath.join('/')}`;
   const regex = /\.[0-9a-z]+$/i; // Regular expression to match file extensions
@@ -51,4 +46,50 @@ export default async function renderDoc(path) {
   return {
     error: new Error(`No Page found for: ${path}`),
   };
+}
+
+async function renderDocV2({ path, lang, authorization }) {
+  const defaultExlClientv2 = await createDefaultExlClientV2();
+
+  const docHtmlResponse = await defaultExlClientv2.getArticleHtmlByPath(
+    path,
+    lang,
+    {
+      headers: {
+        ...(authorization && { authorization }),
+      },
+    },
+  );
+
+  if (!docHtmlResponse.ok) {
+    return {
+      statusCode: docHtmlResponse.status,
+      error: new Error(
+        `Failed to fetch doc HTML: ${docHtmlResponse.statusText}`,
+      ),
+    };
+  }
+
+  const html = await docHtmlResponse.text();
+
+  return {
+    body: html,
+    headers: {
+      'Content-Type': 'text/html',
+    },
+    md: '',
+    original: html,
+  };
+}
+/**
+ * handles a markdown doc path
+ */
+export default async function renderDoc(path, authorization) {
+  const {
+    params: { lang, solution, docRelPath },
+  } = matchDocsPath(path);
+  if (paramMemoryStore.hasFeatureFlag('docs-v2')) {
+    return renderDocV2({ path, lang, authorization });
+  }
+  return renderDocV1({ path, lang, solution, docRelPath });
 }

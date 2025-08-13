@@ -72,7 +72,7 @@ export const render = async function render(path, params) {
   }
 
   if (isDocsPath(path)) {
-    return renderDoc(path, dir);
+    return renderDoc(path, params?.authorization);
   }
 
   if (isPlaylistsPath(path)) {
