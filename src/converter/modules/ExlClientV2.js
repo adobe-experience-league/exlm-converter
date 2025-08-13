@@ -37,9 +37,17 @@ export default class ExlClientV2 {
   // eslint-disable-next-line class-methods-use-this
   async getSlideHtmlById(id, lang = 'en', requestOptions = {}) {
     const path = `api/v2/slides/${id}?lang=${lang}`;
-    console.log(`[FETCH] ${path}`);
-    console.log(requestOptions);
     return this.doFetchHtml(path, requestOptions);
+  }
+
+  async getArticleHtmlByPath(path, lang = 'en', requestOptions = {}) {
+    const searchParams = new URLSearchParams({
+      field: 'path',
+      value: path,
+      lang,
+    });
+    const searchPath = `api/v2/articles/search?${searchParams.toString()}`;
+    return this.doFetchHtml(searchPath, requestOptions);
   }
 
   /**
