@@ -33,6 +33,7 @@ const {
   IPASS_API_KEY,
   EXL_API_HOST,
   FEATURE_FLAGS,
+  V2_PATHS,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -78,6 +79,7 @@ const converterHandler = async (req, res) => {
     authorization,
     exlApiHost: EXL_API_HOST,
     featureFlags: FEATURE_FLAGS,
+    v2Paths: V2_PATHS,
   };
 
   const { body, headers, md, original, error, statusCode } = await render(

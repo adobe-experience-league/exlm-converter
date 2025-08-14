@@ -2,7 +2,10 @@ import { createDefaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
 import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
-import { matchDocsPath } from '../modules/utils/path-match-utils.js';
+import {
+  matchAnyPath,
+  matchDocsPath,
+} from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 
@@ -81,6 +84,12 @@ async function renderDocV2({ path, lang, authorization }) {
     original: html,
   };
 }
+
+export const matchDocsV2Path = (path) => {
+  const v2Paths = paramMemoryStore.get()?.v2Paths?.split(',') || [];
+  return matchAnyPath(path, v2Paths);
+};
+
 /**
  * handles a markdown doc path
  */
@@ -88,7 +97,9 @@ export default async function renderDoc(path, authorization) {
   const {
     params: { lang, solution, docRelPath },
   } = matchDocsPath(path);
-  if (paramMemoryStore.hasFeatureFlag('docs-v2')) {
+
+  // feature flag on, and path is in the v2 paths, use the v2 renderer
+  if (paramMemoryStore.hasFeatureFlag('docs-v2') && matchDocsV2Path(path)) {
     return renderDocV2({ path, lang, authorization });
   }
   return renderDocV1({ path, lang, solution, docRelPath });
