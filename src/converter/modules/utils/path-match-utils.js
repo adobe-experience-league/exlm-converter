@@ -61,3 +61,22 @@ export const matchFragmentPath = (path) => {
 export const isFragmentPath = (path) => matchFragmentPath(path) !== false;
 
 export const isIoFile = (path) => ioFiles.includes(path);
+
+const matchesPath = (path, matchPath) => {
+  const docsMatcher = match(matchPath, { decode: decodeURIComponent });
+  return docsMatcher(path) !== false;
+};
+
+/**
+ * given a path to test and a list of glob paths, return true if the path to test matches any of the glob paths
+ */
+export const matchAnyPath = (pathToTest, globPaths) => {
+  let i = 0;
+  while (i < globPaths.length) {
+    if (matchesPath(pathToTest, globPaths[i])) {
+      return true;
+    }
+    i += 1;
+  }
+  return false;
+};

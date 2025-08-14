@@ -68,6 +68,7 @@ jobs:
           BRANCH: ${{ vars.BRANCH }}
           HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
           FEATURE_FLAGS: ${{ vars.FEATURE_FLAGS }}
+          V2_PATHS: ${{ vars.V2_PATHS }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:
