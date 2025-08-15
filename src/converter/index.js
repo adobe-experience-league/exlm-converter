@@ -24,11 +24,13 @@ import {
   isLandingPath,
   isPlaylistsPath,
   isSlidesPath,
+  isTocPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
 import { paramMemoryStore } from './modules/utils/param-memory-store.js';
 import renderIoFile from './renderers/render-io-file.js';
 import renderSlide from './renderers/render-slide.js';
+import renderToc from './renderers/render-toc.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -73,6 +75,10 @@ export const render = async function render(path, params) {
 
   if (isDocsPath(path)) {
     return renderDoc(path, params?.authorization);
+  }
+
+  if (isTocPath(path)) {
+    return renderToc(path, params?.authorization);
   }
 
   if (isPlaylistsPath(path)) {
