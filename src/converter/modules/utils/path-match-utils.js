@@ -6,6 +6,7 @@ const slidesMatchPath = '/:lang/slides/:slideId';
 const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
+const tocMatchPath = '/:lang/toc/:tocId';
 const ioFiles = ['/redirects.json'];
 
 export const matchDocsPath = (path) => {
@@ -59,6 +60,15 @@ export const matchFragmentPath = (path) => {
 };
 
 export const isFragmentPath = (path) => matchFragmentPath(path) !== false;
+
+export const matchTocPath = (path) => {
+  const tocMatcher = match(tocMatchPath, {
+    decode: decodeURIComponent,
+  });
+  return tocMatcher(path);
+};
+
+export const isTocPath = (path) => matchTocPath(path) !== false;
 
 export const isIoFile = (path) => ioFiles.includes(path);
 

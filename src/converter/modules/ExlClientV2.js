@@ -50,6 +50,11 @@ export default class ExlClientV2 {
     return this.doFetchHtml(searchPath, requestOptions);
   }
 
+  async getTocHtmlById(id, lang = 'en', requestOptions = {}) {
+    const path = `api/v2/tocs/${id}?lang=${lang}`;
+    return this.doFetchHtml(path, requestOptions);
+  }
+
   /**
    * Get Landing Page By ID
    * @param {string} id
