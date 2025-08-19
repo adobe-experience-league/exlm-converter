@@ -20,6 +20,7 @@ import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
 import { translateBlockTags } from './utils/tag-translation-utils.js';
+import hashQuizAnswers from '../modules/blocks/hash-quiz-answers.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -129,6 +130,10 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
 
   const lang = path.split('/')[1];
   await translateBlockTags(document, lang);
+
+  if (path.includes('/learning-collections/')) {
+    await hashQuizAnswers(document, path);
+  }
 
   return dom.serialize();
 }
