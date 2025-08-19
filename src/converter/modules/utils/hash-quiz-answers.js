@@ -18,6 +18,7 @@ export function canonicalizeText(text) {
  */
 async function sha256Base64(input) {
   try {
+    // Use Node.js crypto module
     // eslint-disable-next-line global-require
     const crypto = require('crypto');
     const hash = crypto.createHash('sha256');
@@ -105,6 +106,7 @@ export default async function hashQuizAnswers(document, path) {
         },
       );
 
+      // Wait for all hashes to be generated
       // eslint-disable-next-line no-await-in-loop
       const hashes = await Promise.all(hashPromises);
 
