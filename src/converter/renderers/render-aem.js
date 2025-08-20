@@ -132,7 +132,9 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   await translateBlockTags(document, lang);
 
   if (path.includes('/learning-collections/')) {
-    await hashQuizAnswers(document, path);
+    if (document.querySelector('div.quiz')) {
+      await hashQuizAnswers(document, path);
+    }
   }
 
   return dom.serialize();

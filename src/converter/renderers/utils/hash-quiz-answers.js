@@ -1,6 +1,8 @@
 /**
  * Utility functions for hashing quiz answers
  */
+// Fixed salt value - can be changed to any string
+const QUIZ_SALT = 'EXL_QUIZ_SALT';
 
 /**
  * Creates a canonical version of text (trimmed, lowercase)
@@ -45,12 +47,44 @@ export async function hashAnswer(
   answerIndex,
   answerText,
 ) {
-  // Fixed salt value - can be changed to any string
-  const pageSalt = 'EXL_QUIZ_SALT';
-
-  const canonicalText = canonicalizeText(answerText);
-  const input = `${pagePath}|${questionIndex}|${answerIndex}|${canonicalText}|${pageSalt}`;
+  const input = [
+    pagePath,
+    questionIndex,
+    answerIndex,
+    canonicalizeText(answerText),
+    QUIZ_SALT,
+  ].join('|');
   return sha256Base64(input);
+}
+
+/**
+ * Process a single question and hash its answers
+ * @param {Element} question The question element
+ * @param {number} index The question index
+ * @param {string} path The current path
+ */
+async function processQuestion(question, index, path) {
+  const questionDivs = question.children;
+  const correctAnswerDiv = questionDivs[3];
+  const correctAnswerIndices = correctAnswerDiv.textContent.trim().split(',');
+  const answersDiv = questionDivs[2];
+  const answersList = answersDiv.querySelector('ol');
+  const answers = answersList.querySelectorAll('li');
+
+  const answerHashes = await Promise.all(
+    correctAnswerIndices.map(async (correctAnswerIndex) => {
+      const trimmedIndex = correctAnswerIndex.trim();
+      const answerIdx = parseInt(trimmedIndex, 10) - 1;
+      const correctAnswer =
+        answerIdx >= 0 && answerIdx < answers.length
+          ? answers[answerIdx].textContent || ''
+          : '';
+
+      return hashAnswer(path, index.toString(), trimmedIndex, correctAnswer);
+    }),
+  );
+
+  correctAnswerDiv.textContent = answerHashes.join(',');
 }
 
 /**
@@ -60,58 +94,15 @@ export async function hashAnswer(
  * @returns {Promise<void>}
  */
 export default async function hashQuizAnswers(document, path) {
-  // Find all quiz blocks
   const quizBlocks = document.querySelectorAll('div.quiz');
+  if (quizBlocks.length === 0) return;
 
-  // Process each quiz block
-  for (let i = 0; i < quizBlocks.length; i += 1) {
-    const quizBlock = quizBlocks[i];
+  const promises = [];
+  quizBlocks.forEach((quizBlock) => {
+    Array.from(quizBlock.children).forEach((question, index) => {
+      promises.push(processQuestion(question, index, path));
+    });
+  });
 
-    // Process each question in the quiz block
-    const questions = Array.from(quizBlock.children);
-
-    for (
-      let questionIndex = 0;
-      questionIndex < questions.length;
-      questionIndex += 1
-    ) {
-      const question = questions[questionIndex];
-
-      const questionDivs = Array.from(question.children);
-
-      // Extract correct answers
-      const correctAnswerDiv = questionDivs[3];
-      const correctAnswerIndices = correctAnswerDiv.textContent
-        .trim()
-        .split(',');
-
-      // Get the answers list
-      const answersDiv = questionDivs[2];
-      const answersList = answersDiv.querySelector('ol');
-
-      const answers = Array.from(answersList.querySelectorAll('li'));
-
-      // Generate hashes for all correct answers
-      const hashPromises = correctAnswerIndices.map(
-        async (correctAnswerIndex) => {
-          const trimmedIndex = correctAnswerIndex.trim();
-          const correctAnswer =
-            answers[parseInt(trimmedIndex, 10) - 1]?.textContent || '';
-          return hashAnswer(
-            path,
-            questionIndex.toString(),
-            trimmedIndex,
-            correctAnswer,
-          );
-        },
-      );
-
-      // Wait for all hashes to be generated
-      // eslint-disable-next-line no-await-in-loop
-      const hashes = await Promise.all(hashPromises);
-
-      // Replace the correct answer indices with the hash(es)
-      correctAnswerDiv.textContent = hashes.join(',');
-    }
-  }
+  await Promise.all(promises);
 }
