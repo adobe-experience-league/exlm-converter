@@ -49,8 +49,8 @@ export async function hashAnswer(
 ) {
   const input = [
     pagePath,
-    questionIndex,
-    answerIndex,
+    questionIndex || '',
+    answerIndex || '',
     canonicalizeText(answerText),
     QUIZ_SALT,
   ].join('|');
@@ -64,6 +64,8 @@ export async function hashAnswer(
  * @param {string} path The current path
  */
 async function processQuestion(question, index, path) {
+  if (!question || question.children.length < 4) return;
+
   const questionDivs = question.children;
   const correctAnswerDiv = questionDivs[3];
   const correctAnswerIndices = correctAnswerDiv.textContent.trim().split(',');
