@@ -136,7 +136,10 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   const lang = path.split('/')[1];
   await translateBlockTags(document, lang);
 
-  if (path.includes('/courses/') && document.querySelector('div.quiz')) {
+  if (
+    path.includes(`/${lang}/courses/`) &&
+    document.querySelector('div.quiz')
+  ) {
     await hashQuizAnswers(document, path);
   }
 
