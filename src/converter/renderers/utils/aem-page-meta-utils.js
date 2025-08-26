@@ -270,39 +270,32 @@ export const createTranslatedMetadata = async (document, lang) => {
   };
 
   await Promise.all(
-    Object.keys(metaTypes).map(async (key) => {
-      const metaType = metaTypes[key];
+    Object.entries(metaTypes).map(async ([key, metaType]) => {
       const metaContent = getMetadata(document, metaType);
+      if (!metaContent) return;
 
-      if (metaContent) {
-        const tags = metaContent.split(',').map((tag) => tag.trim());
+      const tags = metaContent.split(',').map((tag) => tag.trim());
 
-        const translatedLabels = await Promise.allSettled(
-          tags.map(async (tag) => {
-            try {
-              const label = await defaultExlClient.getLabelFromEndpoint(
-                EXL_LABEL_ENDPOINTS[key.toUpperCase()],
-                tag,
-                lang,
-              );
-              // fallback if label is empty or null
-              return label?.trim() !== '' ? label : tag;
-            } catch (error) {
-              console.error(
-                `Error fetching translated label for ${metaType} with Tag: ${tag}`,
-                error,
-              );
-              return tag;
-            }
-          }),
-        );
+      const translatedLabels = await Promise.all(
+        tags.map(async (tag) => {
+          try {
+            const label = await defaultExlClient.getLabelFromEndpoint(
+              EXL_LABEL_ENDPOINTS[key.toUpperCase()],
+              tag,
+              lang,
+            );
+            return label?.trim() !== '' ? label : tag;
+          } catch (error) {
+            console.error(
+              `Error fetching translated label for ${metaType} with Tag: ${tag}`,
+              error,
+            );
+            return tag;
+          }
+        }),
+      );
 
-        const localizedLabels = translatedLabels.map((result, index) =>
-          result.status === 'fulfilled' ? result.value : tags[index],
-        );
-
-        setMetadata(document, `loc-${metaType}`, localizedLabels.join(','));
-      }
+      setMetadata(document, `loc-${metaType}`, translatedLabels.join(','));
     }),
   );
 };
