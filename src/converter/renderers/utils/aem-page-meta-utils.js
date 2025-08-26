@@ -278,21 +278,23 @@ export const createTranslatedMetadata = async (document, lang) => {
         const tags = metaContent.split(',').map((tag) => tag.trim());
 
         const translatedLabels = await Promise.allSettled(
-          tags.map((tag) =>
-            defaultExlClient
-              .getLabelFromEndpoint(
+          tags.map(async (tag) => {
+            try {
+              const label = await defaultExlClient.getLabelFromEndpoint(
                 EXL_LABEL_ENDPOINTS[key.toUpperCase()],
                 tag,
                 lang,
-              )
-              .catch((error) => {
-                console.error(
-                  `Error fetching translated label for ${metaType} with Tag: ${tag}`,
-                  error,
-                );
-                return tag;
-              }),
-          ),
+              );
+              // fallback if label is empty or null
+              return label?.trim() !== '' ? label : tag;
+            } catch (error) {
+              console.error(
+                `Error fetching translated label for ${metaType} with Tag: ${tag}`,
+                error,
+              );
+              return tag;
+            }
+          }),
         );
 
         const localizedLabels = translatedLabels.map((result, index) =>
