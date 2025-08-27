@@ -394,6 +394,10 @@ export function setMetadata(document, name, content) {
 }
 
 export function htmlFragmentToDoc(mainHTMLContentString) {
+  if (mainHTMLContentString.includes('<html>')) {
+    return mainHTMLContentString;
+  }
+
   return `
         <!doctype html>
         <html>
