@@ -16,7 +16,7 @@ export default async function renderToc(path, authorization) {
     return {
       statusCode: tocHtmlResponse.status,
       error: new Error(
-        `Failed to fetch playlist HTML: ${tocHtmlResponse.statusText}`,
+        `Failed to fetch TOC HTML: ${tocHtmlResponse.statusText}`,
       ),
     };
   }
