@@ -7,6 +7,7 @@ const coursesMatchPath = '/:lang/docs/courses/:docRelPath*';
 const landingMatchPath = '/:lang/docs/:solution?';
 const fragmentMatchPath = '/fragments/:lang/:fragmentRelPath*';
 const tocMatchPath = '/:lang/toc/:tocId';
+const onDemandEventsMatchPath = '/:lang/on-demand-events/:onDemandEventId';
 const ioFiles = ['/redirects.json'];
 
 export const matchDocsPath = (path) => {
@@ -33,6 +34,16 @@ export const matchSlidePath = (path) => {
 };
 
 export const isSlidesPath = (path) => matchSlidePath(path) !== false;
+
+export const matchOnDemandEventPath = (path) => {
+  const onDemandEventsMatcher = match(onDemandEventsMatchPath, {
+    decode: decodeURIComponent,
+  });
+  return onDemandEventsMatcher(path);
+};
+
+export const isOnDemandEventPath = (path) =>
+  matchOnDemandEventPath(path) !== false;
 
 export const matchCoursesPath = (path) => {
   const coursesMatcher = match(coursesMatchPath, {
