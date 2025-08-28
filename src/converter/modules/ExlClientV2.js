@@ -37,8 +37,36 @@ export default class ExlClientV2 {
   // eslint-disable-next-line class-methods-use-this
   async getSlideHtmlById(id, lang = 'en', requestOptions = {}) {
     const path = `api/v2/slides/${id}?lang=${lang}`;
-    console.log(`[FETCH] ${path}`);
-    console.log(requestOptions);
+    return this.doFetchHtml(path, requestOptions);
+  }
+
+  async getArticleHtmlByPath(path, lang = 'en', requestOptions = {}) {
+    const searchParams = new URLSearchParams({
+      field: 'path',
+      value: path,
+      lang,
+    });
+    const searchPath = `api/v2/articles/search?${searchParams.toString()}`;
+    return this.doFetchHtml(searchPath, requestOptions);
+  }
+
+  async getTocHtmlById(id, lang = 'en', requestOptions = {}) {
+    const path = `api/v2/tocs/${id}?lang=${lang}`;
+    return this.doFetchHtml(path, requestOptions);
+  }
+
+  /**
+   * Get Landing Page By ID
+   * @param {string} id
+   * @param {string} lang
+   * @param {RequestInit} requestOptions
+   * @returns {Promise<Response>}
+   */
+  async getLandingPageById(id, lang = 'en', requestOptions = {}) {
+    if (!id) {
+      throw new Error('landing id is required');
+    }
+    const path = `api/v2/landing/${id}?lang=${lang}`;
     return this.doFetchHtml(path, requestOptions);
   }
 

@@ -22,13 +22,17 @@ import {
   isFragmentPath,
   isIoFile,
   isLandingPath,
+  isOnDemandEventPath,
   isPlaylistsPath,
   isSlidesPath,
+  isTocPath,
 } from './modules/utils/path-match-utils.js';
 import renderPlaylist from './renderers/render-playlist.js';
 import { paramMemoryStore } from './modules/utils/param-memory-store.js';
 import renderIoFile from './renderers/render-io-file.js';
 import renderSlide from './renderers/render-slide.js';
+import renderToc from './renderers/render-toc.js';
+import renderOnDemandEvent from './renderers/render-on-demand-events.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -68,11 +72,15 @@ export const render = async function render(path, params) {
   }
 
   if (isLandingPath(path)) {
-    return renderLanding(path, dir);
+    return renderLanding(path, params?.authorization);
   }
 
   if (isDocsPath(path)) {
-    return renderDoc(path, dir);
+    return renderDoc(path, params?.authorization);
+  }
+
+  if (isTocPath(path)) {
+    return renderToc(path, params?.authorization);
   }
 
   if (isPlaylistsPath(path)) {
@@ -81,6 +89,10 @@ export const render = async function render(path, params) {
 
   if (isSlidesPath(path)) {
     return renderSlide(path, params?.authorization);
+  }
+
+  if (isOnDemandEventPath(path)) {
+    return renderOnDemandEvent(path, dir);
   }
 
   // Handle fragments as static content (eg: header, footer ...etc.)

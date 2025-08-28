@@ -21,6 +21,7 @@ application:
               aemBranch: $BRANCH
               exlApiHost: $EXL_API_HOST
               featureFlags: $FEATURE_FLAGS
+              v2Paths: $V2_PATHS
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
