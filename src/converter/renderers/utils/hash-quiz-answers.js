@@ -1,8 +1,8 @@
 /**
  * Utility functions for hashing quiz answers
  */
-// Fixed salt value - can be changed to any string
-const QUIZ_SALT = 'EXL_QUIZ_SALT';
+import { generateHash } from './aem-page-meta-utils.js';
+import { setMetadata } from '../../modules/utils/dom-utils.js';
 
 /**
  * Creates a canonical version of text (trimmed, lowercase)
@@ -39,6 +39,7 @@ async function sha256Base64(input) {
  * @param {string} questionIndex The question index
  * @param {string} answerIndex The index of the answer
  * @param {string} answerText The answer text
+ * @param {string} salt The salt value to use for hashing
  * @returns {Promise<string>} The hashed answer
  */
 export async function hashAnswer(
@@ -46,13 +47,14 @@ export async function hashAnswer(
   questionIndex,
   answerIndex,
   answerText,
+  salt,
 ) {
   const input = [
     pagePath,
     questionIndex || '',
     answerIndex || '',
     canonicalizeText(answerText),
-    QUIZ_SALT,
+    salt,
   ].join('|');
   return sha256Base64(input);
 }
@@ -62,8 +64,9 @@ export async function hashAnswer(
  * @param {Element} question The question element
  * @param {number} index The question index
  * @param {string} path The current path
+ * @param {string} salt The salt value to use for hashing
  */
-async function processQuestion(question, index, path) {
+async function processQuestion(question, index, path, salt) {
   if (!question || question.children.length < 4) return;
 
   const questionDivs = question.children;
@@ -82,7 +85,13 @@ async function processQuestion(question, index, path) {
           ? answers[answerIdx].textContent || ''
           : '';
 
-      return hashAnswer(path, index.toString(), trimmedIndex, correctAnswer);
+      return hashAnswer(
+        path,
+        index.toString(),
+        trimmedIndex,
+        correctAnswer,
+        salt,
+      );
     }),
   );
 
@@ -99,13 +108,19 @@ export default async function hashQuizAnswers(document, path) {
   const quizBlocks = document.querySelectorAll('div.quiz');
   if (quizBlocks.length === 0) return;
 
+  // Generate a unique salt based on the page path
+  const salt = generateHash(path);
+
+  // Set the salt as metadata so it can be accessed from the frontend
+  setMetadata(document, 'content-integrity-token', salt);
+
   const promises = [];
   quizBlocks.forEach((quizBlock) => {
     // Skip the first two children (title and description) and process only the questions
     Array.from(quizBlock.children)
       .slice(2)
       .forEach((question, index) => {
-        promises.push(processQuestion(question, index, path));
+        promises.push(processQuestion(question, index, path, salt));
       });
   });
 
