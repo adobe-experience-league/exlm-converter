@@ -46,39 +46,44 @@ async function transformAemPageMetadata(htmlString, params, path) {
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
   setMetadata(document, 'last-update', lastUpdate);
 
-  const authorBioPages = getMetadata(document, 'author-bio-page');
-  if (authorBioPages) {
-    const authorBioUrls = Array.from(
-      new Set(
-        authorBioPages
-          .split(',')
-          .map((url) => url.trim())
-          .filter((url) => url),
-      ),
-    );
+  if (
+    path.includes('/perspectives/') &&
+    !path.includes('/perspectives/authors')
+  ) {
+    const authorBioPages = getMetadata(document, 'author-bio-page');
+    if (authorBioPages) {
+      const authorBioUrls = Array.from(
+        new Set(
+          authorBioPages
+            .split(',')
+            .map((url) => url.trim())
+            .filter((url) => url),
+        ),
+      );
 
-    const promises = authorBioUrls.map(async (authorBioUrl) => {
-      // eslint-disable-next-line no-use-before-define
-      const { body } = await renderAem(authorBioUrl, params);
-      return getAuthorBioData(body);
-    });
+      const promises = authorBioUrls.map(async (authorBioUrl) => {
+        // eslint-disable-next-line no-use-before-define
+        const { body } = await renderAem(authorBioUrl, params);
+        return getAuthorBioData(body);
+      });
 
-    const results = await Promise.all(promises);
+      const results = await Promise.all(promises);
 
-    const authorNames = results
-      .map((result) => result.authorName)
-      .filter(Boolean);
-    const authorTypes = results
-      .map((result) => result.authorType)
-      .filter(Boolean);
+      const authorNames = results
+        .map((result) => result.authorName)
+        .filter(Boolean);
+      const authorTypes = results
+        .map((result) => result.authorType)
+        .filter(Boolean);
 
-    if (authorNames.length > 0)
-      setMetadata(document, 'author-name', authorNames.join(','));
+      if (authorNames.length > 0)
+        setMetadata(document, 'author-name', authorNames.join(','));
 
-    if (authorTypes.includes('External')) {
-      setMetadata(document, 'author-type', 'External');
-    } else if (authorTypes.length > 0) {
-      setMetadata(document, 'author-type', authorTypes.join(','));
+      if (authorTypes.includes('External')) {
+        setMetadata(document, 'author-type', 'External');
+      } else if (authorTypes.length > 0) {
+        setMetadata(document, 'author-type', authorTypes.join(','));
+      }
     }
   }
   return dom.serialize();
@@ -132,7 +137,9 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   await translateBlockTags(document, lang);
 
   if (
-    path.includes('/learning-collections/') &&
+    path.includes(
+      `/${lang}/courses/` || path.includes(`/${lang}/learning-collections/`),
+    ) &&
     document.querySelector('div.quiz')
   ) {
     await hashQuizAnswers(document, path);
