@@ -137,9 +137,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   await translateBlockTags(document, lang);
 
   if (
-    path.includes(
-      `/${lang}/courses/` || path.includes(`/${lang}/learning-collections/`),
-    ) &&
+    (path.includes(`/courses/`) || path.includes(`/learning-collections/`)) &&
     document.querySelector('div.quiz')
   ) {
     await hashQuizAnswers(document, path);
