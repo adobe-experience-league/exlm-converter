@@ -12,7 +12,9 @@ const iconMapping = {
 export default function createNote(document) {
   // Notes have class extension along with the variation name.
   const noteElements = Array.from(
-    document.querySelectorAll('.extension:not(.relatedarticles):not(.video)'),
+    document.querySelectorAll(
+      '.extension:not(.relatedarticles):not(.video):not(.slide)',
+    ),
   );
 
   noteElements.forEach((el) => {

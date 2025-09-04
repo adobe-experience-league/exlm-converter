@@ -42,6 +42,7 @@ import createDocsCards from './blocks/create-docs-cards.js';
 import { createMetaData } from './utils/metadata-util.js';
 import { createDefaultExlClient } from './ExlClient.js';
 import handleTooManyImages from './blocks/too-many-images.js';
+import createSlideEmbed from './blocks/create-slide-embed.js';
 
 const doAmf = (md) => {
   // AMF has a bug where it doesn't handle tripple-backticks correctly.
@@ -128,6 +129,7 @@ export default async function md2html({
 
     // blocks that cannot contain other blocks
     createRelatedArticles(document);
+    createSlideEmbed(document);
     createUpcomingEventsBlock(document);
     createCodeBlock(document);
     createMiniTOC(document);
