@@ -427,3 +427,9 @@ export function removeAllAttributesExcept(element, keepAttributes = []) {
     }
   });
 }
+
+export function isOneOfTags(element, tags = []) {
+  return tags
+    .map((tag) => tag?.toLowerCase())
+    .includes(element?.tagName?.toLowerCase());
+}

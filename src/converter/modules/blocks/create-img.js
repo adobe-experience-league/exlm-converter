@@ -1,4 +1,4 @@
-import { removeAllAttributesExcept } from '../utils/dom-utils.js';
+import { isOneOfTags, removeAllAttributesExcept } from '../utils/dom-utils.js';
 
 const ALLOWED_ALIGN_VALUES = ['left', 'right', 'center'];
 
@@ -50,9 +50,12 @@ export default function createImg(document) {
         .map(([key, value]) => `${key}="${value}"`)
         .join(' ');
       const text = document.createTextNode(`{${attributesAsText}}`);
-      // ensure the image is within a paragraph
-      // the frontend expects a text node to be after the image within a paragraph (also avoids issue where Edge Delivery puts images and text in separate paragraphs)
-      if (img.parentNode.tagName.toLowerCase() !== 'p') {
+      // images that have following attributes should be wrapped in a paragraph
+      // except images already within a paragraph or list item
+      // why? the frontend expects a text node (attributes) to be after the image.
+      //  There are some cases where Edge Delivery puts images and text in separate paragraphs (if no parent paragraph is present), this avoids that.
+      // @see: UGP-13667
+      if (!isOneOfTags(img.parentNode, ['p', 'li'])) {
         const p = document.createElement('p');
         img.parentNode.insertBefore(p, img.nextSibling);
         p.append(img);
