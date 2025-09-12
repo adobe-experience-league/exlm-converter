@@ -118,7 +118,7 @@ export default async function hashQuizAnswers(document, path) {
   quizBlocks.forEach((quizBlock) => {
     // Skip the other elements and process only the questions
     Array.from(quizBlock.children)
-      .slice(5)
+      .slice(4)
       .forEach((question, index) => {
         promises.push(processQuestion(question, index, path, salt));
       });
