@@ -1,3 +1,18 @@
+# EXLM Converter
+
+Despite the name, this is a collection of Web Actions (on adobe io):
+
+1. `converter`: The entry point for Experience League [Edge Deliver BYOM](https://www.aem.live/developer/byom). AKA where EDS sources the HTML for exl pages when they are published.
+2. `khoros`: Proxies requests to a custom khoros endpoint to get Current User Community links.
+3. `tocs`: given a TOC ID, Provides the HTML for the TOC via EXL API.
+
+## More on the converter.
+
+EXL is setup to use [Bring Your Own Markup](https://www.aem.live/developer/byom) on Edge Delivery with the `conevter` Web Action. When a page is [previewed](https://www.aem.live/docs/admin.html#tag/preview) this action will be [invoked](src/converter/index.js) (GET) and the action will determine where to source the HTML based on path, (docs, landing playlist, tocs, slide) will come from API, others will come from AEM. The content is then transformed and served as HTML.
+
+> [!NOTE]
+> Currently, this converter does the HTML conversion, but in V2 architecture, it will served already-converter HTML from the V2 delivery API.
+
 ## Build
 
 ```
