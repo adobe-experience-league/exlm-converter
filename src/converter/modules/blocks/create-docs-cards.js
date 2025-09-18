@@ -18,22 +18,23 @@ export default function createDocsCards(document) {
     const cards = Array.from(columnsEl.querySelectorAll('.card')).map(
       (cardEl) => {
         // image .card-image inner HTML
-        const cardImage = cardEl.querySelector('.card-image').firstElementChild;
+        const cardImage =
+          cardEl.querySelector('.card-image')?.firstElementChild;
         // card content .card-content > div
         const cardContent = cardEl.querySelector('.card-content > div');
 
         // card headline
-        const headline = cardContent.querySelector('.headline');
+        const headline = cardContent?.querySelector('.headline');
         const cardHeadline = document.createElement('p');
         const cardHeadlineStrong = document.createElement('strong');
-        cardHeadlineStrong.innerHTML = headline.innerHTML;
+        cardHeadlineStrong.innerHTML = headline?.innerHTML;
         cardHeadline.appendChild(cardHeadlineStrong);
 
         // card text
-        const cardText = headline.nextElementSibling;
+        const cardText = headline?.nextElementSibling;
 
         // card time label
-        const timeLabel = headline.previousElementSibling;
+        const timeLabel = headline?.previousElementSibling;
         let cardTimeLabel = null;
         if (timeLabel) {
           cardTimeLabel = document.createElement('p');
