@@ -140,7 +140,11 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   const lang = path.split('/')[1];
   await translateBlockTags(document, lang);
 
-  if (path.includes('/courses/') && !path.includes('/courses/instructors')) {
+  if (
+    path.includes('/courses/') &&
+    !path.includes('/courses/instructors') &&
+    !path.includes('/courses/fragments')
+  ) {
     const slug = path.split('/courses/')[1].split('/')[0];
 
     // Base course page only
