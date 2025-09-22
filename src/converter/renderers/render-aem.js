@@ -118,8 +118,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     '/event-fragment',
     '/instructors/',
     '/test-folder/',
-    '/courses/fragments',
-    '/courses/fragments/',
+    '/course-fragments',
   ];
 
   if (noIndexPaths.some((segment) => path.includes(segment))) {
@@ -143,7 +142,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   if (
     path.includes('/courses/') &&
     !path.includes('/courses/instructors') &&
-    !path.includes('/courses/fragments')
+    !path.includes('/courses/course-fragments')
   ) {
     const slug = path.split('/courses/')[1].split('/')[0];
 
