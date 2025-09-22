@@ -118,6 +118,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     '/event-fragment',
     '/instructors/',
     '/test-folder/',
+    '/course-fragments',
   ];
 
   if (noIndexPaths.some((segment) => path.includes(segment))) {
@@ -138,7 +139,11 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   const lang = path.split('/')[1];
   await translateBlockTags(document, lang);
 
-  if (path.includes('/courses/') && !path.includes('/courses/instructors')) {
+  if (
+    path.includes('/courses/') &&
+    !path.includes('/courses/instructors') &&
+    !path.includes('/courses/course-fragments')
+  ) {
     const slug = path.split('/courses/')[1].split('/')[0];
 
     // Base course page only
