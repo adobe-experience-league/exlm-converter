@@ -118,6 +118,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     '/event-fragment',
     '/instructors/',
     '/test-folder/',
+    '/course-fragments',
   ];
 
   if (noIndexPaths.some((segment) => path.includes(segment))) {
@@ -139,12 +140,23 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   await translateBlockTags(document, lang);
 
   if (
-    (path.includes(`/courses/`) || path.includes(`/learning-collections/`)) &&
-    document.querySelector('div.quiz')
+    path.includes('/courses/') &&
+    !path.includes('/courses/instructors') &&
+    !path.includes('/courses/course-fragments')
   ) {
-    await hashQuizAnswers(document, path);
-  }
+    const slug = path.split('/courses/')[1].split('/')[0];
 
+    // Base course page only
+    if (path.endsWith(`/courses/${slug}`)) {
+      setMetadata(document, 'coveo-content-type', 'Course');
+      setMetadata(document, 'type', 'Course');
+    }
+
+    // Quiz check
+    if (document.querySelector('div.quiz')) {
+      await hashQuizAnswers(document, path);
+    }
+  }
   return dom.serialize();
 }
 
