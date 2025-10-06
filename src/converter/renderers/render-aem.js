@@ -151,8 +151,10 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
 
     // Base course page only
     if (path.endsWith(`/courses/${slug}`)) {
+      const courseID = generateHash(slug);
       setMetadata(document, 'coveo-content-type', 'Course');
       setMetadata(document, 'type', 'Course');
+      setMetadata(document, 'course-id', courseID);
     }
 
     // Quiz check
