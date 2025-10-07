@@ -70,6 +70,18 @@ export default class ExlClientV2 {
     return this.doFetchHtml(path, requestOptions);
   }
 
+  /**
+   * Get On Demand Event By ID
+   * @param {string} id
+   * @param {string} lang
+   * @param {RequestInit} requestOptions
+   * @returns {Promise<Response>}
+   */
+  async getOnDemandEventById(id, lang = 'en', requestOptions = {}) {
+    const path = `api/v2/on-demand-events/${id}?lang=${lang}`;
+    return this.doFetchHtml(path, requestOptions);
+  }
+
   async doFetchHtml(path, requestOptions = {}) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);

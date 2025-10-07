@@ -1,61 +1,36 @@
-import fs from 'fs';
-
-import { join } from 'path';
-import { addExtension } from '../modules/utils/path-utils.js';
-import { formatHtml } from '../modules/utils/prettier-utils.js';
-import { htmlFragmentToDoc } from '../modules/utils/dom-utils.js';
 import { matchOnDemandEventPath } from '../modules/utils/path-match-utils.js';
-
-/**
- * Renders fragment from filesystem at given path
- * @param {string} path - path to fragment from 'src'
- * @param {string} parentFolderPath - path to parent folder of `fragments`
- * @returns {Promise<string>}
- */
-async function getStaticFragment(path, parentFolderPath) {
-  const fragmentPath = join(
-    parentFolderPath,
-    'static',
-    addExtension(path, '.html'),
-  );
-  if (path) {
-    // Get header and footer static content from Github
-    if (fs.existsSync(fragmentPath)) {
-      const body = htmlFragmentToDoc(fs.readFileSync(fragmentPath, 'utf-8'));
-      return formatHtml(body);
-    }
-  }
-  return undefined;
-}
+import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 
 /**
  * Renders on demand event from filesystem at given path
  * @param {string} path - path to on demand event from 'src'
  * @param {string} parentFolderPath - path to parent folder of `on-demand-events`
  */
-export default async function renderOnDemandEvent(path, parentFolderPath) {
+export default async function renderOnDemandEvent(path, authorization) {
   const {
     params: { lang, onDemandEventId },
   } = matchOnDemandEventPath(path);
+  const defaultExlClientv2 = await createDefaultExlClientV2();
+  const onDemandEventHtmlResponse =
+    await defaultExlClientv2.getOnDemandEventById(onDemandEventId, lang, {
+      headers: {
+        ...(authorization && { authorization }),
+      },
+    });
 
-  let body;
-  try {
-    body = await getStaticFragment(
-      `fragments/${lang}/on-demand-events/${onDemandEventId}`,
-      parentFolderPath,
-    );
-  } catch (error) {
-    return { error };
-  }
-
-  if (!body) {
+  if (!onDemandEventHtmlResponse.ok) {
     return {
-      error: new Error(`Fragment: ${path} not found`),
+      statusCode: onDemandEventHtmlResponse.status,
+      error: new Error(
+        `Failed to fetch on demand event HTML: ${onDemandEventHtmlResponse.statusText}`,
+      ),
     };
   }
 
+  const html = await onDemandEventHtmlResponse.text();
+
   return {
-    body,
+    body: html,
     headers: {
       'Content-Type': 'text/html',
     },
