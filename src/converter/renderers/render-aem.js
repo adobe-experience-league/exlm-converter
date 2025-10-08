@@ -36,14 +36,11 @@ async function transformAemPageMetadata(htmlString, params, path) {
 
   const lang = path.split('/')[1];
   decodeCQMetadata(document, 'cq-tags');
-  if (path.includes('/courses/') && !path.includes('/courses/instructors')) {
-    updateTQTagsMetadata(document);
-  } else {
-    updateEncodedMetadata(document, 'role');
-    updateEncodedMetadata(document, 'level');
-    updateCoveoSolutionMetadata(document);
-    await createTranslatedMetadata(document, lang);
-  }
+  updateTQTagsMetadata(document);
+  updateEncodedMetadata(document, 'role');
+  updateEncodedMetadata(document, 'level');
+  updateCoveoSolutionMetadata(document);
+  await createTranslatedMetadata(document, lang);
 
   const publishedTime = getMetadata(document, 'published-time');
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();

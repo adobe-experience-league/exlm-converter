@@ -102,10 +102,10 @@ function decodeHtmlEntities(str) {
 }
 
 /**
- * Update TQ Tags metadata
+ * Update TQ Tags metadata for Coveo
  * @param {Document} document
  */
-export function updateTQTagsMetadata(document) {
+export function updateTQTagsForCoveo(document) {
   const keyMapping = {
     'tq-roles': 'role',
     'tq-levels': 'level',
@@ -151,6 +151,54 @@ export function updateTQTagsMetadata(document) {
     setMetadata(document, 'solution', solutionParts.join(','));
     setMetadata(document, 'original-solution', solutionParts.join(', '));
   }
+}
+
+/**
+ * Update TQ Tags metadata
+ * @param {Document} document
+ */
+export function updateTQTagsMetadata(document) {
+  const keysToUpdate = [
+    'tq-roles',
+    'tq-levels',
+    'tq-products',
+    'tq-features',
+    'tq-subfeatures',
+    'tq-industries',
+    'tq-topics',
+  ];
+
+  keysToUpdate.forEach((key) => {
+    const metaTag = getMetadata(document, key);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const updatedTags = parsed
+          .map((item) =>
+            item.uri && item.label ? `${item.uri}|${item.label}` : null,
+          )
+          .filter(Boolean)
+          .join(', ');
+        if (updatedTags) {
+          setMetadata(document, `${key}`, updatedTags);
+          // Extract labels (the part after |) and join by comma
+          const labels = updatedTags
+            .split(',')
+            .map((tag) => tag.split('|')[1]?.trim())
+            .filter(Boolean)
+            .join(', ');
+
+          setMetadata(document, `${key}-labels`, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${key}:`, e);
+    }
+  });
 }
 
 /**
