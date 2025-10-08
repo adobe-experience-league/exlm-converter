@@ -92,7 +92,7 @@ export const render = async function render(path, params) {
   }
 
   if (isOnDemandEventPath(path)) {
-    return renderOnDemandEvent(path, dir);
+    return renderOnDemandEvent(path, params?.authorization);
   }
 
   // Handle fragments as static content (eg: header, footer ...etc.)
