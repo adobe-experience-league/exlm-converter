@@ -143,7 +143,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
   await translateBlockTags(document, lang);
 
   if (
-    path.includes('/courses/') &&
+    (path.includes('/courses/') || path.includes('/dxpe-course-import/')) &&
     !path.includes('/courses/instructors') &&
     !path.includes('/courses/course-fragments')
   ) {
