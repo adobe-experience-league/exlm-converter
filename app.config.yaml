@@ -15,10 +15,10 @@ application:
               concurrency: 2
             inputs:
               LOG_LEVEL: debug
-              aemAuthorUrl: $AEM_AUTHOR_URL
-              aemOwner: $OWNER
-              aemRepo: $REPO
-              aemBranch: $BRANCH
+              aemAuthorUrl: https://author-p122525-e1200861.adobeaemcloud.com
+              aemOwner: ruhisingh1
+              aemRepo: exlm
+              aemBranch: main
               exlApiHost: $EXL_API_HOST
               featureFlags: $FEATURE_FLAGS
               v2Paths: $V2_PATHS
@@ -50,6 +50,23 @@ application:
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
+          videos:
+            function: dist/videos
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          videos-scheduled-wrapper:
+            function: dist/videos-scheduled-wrapper
+            web: 'no'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              final: true
           files:
             function: dist/files # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
@@ -71,3 +88,12 @@ application:
               apiKey: $HLX_API_KEY
             annotations:
               final: true
+        triggers:
+          daily:
+            feed: /whisk.system/alarms/alarm
+            inputs:
+              cron: '0 */6 * * *'
+        rules:
+          fetchLOCVideoIDRule:
+            trigger: daily
+            action: videos-scheduled-wrapper
