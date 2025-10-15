@@ -12,6 +12,11 @@
 
 import Logger from '@adobe/aio-lib-core-logging';
 import { sendError } from '../common/utils/response-utils.js';
+import {
+  getVideoFromCache,
+  isCacheStale,
+  getCacheStats,
+} from './scheduled-wrapper.js';
 
 export const aioLogger = Logger('videos');
 
@@ -40,35 +45,18 @@ const mapLanguageCode = (lang) => {
 };
 
 /**
- * Fetches localized video data from mock API
- * @param {string} videos - The video ID to look up
+ * Gets localized video data from cache or fallback to API
+ * @param {string} videoId - The video ID to look up
  * @param {string} lang - Language code
  * @returns {Object|null} - Video data or null if not found
  */
-const fetchLocalizedVideoData = async (videoId, lang) => {
+const getLocalizedVideoData = async (videoId, lang) => {
   try {
-    const mockApiUrl =
-      'https://mocki.io/v1/37664131-94d1-46e1-b232-d810fd57ccc4';
-    console.log(`Fetching video data from ${mockApiUrl}`);
+    // First try to get from cache
+    const videoEntry = getVideoFromCache(videoId);
 
-    const response = await fetch(mockApiUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      console.error(`Failed to fetch video data: ${response.status}`);
-      return null;
-    }
-
-    const videoData = await response.json();
-    console.log(`Fetched video data for video ID: ${videoId}`);
-
-    // Look up the video by ID
-    const videoEntry = videoData[videoId];
     if (!videoEntry) {
-      console.log(`Video ID ${videoId} not found in data`);
+      console.log(`Video ID ${videoId} not found in cache`);
       return null;
     }
 
@@ -76,11 +64,11 @@ const fetchLocalizedVideoData = async (videoId, lang) => {
     const mappedLang = mapLanguageCode(lang);
     console.log(`Mapped language ${lang} to ${mappedLang}`);
 
-    // Get localized video data, fallback to 'en' if language not available
-    const localizedData = videoEntry[mappedLang] || videoEntry.en;
+    // Get localized video data without fallback to 'en'
+    const localizedData = videoEntry[mappedLang];
 
     if (!localizedData) {
-      console.log(`No localized data found for ${mappedLang} or fallback 'en'`);
+      console.log(`No localized data found for ${mappedLang}`);
       return null;
     }
 
@@ -94,7 +82,7 @@ const fetchLocalizedVideoData = async (videoId, lang) => {
       modified: localizedData.modified,
     };
   } catch (error) {
-    console.error('Error fetching video data:', error);
+    console.error('Error getting video data:', error);
     return null;
   }
 };
@@ -110,8 +98,13 @@ export const main = async function main(params) {
   try {
     console.log(`Processing video ID: ${videoId} for language: ${lang}`);
 
-    // Fetch localized video data
-    const videoData = await fetchLocalizedVideoData(videoId, lang);
+    // Add 1 second delay for video response
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
+
+    // Get localized video data from cache
+    const videoData = await getLocalizedVideoData(videoId, lang);
 
     if (!videoData) {
       return sendError(
@@ -122,14 +115,27 @@ export const main = async function main(params) {
 
     console.log(`Successfully retrieved localized video data:`, videoData);
 
+    // Add cache information to response headers
+    const cacheStats = getCacheStats();
+    const cacheControl = isCacheStale()
+      ? 'public, max-age=300'
+      : 'public, max-age=300'; // 5 minutes TTL as requested
+
     return {
       body: {
         success: true,
         data: videoData,
+        cache: {
+          fromCache: true,
+          cacheSize: cacheStats.size,
+          lastRefresh: cacheStats.lastFetchTime,
+          isStale: cacheStats.isStale,
+        },
       },
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': cacheControl,
+        'X-Cache-Status': isCacheStale() ? 'STALE' : 'FRESH',
       },
       statusCode: 200,
     };

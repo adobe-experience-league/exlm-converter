@@ -164,7 +164,6 @@ const videosHandler = async (req, res) => {
 
 app.get('/khoros/**', khorosHandler);
 app.get('/toc/**', tocHandler);
-app.get('/videos/**', videosHandler);
 app.get('/videos', videosHandler);
 app.get('/**', converterHandler);
 
