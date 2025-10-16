@@ -14,6 +14,7 @@ import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
 import { main as khorosMain } from '../src/khoros/index.js';
 import { main as tocMain } from '../src/tocs/index.js';
+import { main as videosMain } from '../src/videos/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
 
 const dotEnvFile = 'build/.local.env';
@@ -34,6 +35,7 @@ const {
   EXL_API_HOST,
   FEATURE_FLAGS,
   V2_PATHS,
+  MPC_GITHUB_PAT,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -144,8 +146,27 @@ const tocHandler = async (req, res) => {
   res.send(body);
 };
 
+const videosHandler = async (req, res) => {
+  console.log('video id handler');
+  const { path: originalPath, query } = req;
+  const path = originalPath.replace('/videos', '');
+  const lang = query.lang || 'en';
+  const { videoId } = query;
+  const params = {
+    __ow_path: path,
+    lang,
+    videoId,
+    githubPAT: MPC_GITHUB_PAT,
+  };
+
+  const { body, statusCode } = await videosMain(params);
+  res.status(statusCode || 200);
+  res.send(body);
+};
+
 app.get('/khoros/**', khorosHandler);
 app.get('/toc/**', tocHandler);
+app.get('/videos', videosHandler);
 app.get('/**', converterHandler);
 
 app.listen(port, () =>
@@ -154,5 +175,6 @@ app.listen(port, () =>
   Converter: http://localhost:${port}/en/docs
   Khoros: http://localhost:${port}/khoros
   Toc: http://localhost:${port}/toc
+  Videos: http://localhost:${port}/videos
 `),
 );

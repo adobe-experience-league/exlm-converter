@@ -50,6 +50,24 @@ application:
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
+          videos:
+            function: dist/videos
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+              githubPAT: $MPC_GITHUB_PAT
+            annotations:
+              require-adobe-auth: false # explicitly unauthenticated action
+              final: true
+          videos-cron-job:
+            function: dist/videos-cron-job
+            web: 'no'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              final: true
           files:
             function: dist/files # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
@@ -71,3 +89,12 @@ application:
               apiKey: $HLX_API_KEY
             annotations:
               final: true
+        triggers:
+          daily:
+            feed: /whisk.system/alarms/alarm
+            inputs:
+              cron: '0 9 * * *' # Once per day at 2am PDT (9am UTC)
+        rules:
+          fetchLOCVideoIDRule:
+            trigger: daily
+            action: videos-cron-job

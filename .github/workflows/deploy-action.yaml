@@ -69,6 +69,7 @@ jobs:
           HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
           FEATURE_FLAGS: ${{ vars.FEATURE_FLAGS }}
           V2_PATHS: ${{ vars.V2_PATHS }}
+          MPC_GITHUB_PAT: ${{ secrets.MPC_GITHUB_PAT }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:
