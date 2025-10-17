@@ -156,7 +156,7 @@ const videosHandler = async (req, res) => {
     __ow_path: path,
     lang,
     videoId,
-    githubPAT: MPC_GITHUB_PAT,
+    mpcGithubToken: MPC_GITHUB_PAT,
   };
 
   const { body, statusCode } = await videosMain(params);

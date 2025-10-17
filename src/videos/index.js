@@ -16,17 +16,16 @@ import {
   getVideoFromCache,
   isCacheStale,
   getCacheStats,
-  main as refreshCache,
 } from './scheduled-cron.js';
 
 export const aioLogger = Logger('videos');
 
 /**
- * Maps language codes to the format used in the GitHub video data
- * @param {string} lang - Language code (e.g., 'en', 'de', 'fr')
+ * Maps language codes to the format used in the MPC video data
+ * @param {string} lang - ExL Language code (e.g., 'en', 'de', 'fr')
  * @returns {string} - Formatted language code for video lookup
  */
-const mapLanguageCode = (lang) => {
+const mpcLanguageCode = (lang) => {
   const languageMap = {
     en: 'en',
     de: 'de-DE',
@@ -36,8 +35,8 @@ const mapLanguageCode = (lang) => {
     ja: 'ja-JP',
     ko: 'ko-KR',
     'pt-br': 'pt-BR',
-    sv: 'sv',
-    nl: 'nl',
+    sv: 'sv-SE',
+    nl: 'nl-NL',
     'zh-hans': 'zh-Hans',
     'zh-hant': 'zh-Hant',
   };
@@ -46,41 +45,25 @@ const mapLanguageCode = (lang) => {
 };
 
 /**
- * Gets localized video data from cache (populated from GitHub)
+ * Gets localized video data from state storage using key-value format
  * @param {string} videoId - The video ID to look up
  * @param {string} lang - Language code
- * @returns {Object|null} - Video data or null if not found
+ * @returns {Promise<Object|null>} - Video data or null if not found
  */
 const getLocalizedVideoData = async (videoId, lang) => {
   try {
-    // First try to get from cache
-    const videoEntry = getVideoFromCache(videoId);
+    const mappedLang = mpcLanguageCode(lang);
+    const localizedVideoId = await getVideoFromCache(videoId, mappedLang);
 
-    if (!videoEntry) {
-      console.log(`Video ID ${videoId} not found in cache`);
-      return null;
-    }
-
-    // Get the mapped language code
-    const mappedLang = mapLanguageCode(lang);
-    console.log(`Mapped language ${lang} to ${mappedLang}`);
-
-    // Get localized video data without fallback to 'en'
-    const localizedData = videoEntry[mappedLang];
-
-    if (!localizedData) {
-      console.log(`No localized data found for ${mappedLang}`);
+    if (!localizedVideoId) {
+      console.log(`No localized video found for ${videoId}-${mappedLang}`);
       return null;
     }
 
     return {
       originalvideoId: videoId,
-      localizedvideoId: localizedData.videoID,
+      localizedvideoId: localizedVideoId,
       language: mappedLang,
-      title: localizedData.title,
-      product: localizedData.product,
-      captionLanguage: localizedData.captionLanguage,
-      modified: localizedData.modified,
     };
   } catch (error) {
     console.error('Error getting video data:', error);
@@ -89,26 +72,13 @@ const getLocalizedVideoData = async (videoId, lang) => {
 };
 
 export const main = async function main(params) {
-  const { videoId, lang = 'en', githubPAT } = params;
+  const { videoId, lang = 'en' } = params;
 
   if (!videoId) {
     return sendError(400, 'Missing required parameter: videoId');
   }
 
   try {
-    console.log(`Processing video ID: ${videoId} for language: ${lang}`);
-
-    // Check if cache is stale and refresh if needed with provided githubPAT
-    if (isCacheStale() && githubPAT) {
-      console.log('Cache is stale, refreshing with provided GitHub PAT');
-      await refreshCache({ githubPAT });
-    }
-
-    // Add 3 seconds delay for video response
-    await new Promise((resolve) => {
-      setTimeout(resolve, 3000);
-    });
-
     // Get localized video data from cache
     const videoData = await getLocalizedVideoData(videoId, lang);
 
@@ -119,10 +89,8 @@ export const main = async function main(params) {
       );
     }
 
-    console.log(`Successfully retrieved localized video data:`, videoData);
-
     // Add cache information to response headers
-    const cacheStats = getCacheStats();
+    const cacheStats = await getCacheStats();
     const cacheControl = 'public, max-age=300'; // 5 minutes TTL
 
     return {
@@ -139,7 +107,7 @@ export const main = async function main(params) {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': cacheControl,
-        'X-Cache-Status': isCacheStale() ? 'STALE' : 'FRESH',
+        'X-Cache-Status': (await isCacheStale()) ? 'STALE' : 'FRESH',
       },
       statusCode: 200,
     };

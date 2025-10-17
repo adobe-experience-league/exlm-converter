@@ -11,13 +11,27 @@
  */
 
 import Logger from '@adobe/aio-lib-core-logging';
+import stateLib from '../common/utils/state-lib-util.js';
 
 export const aioLogger = Logger('scheduled-cron');
 
-// In-memory cache for video data
-const videoDataCache = new Map();
-let lastFetchTime = null;
+// State storage keys
+const VIDEO_DATA_STATE_KEY = 'video-data-cache';
+const LAST_FETCH_TIME_KEY = 'video-cache-last-fetch';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+// Initialize state store
+let stateStore = null;
+
+/**
+ * Initialize state store if not already initialized
+ */
+const initStateStore = async () => {
+  if (!stateStore) {
+    stateStore = await stateLib.init();
+  }
+  return stateStore;
+};
 
 // GitHub API configuration
 const GITHUB_API_BASE = 'https://raw.githubusercontent.com';
@@ -27,12 +41,14 @@ const FILE_PATH = 'MPCLocVideoLinkIndex.json';
 const { MPC_GITHUB_PAT } = process.env;
 
 /**
- * Fetches video data from the GitHub API and stores it in memory
+ * Fetches video data from the GitHub API and stores it in state
  * @param {string|null} token - GitHub Personal Access Token
  * @returns {Promise<Object>} - Result object with success status and details
  */
 const fetchAndCacheVideoData = async () => {
   try {
+    const store = await initStateStore();
+
     // Fetch the file content
     const gitApi = `${GITHUB_API_BASE}/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}`;
     const res = await fetch(gitApi, {
@@ -43,23 +59,42 @@ const fetchAndCacheVideoData = async () => {
     });
     const videoData = await res.json();
 
-    // Clear existing cache and populate with new data
-    videoDataCache.clear();
+    // Transform video data to key-value format: { "videoId-language": "localizedVideoId" }
+    // Exclude "en" entries from state storage
+    const transformedData = {};
+    let totalEntries = 0;
+    const originalVideoCount = Object.keys(videoData).length;
 
-    // Store each video entry in the cache
     Object.keys(videoData).forEach((videoId) => {
-      videoDataCache.set(videoId, videoData[videoId]);
+      const videoEntry = videoData[videoId];
+      Object.keys(videoEntry).forEach((language) => {
+        // Skip English ("en") entries
+        if (language === 'en') {
+          return;
+        }
+
+        const localizedData = videoEntry[language];
+        if (localizedData && localizedData.videoID) {
+          const key = `${videoId}-${language}`;
+          transformedData[key] = localizedData.videoID;
+          totalEntries += 1;
+        }
+      });
     });
 
-    lastFetchTime = Date.now();
+    // Store the transformed data and metadata in state
+    await store.put(VIDEO_DATA_STATE_KEY, transformedData);
+    const currentTime = Date.now();
+    await store.put(LAST_FETCH_TIME_KEY, currentTime);
+
     aioLogger.info(
-      `Successfully cached ${videoDataCache.size} video entries from GitHub API`,
+      `Successfully cached ${totalEntries} video-language entries from ${originalVideoCount} original videos to state storage`,
     );
 
     return {
       success: true,
-      cacheSize: videoDataCache.size,
-      lastFetchTime: new Date(lastFetchTime).toISOString(),
+      cacheSize: totalEntries,
+      lastFetchTime: new Date(currentTime).toISOString(),
     };
   } catch (error) {
     aioLogger.error('Error fetching video data from GitHub API:', error);
@@ -72,31 +107,111 @@ const fetchAndCacheVideoData = async () => {
 };
 
 /**
- * Gets video data from cache
+ * Gets video data from state storage using key format "videoId-language"
  * @param {string} videoId - The video ID to look up
- * @returns {Object|null} - Video data or null if not found
+ * @param {string} language - The language code
+ * @returns {Promise<string|null>} - Localized video ID or null if not found
  */
-export const getVideoFromCache = (videoId) =>
-  videoDataCache.get(videoId) || null;
+export const getVideoFromCache = async (videoId, language) => {
+  try {
+    const store = await initStateStore();
+    const cacheData = await store.get(VIDEO_DATA_STATE_KEY);
+
+    if (!cacheData || !cacheData.value) {
+      return null;
+    }
+
+    const key = `${videoId}-${language}`;
+    return cacheData.value[key] || null;
+  } catch (error) {
+    aioLogger.error('Error getting video from cache:', error);
+    return null;
+  }
+};
 
 /**
  * Checks if cache needs refresh
- * @returns {boolean} - True if cache needs refresh
+ * @returns {Promise<boolean>} - True if cache needs refresh
  */
-export const isCacheStale = () => {
-  if (!lastFetchTime) return true;
-  return Date.now() - lastFetchTime > CACHE_DURATION;
+export const isCacheStale = async () => {
+  try {
+    const store = await initStateStore();
+    const lastFetchData = await store.get(LAST_FETCH_TIME_KEY);
+
+    if (!lastFetchData || !lastFetchData.value) return true;
+
+    return Date.now() - lastFetchData.value > CACHE_DURATION;
+  } catch (error) {
+    aioLogger.error('Error checking cache staleness:', error);
+    return true;
+  }
 };
 
 /**
  * Gets cache statistics
- * @returns {Object} - Cache statistics
+ * @returns {Promise<Object>} - Cache statistics
  */
-export const getCacheStats = () => ({
-  size: videoDataCache.size,
-  lastFetchTime: lastFetchTime ? new Date(lastFetchTime).toISOString() : null,
-  isStale: isCacheStale(),
-});
+export const getCacheStats = async () => {
+  try {
+    const store = await initStateStore();
+    const [cacheData, lastFetchData] = await Promise.all([
+      store.get(VIDEO_DATA_STATE_KEY),
+      store.get(LAST_FETCH_TIME_KEY),
+    ]);
+
+    const size =
+      cacheData && cacheData.value ? Object.keys(cacheData.value).length : 0;
+    const lastFetchTime =
+      lastFetchData && lastFetchData.value ? lastFetchData.value : null;
+    const isStale = await isCacheStale();
+
+    return {
+      size,
+      lastFetchTime: lastFetchTime
+        ? new Date(lastFetchTime).toISOString()
+        : null,
+      isStale,
+    };
+  } catch (error) {
+    aioLogger.error('Error getting cache stats:', error);
+    return {
+      size: 0,
+      lastFetchTime: null,
+      isStale: true,
+    };
+  }
+};
+
+/**
+ * Updates state after daily cron job execution
+ * @returns {Promise<void>}
+ */
+const updateStateAfterCronJob = async () => {
+  try {
+    const store = await initStateStore();
+    const currentTime = Date.now();
+
+    // Update last cron execution time
+    await store.put('last-cron-execution', currentTime);
+
+    // Update daily execution counter
+    const dailyCounterData = await store.get('daily-execution-counter');
+    const currentCounter = dailyCounterData?.value || 0;
+    await store.put('daily-execution-counter', currentCounter + 1);
+
+    // Store execution metadata
+    const executionMetadata = {
+      executionTime: new Date(currentTime).toISOString(),
+      executionCount: currentCounter + 1,
+      status: 'completed',
+    };
+    await store.put('cron-execution-metadata', executionMetadata);
+
+    aioLogger.info('State updated after cron job execution', executionMetadata);
+  } catch (error) {
+    aioLogger.error('Error updating state after cron job:', error);
+  }
+};
 
 /**
  * Main function for the scheduled wrapper action
@@ -108,8 +223,11 @@ export const main = async function main() {
     aioLogger.info('Starting scheduled video data fetch');
     const result = await fetchAndCacheVideoData();
 
+    // Update state after cron job execution
+    await updateStateAfterCronJob();
+
     if (result.success) {
-      const stats = getCacheStats();
+      const stats = await getCacheStats();
       aioLogger.info('Scheduled video data fetch completed successfully', {
         ...stats,
         rateLimitRemaining: result.rateLimitRemaining,
@@ -160,11 +278,7 @@ export const main = async function main() {
 (async () => {
   try {
     aioLogger.info('Initializing video data cache on module load');
-    const result = await fetchAndCacheVideoData();
-
-    if (!result.success) {
-      aioLogger.warn('Failed to initialize cache on module load:', result);
-    }
+    await fetchAndCacheVideoData();
   } catch (error) {
     aioLogger.error('Error initializing cache on module load:', error);
   }
