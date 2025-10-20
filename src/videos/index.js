@@ -12,11 +12,7 @@
 
 import Logger from '@adobe/aio-lib-core-logging';
 import { sendError } from '../common/utils/response-utils.js';
-import {
-  getVideoFromCache,
-  isCacheStale,
-  getCacheStats,
-} from './scheduled-cron.js';
+import { getVideoIDFromCache } from './localize-video-ids.js';
 
 export const aioLogger = Logger('videos');
 
@@ -53,10 +49,10 @@ const mpcLanguageCode = (lang) => {
 const getLocalizedVideoData = async (videoId, lang) => {
   try {
     const mappedLang = mpcLanguageCode(lang);
-    const localizedVideoId = await getVideoFromCache(videoId, mappedLang);
+    const localizedVideoId = await getVideoIDFromCache(videoId, mappedLang);
 
     if (!localizedVideoId) {
-      console.log(`No localized video found for ${videoId}-${mappedLang}`);
+      aioLogger.info(`No localized video found for ${videoId}-${mappedLang}`);
       return null;
     }
 
@@ -66,12 +62,13 @@ const getLocalizedVideoData = async (videoId, lang) => {
       language: mappedLang,
     };
   } catch (error) {
-    console.error('Error getting video data:', error);
+    aioLogger.error('Error getting video data:', error);
     return null;
   }
 };
 
 export const main = async function main(params) {
+  const startTime = Date.now();
   const { videoId, lang = 'en' } = params;
 
   if (!videoId) {
@@ -79,40 +76,38 @@ export const main = async function main(params) {
   }
 
   try {
-    // Get localized video data from cache
+    // Get localized video data from cache with optimized response
     const videoData = await getLocalizedVideoData(videoId, lang);
+    const duration = Date.now() - startTime;
 
     if (!videoData) {
+      aioLogger.info(`Video not found: ${videoId}-${lang} (${duration}ms)`);
       return sendError(
         404,
         `Video ID ${videoId} not found or no localized version available`,
       );
     }
 
-    // Add cache information to response headers
-    const cacheStats = await getCacheStats();
-    const cacheControl = 'public, max-age=300'; // 5 minutes TTL
+    aioLogger.debug(
+      `Video lookup successful: ${videoId}-${lang} (${duration}ms)`,
+    );
 
     return {
       body: {
         success: true,
         data: videoData,
-        cache: {
-          fromCache: true,
-          cacheSize: cacheStats.size,
-          lastRefresh: cacheStats.lastFetchTime,
-          isStale: cacheStats.isStale,
-        },
+        responseTime: `${duration}ms`,
       },
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': cacheControl,
-        'X-Cache-Status': (await isCacheStale()) ? 'STALE' : 'FRESH',
+        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400', // Extended cache with stale-while-revalidate
+        'X-Response-Time': `${duration}ms`,
       },
       statusCode: 200,
     };
   } catch (error) {
-    console.error('Error in main function:', error);
+    const duration = Date.now() - startTime;
+    aioLogger.error(`Error in main function (${duration}ms):`, error);
     return sendError(500, 'Internal Server Error');
   }
 };

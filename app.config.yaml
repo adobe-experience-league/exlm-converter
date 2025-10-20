@@ -56,18 +56,21 @@ application:
             runtime: 'nodejs:18'
             inputs:
               LOG_LEVEL: debug
-              githubPAT: $MPC_GITHUB_PAT
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
-          videos-cron-job:
-            function: dist/videos-cron-job
+          videos-scheduler:
+            function: dist/videos-scheduler
             web: 'no'
             runtime: 'nodejs:18'
             inputs:
               LOG_LEVEL: debug
+              mpcGithubToken: $MPC_GITHUB_PAT
             annotations:
               final: true
+            limits:
+              memory: 1024
+              timeout: 3600000 # maximum allowed timeout - 1 hour.
           files:
             function: dist/files # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
@@ -95,6 +98,6 @@ application:
             inputs:
               cron: '0 9 * * *' # Once per day at 2am PDT (9am UTC)
         rules:
-          fetchLOCVideoIDRule:
+          fetchAndCacheLOCVideoID:
             trigger: daily
-            action: videos-cron-job
+            action: videos-scheduler

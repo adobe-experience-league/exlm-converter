@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export { main } from '../videos/scheduled-cron.js';
+export { main } from '../videos/localize-video-ids.js';
