@@ -15,6 +15,7 @@ import {
   decodeCQMetadata,
   generateHash,
   createTranslatedMetadata,
+  getModuleCount,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
@@ -152,6 +153,11 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
       setMetadata(document, 'coveo-content-type', 'Course');
       setMetadata(document, 'type', 'Course');
       setMetadata(document, 'course-id', courseID);
+
+      const moduleCount = getModuleCount(document);
+      if (moduleCount) {
+        setMetadata(document, 'module-count', moduleCount);
+      }
     }
 
     // Quiz check
