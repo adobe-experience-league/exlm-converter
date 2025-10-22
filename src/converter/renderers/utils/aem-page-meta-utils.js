@@ -321,20 +321,11 @@ export const mapTagsToTitles = (meta, taxonomyData) => {
  * @returns {string|null} - The module count value or null if not found
  */
 export function getModuleCount(document) {
-  const courseBreakdownBlock = document.querySelector('div.course-breakdown');
+  const moduleCount = document
+    .querySelector('div.course-breakdown .cb-module-count')
+    ?.textContent?.trim();
 
-  if (!courseBreakdownBlock) {
-    return null;
-  }
-
-  const moduleCountElement =
-    courseBreakdownBlock.querySelector('.cb-module-count');
-
-  if (moduleCountElement) {
-    return moduleCountElement.textContent?.trim() || null;
-  }
-
-  return null;
+  return moduleCount || null;
 }
 
 /**
