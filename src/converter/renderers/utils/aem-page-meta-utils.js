@@ -316,6 +316,19 @@ export const mapTagsToTitles = (meta, taxonomyData) => {
 };
 
 /**
+ * Gets the module count from the course-breakdown block
+ * @param {Document} document - The DOM document
+ * @returns {string|null} - The module count value or null if not found
+ */
+export function getModuleCount(document) {
+  const moduleCount = document
+    .querySelector('div.course-breakdown .cb-module-count')
+    ?.textContent?.trim();
+
+  return moduleCount || null;
+}
+
+/**
  * Creates translated metadata for role, level, and feature meta types.
  *
  * @param {Document} document
