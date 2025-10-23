@@ -94,9 +94,7 @@ export const main = async function main(params) {
 
     return {
       body: {
-        success: true,
         data: videoData,
-        responseTime: `${duration}ms`,
       },
       headers: {
         'Content-Type': 'application/json',

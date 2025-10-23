@@ -96,7 +96,7 @@ application:
           daily:
             feed: /whisk.system/alarms/alarm
             inputs:
-              cron: '0 9 * * *' # Once per day at 2am PDT (9am UTC)
+              cron: '0 3 * * *' # Once per day at 3am UTC
         rules:
           fetchAndCacheLOCVideoID:
             trigger: daily
