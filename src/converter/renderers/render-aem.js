@@ -16,6 +16,7 @@ import {
   generateHash,
   createTranslatedMetadata,
   getModuleCount,
+  getCourseDuration,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
@@ -156,7 +157,12 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
 
       const moduleCount = getModuleCount(document);
       if (moduleCount) {
-        setMetadata(document, 'module-count', moduleCount);
+        setMetadata(document, 'course-module-count', moduleCount);
+      }
+
+      const courseDuration = getCourseDuration(document);
+      if (courseDuration) {
+        setMetadata(document, 'course-duration', courseDuration);
       }
     }
 
