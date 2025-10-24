@@ -318,14 +318,14 @@ export const mapTagsToTitles = (meta, taxonomyData) => {
 /**
  * Gets the module count from the course-breakdown block
  * @param {Document} document - The DOM document
- * @returns {string|null} - The module count value or null if not found
+ * @returns {number} - The module count value
  */
 export function getModuleCount(document) {
-  const moduleCount = document
-    .querySelector('div.course-breakdown .cb-module-count')
-    ?.textContent?.trim();
+  const moduleCount = document.querySelectorAll(
+    '[data-aue-model="course-breakdown-item"]',
+  )?.length;
 
-  return moduleCount || null;
+  return moduleCount;
 }
 
 /**
