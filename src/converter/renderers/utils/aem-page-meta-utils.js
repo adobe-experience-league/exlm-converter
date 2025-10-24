@@ -329,6 +329,19 @@ export function getModuleCount(document) {
 }
 
 /**
+ * Gets the course duration from the 2nd child div of the course-breakdown block
+ * @param {Document} document - The DOM document
+ * @returns {string} - The course duration value
+ */
+export function getCourseDuration(document) {
+  const courseDuration = document
+    .querySelector('.course-breakdown div:nth-child(2)')
+    ?.textContent?.trim();
+
+  return courseDuration || '';
+}
+
+/**
  * Creates translated metadata for role, level, and feature meta types.
  *
  * @param {Document} document
