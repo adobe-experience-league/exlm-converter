@@ -158,17 +158,17 @@ export function updateTQTagsForCoveo(document) {
  * @param {Document} document
  */
 export function updateTQTagsMetadata(document) {
-  const keysToUpdate = [
-    'tq-roles',
-    'tq-levels',
-    'tq-products',
-    'tq-features',
-    'tq-subfeatures',
-    'tq-industries',
-    'tq-topics',
-  ];
+  const keyMapping = {
+    'tq-roles': 'role-v2',
+    'tq-levels': 'level-v2',
+    'tq-products': 'product-v2',
+    'tq-features': 'feature-v2',
+    'tq-subfeatures': 'subfeature-v2',
+    'tq-industries': 'industry-v2',
+    'tq-topics': 'topic-v2',
+  };
 
-  keysToUpdate.forEach((key) => {
+  Object.entries(keyMapping).forEach(([key, newKey]) => {
     const metaTag = getMetadata(document, key);
     if (!metaTag) return;
 
@@ -184,7 +184,7 @@ export function updateTQTagsMetadata(document) {
           .filter(Boolean)
           .join(', ');
         if (updatedTags) {
-          setMetadata(document, `${key}`, updatedTags);
+          setMetadata(document, key, updatedTags);
           // Extract labels (the part after |) and join by comma
           const labels = updatedTags
             .split(',')
@@ -192,7 +192,7 @@ export function updateTQTagsMetadata(document) {
             .filter(Boolean)
             .join(', ');
 
-          setMetadata(document, `${key}-labels`, labels);
+          setMetadata(document, newKey, labels);
         }
       }
     } catch (e) {
