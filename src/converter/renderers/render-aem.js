@@ -15,6 +15,8 @@ import {
   decodeCQMetadata,
   generateHash,
   createTranslatedMetadata,
+  getModuleCount,
+  getCourseDuration,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
@@ -36,14 +38,11 @@ async function transformAemPageMetadata(htmlString, params, path) {
 
   const lang = path.split('/')[1];
   decodeCQMetadata(document, 'cq-tags');
-  if (path.includes('/courses/') && !path.includes('/courses/instructors')) {
-    updateTQTagsMetadata(document);
-  } else {
-    updateEncodedMetadata(document, 'role');
-    updateEncodedMetadata(document, 'level');
-    updateCoveoSolutionMetadata(document);
-    await createTranslatedMetadata(document, lang);
-  }
+  updateTQTagsMetadata(document);
+  updateEncodedMetadata(document, 'role');
+  updateEncodedMetadata(document, 'level');
+  updateCoveoSolutionMetadata(document);
+  await createTranslatedMetadata(document, lang);
 
   const publishedTime = getMetadata(document, 'published-time');
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
@@ -151,8 +150,20 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
 
     // Base course page only
     if (path.endsWith(`/courses/${slug}`)) {
+      const courseID = generateHash(`/courses/${slug}`);
       setMetadata(document, 'coveo-content-type', 'Course');
       setMetadata(document, 'type', 'Course');
+      setMetadata(document, 'course-id', courseID);
+
+      const moduleCount = getModuleCount(document);
+      if (moduleCount) {
+        setMetadata(document, 'course-module-count', moduleCount);
+      }
+
+      const courseDuration = getCourseDuration(document);
+      if (courseDuration) {
+        setMetadata(document, 'course-duration', courseDuration);
+      }
     }
 
     // Quiz check
