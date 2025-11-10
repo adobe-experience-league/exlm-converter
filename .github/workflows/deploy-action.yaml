@@ -7,6 +7,7 @@ on:
       - main
       - stage
       - develop
+      - review
 
 jobs:
   env-select:
@@ -22,6 +23,8 @@ jobs:
             echo "env_name=prod" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.ref }}" = "refs/heads/stage" ]; then
             echo "env_name=stage" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref }}" = "refs/heads/review" ]; then
+            echo "env_name=review" >> "$GITHUB_OUTPUT"
           else
             echo "env_name=dev" >> "$GITHUB_OUTPUT"
           fi
