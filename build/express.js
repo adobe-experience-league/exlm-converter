@@ -181,7 +181,7 @@ const coveoHandler = async (req, res) => {
 
 app.get('/khoros/**', khorosHandler);
 app.get('/toc/**', tocHandler);
-app.get('/coveo', coveoHandler);
+app.get('/coveo-token', coveoHandler);
 app.get('/**', converterHandler);
 
 app.listen(port, () =>
@@ -190,6 +190,6 @@ app.listen(port, () =>
   Converter: http://localhost:${port}/en/docs
   Khoros: http://localhost:${port}/khoros
   Toc: http://localhost:${port}/toc
-  Coveo: http://localhost:${port}/coveo
+  Coveo Token: http://localhost:${port}/coveo-token
 `),
 );

@@ -354,7 +354,7 @@ curl https://<namespace>-dev.adobeioruntime.net/api/v1/web/<package>-dev/coveo-t
 
 ```bash
 curl -H "Origin: https://experienceleague.adobe.com" \
-  http://localhost:3030/coveo
+  http://localhost:3030/coveo-token
 ```
 
 ### Verify Vault Access
