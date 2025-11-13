@@ -83,11 +83,11 @@ The Coveo Token Service is an Adobe I/O Runtime action that:
 
 ### Files
 
-| File | Purpose |
-|------|---------|
-| `index.js` | Main service logic, origin validation, environment detection |
+| File               | Purpose                                                        |
+| ------------------ | -------------------------------------------------------------- |
+| `index.js`         | Main service logic, origin validation, environment detection   |
 | `vault-service.js` | HashiCorp Vault client with AppRole authentication and caching |
-| `README.md` | This documentation |
+| `README.md`        | This documentation                                             |
 
 ---
 
@@ -112,12 +112,12 @@ The service **automatically detects** whether it's running in production or nonp
 
 ### Namespace Examples
 
-| Namespace | Environment | Reasoning |
-|-----------|-------------|-----------|
-| `12345-yourapp` | **Production** | Ends with `yourapp` |
-| `12345-yourapp-dev` | **Nonprod** | Ends with `-dev` |
-| `12345-yourapp-stage` | **Nonprod** | Doesn't end with `yourapp` |
-| `(local development)` | **Nonprod** | No namespace present |
+| Namespace             | Environment    | Reasoning                  |
+| --------------------- | -------------- | -------------------------- |
+| `12345-yourapp`       | **Production** | Ends with `yourapp`        |
+| `12345-yourapp-dev`   | **Nonprod**    | Ends with `-dev`           |
+| `12345-yourapp-stage` | **Nonprod**    | Doesn't end with `yourapp` |
+| `(local development)` | **Nonprod**    | No namespace present       |
 
 ### Why This Matters
 
@@ -159,6 +159,7 @@ All requests are validated against an allowlist of Adobe domains:
   "error": "Forbidden: Access denied from this origin"
 }
 ```
+
 HTTP Status: `403 Forbidden`
 
 ### Token Storage
@@ -231,6 +232,7 @@ COVEO_TOKEN_NONPROD=xxNONPROD-TOKEN-EXAMPLE-5678
 ### Setup
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
@@ -238,6 +240,7 @@ COVEO_TOKEN_NONPROD=xxNONPROD-TOKEN-EXAMPLE-5678
 2. **Configure environment** in `build/.local.env`:
 
    **Option A: Use Vault (Production-like)**
+
    ```bash
    VAULT_ENDPOINT=https://vault.example.com
    VAULT_ROLE_ID=<your-role-id>
@@ -248,16 +251,18 @@ COVEO_TOKEN_NONPROD=xxNONPROD-TOKEN-EXAMPLE-5678
    ```
 
    **Option B: Use Local Tokens (Simpler)**
+
    ```bash
    # Comment out Vault credentials
    # VAULT_ENDPOINT=...
-   
+
    # Use local tokens instead
    COVEO_TOKEN_NONPROD=xxNONPROD-TOKEN-EXAMPLE-5678
    COVEO_TOKEN_PROD=xxPROD-TOKEN-EXAMPLE-1234
    ```
 
 3. **Start local server:**
+
    ```bash
    npm run serve
    ```
@@ -300,7 +305,7 @@ npm run deploy
 Deployment happens automatically via GitHub Actions on push to:
 
 - `main` branch → **Production** environment
-- `stage` branch → **Stage** environment  
+- `stage` branch → **Stage** environment
 - `develop` branch → **Dev** environment
 
 ### Required GitHub Secrets
@@ -322,10 +327,10 @@ Variables (optional):
 
 After deployment:
 
-| Environment | URL |
-|-------------|-----|
-| **Production** | `https://<namespace>.adobeioruntime.net/api/v1/web/<package>/coveo-token` |
-| **Dev** | `https://<namespace>-dev.adobeioruntime.net/api/v1/web/<package>-dev/coveo-token` |
+| Environment    | URL                                                                               |
+| -------------- | --------------------------------------------------------------------------------- |
+| **Production** | `https://<namespace>.adobeioruntime.net/api/v1/web/<package>/coveo-token`         |
+| **Dev**        | `https://<namespace>-dev.adobeioruntime.net/api/v1/web/<package>-dev/coveo-token` |
 
 ---
 
@@ -371,14 +376,14 @@ curl -H "X-Vault-Token: $VAULT_TOKEN" \
 
 ### Expected Behaviors
 
-| Scenario | Expected Result |
-|----------|----------------|
-| Valid Adobe origin | `200` with token |
-| Invalid origin | `403 Forbidden` |
-| Vault configured | Uses Vault token |
-| Vault not configured | Uses local env token |
-| Production namespace | Returns prod token |
-| Nonprod namespace | Returns nonprod token |
+| Scenario             | Expected Result       |
+| -------------------- | --------------------- |
+| Valid Adobe origin   | `200` with token      |
+| Invalid origin       | `403 Forbidden`       |
+| Vault configured     | Uses Vault token      |
+| Vault not configured | Uses local env token  |
+| Production namespace | Returns prod token    |
+| Nonprod namespace    | Returns nonprod token |
 
 ---
 
@@ -389,15 +394,18 @@ curl -H "X-Vault-Token: $VAULT_TOKEN" \
 #### 1. "Permission Denied" from Vault
 
 **Error:**
+
 ```
 Failed to read secret from Vault: permission denied
 ```
 
 **Causes:**
+
 - AppRole doesn't have read permissions for the secret path
 - Incorrect Vault path (check for `/v1/` prefix - it should NOT be included)
 
 **Solutions:**
+
 ```bash
 # Verify the path doesn't include /v1/
 COVEO_SECRET_PATH=<your-vault-path>/data/coveo  # ✅ Correct
@@ -411,10 +419,12 @@ COVEO_SECRET_PATH=<your-vault-path>/data/coveo  # ✅ Correct
 #### 2. "Forbidden: Access denied from this origin"
 
 **Causes:**
+
 - Request coming from unauthorized domain
 - Missing origin headers
 
 **Solutions:**
+
 ```bash
 # Verify origin is in allowlist
 # For local dev, use localhost:
@@ -426,10 +436,12 @@ curl http://localhost:3030/coveo
 #### 3. Empty Token Returned
 
 **Causes:**
+
 - Token key doesn't exist in Vault
 - Wrong key name configured
 
 **Solutions:**
+
 ```bash
 # Verify Vault secret structure
 curl -H "X-Vault-Token: $TOKEN" \
@@ -443,10 +455,12 @@ COVEO_SECRET_KEY_NONPROD=<your-nonprod-key-name>
 #### 4. Local Development: Changes Not Taking Effect
 
 **Cause:**
+
 - `.local.env` changes require server restart
 - `nodemon` only watches code files, not `.local.env`
 
 **Solution:**
+
 ```bash
 # Stop server (Ctrl+C) and restart
 npm run serve
@@ -455,10 +469,12 @@ npm run serve
 #### 5. Wrong Environment Token Being Returned
 
 **Causes:**
+
 - Environment detection not working as expected
 - Explicit `COVEO_ENV` override set incorrectly
 
 **Debug:**
+
 ```bash
 # Check logs for environment detection:
 # "Environment determined by COVEO_ENV: production"
@@ -513,6 +529,7 @@ GET /coveo
 ```
 
 **Headers:**
+
 - `Origin` (automatically sent by browsers on cross-origin requests)
 - `Referer` (fallback for origin validation)
 - `Host` (fallback for localhost direct access)
@@ -522,6 +539,7 @@ GET /coveo
 ### Response
 
 **Success (200):**
+
 ```json
 {
   "token": "xxEXAMPLE-TOKEN-abc123def456"
@@ -529,6 +547,7 @@ GET /coveo
 ```
 
 **Headers:**
+
 ```http
 Content-Type: application/json
 Access-Control-Allow-Origin: <requesting-origin>
@@ -537,6 +556,7 @@ Access-Control-Allow-Headers: Content-Type
 ```
 
 **Error (403):**
+
 ```json
 {
   "error": "Forbidden: Access denied from this origin"
@@ -544,6 +564,7 @@ Access-Control-Allow-Headers: Content-Type
 ```
 
 **Error (500):**
+
 ```json
 {
   "error": {
@@ -564,6 +585,7 @@ Access-Control-Allow-Headers: Content-Type
 **Chosen:** Auto-detect from deployment namespace
 
 **Reasoning:**
+
 - **Security**: Prevents clients from requesting prod tokens in nonprod
 - **Simplicity**: No need to pass parameters
 - **Reliability**: Environment determined by infrastructure, not client
@@ -575,6 +597,7 @@ Access-Control-Allow-Headers: Content-Type
 **Chosen:** Same path, different keys
 
 **Reasoning:**
+
 - **Simplicity**: One path to manage and configure
 - **Flexibility**: Easy to add new environments as additional keys
 - **Permissions**: Simpler Vault policy management
@@ -584,6 +607,7 @@ Access-Control-Allow-Headers: Content-Type
 **Alternative:** Rely on Adobe I/O authentication
 
 **Reasoning:**
+
 - **Defense in depth**: Multiple layers of security
 - **Browser requests**: Origin validation works well for CORS
 - **Explicit allowlist**: Clear documentation of who can access
@@ -630,4 +654,3 @@ For issues or questions:
 
 Copyright 2023 Adobe. All rights reserved.
 This file is licensed under the Apache License, Version 2.0.
-
