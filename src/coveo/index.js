@@ -47,7 +47,9 @@ function isAllowedOrigin(origin, host = '') {
       /\.adobe\.io$/,
       /\.adobeaemcloud\.com$/,
       /\.hlx\.page$/,
+      /\.aem\.page$/,
       /\.hlx\.live$/,
+      /\.aem\.live$/,
       /^experienceleague\.adobe\.com$/,
       /^localhost$/, // Allow localhost for local development
       /^127\.0\.0\.1$/, // Allow 127.0.0.1 for local development
