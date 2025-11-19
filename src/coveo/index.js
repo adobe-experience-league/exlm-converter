@@ -43,12 +43,10 @@ function isAllowedOrigin(origin, host = '') {
 
     // Allow all Adobe domains (*.adobe.com, *.adobe.io, *.adobeaemcloud.com, *.hlx.page, *.hlx.live)
     const allowedPatterns = [
-      /\.adobe\.com$/,
-      /\.adobe\.io$/,
       /\.adobeaemcloud\.com$/,
       /\.aem\.page$/,
       /\.aem\.live$/,
-      /^experienceleague\.adobe\.com$/,
+      /(^([a-z0-9-]+\.)+adobe\.com$)/,
       /^localhost$/, // Allow localhost for local development
       /^127\.0\.0\.1$/, // Allow 127.0.0.1 for local development
     ];
