@@ -90,3 +90,4 @@ application:
               require-adobe-auth: false # unauthenticated, secured by origin validation
               final: true
               web-export: true # enable CORS for browser requests
+              web-custom-options: true
