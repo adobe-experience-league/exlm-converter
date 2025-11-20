@@ -15,10 +15,10 @@ application:
               concurrency: 2
             inputs:
               LOG_LEVEL: debug
-              aemAuthorUrl: $AEM_AUTHOR_URL
-              aemOwner: $OWNER
-              aemRepo: $REPO
-              aemBranch: $BRANCH
+              aemAuthorUrl: https://author-p122525-e1200861.adobeaemcloud.com/
+              aemOwner: adobe-experience-league
+              aemRepo: exlm
+              aemBranch: main
               exlApiHost: $EXL_API_HOST
               featureFlags: $FEATURE_FLAGS
               v2Paths: $V2_PATHS
@@ -90,3 +90,4 @@ application:
               require-adobe-auth: false # unauthenticated, secured by origin validation
               final: true
               web-export: true # enable CORS for browser requests
+              web-custom-options: true
