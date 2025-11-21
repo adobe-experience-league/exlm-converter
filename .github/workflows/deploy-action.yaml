@@ -72,6 +72,13 @@ jobs:
           HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
           FEATURE_FLAGS: ${{ vars.FEATURE_FLAGS }}
           V2_PATHS: ${{ vars.V2_PATHS }}
+          VAULT_ENDPOINT: ${{ secrets.VAULT_ENDPOINT }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          COVEO_SECRET_PATH: ${{ secrets.COVEO_SECRET_PATH }}
+          COVEO_SECRET_KEY_PROD: ${{ secrets.COVEO_SECRET_KEY_PROD }}
+          COVEO_SECRET_KEY_NONPROD: ${{ secrets.COVEO_SECRET_KEY_NONPROD }}
+          COVEO_ENV: ${{ vars.COVEO_ENV }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:
