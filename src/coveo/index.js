@@ -41,14 +41,13 @@ function isAllowedOrigin(origin, host = '') {
     const url = new URL(origin);
     const hostname = url.hostname.toLowerCase();
 
-    // Allow all Adobe domains (*.adobe.com, *.adobe.io, *.adobeaemcloud.com, *.hlx.page, *.hlx.live)
+    // Allow domains specific to experienceleague & experienceleaguecommunities
+
     const allowedPatterns = [
-      /\.adobeaemcloud\.com$/,
-      /\.aem\.page$/,
-      /\.aem\.live$/,
-      /(^([a-z0-9-]+\.)+adobe\.com$)/,
-      /^localhost$/, // Allow localhost for local development
-      /^127\.0\.0\.1$/, // Allow 127.0.0.1 for local development
+      /^experienceleague(-(dev|stage))?\.adobe\.com$/,
+      /^experienceleaguecommunities(-(dev))?\.adobe\.com$/,
+      /^author-p122525-e\d+\.adobeaemcloud\.com$/,
+      /^([a-z0-9-]+)--([a-z0-9-]+)--adobe-experience-league\.(hlx|aem)\.(page|live)$/,
     ];
 
     const isAllowed = allowedPatterns.some((pattern) => pattern.test(hostname));
