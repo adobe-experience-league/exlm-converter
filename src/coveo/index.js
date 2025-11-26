@@ -180,7 +180,7 @@ export const main = async function main(params) {
           'Content-Type': 'application/json',
         },
         body: {
-          error: 'Forbidden: Access denied from this origin',
+          error: 'The requested resource is not available',
         },
       };
     }
