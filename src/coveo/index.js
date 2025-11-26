@@ -174,15 +174,8 @@ export const main = async function main(params) {
       aioLogger.warn(
         `Unauthorized access attempt from origin: ${origin}, host: ${host}`,
       );
-      return {
-        statusCode: 403,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: {
-          error: 'The requested resource is not available',
-        },
-      };
+
+      return sendError(403, 'The requested resource is not available');
     }
 
     aioLogger.info(`Request authorized from origin: ${origin}`);
