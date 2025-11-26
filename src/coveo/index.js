@@ -174,8 +174,7 @@ export const main = async function main(params) {
       aioLogger.warn(
         `Unauthorized access attempt from origin: ${origin}, host: ${host}`,
       );
-
-      return sendError(403, 'The requested resource is not available');
+      return sendError(403, '');
     }
 
     aioLogger.info(`Request authorized from origin: ${origin}`);
