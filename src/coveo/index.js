@@ -174,7 +174,11 @@ export const main = async function main(params) {
       aioLogger.warn(
         `Unauthorized access attempt from origin: ${origin}, host: ${host}`,
       );
-      return sendError(403, '');
+      return {
+        statusCode: 403,
+        headers: {},
+        body: '',
+      };
     }
 
     aioLogger.info(`Request authorized from origin: ${origin}`);
