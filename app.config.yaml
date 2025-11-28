@@ -71,3 +71,23 @@ application:
               apiKey: $HLX_API_KEY
             annotations:
               final: true
+          coveo-token:
+            function: dist/coveo
+            web: 'yes'
+            runtime: 'nodejs:18'
+            inputs:
+              LOG_LEVEL: debug
+              # Vault configuration
+              vaultEndpoint: $VAULT_ENDPOINT
+              vaultRoleId: $VAULT_ROLE_ID
+              vaultSecretId: $VAULT_SECRET_ID
+              coveoSecretPath: $COVEO_SECRET_PATH
+              coveoSecretKeyProd: $COVEO_SECRET_KEY_PROD
+              coveoSecretKeyNonprod: $COVEO_SECRET_KEY_NONPROD
+              # Optional: Explicit environment override (normally auto-detected)
+              coveoEnv: $COVEO_ENV
+            annotations:
+              require-adobe-auth: false # unauthenticated, secured by origin validation
+              final: true
+              web-export: true # enable CORS for browser requests
+              web-custom-options: true

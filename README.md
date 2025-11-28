@@ -100,6 +100,52 @@ IPASS_API_KEY=<the ipass api key for dev iPaaS service for the given KHOROS_ORIG
 
 > Please note, on Prod, iPaaS is not used, the khoros endpoint is called directly.
 
+### Working with the Coveo token action locally
+
+> This is specifically for the coveo-token action.
+
+The coveo-token action serves Coveo search tokens to the exlm site. It uses a smart fallback system:
+
+1. **Primary (Production)**: Fetches tokens from HashiCorp Vault using AppRole authentication
+2. **Fallback (Local Dev)**: Uses local environment variables when Vault is not configured
+
+The coveo-token action is available locally at `localhost:3030/coveo-token` when you run `npm run serve`
+
+#### Option 1: Using Vault (Production setup)
+
+For production or production-like testing, configure Vault credentials:
+
+Add these variables to `build/.local.env`:
+
+> please reach out to the dev team for these values
+
+```
+# Vault Connection with AppRole authentication
+VAULT_ENDPOINT=<HashiCorp Vault endpoint URL>
+VAULT_ROLE_ID=<Vault AppRole role_id>
+VAULT_SECRET_ID=<Vault AppRole secret_id>
+
+# Coveo secret paths in Vault
+COVEO_SECRET_PATH_PROD=<Vault path to production Coveo token, e.g., secret/data/coveo/prod>
+COVEO_SECRET_PATH_NONPROD=<Vault path to nonprod Coveo token, e.g., secret/data/coveo/nonprod>
+COVEO_SECRET_KEY=<Key name for token in Vault secret, defaults to 'token'>
+```
+
+When Vault credentials are provided, the action will always use Vault (production behavior).
+
+#### Option 2: Local Tokens (Quick Local Development)
+
+For easier local development without Vault access, set tokens directly:
+
+```
+COVEO_TOKEN_PROD=<your-production-coveo-token>
+COVEO_TOKEN_NONPROD=<your-nonprod-coveo-token>
+```
+
+**Note:** Local tokens are only used as a fallback when Vault credentials are NOT configured. In production, Vault is always used.
+
+> see description of these env variables in the `Application environment variables` section.
+
 ## Deployment
 
 The action is built and deployed by a [github workflow](.github/workflows/deploy-action.yaml).
@@ -127,26 +173,45 @@ The action requires the follwoing environment variables/secrets to be set:
 
 ## Application environment variables
 
-| Name                     | Type   | required for Prod? | description                                                  |
-| ------------------------ | ------ | ------------------ | ------------------------------------------------------------ |
-| `OWNER`                  | var    | yes                | this repo owner, sent to AEM for AEM content                 |
-| `REPO`                   | var    | yes                | this repo name, sent to AEM for AEM content                  |
-| `BRANCH`                 | var    | yes                | this repo branch, sent to AEM for AEM content                |
-| `AEM_AUTHOR_URL`         | var    | yes                | AEM author instance url to get content from                  |
-| `KHOROS_ORIGIN`          | secret | yes                | the origin used to proxy khoros requests                     |
-| `KHOROS_API_SECRET`      | secret | yes                | the API secret used for khoros requests                      |
-| `IMS_ORIGIN`             | secret | yes                | the IMS origin to call for IMS authentication                |
-| `IMS_CLIENT_ID`          | secret | no                 | the IMS client id to use for IMS authentication              |
-| `IMS_CLIENT_SECRET`      | secret | no                 | the IMS client secret to use for IMS authentication          |
-| `IMS_AUTHORIZATION_CODE` | secret | no                 | the IMS auth code to use for IMS authentication              |
-| `IPASS_API_KEY`          | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments |
-| `EXL_API_HOST`           | var    | no                 | `https://experienceleague.adobe.com`                         |
-| `FEATURE_FLAGS`          | var    | no                 | comma separated feature flags that affect converter behavior |
-| `V2_PATHS`               | var    | no                 | comma separated path-to-regexp to render v2 docs             |
+| Name                        | Type   | required for Prod? | description                                                           |
+| --------------------------- | ------ | ------------------ | --------------------------------------------------------------------- |
+| `OWNER`                     | var    | yes                | this repo owner, sent to AEM for AEM content                          |
+| `REPO`                      | var    | yes                | this repo name, sent to AEM for AEM content                           |
+| `BRANCH`                    | var    | yes                | this repo branch, sent to AEM for AEM content                         |
+| `AEM_AUTHOR_URL`            | var    | yes                | AEM author instance url to get content from                           |
+| `KHOROS_ORIGIN`             | secret | yes                | the origin used to proxy khoros requests                              |
+| `KHOROS_API_SECRET`         | secret | yes                | the API secret used for khoros requests                               |
+| `IMS_ORIGIN`                | secret | yes                | the IMS origin to call for IMS authentication                         |
+| `IMS_CLIENT_ID`             | secret | no                 | the IMS client id to use for IMS authentication                       |
+| `IMS_CLIENT_SECRET`         | secret | no                 | the IMS client secret to use for IMS authentication                   |
+| `IMS_AUTHORIZATION_CODE`    | secret | no                 | the IMS auth code to use for IMS authentication                       |
+| `IPASS_API_KEY`             | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments          |
+| `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
+| `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior          |
+| `V2_PATHS`                  | var    | no                 | comma separated path-to-regexp to render v2 docs                      |
+| `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |
+| `VAULT_ROLE_ID`             | secret | yes                | Vault AppRole role_id for authentication                              |
+| `VAULT_SECRET_ID`           | secret | yes                | Vault AppRole secret_id for authentication                            |
+| `COVEO_SECRET_PATH_PROD`    | var    | yes                | Vault path to production Coveo token (e.g., `secret/data/coveo/prod`) |
+| `COVEO_SECRET_PATH_NONPROD` | var    | yes                | Vault path to nonprod Coveo token (e.g., `secret/data/coveo/nonprod`) |
+| `COVEO_SECRET_KEY`          | var    | no                 | Key name for token in Vault secret (default: `token`)                 |
 
 > `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
 > for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication
 > `IMS_CLIENT_ID` is required in all envs sincve we need it for IMS token validation
+
+> **Vault Authentication (Primary)**: The Coveo token action uses AppRole authentication for secure Vault
+> access. When Vault credentials (`VAULT_ENDPOINT`, `VAULT_ROLE_ID`, `VAULT_SECRET_ID`) are provided,
+> Vault is always used - ensuring production behavior and preventing local tokens from interfering.
+>
+> **Local Token Fallback**: When Vault credentials are NOT configured, the action falls back to
+> `COVEO_TOKEN_PROD` and `COVEO_TOKEN_NONPROD` environment variables. This fallback mode is only for
+> local development convenience and has no performance impact on production deployments.
+>
+> **Origin-Based Security**: The coveo-token endpoint validates the request origin (domain) to ensure
+> requests only come from Adobe-owned domains (_.adobe.com, _.adobe.io, _.adobeaemcloud.com, _.hlx.page, \*.hlx.live).
+> This provides security without requiring API keys in client-side code, making it safe for browser-based calls
+> from the exlm site while allowing anonymous users to search.
 
 ## Debugging common issues
 

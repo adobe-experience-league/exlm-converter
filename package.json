@@ -49,6 +49,7 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "mdast-util-to-hast": "12.3.0",
+    "node-vault": "^0.10.2",
     "openwhisk": "^3.21.8",
     "path-to-regexp": "^6.2.1",
     "rehype-format": "4.0.1",
