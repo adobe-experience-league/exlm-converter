@@ -176,12 +176,8 @@ export const main = async function main(params) {
       );
       return {
         statusCode: 403,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: {
-          error: 'Forbidden: Access denied from this origin',
-        },
+        headers: {},
+        body: '',
       };
     }
 
