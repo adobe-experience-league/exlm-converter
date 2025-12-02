@@ -48,6 +48,7 @@ function isAllowedOrigin(origin, host = '') {
       /^experienceleaguecommunities(-(dev))?\.adobe\.com$/,
       /^author-p122525-e\d+\.adobeaemcloud\.com$/,
       /^([a-z0-9-]+)--([a-z0-9-]+)--adobe-experience-league\.(hlx|aem)\.(page|live)$/,
+      /^([a-z0-9-]+).adobeioruntime\.net$/,
       /^localhost$/, // Allow localhost for local development
       /^127\.0\.0\.1$/,
     ];
