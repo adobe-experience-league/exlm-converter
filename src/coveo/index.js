@@ -240,8 +240,9 @@ export const main = async function main(params) {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': origin || '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
+          'Cache-Control': 'max-age=3600',
         },
         body: {
           token,
