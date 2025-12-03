@@ -243,7 +243,6 @@ export const main = async function main(params) {
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'Cache-Control': 'max-age=3600',
-          'Edge-Control': 'max-age=3600',
         },
         body: {
           token,
@@ -269,7 +268,6 @@ export const main = async function main(params) {
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'Cache-Control': 'max-age=3600',
-          'Edge-Control': 'max-age=3600',
         },
         body: {
           token: localToken,
