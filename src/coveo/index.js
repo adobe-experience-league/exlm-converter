@@ -48,6 +48,7 @@ function isAllowedOrigin(origin, host = '') {
       /^experienceleaguecommunities(-(dev))?\.adobe\.com$/,
       /^author-p122525-e\d+\.adobeaemcloud\.com$/,
       /^([a-z0-9-]+)--([a-z0-9-]+)--adobe-experience-league\.(hlx|aem)\.(page|live)$/,
+      /^([a-z0-9-]+).adobeioruntime\.net$/,
       /^localhost$/, // Allow localhost for local development
       /^127\.0\.0\.1$/,
     ];
@@ -239,8 +240,9 @@ export const main = async function main(params) {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': origin || '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
+          'Cache-Control': 'max-age=3600',
         },
         body: {
           token,
