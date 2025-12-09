@@ -47,7 +47,7 @@ export default async function renderOnDemandEvent(path, authorization) {
     transformedHtml = dom.serialize();
   } catch (error) {
     return {
-      error: new Error(`Failed to serialize DOM: ${error}`),
+      error: new Error(`Failed to process DOM manipulation: ${error.message}`),
     };
   }
 
