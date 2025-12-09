@@ -1,7 +1,7 @@
 import jsdom from 'jsdom';
 import { matchOnDemandEventPath } from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
-import { setMetadata } from '../modules/utils/dom-utils.js';
+import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 
 export default async function renderOnDemandEvent(path, authorization) {
   const {
@@ -35,8 +35,14 @@ export default async function renderOnDemandEvent(path, authorization) {
 
   const dom = new jsdom.JSDOM(onDemandHtml);
   const { document } = dom.window;
-  setMetadata(document, 'coveo-content-type', 'Event');
-  setMetadata(document, 'type', 'Event');
+
+  if (!getMetadata(document, 'coveo-content-type')) {
+    setMetadata(document, 'coveo-content-type', 'Event');
+  }
+  if (!getMetadata(document, 'type')) {
+    setMetadata(document, 'type', 'Event');
+  }
+
   const transformedHtml = dom.serialize();
 
   return {
