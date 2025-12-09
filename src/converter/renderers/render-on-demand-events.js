@@ -32,18 +32,24 @@ export default async function renderOnDemandEvent(path, authorization) {
   }
 
   const onDemandHtml = await onDemandEventHtmlResponse.text();
+  let transformedHtml = onDemandHtml;
+  try {
+    const dom = new jsdom.JSDOM(onDemandHtml);
+    const { document } = dom.window;
 
-  const dom = new jsdom.JSDOM(onDemandHtml);
-  const { document } = dom.window;
+    if (!getMetadata(document, 'coveo-content-type')) {
+      setMetadata(document, 'coveo-content-type', 'Event');
+    }
+    if (!getMetadata(document, 'type')) {
+      setMetadata(document, 'type', 'Event');
+    }
 
-  if (!getMetadata(document, 'coveo-content-type')) {
-    setMetadata(document, 'coveo-content-type', 'Event');
+    transformedHtml = dom.serialize();
+  } catch (error) {
+    return {
+      error: new Error(`Failed to serialize DOM: ${error}`),
+    };
   }
-  if (!getMetadata(document, 'type')) {
-    setMetadata(document, 'type', 'Event');
-  }
-
-  const transformedHtml = dom.serialize();
 
   return {
     body: transformedHtml,
