@@ -15,6 +15,11 @@ import { jwtDecode } from 'jwt-decode';
 import { sendError } from '../common/utils/response-utils.js';
 import { getDefaultImsService } from './utils/IMSService.js';
 import { KhorosProxy, getDefaultKhorosProxy } from './utils/KhorosProxy.js';
+import { getDefaultGainsightOAuth2Service } from './utils/GainsightOAuth2Service.js';
+import {
+  GainsightProxy,
+  getDefaultGainsightProxy,
+} from './utils/GainsightProxy.js';
 
 export const aioLogger = Logger('khoros');
 export const main = async function main(params) {
@@ -30,6 +35,10 @@ export const main = async function main(params) {
     imsClientSecret,
     imsAuthorizationCode,
     ipassApiKey,
+    gainsightApiUrl,
+    gainsightOAuth2ClientId,
+    gainsightOAuth2ClientSecret,
+    gainsightOAuth2Scope,
     lang = 'en',
   } = params;
   // eslint-disable-next-line camelcase
@@ -37,15 +46,21 @@ export const main = async function main(params) {
   // eslint-disable-next-line camelcase
   const imsToken = __ow_headers['x-ims-token'] || '';
 
-  const khorosProxy = getDefaultKhorosProxy({
-    khorosOrigin,
-    khorosApiSecret,
-  });
+  // Parse platform parameter from query string (default: khoros)
+  const queryString = path.split('?')[1] || '';
+  const queryParams = new URLSearchParams(queryString);
+  const platform = queryParams.get('platform') || 'khoros';
+  const pathWithoutQuery = path.split('?')[0];
 
-  // check if request and env are valid
-  if (!KhorosProxy.canHandle(path)) return sendError(404, 'Not Found');
-  if (!khorosApiSecret) return sendError(401, 'Missing Khoros Token');
-  if (!khorosOrigin) return sendError(500, 'Missing Config: Khoros Origin');
+  aioLogger.debug(`Platform selected: ${platform}`);
+
+  // Basic validation
+  if (
+    !KhorosProxy.canHandle(pathWithoutQuery) &&
+    !GainsightProxy.canHandle(pathWithoutQuery)
+  ) {
+    return sendError(404, 'Not Found');
+  }
   if (!imsOrigin) return sendError(500, 'Missing Config: IMS Origin');
   if (!imsToken) return sendError(401, 'Missing IMS Token');
 
@@ -65,6 +80,62 @@ export const main = async function main(params) {
     return sendError(401, 'Invalid IMS Token');
   }
 
+  // Extract user_id and email from JWT token
+  // eslint-disable-next-line camelcase
+  const decodedToken = jwtDecode(imsToken);
+  // eslint-disable-next-line camelcase
+  const { user_id, email } = decodedToken;
+
+  // Platform routing
+  if (platform === 'gainsight') {
+    // Gainsight configuration validation
+    if (!gainsightApiUrl) {
+      return sendError(500, 'Missing Config: Gainsight API URL');
+    }
+    if (!gainsightOAuth2ClientId) {
+      return sendError(500, 'Missing Config: Gainsight OAuth2 Client ID');
+    }
+    if (!gainsightOAuth2ClientSecret) {
+      return sendError(500, 'Missing Config: Gainsight OAuth2 Client Secret');
+    }
+    if (!email) {
+      aioLogger.error('Email not available in IMS token for Gainsight lookup');
+      return sendError(
+        400,
+        'Bad Request: Email is required for Gainsight platform',
+      );
+    }
+
+    // Initialize Gainsight OAuth2 service and proxy
+    const gainsightOAuth2Service = getDefaultGainsightOAuth2Service({
+      apiUrl: gainsightApiUrl,
+      clientId: gainsightOAuth2ClientId,
+      clientSecret: gainsightOAuth2ClientSecret,
+      scope: gainsightOAuth2Scope || 'read',
+    });
+
+    const gainsightProxy = getDefaultGainsightProxy({
+      gainsightApiUrl,
+      oauth2Service: gainsightOAuth2Service,
+    });
+
+    // Route to Gainsight
+    return gainsightProxy.proxyPath({
+      path: pathWithoutQuery,
+      email,
+      additionalHeaders: {},
+    });
+  }
+
+  // Default: Khoros platform
+  if (!khorosApiSecret) return sendError(401, 'Missing Khoros Token');
+  if (!khorosOrigin) return sendError(500, 'Missing Config: Khoros Origin');
+
+  const khorosProxy = getDefaultKhorosProxy({
+    khorosOrigin,
+    khorosApiSecret,
+  });
+
   const additionalHeaders = {};
   // get access token if we should use ipass
   if (shouldUseIpass) {
@@ -72,9 +143,6 @@ export const main = async function main(params) {
     additionalHeaders.Authorization = `${token}`;
     additionalHeaders.api_key = ipassApiKey;
   }
-
-  // eslint-disable-next-line camelcase
-  const { user_id } = jwtDecode(imsToken);
 
   return khorosProxy.proxyPath({
     path,
