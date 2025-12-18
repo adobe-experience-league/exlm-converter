@@ -81,11 +81,11 @@ export const main = async function main(params) {
     return sendError(401, 'Invalid IMS Token');
   }
 
-  // Extract user_id and email from JWT token
+  // Extract user_id from JWT token
   // eslint-disable-next-line camelcase
   const decodedToken = jwtDecode(imsToken);
   // eslint-disable-next-line camelcase
-  const { user_id } = decodedToken;
+  const { user_id: userId } = decodedToken;
 
   // Platform routing
   if (platform === 'gainsight') {
@@ -120,7 +120,7 @@ export const main = async function main(params) {
     // Route to Gainsight
     return gainsightProxy.proxyPath({
       path: pathWithoutQuery,
-      user_id, // eslint-disable-line camelcase
+      userId,
       additionalHeaders: {},
     });
   }
@@ -145,8 +145,7 @@ export const main = async function main(params) {
   return khorosProxy.proxyPath({
     path,
     pathPrefix: shouldUseIpass ? '' : '/plugins/custom/adobe/adobedx',
-    // eslint-disable-next-line camelcase
-    params: { user: user_id, lang },
+    params: { user: userId, lang },
     additionalHeaders,
   });
 };

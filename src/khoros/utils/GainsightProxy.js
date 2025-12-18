@@ -145,18 +145,16 @@ export class GainsightProxy {
   /**
    * proxy path request with params and auth.
    * @param {string} path
-   * @param {string} user_id
+   * @param {string} userId
    * @param {Object.<string, string>} additionalHeaders
    * @returns
    */
-  async proxyPath({ path, user_id, additionalHeaders = {} }) {
-    // eslint-disable-line camelcase
+  async proxyPath({ path, userId, additionalHeaders = {} }) {
     if (!GainsightProxy.canHandle(path)) {
       return sendErrorWithDefaultHeaders(404, 'Not Found');
     }
 
-    if (!user_id) {
-      // eslint-disable-line camelcase
+    if (!userId) {
       aioLogger.error('User ID is required for Gainsight user lookup');
       return sendErrorWithDefaultHeaders(
         400,
@@ -166,13 +164,13 @@ export class GainsightProxy {
 
     try {
       const response = await this.fetchGainsight({
-        user_id, // eslint-disable-line camelcase
+        userId,
         additionalHeaders,
       });
 
       if (response.status === 404) {
         aioLogger.info(
-          `User not found in Gainsight: ${GainsightProxy.maskEmail(user_id)}`,
+          `User not found in Gainsight: ${GainsightProxy.maskEmail(userId)}`,
         );
         return sendErrorWithDefaultHeaders(
           404,
@@ -208,7 +206,7 @@ export class GainsightProxy {
 
         aioLogger.debug(
           `Successfully retrieved and mapped Gainsight profile for user: ${GainsightProxy.maskEmail(
-            user_id,
+            userId,
           )}`,
         );
 
@@ -238,12 +236,11 @@ export class GainsightProxy {
 
   /**
    * Fetch user data from Gainsight API
-   * @param {string} user_id
+   * @param {string} userId
    * @param {Object.<string, string>} additionalHeaders
    * @returns {Promise<Response>}
    */
-  async fetchGainsight({ user_id, additionalHeaders = {} }) {
-    // eslint-disable-line camelcase
+  async fetchGainsight({ userId, additionalHeaders = {} }) {
     try {
       // Get OAuth2 token
       const accessToken = await this.oauth2Service.getAccessToken();
@@ -251,10 +248,10 @@ export class GainsightProxy {
         throw new Error('Failed to obtain OAuth2 access token');
       }
 
-      // Build URL with email
+      // Build URL with userId
       const gainsightUrl = `${
         this.gainsightApiUrl
-      }/user/oauth2_sso_id/${encodeURIComponent(user_id)}`;
+      }/user/oauth2_sso_id/${encodeURIComponent(userId)}`;
 
       const headers = {
         Authorization: `Bearer ${accessToken}`,
@@ -263,9 +260,7 @@ export class GainsightProxy {
       };
 
       aioLogger.debug(
-        `Fetching Gainsight user data for: ${GainsightProxy.maskEmail(
-          user_id,
-        )}`,
+        `Fetching Gainsight user data for: ${GainsightProxy.maskEmail(userId)}`,
       );
 
       return fetch(gainsightUrl, {
