@@ -39,6 +39,8 @@ export const main = async function main(params) {
     gainsightOAuth2ClientId,
     gainsightOAuth2ClientSecret,
     gainsightOAuth2Scope,
+    gainsightCommunityUrl,
+    platform: platformParam,
     lang = 'en',
   } = params;
   // eslint-disable-next-line camelcase
@@ -46,10 +48,9 @@ export const main = async function main(params) {
   // eslint-disable-next-line camelcase
   const imsToken = __ow_headers['x-ims-token'] || '';
 
-  // Parse platform parameter from query string (default: khoros)
-  const queryString = path.split('?')[1] || '';
-  const queryParams = new URLSearchParams(queryString);
-  const platform = queryParams.get('platform') || 'khoros';
+  // Parse platform parameter from query string or direct parameter (default: khoros)
+  // Default to 'khoros' if not provided
+  const platform = platformParam || 'khoros';
   const pathWithoutQuery = path.split('?')[0];
 
   aioLogger.debug(`Platform selected: ${platform}`);
@@ -84,7 +85,7 @@ export const main = async function main(params) {
   // eslint-disable-next-line camelcase
   const decodedToken = jwtDecode(imsToken);
   // eslint-disable-next-line camelcase
-  const { user_id, email } = decodedToken;
+  const { user_id } = decodedToken;
 
   // Platform routing
   if (platform === 'gainsight') {
@@ -98,12 +99,8 @@ export const main = async function main(params) {
     if (!gainsightOAuth2ClientSecret) {
       return sendError(500, 'Missing Config: Gainsight OAuth2 Client Secret');
     }
-    if (!email) {
-      aioLogger.error('Email not available in IMS token for Gainsight lookup');
-      return sendError(
-        400,
-        'Bad Request: Email is required for Gainsight platform',
-      );
+    if (!gainsightCommunityUrl) {
+      return sendError(500, 'Missing Config: Gainsight Community URL');
     }
 
     // Initialize Gainsight OAuth2 service and proxy
@@ -116,13 +113,14 @@ export const main = async function main(params) {
 
     const gainsightProxy = getDefaultGainsightProxy({
       gainsightApiUrl,
+      gainsightCommunityUrl,
       oauth2Service: gainsightOAuth2Service,
     });
 
     // Route to Gainsight
     return gainsightProxy.proxyPath({
       path: pathWithoutQuery,
-      email,
+      user_id, // eslint-disable-line camelcase
       additionalHeaders: {},
     });
   }

@@ -16,8 +16,9 @@ const sendErrorWithDefaultHeaders = (code, message) =>
  * Proxy request to Gainsight
  */
 export class GainsightProxy {
-  constructor({ gainsightApiUrl, oauth2Service }) {
+  constructor({ gainsightApiUrl, gainsightCommunityUrl, oauth2Service }) {
     this.gainsightApiUrl = gainsightApiUrl;
+    this.gainsightCommunityUrl = gainsightCommunityUrl;
     this.oauth2Service = oauth2Service;
   }
 
@@ -52,77 +53,126 @@ export class GainsightProxy {
   }
 
   /**
-   * Map Gainsight response to Khoros-compatible format
+   * Map Gainsight response to profile details format
    * @param {Object} gainsightResponse
    * @returns {Object}
    */
-  mapGainsightToKhorosFormat(gainsightResponse) {
-    const {
-      userid,
-      email,
-      username,
-      joindate,
-      profileFields = [],
-      rank,
-      user_statistics: userStatistics,
-      roles = [],
-      sso,
-    } = gainsightResponse;
+  mapToProfileDetails(gainsightResponse) {
+    const { userid, username, profileFields = [] } = gainsightResponse;
 
-    // Extract display name from profileFields
-    const displayName = this.extractProfileField(profileFields, 'Full Name');
+    // Construct profile URL from username and userid (both required)
+    const profileUrl =
+      username && userid
+        ? `${this.gainsightCommunityUrl}/members/${username}-${userid}`
+        : '';
+
+    // Extract City, Job Title, and Company from profileFields
+    const location = this.extractProfileField(profileFields, 'City');
+    const title = this.extractProfileField(profileFields, 'Job Title');
     const company = this.extractProfileField(profileFields, 'Company');
 
-    // Construct profile URL from username
-    const profileUrl = username ? `/members/${username}` : '';
+    return {
+      data: {
+        company,
+        location,
+        profilePageUrl: profileUrl,
+        title,
+        username: username || '',
+      },
+    };
+  }
+
+  /**
+   * Map Gainsight response to profile menu list format
+   * @param {Object} gainsightResponse
+   * @returns {Object}
+   */
+  mapToProfileMenuList(gainsightResponse) {
+    const { userid, username } = gainsightResponse;
+
+    // Construct profile URL from username and userid (both required)
+    const profileUrl =
+      username && userid
+        ? `${this.gainsightCommunityUrl}/members/${username}-${userid}`
+        : '';
+
+    // Construct user ID based settings URL
+    const settingsUrl = userid
+      ? `${this.gainsightCommunityUrl}/members/settings`
+      : '';
+
+    const followsUrl = userid
+      ? `${this.gainsightCommunityUrl}/members/subscriptions`
+      : '';
 
     return {
-      userid,
-      email,
-      username,
-      displayName,
-      company,
-      profileUrl,
-      joindate,
-      rank: rank?.display_name || '',
-      post_count: userStatistics?.post_count || 0,
-      likes: userStatistics?.likes || 0,
-      likes_given: userStatistics?.likes_given || 0,
-      topic_count: userStatistics?.topic_count || 0,
-      roles: roles.map((role) => role.auth_item?.name).filter(Boolean),
-      sso_username: sso?.saml || '',
+      data: {
+        menu: [
+          {
+            id: 'profile',
+            url: profileUrl,
+            title: 'My Community profile',
+          },
+          {
+            id: 'setting',
+            url: settingsUrl,
+            title: 'Account settings',
+          },
+          {
+            id: 'follows',
+            url: followsUrl,
+            title: 'My follows',
+          },
+        ],
+      },
     };
+  }
+
+  /**
+   * Map Gainsight response to Khoros-compatible format based on path
+   * @param {Object} gainsightResponse
+   * @param {string} path
+   * @returns {Object}
+   */
+  mapGainsightToKhorosFormat(gainsightResponse, path) {
+    if (path === '/profile-menu-list') {
+      return this.mapToProfileMenuList(gainsightResponse);
+    }
+    // Default to profile details for /profile-details
+    return this.mapToProfileDetails(gainsightResponse);
   }
 
   /**
    * proxy path request with params and auth.
    * @param {string} path
-   * @param {string} email
+   * @param {string} user_id
    * @param {Object.<string, string>} additionalHeaders
    * @returns
    */
-  async proxyPath({ path, email, additionalHeaders = {} }) {
+  async proxyPath({ path, user_id, additionalHeaders = {} }) {
+    // eslint-disable-line camelcase
     if (!GainsightProxy.canHandle(path)) {
       return sendErrorWithDefaultHeaders(404, 'Not Found');
     }
 
-    if (!email) {
-      aioLogger.error('Email is required for Gainsight user lookup');
+    if (!user_id) {
+      // eslint-disable-line camelcase
+      aioLogger.error('User ID is required for Gainsight user lookup');
       return sendErrorWithDefaultHeaders(
         400,
-        'Bad Request: Email is required for Gainsight platform',
+        'Bad Request: User ID is required for Gainsight platform',
       );
     }
 
     try {
       const response = await this.fetchGainsight({
-        email,
+        user_id, // eslint-disable-line camelcase
         additionalHeaders,
       });
 
       if (response.status === 404) {
         aioLogger.info(
-          `User not found in Gainsight: ${GainsightProxy.maskEmail(email)}`,
+          `User not found in Gainsight: ${GainsightProxy.maskEmail(user_id)}`,
         );
         return sendErrorWithDefaultHeaders(
           404,
@@ -154,11 +204,11 @@ export class GainsightProxy {
       const text = await response.text();
       try {
         const gainsightData = JSON.parse(text);
-        const mappedBody = this.mapGainsightToKhorosFormat(gainsightData);
+        const mappedBody = this.mapGainsightToKhorosFormat(gainsightData, path);
 
         aioLogger.debug(
           `Successfully retrieved and mapped Gainsight profile for user: ${GainsightProxy.maskEmail(
-            email,
+            user_id,
           )}`,
         );
 
@@ -188,11 +238,12 @@ export class GainsightProxy {
 
   /**
    * Fetch user data from Gainsight API
-   * @param {string} email
+   * @param {string} user_id
    * @param {Object.<string, string>} additionalHeaders
    * @returns {Promise<Response>}
    */
-  async fetchGainsight({ email, additionalHeaders = {} }) {
+  async fetchGainsight({ user_id, additionalHeaders = {} }) {
+    // eslint-disable-line camelcase
     try {
       // Get OAuth2 token
       const accessToken = await this.oauth2Service.getAccessToken();
@@ -203,7 +254,7 @@ export class GainsightProxy {
       // Build URL with email
       const gainsightUrl = `${
         this.gainsightApiUrl
-      }/user/email/${encodeURIComponent(email)}`;
+      }/user/oauth2_sso_id/${encodeURIComponent(user_id)}`;
 
       const headers = {
         Authorization: `Bearer ${accessToken}`,
@@ -212,7 +263,9 @@ export class GainsightProxy {
       };
 
       aioLogger.debug(
-        `Fetching Gainsight user data for: ${GainsightProxy.maskEmail(email)}`,
+        `Fetching Gainsight user data for: ${GainsightProxy.maskEmail(
+          user_id,
+        )}`,
       );
 
       return fetch(gainsightUrl, {
