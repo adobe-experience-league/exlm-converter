@@ -35,6 +35,11 @@ const {
   EXL_API_HOST,
   FEATURE_FLAGS,
   V2_PATHS,
+  GAINSIGHT_API_URL,
+  GAINSIGHT_OAUTH2_CLIENT_ID,
+  GAINSIGHT_OAUTH2_CLIENT_SECRET,
+  GAINSIGHT_OAUTH2_SCOPE,
+  GAINSIGHT_COMMUNITY_URL,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -122,6 +127,11 @@ const khorosHandler = async (req, res) => {
     imsAuthorizationCode: IMS_AUTHORIZATION_CODE,
     ipassApiKey: IPASS_API_KEY,
     khorosOrigin: KHOROS_ORIGIN,
+    gainsightApiUrl: GAINSIGHT_API_URL,
+    gainsightOAuth2ClientId: GAINSIGHT_OAUTH2_CLIENT_ID,
+    gainsightOAuth2ClientSecret: GAINSIGHT_OAUTH2_CLIENT_SECRET,
+    gainsightOAuth2Scope: GAINSIGHT_OAUTH2_SCOPE,
+    gainsightCommunityUrl: GAINSIGHT_COMMUNITY_URL,
     ...query,
   };
 
