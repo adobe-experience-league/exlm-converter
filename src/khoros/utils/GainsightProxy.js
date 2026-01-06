@@ -96,13 +96,14 @@ export class GainsightProxy {
         ? `${this.gainsightCommunityUrl}/members/${username}-${userid}`
         : '';
 
-    // Construct user ID based settings URL
+    // Construct settings URL (Gainsight path: /settings/profile)
     const settingsUrl = userid
-      ? `${this.gainsightCommunityUrl}/members/settings`
+      ? `${this.gainsightCommunityUrl}/settings/profile`
       : '';
 
+    // Construct subscriptions/favorites URL (Gainsight path: /favorite/overview)
     const followsUrl = userid
-      ? `${this.gainsightCommunityUrl}/members/subscriptions`
+      ? `${this.gainsightCommunityUrl}/favorite/overview`
       : '';
 
     return {
