@@ -42,6 +42,7 @@ application:
               gainsightOAuth2ClientId: $GAINSIGHT_OAUTH2_CLIENT_ID
               gainsightOAuth2ClientSecret: $GAINSIGHT_OAUTH2_CLIENT_SECRET
               gainsightOAuth2Scope: $GAINSIGHT_OAUTH2_SCOPE
+              gainsightCommunityUrl: $GAINSIGHT_COMMUNITY_URL
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
