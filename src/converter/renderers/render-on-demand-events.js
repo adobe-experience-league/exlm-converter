@@ -1,15 +1,19 @@
+import jsdom from 'jsdom';
 import { matchOnDemandEventPath } from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
+import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 
-/**
- * Renders on demand event from filesystem at given path
- * @param {string} path - path to on demand event from 'src'
- * @param {string} parentFolderPath - path to parent folder of `on-demand-events`
- */
 export default async function renderOnDemandEvent(path, authorization) {
   const {
     params: { lang, onDemandEventId },
   } = matchOnDemandEventPath(path);
+
+  if (!onDemandEventId) {
+    return {
+      error: new Error(`On-demand id is required but none was provided`),
+    };
+  }
+
   const defaultExlClientv2 = await createDefaultExlClientV2();
   const onDemandEventHtmlResponse =
     await defaultExlClientv2.getOnDemandEventById(onDemandEventId, lang, {
@@ -27,12 +31,32 @@ export default async function renderOnDemandEvent(path, authorization) {
     };
   }
 
-  const html = await onDemandEventHtmlResponse.text();
+  const onDemandHtml = await onDemandEventHtmlResponse.text();
+  let transformedHtml = onDemandHtml;
+  try {
+    const dom = new jsdom.JSDOM(onDemandHtml);
+    const { document } = dom.window;
+
+    if (!getMetadata(document, 'coveo-content-type')) {
+      setMetadata(document, 'coveo-content-type', 'Event');
+    }
+    if (!getMetadata(document, 'type')) {
+      setMetadata(document, 'type', 'Event');
+    }
+
+    transformedHtml = dom.serialize();
+  } catch (error) {
+    return {
+      error: new Error(`Failed to process DOM manipulation: ${error.message}`),
+    };
+  }
 
   return {
-    body: html,
+    body: transformedHtml,
     headers: {
       'Content-Type': 'text/html',
     },
+    md: '',
+    original: onDemandHtml,
   };
 }
