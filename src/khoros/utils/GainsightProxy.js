@@ -122,7 +122,7 @@ export class GainsightProxy {
           {
             id: 'follows',
             url: followsUrl,
-            title: 'My follows',
+            title: 'Subscriptions',
           },
         ],
       },
