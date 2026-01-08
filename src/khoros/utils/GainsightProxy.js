@@ -96,6 +96,11 @@ export class GainsightProxy {
         ? `${this.gainsightCommunityUrl}/members/${username}-${userid}`
         : '';
 
+    // Construct private messages URL (Gainsight path: /inbox/overview)
+    const messageUrl = userid
+      ? `${this.gainsightCommunityUrl}/inbox/overview`
+      : '';
+
     // Construct settings URL (Gainsight path: /settings/profile)
     const settingsUrl = userid
       ? `${this.gainsightCommunityUrl}/settings/profile`
@@ -113,6 +118,11 @@ export class GainsightProxy {
             id: 'profile',
             url: profileUrl,
             title: 'My Community profile',
+          },
+          {
+            id: 'message',
+            url: messageUrl,
+            title: 'Private messages',
           },
           {
             id: 'setting',
