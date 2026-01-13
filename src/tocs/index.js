@@ -14,6 +14,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { JSDOM } from 'jsdom';
 import { sendError } from '../common/utils/response-utils.js';
 import handleUrls from '../common/utils/link-utils.js';
+import { handleExternalUrl } from '../converter/modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('toc');
 
@@ -22,6 +23,7 @@ const rewriteRedirects = (html, lang) => {
   const dom = new JSDOM(html);
   const { document } = dom.window;
   handleUrls(document, lang);
+  handleExternalUrl(document);
   return document.body.innerHTML;
 };
 
