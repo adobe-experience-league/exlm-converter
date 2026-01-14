@@ -45,7 +45,7 @@ function isAllowedOrigin(origin, host = '') {
 
     const allowedPatterns = [
       /^experienceleague(-(dev|stage))?\.adobe\.com$/,
-      /^experienceleaguecommunities(-(dev))?\.adobe\.com$/,
+      /^experienceleaguecommunities(-(dev|beta))?\.adobe\.com$/,
       /^author-p122525-e\d+\.adobeaemcloud\.com$/,
       /^([a-z0-9-]+)--([a-z0-9-]+)--adobe-experience-league\.(hlx|aem)\.(page|live)$/,
       /^([a-z0-9-]+).adobeioruntime\.net$/,
