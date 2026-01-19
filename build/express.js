@@ -14,6 +14,7 @@ import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
 import { main as khorosMain } from '../src/khoros/index.js';
 import { main as tocMain } from '../src/tocs/index.js';
+import { main as coveoMain } from '../src/coveo/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
 
 const dotEnvFile = 'build/.local.env';
@@ -34,6 +35,11 @@ const {
   EXL_API_HOST,
   FEATURE_FLAGS,
   V2_PATHS,
+  GAINSIGHT_API_URL,
+  GAINSIGHT_OAUTH2_CLIENT_ID,
+  GAINSIGHT_OAUTH2_CLIENT_SECRET,
+  GAINSIGHT_OAUTH2_SCOPE,
+  GAINSIGHT_COMMUNITY_URL,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -121,6 +127,11 @@ const khorosHandler = async (req, res) => {
     imsAuthorizationCode: IMS_AUTHORIZATION_CODE,
     ipassApiKey: IPASS_API_KEY,
     khorosOrigin: KHOROS_ORIGIN,
+    gainsightApiUrl: GAINSIGHT_API_URL,
+    gainsightOAuth2ClientId: GAINSIGHT_OAUTH2_CLIENT_ID,
+    gainsightOAuth2ClientSecret: GAINSIGHT_OAUTH2_CLIENT_SECRET,
+    gainsightOAuth2Scope: GAINSIGHT_OAUTH2_SCOPE,
+    gainsightCommunityUrl: GAINSIGHT_COMMUNITY_URL,
     ...query,
   };
 
@@ -144,8 +155,43 @@ const tocHandler = async (req, res) => {
   res.send(body);
 };
 
+const coveoHandler = async (req, res) => {
+  const { headers } = req;
+  const params = {
+    __ow_headers: headers,
+    // Environment is automatically determined by the coveo service based on:
+    // - COVEO_ENV environment variable (explicit override)
+    // - Adobe I/O Runtime namespace detection (checks for '-dev' suffix)
+    // Vault credentials (optional - will use env vars if not provided)
+    vaultEndpoint: process.env.VAULT_ENDPOINT,
+    vaultRoleId: process.env.VAULT_ROLE_ID,
+    vaultSecretId: process.env.VAULT_SECRET_ID,
+    coveoSecretPath: process.env.COVEO_SECRET_PATH,
+    coveoSecretKeyProd: process.env.COVEO_SECRET_KEY_PROD || 'prod_token',
+    coveoSecretKeyNonprod:
+      process.env.COVEO_SECRET_KEY_NONPROD || 'nonprod_token',
+  };
+
+  const {
+    body,
+    statusCode,
+    headers: responseHeaders,
+  } = await coveoMain(params);
+
+  // Set response headers
+  if (responseHeaders) {
+    Object.entries(responseHeaders).forEach(([key, value]) =>
+      res.setHeader(key, value),
+    );
+  }
+
+  res.status(statusCode || 200);
+  res.json(body);
+};
+
 app.get('/khoros/**', khorosHandler);
 app.get('/toc/**', tocHandler);
+app.get('/coveo-token', coveoHandler);
 app.get('/**', converterHandler);
 
 app.listen(port, () =>
@@ -154,5 +200,6 @@ app.listen(port, () =>
   Converter: http://localhost:${port}/en/docs
   Khoros: http://localhost:${port}/khoros
   Toc: http://localhost:${port}/toc
+  Coveo Token: http://localhost:${port}/coveo-token
 `),
 );

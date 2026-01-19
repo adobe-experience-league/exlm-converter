@@ -62,6 +62,11 @@ jobs:
           IMS_CLIENT_SECRET: ${{ secrets.IMS_CLIENT_SECRET }}
           IMS_AUTHORIZATION_CODE: ${{ secrets.IMS_AUTHORIZATION_CODE }}
           IPASS_API_KEY: ${{ secrets.IPASS_API_KEY }}
+          GAINSIGHT_API_URL: ${{ vars.GAINSIGHT_API_URL }}
+          GAINSIGHT_OAUTH2_CLIENT_ID: ${{ secrets.GAINSIGHT_OAUTH2_CLIENT_ID }}
+          GAINSIGHT_OAUTH2_CLIENT_SECRET: ${{ secrets.GAINSIGHT_OAUTH2_CLIENT_SECRET }}
+          GAINSIGHT_OAUTH2_SCOPE: ${{ vars.GAINSIGHT_OAUTH2_SCOPE }}
+          GAINSIGHT_COMMUNITY_URL: ${{ vars.GAINSIGHT_COMMUNITY_URL }}
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
           AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
@@ -72,6 +77,13 @@ jobs:
           HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
           FEATURE_FLAGS: ${{ vars.FEATURE_FLAGS }}
           V2_PATHS: ${{ vars.V2_PATHS }}
+          VAULT_ENDPOINT: ${{ secrets.VAULT_ENDPOINT }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          COVEO_SECRET_PATH: ${{ secrets.COVEO_SECRET_PATH }}
+          COVEO_SECRET_KEY_PROD: ${{ secrets.COVEO_SECRET_KEY_PROD }}
+          COVEO_SECRET_KEY_NONPROD: ${{ secrets.COVEO_SECRET_KEY_NONPROD }}
+          COVEO_ENV: ${{ vars.COVEO_ENV }}
       - name: Publish Fragments
         run: npm run publish-fragments
         env:
