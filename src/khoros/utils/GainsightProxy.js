@@ -254,7 +254,7 @@ export class GainsightProxy {
   async fetchGainsight({ userId, additionalHeaders = {} }) {
     try {
       // Get OAuth2 token
-      const accessToken = await this.oauth2Service.getAccessToken();
+      const accessToken = await this.oauth2Service.getAccessToken(true);
       if (!accessToken) {
         throw new Error('Failed to obtain OAuth2 access token');
       }
