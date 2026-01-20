@@ -37,8 +37,6 @@ export class IMSService {
    * @returns {Promise<boolean>}
    */
   async isValidImsToken(token) {
-    console.log('token', token);
-    aioLogger.debug(`token`, token);
     const { imsOrigin } = this.config;
     // eslint-disable-next-line camelcase
     const { client_id, type } = jwtDecode(token);
