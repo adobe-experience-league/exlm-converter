@@ -12,7 +12,6 @@
 
 import vault from 'node-vault';
 import Logger from '@adobe/aio-lib-core-logging';
-import stateLib from '../common/utils/state-lib-util.js';
 
 const aioLogger = Logger('vault-service');
 
@@ -21,9 +20,13 @@ const aioLogger = Logger('vault-service');
  * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId, cacheTtlHours = 24 }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlHours = 24 }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
+    }
+
+    if (!state) {
+      throw new Error('State store is required');
     }
 
     this.vaultClient = vault({
@@ -36,20 +39,10 @@ export class VaultService {
     this.authenticated = false;
 
     this.cacheTtlSeconds = Math.floor(cacheTtlHours * 3600);
-    this.stateStore = null;
+    this.stateStore = state;
     aioLogger.debug(
       `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${this.cacheTtlSeconds}s`,
     );
-  }
-
-  // Initialize Adobe I/O state store for caching
-
-  async initStateStore() {
-    if (!this.stateStore) {
-      this.stateStore = await stateLib.init();
-      aioLogger.debug('[VAULT] State store initialized');
-    }
-    return this.stateStore;
   }
 
   // Generate unique cache key for vault path using base64 encoding
@@ -62,9 +55,14 @@ export class VaultService {
 
   async getCachedData(cacheKey) {
     try {
-      const store = await this.initStateStore();
-      const result = await store.get(cacheKey);
-      return result?.value ?? null;
+      const result = await this.stateStore.get(cacheKey);
+      const value = result?.value ?? null;
+      if (value) {
+        aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
+      } else {
+        aioLogger.info(`[VAULT] ❌ CACHE MISS for key: ${cacheKey}`);
+      }
+      return value;
     } catch (error) {
       aioLogger.warn(`[VAULT] Cache read error: ${error.message}`);
       return null;
@@ -75,8 +73,7 @@ export class VaultService {
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
-      const store = await this.initStateStore();
-      await store.put(cacheKey, data, { ttl: ttlSeconds });
+      await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
       aioLogger.debug(`[VAULT] Data cached (${ttlSeconds}s)`);
     } catch (error) {
       aioLogger.warn(`[VAULT] Cache write error: ${error.message}`);
@@ -87,8 +84,7 @@ export class VaultService {
 
   async clearCachedData(cacheKey) {
     try {
-      const store = await this.initStateStore();
-      await store.delete(cacheKey);
+      await this.stateStore.delete(cacheKey);
     } catch (error) {
       aioLogger.warn(`[VAULT] Cache clear error: ${error.message}`);
     }
@@ -102,12 +98,16 @@ export class VaultService {
     if (cachedAuth?.token) {
       this.vaultClient.token = cachedAuth.token;
       this.authenticated = true;
-      aioLogger.debug('[VAULT] Using cached auth token');
+      aioLogger.info(
+        '[VAULT] Using cached auth token (no re-authentication needed)',
+      );
       return;
     }
 
     try {
-      aioLogger.debug('[VAULT] Authenticating with AppRole');
+      aioLogger.info(
+        '[VAULT] Authenticating with AppRole (cache expired or first call)',
+      );
 
       const response = await this.vaultClient.approleLogin({
         role_id: this.roleId,
@@ -137,7 +137,10 @@ export class VaultService {
     const cacheKey = VaultService.getCacheKey(path);
 
     const cachedData = await this.getCachedData(cacheKey);
-    if (cachedData) return cachedData;
+    if (cachedData) {
+      aioLogger.info(`[VAULT] Returning cached secret data for path: ${path}`);
+      return cachedData;
+    }
 
     if (!this.authenticated) {
       await this.authenticateWithAppRole();
@@ -225,6 +228,8 @@ export class VaultService {
  * @param {string} config.endpoint - Vault endpoint URL
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
+ * @param {number} config.cacheTtlHours - cacheTtlHours
+ * @param {Object} config.state - Adobe I/O state store instance
  * @returns {VaultService}
  */
 export function createVaultService(config) {

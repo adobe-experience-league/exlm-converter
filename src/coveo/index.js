@@ -13,6 +13,7 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import { sendError } from '../common/utils/response-utils.js';
 import { createVaultService } from './vault-service.js';
+import stateLib from '../common/utils/state-lib-util.js';
 
 export const aioLogger = Logger('coveo-token');
 
@@ -212,11 +213,15 @@ export const main = async function main(params) {
         `Vault endpoint: ${vaultEndpoint}, Secret path: ${coveoSecretPath}, Key: ${secretKey}`,
       );
 
+      // Initialize AIO state for caching
+      const state = await stateLib.init();
+
       // Create Vault service with AppRole authentication
       const vaultService = createVaultService({
         endpoint: vaultEndpoint,
         roleId: vaultRoleId,
         secretId: vaultSecretId,
+        state,
       });
 
       const token = await vaultService.readSecretKey(
