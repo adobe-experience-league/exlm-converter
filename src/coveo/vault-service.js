@@ -20,7 +20,7 @@ const aioLogger = Logger('vault-service');
  * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId, state, cacheTtlHours = 24 }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlHours }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
     }
@@ -228,7 +228,6 @@ export class VaultService {
  * @param {string} config.endpoint - Vault endpoint URL
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
- * @param {number} config.cacheTtlHours - cacheTtlHours
  * @param {Object} config.state - Adobe I/O state store instance
  * @returns {VaultService}
  */
