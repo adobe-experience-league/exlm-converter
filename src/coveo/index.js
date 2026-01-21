@@ -151,6 +151,7 @@ function getLocalToken(isProd) {
  * @param {string} params.coveoSecretPath - Vault path to Coveo tokens (same path for both prod and nonprod)
  * @param {string} params.coveoSecretKeyProd - The key name for production token in Vault (default: 'prod_token')
  * @param {string} params.coveoSecretKeyNonprod - The key name for nonprod token in Vault (default: 'nonprod_token')
+ * @param {number} params.cacheTtlHours - Cache TTL in hours (default: 24)
  * @returns {Promise<Object>} - The token response
  */
 export const main = async function main(params) {
@@ -161,6 +162,7 @@ export const main = async function main(params) {
     coveoSecretPath,
     coveoSecretKeyProd = 'prod_token',
     coveoSecretKeyNonprod = 'nonprod_token',
+    cacheTtlHours = 24,
     __ow_headers, // eslint-disable-line camelcase
   } = params;
 
@@ -222,6 +224,7 @@ export const main = async function main(params) {
         roleId: vaultRoleId,
         secretId: vaultSecretId,
         state,
+        cacheTtlHours,
       });
 
       const token = await vaultService.readSecretKey(
