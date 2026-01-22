@@ -13,7 +13,7 @@
 import vault from 'node-vault';
 import Logger from '@adobe/aio-lib-core-logging';
 
-const aioLogger = Logger('vault-service');
+const aioLogger = Logger('vault-service', { provider: 'debug' });
 
 /**
  * VaultService class for interacting with HashiCorp Vault
@@ -28,6 +28,8 @@ export class VaultService {
     if (!state) {
       throw new Error('State store is required');
     }
+
+    console.log(cacheTtlHours);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
@@ -57,6 +59,7 @@ export class VaultService {
     try {
       const result = await this.stateStore.get(cacheKey);
       const value = result?.value ?? null;
+      console.log(value);
       if (value) {
         aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
       } else {
