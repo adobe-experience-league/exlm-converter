@@ -125,7 +125,7 @@ export class VaultService {
         `[VAULT] Attempting to cache data for key: ${cacheKey} with TTL: ${ttlSeconds}s`,
       );
 
-      await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
+      await this.stateStore.put(cacheKey, data, { ttl: 36 });
 
       aioLogger.info(
         `[VAULT] ✅ Cache successfully stored for key: ${cacheKey}`,
