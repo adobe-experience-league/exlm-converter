@@ -20,7 +20,7 @@ const aioLogger = Logger('vault-service');
  * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId, state, cacheTtlHours = 24 }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlSeconds = 86400 }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
     }
@@ -28,8 +28,6 @@ export class VaultService {
     if (!state) {
       throw new Error('State store is required');
     }
-
-    aioLogger.info(`[VAULT] Received cacheTtlHours: ${cacheTtlHours}`);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
@@ -39,9 +37,9 @@ export class VaultService {
     this.roleId = roleId;
     this.secretId = secretId;
     this.authenticated = false;
-
-    this.cacheTtlSeconds = Math.floor(cacheTtlHours * 3600);
+    this.cacheTtlSeconds = cacheTtlSeconds;
     this.stateStore = state;
+
     aioLogger.info(
       `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${this.cacheTtlSeconds}s`,
     );
@@ -57,59 +55,17 @@ export class VaultService {
 
   async getCachedData(cacheKey) {
     try {
-      aioLogger.info(`[VAULT] 🔍 Checking cache for key: ${cacheKey}`);
       const result = await this.stateStore.get(cacheKey);
-
-      aioLogger.info(`[VAULT] Raw result from ,${result}`);
-
-      // Log full result structure (for debugging)
-      aioLogger.info(
-        `[VAULT] Raw result from state.get(): ${JSON.stringify({
-          hasValue: !!result?.value,
-          valueType: result?.value ? typeof result.value : 'undefined',
-          valueKeys:
-            result?.value && typeof result.value === 'object'
-              ? Object.keys(result.value)
-              : 'N/A',
-          expiration: result?.expiration,
-          expirationDate: result?.expiration
-            ? new Date(result.expiration).toISOString()
-            : 'none',
-        })}`,
-      );
-
       const value = result?.value ?? null;
 
-      aioLogger.info(`[VAULT] Cached value :${value}`);
       if (value) {
-        const now = Date.now();
-        const expiresAt = result?.expiration || 0;
-        const ttlRemaining =
-          expiresAt > now ? Math.floor((expiresAt - now) / 1000) : 0;
-
-        aioLogger.info(
-          `[VAULT] ✅ CACHE HIT for key: ${cacheKey} | TTL remaining: ${ttlRemaining}s (${Math.floor(
-            ttlRemaining / 60,
-          )} minutes)`,
-        );
-        aioLogger.info(
-          `[VAULT] Cached value structure: ${JSON.stringify({
-            type: typeof value,
-            keys: typeof value === 'object' ? Object.keys(value) : 'N/A',
-            isArray: Array.isArray(value),
-          })}`,
-        );
+        aioLogger.info(`[VAULT] Using cached data`);
       } else {
-        aioLogger.info(
-          `[VAULT] ❌ CACHE MISS for key: ${cacheKey} | Reason: ${
-            result?.value === undefined ? 'Not found' : 'Expired'
-          }`,
-        );
+        aioLogger.info(`[VAULT] Cache miss, fetching from Vault`);
       }
       return value;
     } catch (error) {
       aioLogger.error(`[VAULT] Cache read error: ${error.message}`);
-      aioLogger.error(`[VAULT] Error stack: ${error.stack}`);
       return null;
     }
   }
@@ -117,29 +73,17 @@ export class VaultService {
   // Cache data with TTL
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
-
     try {
+      await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
+      const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
       aioLogger.info(
-        `[VAULT] Attempting to cache data for key: ${cacheKey} with TTL: ${ttlSeconds}s`,
-      );
-
-      await this.stateStore.put(cacheKey, data, { ttl: 60 });
-
-      aioLogger.info(
-        `[VAULT] ✅ Cache successfully stored for key: ${cacheKey}`,
-      );
-      aioLogger.info(
-        `[VAULT] ⏰ Cached at: ${now.toISOString()} | Expires at: ${expiresAt.toISOString()} | TTL: ${ttlSeconds}s (${
+        `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttlSeconds}s (${(
           ttlSeconds / 3600
-        }h)`,
+        ).toFixed(1)}h)`,
       );
     } catch (error) {
-      aioLogger.error(`[VAULT] ❌ FAILED to cache data for key: ${cacheKey}`);
-      aioLogger.error(`[VAULT] Error details: ${error.message}`);
-      aioLogger.error(`[VAULT] Error stack: ${error.stack}`);
-      throw error; // Re-throw to make the failure visible
+      aioLogger.error(`[VAULT] Cache write failed: ${error.message}`);
+      throw error;
     }
   }
 
@@ -161,9 +105,6 @@ export class VaultService {
     if (cachedAuth?.token) {
       this.vaultClient.token = cachedAuth.token;
       this.authenticated = true;
-      aioLogger.info(
-        '[VAULT] Using cached auth token (no re-authentication needed)',
-      );
       return;
     }
 
@@ -292,6 +233,7 @@ export class VaultService {
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
  * @param {Object} config.state - Adobe I/O state store instance
+ * @param {number} [config.cacheTtlSeconds=86400] - Cache TTL in seconds (default: 86400 = 24 hours)
  * @returns {VaultService}
  */
 export function createVaultService(config) {
