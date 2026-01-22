@@ -29,7 +29,7 @@ export class VaultService {
       throw new Error('State store is required');
     }
 
-    aioLogger.info(cacheTtlHours);
+    aioLogger.info(`cacheTtlHours :${cacheTtlHours}`);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
