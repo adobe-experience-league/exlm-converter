@@ -57,11 +57,7 @@ export class GainsightOAuth2Service {
         aioLogger.debug(
           'OAuth2 token successfully retrieved from Gainsight. Caching it for later use.',
         );
-        try {
-          await this.store.setToken(data);
-        } catch (storeErr) {
-          aioLogger.warn('Failed to cache token:', storeErr.message);
-        }
+        await this.store.setToken(data);
         accessToken = data.access_token;
       } else {
         responseText = await response.text();
