@@ -49,7 +49,6 @@ export class GainsightOAuth2Service {
 
     let response;
     let accessToken = '';
-    let responseText;
     try {
       response = await this.fetchOAuth2Token();
       if (response.ok) {
@@ -60,19 +59,19 @@ export class GainsightOAuth2Service {
         await this.store.setToken(data);
         accessToken = data.access_token;
       } else {
-        responseText = await response.text();
         throw new Error(
-          `Failed to get OAuth2 token from Gainsight, status: ${response.status}, response: ${responseText}`,
+          `Failed to get OAuth2 token from Gainsight, status: ${
+            response.status
+          }, response: ${JSON.stringify(await response.text(), null, 2)}`,
         );
       }
     } catch (err) {
       aioLogger.error(err);
-      if (responseText) {
-        aioLogger.error(
-          'Failed to get OAuth2 token from Gainsight, response:',
-          responseText,
-        );
-      }
+      aioLogger.error(
+        'Failed to get OAuth2 token from Gainsight, response:',
+        // @ts-expect-error this is ok.
+        await response?.text(),
+      );
     }
     return accessToken;
   }
