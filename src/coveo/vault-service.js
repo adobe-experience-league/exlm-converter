@@ -20,7 +20,7 @@ const aioLogger = Logger('vault-service');
  * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId, state, cacheTtlHours }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlHours = 24 }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
     }
@@ -29,7 +29,7 @@ export class VaultService {
       throw new Error('State store is required');
     }
 
-    aioLogger.info(`cacheTtlHours :${cacheTtlHours}`);
+    aioLogger.info(`[VAULT] Received cacheTtlHours: ${cacheTtlHours}`);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
@@ -57,17 +57,59 @@ export class VaultService {
 
   async getCachedData(cacheKey) {
     try {
+      aioLogger.info(`[VAULT] 🔍 Checking cache for key: ${cacheKey}`);
       const result = await this.stateStore.get(cacheKey);
+
+      aioLogger.info(`[VAULT] Raw result from ,${result}`);
+
+      // Log full result structure (for debugging)
+      aioLogger.info(
+        `[VAULT] Raw result from state.get(): ${JSON.stringify({
+          hasValue: !!result?.value,
+          valueType: result?.value ? typeof result.value : 'undefined',
+          valueKeys:
+            result?.value && typeof result.value === 'object'
+              ? Object.keys(result.value)
+              : 'N/A',
+          expiration: result?.expiration,
+          expirationDate: result?.expiration
+            ? new Date(result.expiration).toISOString()
+            : 'none',
+        })}`,
+      );
+
       const value = result?.value ?? null;
-      aioLogger.info(value);
+
+      aioLogger.info(`[VAULT] Cached value :${value}`);
       if (value) {
-        aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
+        const now = Date.now();
+        const expiresAt = result?.expiration || 0;
+        const ttlRemaining =
+          expiresAt > now ? Math.floor((expiresAt - now) / 1000) : 0;
+
+        aioLogger.info(
+          `[VAULT] ✅ CACHE HIT for key: ${cacheKey} | TTL remaining: ${ttlRemaining}s (${Math.floor(
+            ttlRemaining / 60,
+          )} minutes)`,
+        );
+        aioLogger.info(
+          `[VAULT] Cached value structure: ${JSON.stringify({
+            type: typeof value,
+            keys: typeof value === 'object' ? Object.keys(value) : 'N/A',
+            isArray: Array.isArray(value),
+          })}`,
+        );
       } else {
-        aioLogger.info(`[VAULT] ❌ CACHE MISS for key: ${cacheKey}`);
+        aioLogger.info(
+          `[VAULT] ❌ CACHE MISS for key: ${cacheKey} | Reason: ${
+            result?.value === undefined ? 'Not found' : 'Expired'
+          }`,
+        );
       }
       return value;
     } catch (error) {
-      aioLogger.warn(`[VAULT] Cache read error: ${error.message}`);
+      aioLogger.error(`[VAULT] Cache read error: ${error.message}`);
+      aioLogger.error(`[VAULT] Error stack: ${error.stack}`);
       return null;
     }
   }
@@ -75,11 +117,29 @@ export class VaultService {
   // Cache data with TTL
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
+
     try {
+      aioLogger.info(
+        `[VAULT] Attempting to cache data for key: ${cacheKey} with TTL: ${ttlSeconds}s`,
+      );
+
       await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
-      aioLogger.info(`[VAULT] Data cached (${ttlSeconds}s)`);
+
+      aioLogger.info(
+        `[VAULT] ✅ Cache successfully stored for key: ${cacheKey}`,
+      );
+      aioLogger.info(
+        `[VAULT] ⏰ Cached at: ${now.toISOString()} | Expires at: ${expiresAt.toISOString()} | TTL: ${ttlSeconds}s (${
+          ttlSeconds / 3600
+        }h)`,
+      );
     } catch (error) {
-      aioLogger.warn(`[VAULT] Cache write error: ${error.message}`);
+      aioLogger.error(`[VAULT] ❌ FAILED to cache data for key: ${cacheKey}`);
+      aioLogger.error(`[VAULT] Error details: ${error.message}`);
+      aioLogger.error(`[VAULT] Error stack: ${error.stack}`);
+      throw error; // Re-throw to make the failure visible
     }
   }
 
