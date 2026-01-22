@@ -20,7 +20,7 @@ const aioLogger = Logger('vault-service');
  * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId, state, cacheTtlHours }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlHours = 24 }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
     }
@@ -29,7 +29,7 @@ export class VaultService {
       throw new Error('State store is required');
     }
 
-    aioLogger.info(`cacheTtlHours :${cacheTtlHours}`);
+    aioLogger.info(`[VAULT] Received cacheTtlHours: ${cacheTtlHours}`);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
@@ -57,17 +57,33 @@ export class VaultService {
 
   async getCachedData(cacheKey) {
     try {
+      aioLogger.info(`[VAULT] 🔍 Checking cache for key: ${cacheKey}`);
       const result = await this.stateStore.get(cacheKey);
+      aioLogger.info(
+        `[VAULT] Cache result - value exists: ${!!result?.value}, expiration: ${
+          result?.expiration || 'none'
+        }`,
+      );
+
       const value = result?.value ?? null;
-      aioLogger.info(value);
       if (value) {
-        aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
+        const now = Date.now();
+        const expiresAt = result?.expiration || 0;
+        const ttlRemaining =
+          expiresAt > now ? Math.floor((expiresAt - now) / 1000) : 0;
+        aioLogger.info(
+          `[VAULT] ✅ CACHE HIT for key: ${cacheKey} | TTL remaining: ${ttlRemaining}s`,
+        );
       } else {
-        aioLogger.info(`[VAULT] ❌ CACHE MISS for key: ${cacheKey}`);
+        aioLogger.info(
+          `[VAULT] ❌ CACHE MISS for key: ${cacheKey} | Reason: ${
+            result?.value === undefined ? 'Not found' : 'Expired'
+          }`,
+        );
       }
       return value;
     } catch (error) {
-      aioLogger.warn(`[VAULT] Cache read error: ${error.message}`);
+      aioLogger.error(`[VAULT] Cache read error: ${error.message}`);
       return null;
     }
   }
@@ -76,8 +92,17 @@ export class VaultService {
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
+      const now = new Date();
+      const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
+
       await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
-      aioLogger.info(`[VAULT] Data cached (${ttlSeconds}s)`);
+
+      aioLogger.info(`[VAULT] 💾 Cache stored for key: ${cacheKey}`);
+      aioLogger.info(
+        `[VAULT] Cached at: ${now.toISOString()} | Expires at: ${expiresAt.toISOString()} | TTL: ${ttlSeconds}s (${
+          ttlSeconds / 3600
+        }h)`,
+      );
     } catch (error) {
       aioLogger.warn(`[VAULT] Cache write error: ${error.message}`);
     }
