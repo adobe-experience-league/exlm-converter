@@ -86,6 +86,7 @@ application:
               vaultEndpoint: $VAULT_ENDPOINT
               vaultRoleId: $VAULT_ROLE_ID
               vaultSecretId: $VAULT_SECRET_ID
+              vaulTokenCacheTtlHours: $VAULT_TOKEN_CACHE_TTL_HOURS
               coveoSecretPath: $COVEO_SECRET_PATH
               coveoSecretKeyProd: $COVEO_SECRET_KEY_PROD
               coveoSecretKeyNonprod: $COVEO_SECRET_KEY_NONPROD
