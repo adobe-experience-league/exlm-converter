@@ -29,6 +29,8 @@ export class VaultService {
       throw new Error('State store is required');
     }
 
+    aioLogger.info(cacheTtlHours);
+
     this.vaultClient = vault({
       apiVersion: 'v1',
       endpoint,
@@ -40,7 +42,7 @@ export class VaultService {
 
     this.cacheTtlSeconds = Math.floor(cacheTtlHours * 3600);
     this.stateStore = state;
-    aioLogger.debug(
+    aioLogger.info(
       `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${this.cacheTtlSeconds}s`,
     );
   }
@@ -57,6 +59,7 @@ export class VaultService {
     try {
       const result = await this.stateStore.get(cacheKey);
       const value = result?.value ?? null;
+      aioLogger.info(value);
       if (value) {
         aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
       } else {
@@ -74,7 +77,7 @@ export class VaultService {
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
       await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
-      aioLogger.debug(`[VAULT] Data cached (${ttlSeconds}s)`);
+      aioLogger.info(`[VAULT] Data cached (${ttlSeconds}s)`);
     } catch (error) {
       aioLogger.warn(`[VAULT] Cache write error: ${error.message}`);
     }
@@ -147,7 +150,7 @@ export class VaultService {
     }
 
     try {
-      aioLogger.debug(`[VAULT] Reading secret from Vault at path: ${path}`);
+      aioLogger.info(`[VAULT] Reading secret from Vault at path: ${path}`);
       const result = await this.vaultClient.read(path);
       const secretData = result.data;
 
@@ -191,7 +194,7 @@ export class VaultService {
       if (!data[key]) {
         throw new Error(`Key '${key}' not found in secret at path ${path}`);
       }
-      aioLogger.debug(
+      aioLogger.info(
         `[VAULT] Successfully retrieved key '${key}' from path: ${path}`,
       );
       return data[key];
