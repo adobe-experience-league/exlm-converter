@@ -29,7 +29,7 @@ export class VaultService {
       throw new Error('State store is required');
     }
 
-    console.log(cacheTtlHours);
+    aioLogger.info(cacheTtlHours);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
@@ -59,7 +59,7 @@ export class VaultService {
     try {
       const result = await this.stateStore.get(cacheKey);
       const value = result?.value ?? null;
-      console.log(value);
+      aioLogger.info(value);
       if (value) {
         aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
       } else {
