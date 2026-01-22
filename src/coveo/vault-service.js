@@ -59,7 +59,6 @@ export class VaultService {
     try {
       aioLogger.info(`[VAULT] 🔍 Checking cache for key: ${cacheKey}`);
       const result = await this.stateStore.get(cacheKey);
-      await this.stateStore.stats();
 
       aioLogger.info(`[VAULT] Raw result from ,${result}`);
 
@@ -126,7 +125,7 @@ export class VaultService {
         `[VAULT] Attempting to cache data for key: ${cacheKey} with TTL: ${ttlSeconds}s`,
       );
 
-      await this.stateStore.put(cacheKey, data, { ttl: 36 });
+      await this.stateStore.put(cacheKey, data, { ttl: 60 });
 
       aioLogger.info(
         `[VAULT] ✅ Cache successfully stored for key: ${cacheKey}`,
