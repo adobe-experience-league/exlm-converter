@@ -59,6 +59,7 @@ export class VaultService {
     try {
       aioLogger.info(`[VAULT] 🔍 Checking cache for key: ${cacheKey}`);
       const result = await this.stateStore.get(cacheKey);
+      await this.stateStore.stats();
 
       aioLogger.info(`[VAULT] Raw result from ,${result}`);
 
