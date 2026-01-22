@@ -162,7 +162,7 @@ export const main = async function main(params) {
     coveoSecretPath,
     coveoSecretKeyProd = 'prod_token',
     coveoSecretKeyNonprod = 'nonprod_token',
-    cacheTtlHours = 24,
+    vaulTokenCacheTtlHours = 24,
     __ow_headers, // eslint-disable-line camelcase
   } = params;
 
@@ -224,7 +224,7 @@ export const main = async function main(params) {
         roleId: vaultRoleId,
         secretId: vaultSecretId,
         state,
-        cacheTtlHours,
+        vaulTokenCacheTtlHours,
       });
 
       const token = await vaultService.readSecretKey(
