@@ -166,6 +166,7 @@ const coveoHandler = async (req, res) => {
     vaultEndpoint: process.env.VAULT_ENDPOINT,
     vaultRoleId: process.env.VAULT_ROLE_ID,
     vaultSecretId: process.env.VAULT_SECRET_ID,
+    vaulTokenCacheTtlHours: process.env.VAULT_TOKEN_CACHE_TTL_SECONDS,
     coveoSecretPath: process.env.COVEO_SECRET_PATH,
     coveoSecretKeyProd: process.env.COVEO_SECRET_KEY_PROD || 'prod_token',
     coveoSecretKeyNonprod:
