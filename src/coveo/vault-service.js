@@ -37,23 +37,45 @@ export class VaultService {
     this.roleId = roleId;
     this.secretId = secretId;
     this.authenticated = false;
-    this.cacheTtlSeconds = cacheTtlSeconds;
+
+    // Parse and validate cacheTtlSeconds (convert string to number if needed)
+    // If not provided or invalid, caching is disabled (null)
+    let ttl = null;
+    if (cacheTtlSeconds !== undefined && cacheTtlSeconds !== null) {
+      const parsed = Number(cacheTtlSeconds);
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        ttl = parsed;
+      }
+    }
+    this.cacheTtlSeconds = ttl;
+    this.cachingEnabled = ttl !== null;
     this.stateStore = state;
 
-    aioLogger.info(
-      `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${this.cacheTtlSeconds}s`,
-    );
+    if (this.cachingEnabled) {
+      aioLogger.info(
+        `[VAULT] Initialized with endpoint: ${endpoint}, caching ENABLED with TTL: ${this.cacheTtlSeconds}s`,
+      );
+    } else {
+      aioLogger.info(
+        `[VAULT] Initialized with endpoint: ${endpoint}, caching DISABLED (no TTL configured)`,
+      );
+    }
   }
 
   // Generate unique cache key for vault path using base64 encoding
 
   static getCacheKey(path) {
-    return `vault_${Buffer.from(path).toString('base64')}`;
+    return `vault__${Buffer.from(path).toString('base64')}`;
   }
 
   // Get cached data if valid, otherwise return null
 
   async getCachedData(cacheKey) {
+    // Skip caching if disabled
+    if (!this.cachingEnabled) {
+      return null;
+    }
+
     try {
       const result = await this.stateStore.get(cacheKey);
       const value = result?.value ?? null;
@@ -73,6 +95,12 @@ export class VaultService {
   // Cache data with TTL
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
+    // Skip caching if disabled
+    if (!this.cachingEnabled) {
+      aioLogger.debug(`[VAULT] Caching disabled, skipping cache write`);
+      return;
+    }
+
     try {
       // Ensure ttl is a number (convert from string if needed)
       const ttl =
@@ -238,7 +266,6 @@ export class VaultService {
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
  * @param {Object} config.state - Adobe I/O state store instance
- * @param {number} [config.cacheTtlSeconds=86400] - Cache TTL in seconds (default: 86400 = 24 hours)
  * @returns {VaultService}
  */
 export function createVaultService(config) {
