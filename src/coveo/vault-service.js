@@ -37,14 +37,11 @@ export class VaultService {
     this.roleId = roleId;
     this.secretId = secretId;
     this.authenticated = false;
-
     this.cacheTtlSeconds = cacheTtlSeconds;
     this.stateStore = state;
 
     aioLogger.info(
-      `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${
-        this.cacheTtlSeconds
-      }s (type: ${typeof this.cacheTtlSeconds})`,
+      `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${this.cacheTtlSeconds}s`,
     );
   }
 
@@ -77,20 +74,17 @@ export class VaultService {
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
-      // Ensure ttl is a number (convert from string if needed); if not set default to 86400
+      // Ensure ttl is a number (convert from string if needed)
       const ttl =
         typeof ttlSeconds === 'number'
           ? ttlSeconds
-          : Number(ttlSeconds) || 86400;
-
-      aioLogger.info(
-        `[VAULT] Setting cache with TTL: ${ttlSeconds}s for key: ${cacheKey}`,
-      );
+          : Number(ttlSeconds) || this.cacheTtlSeconds;
       await this.stateStore.put(cacheKey, data, { ttl });
-
       const expiresAt = new Date(Date.now() + ttl * 1000);
       aioLogger.info(
-        `[VAULT] Cached successfully | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s`,
+        `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s (${(
+          ttl / 3600
+        ).toFixed(1)}h)`,
       );
     } catch (error) {
       aioLogger.error(`[VAULT] Cache write failed: ${error.message}`);
@@ -244,6 +238,7 @@ export class VaultService {
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
  * @param {Object} config.state - Adobe I/O state store instance
+ * @param {number} [config.cacheTtlSeconds=86400] - Cache TTL in seconds (default: 86400 = 24 hours)
  * @returns {VaultService}
  */
 export function createVaultService(config) {
