@@ -65,7 +65,7 @@ export class VaultService {
   // Generate unique cache key for vault path using base64 encoding
 
   static getCacheKey(path) {
-    return `vault_${Buffer.from(path).toString('base64')}`;
+    return `vault__${Buffer.from(path).toString('base64')}`;
   }
 
   // Get cached data if valid, otherwise return null
