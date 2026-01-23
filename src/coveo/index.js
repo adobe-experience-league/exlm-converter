@@ -162,7 +162,7 @@ export const main = async function main(params) {
     coveoSecretPath,
     coveoSecretKeyProd = 'prod_token',
     coveoSecretKeyNonprod = 'nonprod_token',
-    vaultTokenCacheTtlSeconds,
+    vaultTokenCacheTtlSeconds, // No default - caching disabled if not provided
     __ow_headers, // eslint-disable-line camelcase
   } = params;
 
