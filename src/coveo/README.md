@@ -94,11 +94,11 @@ The Coveo Token Service is an Adobe I/O Runtime action that:
 
 ### Files
 
-| File               | Purpose                                                        |
-| ------------------ | -------------------------------------------------------------- |
-| `index.js`         | Main service logic, origin validation, environment detection   |
+| File               | Purpose                                                                  |
+| ------------------ | ------------------------------------------------------------------------ |
+| `index.js`         | Main service logic, origin validation, environment detection             |
 | `vault-service.js` | HashiCorp Vault client with AppRole authentication and AIO State caching |
-| `README.md`        | This documentation                                             |
+| `README.md`        | This documentation                                                       |
 
 ---
 
@@ -262,7 +262,7 @@ The caching system operates at two levels:
   - **Production**: Uses Adobe I/O Runtime's distributed state store
   - **Local Development**: Uses in-memory mock state store (when `LOCAL_CONVERTER` is set)
 - **TTL (Time To Live)**: Configurable per cache entry (default: 24 hours)
-- **Cache Keys**: 
+- **Cache Keys**:
   - Authentication: `vault_auth_token`
   - Secrets: `vault_<base64-encoded-path>`
 
@@ -306,6 +306,7 @@ VAULT_TOKEN_CACHE_TTL_SECONDS=3600  # 1 hour
 **Default**: `86400` seconds (24 hours) if not specified or invalid
 
 **Validation**:
+
 - Must be a positive number
 - Automatically converts string values to numbers
 - Falls back to default (86400) if invalid or missing
