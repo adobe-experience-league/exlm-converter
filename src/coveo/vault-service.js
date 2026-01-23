@@ -74,11 +74,16 @@ export class VaultService {
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
-      await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
-      const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
+      // Ensure ttl is a number (convert from string if needed)
+      const ttl =
+        typeof ttlSeconds === 'number'
+          ? ttlSeconds
+          : Number(ttlSeconds) || this.cacheTtlSeconds;
+      await this.stateStore.put(cacheKey, data, { ttl });
+      const expiresAt = new Date(Date.now() + ttl * 1000);
       aioLogger.info(
-        `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttlSeconds}s (${(
-          ttlSeconds / 3600
+        `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s (${(
+          ttl / 3600
         ).toFixed(1)}h)`,
       );
     } catch (error) {
