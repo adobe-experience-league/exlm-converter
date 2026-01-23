@@ -31,7 +31,8 @@ The Coveo Token Service is an Adobe I/O Runtime action that:
 - ✅ **Secure**: Origin validation prevents unauthorized access
 - ✅ **Automatic**: Environment detection requires no manual configuration
 - ✅ **Flexible**: Supports both Vault and local environment variables
-- ✅ **Cached**: Vault responses are cached for performance
+- ✅ **Cached**: Vault authentication tokens and secrets cached using Adobe I/O State Library
+- ✅ **Performant**: Cache reduces Vault API calls and improves response times
 - ✅ **Observable**: Comprehensive logging for debugging and monitoring
 
 ---
@@ -78,7 +79,17 @@ The Coveo Token Service is an Adobe I/O Runtime action that:
 │ - AppRole Auth    │          │ COVEO_TOKEN_PROD     │
 │ - Token Caching   │          │ COVEO_TOKEN_NONPROD  │
 │ - KV v2 Support   │          │                      │
-└───────────────────┘          └──────────────────────┘
+└─────────┬─────────┘          └──────────────────────┘
+          │
+          │ Cache Layer
+          ▼
+┌─────────────────────────────────────────┐
+│     Adobe I/O State Library             │
+│     (@adobe/aio-lib-state)             │
+│                                         │
+│  - Auth Token Cache (TTL: 24h default) │
+│  - Secret Data Cache (TTL: 24h default)│
+└─────────────────────────────────────────┘
 ```
 
 ### Files
@@ -86,7 +97,7 @@ The Coveo Token Service is an Adobe I/O Runtime action that:
 | File               | Purpose                                                        |
 | ------------------ | -------------------------------------------------------------- |
 | `index.js`         | Main service logic, origin validation, environment detection   |
-| `vault-service.js` | HashiCorp Vault client with AppRole authentication and caching |
+| `vault-service.js` | HashiCorp Vault client with AppRole authentication and AIO State caching |
 | `README.md`        | This documentation                                             |
 
 ---
@@ -224,6 +235,128 @@ COVEO_ENV=production  # or "nonprod"
 COVEO_TOKEN_PROD=xxPROD-TOKEN-EXAMPLE-1234
 COVEO_TOKEN_NONPROD=xxNONPROD-TOKEN-EXAMPLE-5678
 ```
+
+#### Cache Configuration
+
+```bash
+# Optional: Vault token cache TTL in seconds (default: 86400 = 24 hours)
+VAULT_TOKEN_CACHE_TTL_SECONDS=86400
+```
+
+---
+
+## Caching
+
+The service uses **Adobe I/O State Library** to cache Vault authentication tokens and retrieved secrets, significantly reducing Vault API calls and improving response times.
+
+### How It Works
+
+The caching system operates at two levels:
+
+1. **Authentication Token Caching**: Vault AppRole authentication tokens are cached to avoid re-authenticating on every request
+2. **Secret Data Caching**: Retrieved secrets from Vault are cached to avoid repeated reads
+
+### Cache Implementation
+
+- **Storage**: Adobe I/O State Library (`@adobe/aio-lib-state`)
+  - **Production**: Uses Adobe I/O Runtime's distributed state store
+  - **Local Development**: Uses in-memory mock state store (when `LOCAL_CONVERTER` is set)
+- **TTL (Time To Live)**: Configurable per cache entry (default: 24 hours)
+- **Cache Keys**: 
+  - Authentication: `vault_auth_token`
+  - Secrets: `vault_<base64-encoded-path>`
+
+### Cache Behavior
+
+#### Authentication Token Cache
+
+```javascript
+// Cache key: 'vault_auth_token'
+// TTL: Configurable (default: 86400 seconds = 24 hours)
+// Cached value: { token: "vault-client-token-string" }
+```
+
+- **Cache Hit**: Reuses existing Vault token, skips AppRole authentication
+- **Cache Miss**: Performs AppRole login, caches token for future use
+- **On Error**: Clears auth cache and re-authenticates
+
+#### Secret Data Cache
+
+```javascript
+// Cache key: 'vault_<base64-encoded-path>'
+// TTL: Configurable (default: 86400 seconds = 24 hours)
+// Cached value: Secret data object from Vault
+```
+
+- **Cache Hit**: Returns cached secret data immediately
+- **Cache Miss**: Fetches from Vault, caches result
+- **On Permission Error**: Clears auth cache, re-authenticates, retries
+
+### Configuration
+
+#### Cache TTL
+
+The cache TTL can be configured via the `vaultTokenCacheTtlSeconds` parameter:
+
+```bash
+# Environment variable (passed as action parameter)
+VAULT_TOKEN_CACHE_TTL_SECONDS=3600  # 1 hour
+```
+
+**Default**: `86400` seconds (24 hours) if not specified or invalid
+
+**Validation**:
+- Must be a positive number
+- Automatically converts string values to numbers
+- Falls back to default (86400) if invalid or missing
+
+### Cache Lifecycle
+
+```
+Request → Check Auth Cache
+  ├─ Cache Hit → Use cached token
+  └─ Cache Miss → Authenticate → Cache token
+
+Request → Check Secret Cache
+  ├─ Cache Hit → Return cached secret
+  └─ Cache Miss → Read from Vault → Cache secret → Return
+```
+
+### Cache Invalidation
+
+Caches are automatically invalidated when:
+
+1. **TTL Expires**: Cache entries expire after the configured TTL
+2. **Authentication Errors**: Auth cache is cleared on authentication failures
+3. **Permission Errors**: Auth cache is cleared when Vault returns permission denied
+4. **Invalid Token Errors**: Auth cache is cleared when Vault token becomes invalid
+
+### Performance Benefits
+
+- **Reduced Latency**: Cached responses return in milliseconds vs. hundreds of milliseconds for Vault API calls
+- **Reduced Load**: Fewer requests to Vault reduce API rate limit concerns
+- **Improved Reliability**: Cached data available even if Vault is temporarily unavailable (until cache expires)
+
+### Monitoring
+
+Cache behavior is logged for observability:
+
+```
+✅ Cache hits:
+[VAULT] Using cached data
+[VAULT] Returning cached secret data for path: <path>
+
+❌ Cache misses:
+[VAULT] Cache miss, fetching from Vault
+[VAULT] Authenticating with AppRole (cache expired or first call)
+
+📊 Cache operations:
+[VAULT] Cached | Expires: <timestamp> | TTL: <seconds>s (<hours>h)
+```
+
+### Local Development
+
+When running locally with `LOCAL_CONVERTER` environment variable set, the service uses an in-memory mock state store. Cache entries persist only for the duration of the process and are cleared on server restart.
 
 ---
 
@@ -488,6 +621,64 @@ echo $__OW_NAMESPACE
 COVEO_ENV=production npm run serve
 ```
 
+#### 6. Cache TTL Error: "ttl" must be a number
+
+**Error:**
+
+```
+[VAULT] Cache write failed: [StateLib:ERROR_BAD_ARGUMENT] "ttl" must be a number
+```
+
+**Causes:**
+
+- `VAULT_TOKEN_CACHE_TTL_SECONDS` environment variable is set to a non-numeric value
+- Environment variable is set to an empty string or invalid value
+- Missing environment variable (should default to 86400, but may fail if incorrectly passed)
+
+**Solutions:**
+
+```bash
+# Ensure TTL is a valid positive number (in seconds)
+VAULT_TOKEN_CACHE_TTL_SECONDS=3600  # ✅ Valid: 1 hour
+VAULT_TOKEN_CACHE_TTL_SECONDS=86400 # ✅ Valid: 24 hours (default)
+
+# Invalid examples:
+VAULT_TOKEN_CACHE_TTL_SECONDS=60s   # ❌ Invalid: contains "s"
+VAULT_TOKEN_CACHE_TTL_SECONDS=""    # ❌ Invalid: empty string
+VAULT_TOKEN_CACHE_TTL_SECONDS=0     # ❌ Invalid: must be > 0
+
+# If not set, defaults to 86400 (24 hours)
+# The service automatically converts string numbers to integers
+```
+
+**Note**: The service automatically handles conversion and defaults to 86400 seconds if the value is missing or invalid.
+
+#### 7. Stale Cache Data
+
+**Symptoms:**
+
+- Token returned from cache is expired or invalid
+- Secret data in cache doesn't reflect recent Vault changes
+
+**Causes:**
+
+- Cache TTL is too long
+- Vault secret was updated but cache hasn't expired yet
+
+**Solutions:**
+
+```bash
+# Reduce cache TTL for more frequent updates
+VAULT_TOKEN_CACHE_TTL_SECONDS=3600  # 1 hour instead of 24 hours
+
+# Cache automatically expires after TTL
+# Wait for cache expiration or restart the action
+
+# Cache is automatically cleared on authentication/permission errors
+```
+
+**Note**: Cache entries automatically expire after the configured TTL. On authentication or permission errors, the auth cache is automatically cleared to force re-authentication.
+
 ### Debug Logging
 
 Enable debug logging:
@@ -508,13 +699,24 @@ inputs:
 ✅ Success indicators:
 - "Request authorized from origin: ..."
 - "Environment determined by ..."
+- "[VAULT] Initialized with endpoint: ..., cache TTL: ...s"
+- "[VAULT] Using cached data"
+- "[VAULT] Returning cached secret data for path: ..."
 - "[VAULT] AppRole authentication successful"
+- "[VAULT] Cached | Expires: ... | TTL: ...s (...h)"
 - "Successfully retrieved Coveo token from Vault"
+
+📊 Cache indicators:
+- "[VAULT] Cache miss, fetching from Vault"
+- "[VAULT] Authenticating with AppRole (cache expired or first call)"
+- "[VAULT] Cache write failed: ..."
 
 ❌ Error indicators:
 - "Unauthorized access attempt from origin: ..."
+- "[VAULT] Cache write failed: [StateLib:ERROR_BAD_ARGUMENT] ..."
 - "[VAULT] AppRole authentication failed"
 - "[VAULT] Failed to read secret from Vault"
+- "[VAULT] Authentication failed: ..."
 - "No token source available"
 ```
 
@@ -612,6 +814,28 @@ Access-Control-Allow-Headers: Content-Type
 - **Browser requests**: Origin validation works well for CORS
 - **Explicit allowlist**: Clear documentation of who can access
 
+### Why Use Adobe I/O State Library for Caching?
+
+**Alternative:** In-memory caching, Redis, or no caching
+
+**Chosen:** Adobe I/O State Library (`@adobe/aio-lib-state`)
+
+**Reasoning:**
+
+- **Native Integration**: Built-in support for Adobe I/O Runtime actions
+- **Distributed**: Shared cache across action instances in production
+- **TTL Support**: Built-in time-to-live for automatic cache expiration
+- **Reliability**: Managed service reduces operational overhead
+- **Performance**: Reduces Vault API calls and improves response times
+- **Local Development**: Seamless fallback to in-memory mock for local testing
+
+**Cache Strategy:**
+
+- **Two-Level Caching**: Separate caches for auth tokens and secret data
+- **Configurable TTL**: Default 24 hours, configurable per deployment
+- **Automatic Invalidation**: Cache cleared on authentication/permission errors
+- **Graceful Degradation**: Cache failures don't break the service
+
 ---
 
 ## Dependencies
@@ -619,11 +843,13 @@ Access-Control-Allow-Headers: Content-Type
 ```json
 {
   "@adobe/aio-lib-core-logging": "^2.0.1",
+  "@adobe/aio-lib-state": "^4.0.0",
   "node-vault": "^0.10.2"
 }
 ```
 
-- **aio-lib-core-logging**: Adobe's logging library for structured logs
+- **@adobe/aio-lib-core-logging**: Adobe's logging library for structured logs
+- **@adobe/aio-lib-state**: Adobe I/O State Library for caching Vault tokens and secrets
 - **node-vault**: HashiCorp Vault client for Node.js
 
 ---

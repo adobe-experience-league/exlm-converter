@@ -37,7 +37,13 @@ export class VaultService {
     this.roleId = roleId;
     this.secretId = secretId;
     this.authenticated = false;
-    this.cacheTtlSeconds = cacheTtlSeconds;
+    // Ensure cacheTtlSeconds is a valid number (default to 86400 = 24 hours if missing/invalid)
+    const parsedTtl =
+      typeof cacheTtlSeconds === 'number' && !Number.isNaN(cacheTtlSeconds)
+        ? cacheTtlSeconds
+        : Number(cacheTtlSeconds);
+    this.cacheTtlSeconds =
+      !Number.isNaN(parsedTtl) && parsedTtl > 0 ? parsedTtl : 86400;
     this.stateStore = state;
 
     aioLogger.info(
@@ -74,11 +80,21 @@ export class VaultService {
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
-      // Ensure ttl is a number (convert from string if needed)
-      const ttl =
-        typeof ttlSeconds === 'number'
-          ? ttlSeconds
-          : Number(ttlSeconds) || this.cacheTtlSeconds;
+      // Ensure ttl is a valid number (convert from string if needed, default to 86400 if invalid)
+      let ttl;
+      if (
+        typeof ttlSeconds === 'number' &&
+        !Number.isNaN(ttlSeconds) &&
+        ttlSeconds > 0
+      ) {
+        ttl = ttlSeconds;
+      } else {
+        const parsedTtl = Number(ttlSeconds);
+        ttl =
+          !Number.isNaN(parsedTtl) && parsedTtl > 0
+            ? parsedTtl
+            : this.cacheTtlSeconds || 86400;
+      }
       await this.stateStore.put(cacheKey, data, { ttl });
       const expiresAt = new Date(Date.now() + ttl * 1000);
       aioLogger.info(
