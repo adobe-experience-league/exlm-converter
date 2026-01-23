@@ -38,16 +38,7 @@ export class VaultService {
     this.secretId = secretId;
     this.authenticated = false;
 
-    // Ensure cacheTtlSeconds is a valid number (environment variables come as strings)
-    // Convert to number and validate, default to 86400 (24 hours) if invalid
-    let ttl = 86400; // default
-    if (cacheTtlSeconds !== undefined && cacheTtlSeconds !== null) {
-      const parsed = Number(cacheTtlSeconds);
-      if (!Number.isNaN(parsed) && parsed > 0) {
-        ttl = parsed;
-      }
-    }
-    this.cacheTtlSeconds = ttl;
+    this.cacheTtlSeconds = cacheTtlSeconds;
     this.stateStore = state;
 
     aioLogger.info(
@@ -86,14 +77,20 @@ export class VaultService {
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
     try {
+      // Ensure ttl is a number (convert from string if needed); if not set default to 86400
+      const ttl =
+        typeof ttlSeconds === 'number'
+          ? ttlSeconds
+          : Number(ttlSeconds) || 86400;
+
       aioLogger.info(
         `[VAULT] Setting cache with TTL: ${ttlSeconds}s for key: ${cacheKey}`,
       );
-      await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
+      await this.stateStore.put(cacheKey, data, { ttl });
 
-      const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
+      const expiresAt = new Date(Date.now() + ttl * 1000);
       aioLogger.info(
-        `[VAULT] Cached successfully | Expires: ${expiresAt.toISOString()} | TTL: ${ttlSeconds}s`,
+        `[VAULT] Cached successfully | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s`,
       );
     } catch (error) {
       aioLogger.error(`[VAULT] Cache write failed: ${error.message}`);
@@ -247,7 +244,6 @@ export class VaultService {
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
  * @param {Object} config.state - Adobe I/O state store instance
- * @param {number} [config.cacheTtlSeconds=86400] - Cache TTL in seconds (default: 86400 = 24 hours)
  * @returns {VaultService}
  */
 export function createVaultService(config) {
