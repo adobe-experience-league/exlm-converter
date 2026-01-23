@@ -266,7 +266,6 @@ export class VaultService {
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
  * @param {Object} config.state - Adobe I/O state store instance
- * @param {number} [config.cacheTtlSeconds=86400] - Cache TTL in seconds (default: 86400 = 24 hours)
  * @returns {VaultService}
  */
 export function createVaultService(config) {
