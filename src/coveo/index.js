@@ -196,9 +196,7 @@ export const main = async function main(params) {
 
     // 1. Primary: Use Vault with AppRole authentication (production path)
     if (hasVaultConfig) {
-      aioLogger.info(
-        `Fetching Coveo token from Vault using AppRole for ${environment} environment`,
-      );
+      aioLogger.info(`Determined environment - ${environment}`);
 
       // Validate secret path
       if (!coveoSecretPath) {
@@ -238,10 +236,6 @@ export const main = async function main(params) {
         );
         return sendError(500, 'Failed to retrieve valid token from Vault');
       }
-
-      aioLogger.info(
-        `Successfully retrieved Coveo token from Vault for ${environment} environment`,
-      );
 
       return {
         statusCode: 200,
