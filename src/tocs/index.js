@@ -22,6 +22,7 @@ const rewriteRedirects = (html, lang) => {
   const dom = new JSDOM(html);
   const { document } = dom.window;
   handleUrls(document, lang);
+  // Note: No need to call handleExternalUrl() for TOCs - the API already adds #_blank
   return document.body.innerHTML;
 };
 
@@ -35,7 +36,7 @@ export const main = async function main(params) {
   const path = __ow_path || '';
 
   try {
-    const url = `https://experienceleague.adobe.com/api/tocs${path}?lang=${lang}&cachebust=${Date.now()}`;
+    const url = `https://experienceleague-dev.adobe.com/api/v2/tocs${path}?lang=${lang}&cachebust=${Date.now()}`;
     console.log(`Fetching TOC from ${url}`);
     const resp = await fetch(url, {
       headers: {
@@ -49,12 +50,27 @@ export const main = async function main(params) {
     if (resp.ok) {
       const json = await resp.json();
       console.log(`JSON: ${JSON.stringify(json)}`);
-      if (json?.data?.HTML) {
+
+      // Support both old and V2 API response formats
+      let htmlContent;
+
+      // V2 API structure: json.data.transformedContent[].raw
+      if (json?.data?.transformedContent) {
+        htmlContent = json.data.transformedContent.find(
+          (content) => content.contentType === 'text/html',
+        )?.raw;
+      }
+      // Old API structure: json.data.HTML (fallback for backward compatibility)
+      else if (json?.data?.HTML) {
+        htmlContent = json.data.HTML;
+      }
+
+      if (htmlContent) {
         return {
           body: {
             data: {
               ...json.data,
-              HTML: rewriteRedirects(json.data.HTML, lang),
+              HTML: rewriteRedirects(htmlContent, lang),
             },
           },
           headers: {
