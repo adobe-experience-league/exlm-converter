@@ -97,10 +97,10 @@ export default class ExlClientV2 {
 
 export const createDefaultExlClientV2 = async () => {
   const params = paramMemoryStore.get();
-  const { exlApiHostV2 } = params;
+  const { exlApiHost } = params;
   const state = await stateLib.init();
   return new ExlClientV2({
-    host: exlApiHostV2,
+    host: exlApiHost,
     state,
   });
 };
