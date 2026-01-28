@@ -20,6 +20,7 @@ application:
               aemRepo: $REPO
               aemBranch: $BRANCH
               exlApiHost: $EXL_API_HOST
+              exlApiHostV2: $EXL_API_HOST_V2
               featureFlags: $FEATURE_FLAGS
               v2Paths: $V2_PATHS
             annotations:
@@ -52,6 +53,8 @@ application:
             runtime: 'nodejs:18'
             inputs:
               LOG_LEVEL: debug
+              exlApiHost: $EXL_API_HOST
+              exlApiHostV2: $EXL_API_HOST_V2
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

@@ -15,6 +15,7 @@ import { JSDOM } from 'jsdom';
 import { sendError } from '../common/utils/response-utils.js';
 import handleUrls from '../common/utils/link-utils.js';
 import { createDefaultExlClientV2 } from '../converter/modules/ExlClientV2.js';
+import { paramMemoryStore } from '../converter/modules/utils/param-memory-store.js';
 
 export const aioLogger = Logger('toc');
 
@@ -27,6 +28,9 @@ const rewriteRedirects = (html, lang) => {
 };
 
 export const main = async function main(params) {
+  // Set params in memory store so ExlClientV2 can access them
+  paramMemoryStore.set(params);
+
   const {
     // eslint-disable-next-line camelcase
     __ow_path,

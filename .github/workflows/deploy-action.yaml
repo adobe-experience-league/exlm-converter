@@ -71,6 +71,7 @@ jobs:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
           AEM_AUTHOR_URL: ${{ vars.AEM_AUTHOR_URL }}
           EXL_API_HOST: ${{ vars.EXL_API_HOST }}
+          EXL_API_HOST_V2: ${{ vars.EXL_API_HOST_V2 }}
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}
           BRANCH: ${{ vars.BRANCH }}

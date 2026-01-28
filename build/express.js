@@ -33,6 +33,7 @@ const {
   IMS_AUTHORIZATION_CODE,
   IPASS_API_KEY,
   EXL_API_HOST,
+  EXL_API_HOST_V2,
   FEATURE_FLAGS,
   V2_PATHS,
   GAINSIGHT_API_URL,
@@ -84,6 +85,7 @@ const converterHandler = async (req, res) => {
     aemBranch: BRANCH,
     authorization,
     exlApiHost: EXL_API_HOST,
+    exlApiHostV2: EXL_API_HOST_V2,
     featureFlags: FEATURE_FLAGS,
     v2Paths: V2_PATHS,
   };
@@ -148,6 +150,8 @@ const tocHandler = async (req, res) => {
   const params = {
     __ow_path: path,
     lang,
+    exlApiHost: EXL_API_HOST,
+    exlApiHostV2: EXL_API_HOST_V2,
   };
 
   const { body, statusCode } = await tocMain(params);
