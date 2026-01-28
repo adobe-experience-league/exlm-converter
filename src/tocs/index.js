@@ -14,6 +14,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { JSDOM } from 'jsdom';
 import { sendError } from '../common/utils/response-utils.js';
 import handleUrls from '../common/utils/link-utils.js';
+import { createDefaultExlClientV2 } from '../converter/modules/ExlClientV2.js';
 
 export const aioLogger = Logger('toc');
 
@@ -22,7 +23,6 @@ const rewriteRedirects = (html, lang) => {
   const dom = new JSDOM(html);
   const { document } = dom.window;
   handleUrls(document, lang);
-  // Note: No need to call handleExternalUrl() for TOCs - the API already adds #_blank
   return document.body.innerHTML;
 };
 
@@ -36,7 +36,7 @@ export const main = async function main(params) {
   const path = __ow_path || '';
 
   try {
-    const url = `https://experienceleague-dev.adobe.com/api/v2/tocs${path}?lang=${lang}&cachebust=${Date.now()}`;
+    const url = `https://experienceleague.adobe.com/api/tocs${path}?lang=${lang}&cachebust=${Date.now()}`;
     console.log(`Fetching TOC from ${url}`);
     const resp = await fetch(url, {
       headers: {
@@ -50,27 +50,13 @@ export const main = async function main(params) {
     if (resp.ok) {
       const json = await resp.json();
       console.log(`JSON: ${JSON.stringify(json)}`);
-
-      // Support both old and V2 API response formats
-      let htmlContent;
-
-      // V2 API structure: json.data.transformedContent[].raw
-      if (json?.data?.transformedContent) {
-        htmlContent = json.data.transformedContent.find(
-          (content) => content.contentType === 'text/html',
-        )?.raw;
-      }
-      // Old API structure: json.data.HTML (fallback for backward compatibility)
-      else if (json?.data?.HTML) {
-        htmlContent = json.data.HTML;
-      }
-
-      if (htmlContent) {
+      // V1 API structure: json.data.HTML
+      if (json?.data?.HTML) {
         return {
           body: {
             data: {
               ...json.data,
-              HTML: rewriteRedirects(htmlContent, lang),
+              HTML: rewriteRedirects(json.data.HTML, lang),
             },
           },
           headers: {
@@ -79,6 +65,42 @@ export const main = async function main(params) {
           },
           statusCode: 200,
         };
+      }
+
+      // V1 API didn't return data, try V2 API
+      console.log('V1 API did not return HTML, falling back to V2 API');
+      const tocId = path.replace(/^\//, '');
+      const exlv2Client = await createDefaultExlClientV2();
+      const v2Resp = await exlv2Client.getTocHtmlById(tocId, lang);
+
+      if (v2Resp.ok) {
+        const v2Json = await v2Resp.json();
+        console.log(`V2 API response:`, JSON.stringify(v2Json));
+
+        // V2 API structure: json.data.transformedContent[].raw
+        if (v2Json?.data?.transformedContent) {
+          const htmlContent = v2Json.data.transformedContent.find(
+            (content) => content.contentType === 'text/html',
+          )?.raw;
+
+          if (htmlContent) {
+            return {
+              body: {
+                data: {
+                  ...v2Json.data,
+                  HTML: rewriteRedirects(htmlContent, lang),
+                },
+              },
+              headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'public, max-age=7200',
+              },
+              statusCode: 200,
+            };
+          }
+        }
+      } else {
+        console.log(`V2 API failed: ${v2Resp.status} ${v2Resp.statusText}`);
       }
     } else {
       const responseText = await resp.text();
