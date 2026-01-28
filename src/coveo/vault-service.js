@@ -17,13 +17,16 @@ const aioLogger = Logger('vault-service');
 
 /**
  * VaultService class for interacting with HashiCorp Vault
- * Uses AppRole authentication for secure access
- * Implements in-memory caching for better performance
+ * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlSeconds }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
+    }
+
+    if (!state) {
+      throw new Error('State store is required');
     }
 
     this.vaultClient = vault({
@@ -35,24 +38,114 @@ export class VaultService {
     this.secretId = secretId;
     this.authenticated = false;
 
-    // In-memory cache for Vault secrets
-    this.vaultCache = new Map();
+    // Parse and validate cacheTtlSeconds (convert string to number if needed)
+    // If not provided or invalid, caching is disabled (null)
+    let ttl = null;
+    if (cacheTtlSeconds !== undefined && cacheTtlSeconds !== null) {
+      const parsed = Number(cacheTtlSeconds);
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        ttl = parsed;
+      }
+    }
+    this.cacheTtlSeconds = ttl;
+    this.cachingEnabled = ttl !== null;
+    this.stateStore = state;
 
-    aioLogger.debug(`[VAULT] Initialized with endpoint: ${endpoint}`);
+    if (this.cachingEnabled) {
+      aioLogger.info(
+        `[VAULT] Initialized with endpoint: ${endpoint}, caching ENABLED with TTL: ${this.cacheTtlSeconds}s`,
+      );
+    } else {
+      aioLogger.info(
+        `[VAULT] Initialized with endpoint: ${endpoint}, caching DISABLED (no TTL configured)`,
+      );
+    }
   }
 
-  /**
-   * Authenticate with Vault using AppRole
-   * @private
-   */
-  async authenticateWithAppRole() {
-    if (this.authenticated) {
-      aioLogger.debug('[VAULT] Already authenticated, skipping AppRole login');
+  // Generate unique cache key for vault path using base64 encoding
+
+  static getCacheKey(path) {
+    return `vault__${Buffer.from(path).toString('base64')}`;
+  }
+
+  // Get cached data if valid, otherwise return null
+
+  async getCachedData(cacheKey) {
+    // Skip caching if disabled
+    if (!this.cachingEnabled) {
+      return null;
+    }
+
+    try {
+      const result = await this.stateStore.get(cacheKey);
+      const value = result?.value ?? null;
+
+      if (value) {
+        aioLogger.info(`[VAULT] Using cached data`);
+      } else {
+        aioLogger.info(`[VAULT] Cache miss, fetching from Vault`);
+      }
+      return value;
+    } catch (error) {
+      aioLogger.error(`[VAULT] Cache read error: ${error.message}`);
+      return null;
+    }
+  }
+
+  // Cache data with TTL
+
+  async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
+    // Skip caching if disabled
+    if (!this.cachingEnabled) {
+      aioLogger.debug(`[VAULT] Caching disabled, skipping cache write`);
       return;
     }
 
     try {
-      aioLogger.debug('[VAULT] Authenticating with AppRole');
+      // Ensure ttl is a number (convert from string if needed)
+      const ttl =
+        typeof ttlSeconds === 'number'
+          ? ttlSeconds
+          : Number(ttlSeconds) || this.cacheTtlSeconds;
+      await this.stateStore.put(cacheKey, data, { ttl });
+      const expiresAt = new Date(Date.now() + ttl * 1000);
+      aioLogger.info(
+        `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s (${(
+          ttl / 3600
+        ).toFixed(1)}h)`,
+      );
+    } catch (error) {
+      aioLogger.error(`[VAULT] Cache write failed: ${error.message}`);
+      throw error;
+    }
+  }
+
+  // Clear cached data
+
+  async clearCachedData(cacheKey) {
+    try {
+      await this.stateStore.delete(cacheKey);
+    } catch (error) {
+      aioLogger.warn(`[VAULT] Cache clear error: ${error.message}`);
+    }
+  }
+
+  // Authenticate with Vault using AppRole with token caching
+  async authenticateWithAppRole() {
+    const authCacheKey = 'vault_auth_token';
+
+    const cachedAuth = await this.getCachedData(authCacheKey);
+    if (cachedAuth?.token) {
+      this.vaultClient.token = cachedAuth.token;
+      this.authenticated = true;
+      return;
+    }
+
+    try {
+      aioLogger.info(
+        '[VAULT] Authenticating with AppRole (cache expired or first call)',
+      );
+
       const response = await this.vaultClient.approleLogin({
         role_id: this.roleId,
         secret_id: this.secretId,
@@ -62,53 +155,60 @@ export class VaultService {
       this.vaultClient.token = response.auth.client_token;
       this.authenticated = true;
 
-      aioLogger.info('[VAULT] AppRole authentication successful');
+      // CACHE the token for the configurable TTL
+      await this.setCachedData(authCacheKey, {
+        token: response.auth.client_token,
+      });
+
+      aioLogger.info('[VAULT] Authentication successful');
     } catch (error) {
-      aioLogger.error(
-        `[VAULT] AppRole authentication failed: ${error.message}`,
-      );
-      throw new Error(
-        `Failed to authenticate with Vault using AppRole: ${error.message}`,
-      );
+      await this.clearCachedData(authCacheKey);
+      this.authenticated = false;
+      aioLogger.error(`[VAULT] Authentication failed: ${error.message}`);
+      throw error;
     }
   }
 
-  /**
-   * Read a secret from Vault with caching support
-   * @param {string} path - The path to the secret in Vault
-   * @returns {Promise<Object>} - The secret data
-   */
+  // Read a secret from Vault with caching
   async readSecret(path) {
-    // Check cache first
-    if (this.vaultCache.has(path)) {
-      aioLogger.debug(`[VAULT] Cache hit for path: ${path}`);
-      return this.vaultCache.get(path);
+    const cacheKey = VaultService.getCacheKey(path);
+
+    const cachedData = await this.getCachedData(cacheKey);
+    if (cachedData) {
+      aioLogger.info(`[VAULT] Returning cached secret data for path: ${path}`);
+      return cachedData;
     }
 
-    aioLogger.debug(`[VAULT] Cache miss for path: ${path}`);
-
-    // Ensure we're authenticated
     if (!this.authenticated) {
       await this.authenticateWithAppRole();
     }
 
     try {
-      aioLogger.debug(`[VAULT] Reading secret from Vault at path: ${path}`);
+      aioLogger.info(`[VAULT] Reading secret from Vault at path: ${path}`);
       const result = await this.vaultClient.read(path);
       const secretData = result.data;
 
-      // Cache the result
-      this.vaultCache.set(path, secretData);
-      aioLogger.debug(
-        `[VAULT] Secret read successfully and cached at path: ${path}`,
-      );
-
+      await this.setCachedData(cacheKey, secretData);
       return secretData;
     } catch (error) {
+      if (
+        error.message.includes('permission denied') ||
+        error.message.includes('invalid token')
+      ) {
+        await this.clearCachedData('vault_auth_token');
+        this.authenticated = false;
+
+        await this.authenticateWithAppRole();
+        const retry = await this.vaultClient.read(path);
+
+        await this.setCachedData(cacheKey, retry.data);
+        return retry.data;
+      }
+
       aioLogger.error(
-        `[VAULT] Failed to read secret from Vault at path ${path}: ${error.message}`,
+        `[VAULT] Failed to read secret at path ${path}: ${error.message}`,
       );
-      throw new Error(`Failed to read secret from Vault: ${error.message}`);
+      throw error;
     }
   }
 
@@ -128,8 +228,7 @@ export class VaultService {
       if (!data[key]) {
         throw new Error(`Key '${key}' not found in secret at path ${path}`);
       }
-
-      aioLogger.debug(
+      aioLogger.info(
         `[VAULT] Successfully retrieved key '${key}' from path: ${path}`,
       );
       return data[key];
@@ -141,12 +240,22 @@ export class VaultService {
     }
   }
 
-  /**
-   * Clear the cache (useful for testing or forcing refresh)
-   */
-  clearCache() {
-    aioLogger.debug('[VAULT] Clearing cache');
-    this.vaultCache.clear();
+  // Clear auth cache
+
+  async clearCache() {
+    await this.clearCachedData('vault_auth_token');
+    this.authenticated = false;
+    aioLogger.info('[VAULT] Auth cache cleared');
+  }
+
+  // Cache diagnostics
+  getCacheStats() {
+    return {
+      cachingMethod: 'Adobe I/O State Library',
+      ttlHours: this.cacheTtlSeconds / 3600,
+      authenticated: this.authenticated,
+      endpoint: this.endpoint,
+    };
   }
 }
 
@@ -156,6 +265,7 @@ export class VaultService {
  * @param {string} config.endpoint - Vault endpoint URL
  * @param {string} config.roleId - Vault AppRole role_id
  * @param {string} config.secretId - Vault AppRole secret_id
+ * @param {Object} config.state - Adobe I/O state store instance
  * @returns {VaultService}
  */
 export function createVaultService(config) {
