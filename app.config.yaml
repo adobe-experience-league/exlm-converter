@@ -52,6 +52,7 @@ application:
             runtime: 'nodejs:18'
             inputs:
               LOG_LEVEL: debug
+              exlApiHost: $EXL_API_HOST
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

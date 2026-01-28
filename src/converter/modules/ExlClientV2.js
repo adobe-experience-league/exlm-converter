@@ -98,7 +98,18 @@ export default class ExlClientV2 {
 export const createDefaultExlClientV2 = async () => {
   const params = paramMemoryStore.get();
   const { exlApiHost } = params;
-  const state = await stateLib.init();
+
+  // State library is optional for local development
+  let state;
+  try {
+    state = await stateLib.init();
+  } catch (e) {
+    aioLogger.debug(
+      '[ExlClientV2] State library not available (local dev mode)',
+    );
+    state = null;
+  }
+
   return new ExlClientV2({
     host: exlApiHost,
     state,

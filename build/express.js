@@ -148,6 +148,7 @@ const tocHandler = async (req, res) => {
   const params = {
     __ow_path: path,
     lang,
+    exlApiHost: EXL_API_HOST,
   };
 
   const { body, statusCode } = await tocMain(params);

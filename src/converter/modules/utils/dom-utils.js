@@ -258,6 +258,8 @@ export const newHtmlList = (document, { tag = 'ul', items = [] }) => {
 
 /**
  * Modifies the href attribute of anchor elements with target="_blank" to include "#_blank" in the URL.
+ * Edge Delivery strips target="_blank" attributes, so the #_blank hash is used by frontend JS
+ * to open links in a new tab.
  *
  * @param {Document} document - The document object to search for anchor elements.
  */
