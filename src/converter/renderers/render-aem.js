@@ -121,6 +121,7 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     '/instructors/',
     '/test-folder/',
     '/course-fragments',
+    '/docs-fragments/',
   ];
 
   if (noIndexPaths.some((segment) => path.includes(segment))) {
