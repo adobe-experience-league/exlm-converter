@@ -65,7 +65,8 @@ export class VaultService {
   // Generate unique cache key for vault path using base64 encoding
 
   static getCacheKey(path) {
-    return `vault__${Buffer.from(path).toString('base64')}`;
+    const sanitized = path.replace(/[^a-zA-Z0-9-_.]/g, '_');
+    return `vault__${sanitized}`;
   }
 
   // Get cached data if valid, otherwise return null
@@ -82,10 +83,18 @@ export class VaultService {
 
       if (value) {
         aioLogger.info(`[VAULT] Using cached data`);
+        try {
+          return JSON.parse(value);
+        } catch (parseError) {
+          aioLogger.error(
+            `[VAULT] Failed to parse cached data: ${parseError.message}`,
+          );
+          return null;
+        }
       } else {
         aioLogger.info(`[VAULT] Cache miss, fetching from Vault`);
       }
-      return value;
+      return null;
     } catch (error) {
       aioLogger.error(`[VAULT] Cache read error: ${error.message}`);
       return null;
@@ -107,7 +116,10 @@ export class VaultService {
         typeof ttlSeconds === 'number'
           ? ttlSeconds
           : Number(ttlSeconds) || this.cacheTtlSeconds;
-      await this.stateStore.put(cacheKey, data, { ttl });
+      const valueToStore =
+        typeof data === 'string' ? data : JSON.stringify(data);
+
+      await this.stateStore.put(cacheKey, valueToStore, { ttl });
       const expiresAt = new Date(Date.now() + ttl * 1000);
       aioLogger.info(
         `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s (${(
