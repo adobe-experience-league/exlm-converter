@@ -15,8 +15,8 @@ export class GainsightOAuth2TokenStore {
    * @returns {Promise<StateStore>} the state object
    */
   async getState() {
-    if (this.state) return this.state;
-    this.state = stateLib.init();
+    if (process?.env?.LOCAL_CONVERTER && this.state) return this.state;
+    this.state = await stateLib.init();
     return this.state;
   }
 
