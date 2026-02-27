@@ -107,13 +107,13 @@ function decodeHtmlEntities(str) {
  */
 export function updateTQTagsForCoveo(document) {
   const keyMapping = {
-    'tq-roles': 'role',
-    'tq-levels': 'level',
-    'tq-products': 'coveo-solution',
-    'tq-features': 'feature',
-    'tq-subfeatures': 'sub-feature',
-    'tq-industries': 'industry',
-    'tq-topics': 'topic',
+    role_v2: 'role',
+    level_v2: 'level',
+    product_v2: 'coveo-solution',
+    feature_v2: 'feature',
+    subfeature_v2: 'sub-feature',
+    industrty_v2: 'industry',
+    topic_v2: 'topic',
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
@@ -125,7 +125,7 @@ export function updateTQTagsForCoveo(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const separator = key === 'tq-products' ? ';' : ',';
+        const separator = key === 'product_v2' ? ';' : ',';
         const labels = [
           ...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean)),
         ].join(separator);
@@ -159,13 +159,13 @@ export function updateTQTagsForCoveo(document) {
  */
 export function updateTQTagsMetadata(document) {
   const keyMapping = {
-    'tq-roles': 'role-v2',
-    'tq-levels': 'level-v2',
-    'tq-products': 'product-v2',
-    'tq-features': 'feature-v2',
-    'tq-subfeatures': 'subfeature-v2',
-    'tq-industries': 'industry-v2',
-    'tq-topics': 'topic-v2',
+    role_v2: 'role-v2',
+    level_v2: 'level-v2',
+    product_v2: 'product-v2',
+    feature_v2: 'feature-v2',
+    subfeature_v2: 'subfeature-v2',
+    industrty_v2: 'industry-v2',
+    topic_v2: 'topic-v2',
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
