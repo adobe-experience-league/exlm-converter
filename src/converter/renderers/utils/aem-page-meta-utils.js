@@ -107,36 +107,29 @@ function decodeHtmlEntities(str) {
  */
 export function updateTQTagsForCoveo(document) {
   const keyMapping = {
-    role_v2: 'role',
-    level_v2: 'level',
-    product_v2: 'coveo-solution',
-    feature_v2: 'feature',
-    subfeature_v2: 'sub-feature',
-    industrty_v2: 'industry',
-    topic_v2: 'topic',
+    'role-v2': 'role',
+    'level-v2': 'level',
+    'product-v2': 'coveo-solution',
+    'feature-v2': 'feature',
+    'subfeature-v2': 'sub-feature',
+    'industry-v2': 'industry',
+    'topic-v2': 'topic',
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
     const metaTag = getMetadata(document, key);
     if (!metaTag) return;
 
-    try {
-      const decoded = decodeHtmlEntities(metaTag);
-      const parsed = JSON.parse(decoded);
-
-      if (Array.isArray(parsed)) {
-        const separator = key === 'product_v2' ? ';' : ',';
-        const labels = [
-          ...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean)),
-        ].join(separator);
-
-        if (labels) {
-          setMetadata(document, newKey, labels);
-        }
-      }
-    } catch (e) {
-      console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
+    let formatted = metaTag.trim();
+    // Only product needs different separator
+    if (key === 'product-v2') {
+      formatted = formatted
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean)
+        .join(';');
     }
+    setMetadata(document, newKey, formatted);
   });
   const coveoSolutions = getMetadata(document, 'coveo-solution');
   if (coveoSolutions) {
