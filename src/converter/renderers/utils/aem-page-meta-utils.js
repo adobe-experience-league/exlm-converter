@@ -178,17 +178,24 @@ export function updateTQTagsMetadata(document) {
 
       if (Array.isArray(parsed)) {
         const updatedTags = parsed
-          .map((item) =>
-            item.uri && item.label ? `${item.uri}|${item.label}` : null,
-          )
+          .map((item) => {
+            if (item.uri && item.label) {
+              const id = item.uri.split('/').pop(); // extract TQ ID
+              return JSON.stringify({
+                id,
+                'internal-label': item.label,
+              });
+            }
+            return null;
+          })
           .filter(Boolean)
-          .join(', ');
+          .join(',');
+
         if (updatedTags) {
           setMetadata(document, key, updatedTags);
-          // Extract labels (the part after |) and join by comma
-          const labels = updatedTags
-            .split(',')
-            .map((tag) => tag.split('|')[1]?.trim())
+
+          const labels = parsed
+            .map((item) => item.label)
             .filter(Boolean)
             .join(', ');
 
