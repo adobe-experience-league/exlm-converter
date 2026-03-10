@@ -20,6 +20,18 @@ const getCsvValues = (value = '') =>
 
 const dedupeStrings = (values = []) => [...new Set(values)];
 
+const getFirstNonEmpty = (...values) =>
+  values.find((value) => typeof value === 'string' && value.trim()) || '';
+
+const getCanonicalHref = (document) =>
+  document
+    .querySelector('head link[rel="canonical"]')
+    ?.getAttribute('href')
+    ?.trim() || '';
+
+const getPageTitle = (document) =>
+  document.querySelector('title')?.textContent?.trim() || '';
+
 const getCanonicalUrl = (path, metadataUrl = '') => {
   const rawUrl = metadataUrl || `${EXL_HOST}${path}`;
   try {
@@ -46,10 +58,24 @@ const inferSchemaType = (path = '') => {
 };
 
 const buildSchemaFromMeta = (document, path) => {
-  const publishUrl = getMetadata(document, 'publish-url');
-  const canonicalUrl = getCanonicalUrl(path, publishUrl);
-  const headline = getMetadata(document, 'title');
-  const description = getMetadata(document, 'description');
+  const canonicalSource = getFirstNonEmpty(
+    getMetadata(document, 'publish-url'),
+    getCanonicalHref(document),
+    getMetadata(document, 'og:url'),
+  );
+  const canonicalUrl = getCanonicalUrl(path, canonicalSource);
+  const headline = getFirstNonEmpty(
+    getMetadata(document, 'title'),
+    getMetadata(document, 'og:title'),
+    getMetadata(document, 'twitter:title'),
+    getPageTitle(document),
+  );
+  const description = getFirstNonEmpty(
+    getMetadata(document, 'description'),
+    getMetadata(document, 'og:description'),
+    getMetadata(document, 'twitter:description'),
+    headline,
+  );
   const type = inferSchemaType(path);
   const inLanguage = getLanguageFromPath(path);
 
@@ -58,14 +84,22 @@ const buildSchemaFromMeta = (document, path) => {
   }
 
   const dateModified = toIsoDate(
-    getMetadata(document, 'last-update') ||
+    getFirstNonEmpty(
+      getMetadata(document, 'modified-time'),
+      getMetadata(document, 'last-update'),
       getMetadata(document, 'published-time'),
+    ),
   );
   const datePublished = toIsoDate(
-    getMetadata(document, 'published-time') || dateModified,
+    getFirstNonEmpty(getMetadata(document, 'published-time'), dateModified),
   );
   const dateCreated = toIsoDate(
-    getMetadata(document, 'build-date') || datePublished,
+    getFirstNonEmpty(getMetadata(document, 'build-date'), datePublished),
+  );
+  const image = getFirstNonEmpty(
+    getMetadata(document, 'og:image:secure_url'),
+    getMetadata(document, 'og:image'),
+    getMetadata(document, 'twitter:image'),
   );
 
   const audienceType = dedupeStrings(
@@ -107,6 +141,7 @@ const buildSchemaFromMeta = (document, path) => {
   if (dateCreated) schema.dateCreated = dateCreated;
   if (datePublished) schema.datePublished = datePublished;
   if (dateModified) schema.dateModified = dateModified;
+  if (image) schema.image = image;
   if (audienceType.length > 0) {
     schema.audience = {
       '@type': 'Audience',
