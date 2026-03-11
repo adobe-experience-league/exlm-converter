@@ -126,7 +126,7 @@ export function updateTQTagsForCoveo(document) {
     if (sourceKey === 'product_v2') {
       formatted = formatted
         .split(',')
-        .map((v) => v.trim())
+        .map((item) => item.trim())
         .filter(Boolean)
         .join(';');
     }
