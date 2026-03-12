@@ -3,6 +3,7 @@ import { getMetadata } from './dom-utils.js';
 import { upsertJsonLdScript } from './json-ld-util.js';
 
 const EXL_HOST = 'https://experienceleague.adobe.com';
+const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
 
 const toIsoDate = (value) => {
@@ -117,7 +118,7 @@ const buildSchemaFromMeta = (document, path) => {
   );
 
   const schema = {
-    '@context': 'https://schema.org',
+    '@context': SCHEMA_ORG_CONTEXT,
     '@type': type,
     '@id': `${canonicalUrl}#/schema`,
     url: canonicalUrl,
