@@ -66,6 +66,73 @@ const inferSchemaType = (path = '') => {
   return WEB_PAGE_TYPE;
 };
 
+const addIfPresent = (target, key, value) => {
+  if (value === '' || value === undefined || value === null) return;
+  if (Array.isArray(value) && value.length === 0) return;
+  target[key] = value;
+};
+
+const buildOrderedSchema = ({
+  type,
+  canonicalUrl,
+  headline,
+  description,
+  inLanguage,
+  dateCreated,
+  datePublished,
+  dateModified,
+  image,
+  audienceType,
+  about,
+  keywords,
+  eventStartDate,
+}) => {
+  const schema = {};
+
+  addIfPresent(schema, '@context', SCHEMA_ORG_CONTEXT);
+  addIfPresent(schema, '@type', type);
+  addIfPresent(schema, '@id', `${canonicalUrl}#/schema`);
+  addIfPresent(schema, 'url', canonicalUrl);
+  addIfPresent(schema, 'headline', headline);
+  addIfPresent(schema, 'description', description);
+  addIfPresent(schema, 'inLanguage', inLanguage);
+  addIfPresent(schema, 'dateCreated', dateCreated);
+  addIfPresent(schema, 'datePublished', datePublished);
+  addIfPresent(schema, 'dateModified', dateModified);
+  addIfPresent(schema, 'image', image);
+  addIfPresent(schema, 'startDate', eventStartDate);
+  addIfPresent(schema, 'publisher', ADOBE_PUBLISHER);
+
+  if (audienceType.length > 0) {
+    addIfPresent(schema, 'audience', {
+      '@type': AUDIENCE_TYPE,
+      audienceType,
+    });
+  }
+
+  if (about.length > 0) {
+    addIfPresent(
+      schema,
+      'about',
+      about.map((name) => ({
+        '@type': SOFTWARE_APPLICATION_TYPE,
+        name,
+      })),
+    );
+  }
+
+  addIfPresent(schema, 'keywords', keywords);
+  addIfPresent(schema, 'mainEntityOfPage', {
+    '@type': WEB_PAGE_TYPE,
+    '@id': canonicalUrl,
+    url: canonicalUrl,
+    name: headline,
+    description,
+  });
+
+  return schema;
+};
+
 const buildSchemaFromMeta = (document, path) => {
   const canonicalUrl = resolveCanonicalUrl(document, path);
   const headline = getFirstNonEmpty(
@@ -115,52 +182,27 @@ const buildSchemaFromMeta = (document, path) => {
       getCsvValues(getMetadata(document, 'feature')),
     ),
   );
+  const eventStartDate =
+    type === 'Event'
+      ? toIsoDate(getMetadata(document, 'event-start-date')) ||
+        toIsoDate(getMetadata(document, 'start-date'))
+      : '';
 
-  const schema = {
-    '@context': SCHEMA_ORG_CONTEXT,
-    '@type': type,
-    '@id': `${canonicalUrl}#/schema`,
-    url: canonicalUrl,
+  return buildOrderedSchema({
+    type,
+    canonicalUrl,
     headline,
     description,
     inLanguage,
-    publisher: ADOBE_PUBLISHER,
-    mainEntityOfPage: {
-      '@type': WEB_PAGE_TYPE,
-      '@id': canonicalUrl,
-      url: canonicalUrl,
-      name: headline,
-      description,
-    },
-  };
-
-  if (dateCreated) schema.dateCreated = dateCreated;
-  if (datePublished) schema.datePublished = datePublished;
-  if (dateModified) schema.dateModified = dateModified;
-  if (image) schema.image = image;
-  if (audienceType.length > 0) {
-    schema.audience = {
-      '@type': AUDIENCE_TYPE,
-      audienceType,
-    };
-  }
-  if (about.length > 0) {
-    schema.about = about.map((name) => ({
-      '@type': SOFTWARE_APPLICATION_TYPE,
-      name,
-    }));
-  }
-  if (keywords.length > 0) {
-    schema.keywords = keywords;
-  }
-  if (type === 'Event') {
-    const eventStartDate =
-      toIsoDate(getMetadata(document, 'event-start-date')) ||
-      toIsoDate(getMetadata(document, 'start-date'));
-    if (eventStartDate) schema.startDate = eventStartDate;
-  }
-
-  return schema;
+    dateCreated,
+    datePublished,
+    dateModified,
+    image,
+    audienceType,
+    about,
+    keywords,
+    eventStartDate,
+  });
 };
 
 export const injectSchemaOrg = ({ path, body, headers = {} }) => {
