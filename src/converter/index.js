@@ -119,7 +119,7 @@ export const render = async function render(path, params) {
   }
 
   // Handle AEM UE Pages by default
-  return withSchema(await renderAem(path, params));
+  return renderAem(path, params);
 };
 
 export const main = async function main(params) {

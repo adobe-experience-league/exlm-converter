@@ -5,6 +5,9 @@ import { upsertJsonLdScript } from './json-ld-util.js';
 const EXL_HOST = 'https://experienceleague.adobe.com';
 const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
+const WEB_PAGE_TYPE = 'WebPage';
+const AUDIENCE_TYPE = 'Audience';
+const SOFTWARE_APPLICATION_TYPE = 'SoftwareApplication';
 const ADOBE_PUBLISHER = {
   '@type': 'Organization',
   name: 'Adobe',
@@ -60,7 +63,7 @@ const getLanguageFromPath = (path = '') => {
 
 const inferSchemaType = (path = '') => {
   if (path.includes('/docs/')) return 'HowTo';
-  return 'WebPage';
+  return WEB_PAGE_TYPE;
 };
 
 const buildSchemaFromMeta = (document, path) => {
@@ -106,15 +109,11 @@ const buildSchemaFromMeta = (document, path) => {
   const audienceType = dedupeStrings(
     getCsvValues(getMetadata(document, 'role')),
   );
-  const about = dedupeStrings(
-    getCsvValues(getMetadata(document, 'solution')).concat(
-      getCsvValues(getMetadata(document, 'product')),
-    ),
-  );
+  const about = dedupeStrings(getCsvValues(getMetadata(document, 'solution')));
   const keywords = dedupeStrings(
-    getCsvValues(getMetadata(document, 'keywords'))
-      .concat(getCsvValues(getMetadata(document, 'feature')))
-      .concat(getCsvValues(getMetadata(document, 'topic'))),
+    getCsvValues(getMetadata(document, 'keywords')).concat(
+      getCsvValues(getMetadata(document, 'feature')),
+    ),
   );
 
   const schema = {
@@ -127,7 +126,7 @@ const buildSchemaFromMeta = (document, path) => {
     inLanguage,
     publisher: ADOBE_PUBLISHER,
     mainEntityOfPage: {
-      '@type': 'WebPage',
+      '@type': WEB_PAGE_TYPE,
       '@id': canonicalUrl,
       url: canonicalUrl,
       name: headline,
@@ -141,13 +140,13 @@ const buildSchemaFromMeta = (document, path) => {
   if (image) schema.image = image;
   if (audienceType.length > 0) {
     schema.audience = {
-      '@type': 'Audience',
+      '@type': AUDIENCE_TYPE,
       audienceType,
     };
   }
   if (about.length > 0) {
     schema.about = about.map((name) => ({
-      '@type': 'SoftwareApplication',
+      '@type': SOFTWARE_APPLICATION_TYPE,
       name,
     }));
   }
