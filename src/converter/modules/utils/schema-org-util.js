@@ -29,17 +29,20 @@ const dedupeStrings = (values = []) => [...new Set(values)];
 const getFirstNonEmpty = (...values) =>
   values.find((value) => typeof value === 'string' && value.trim()) || '';
 
-const getCanonicalHref = (document) =>
-  document
-    .querySelector('head link[rel="canonical"]')
-    ?.getAttribute('href')
-    ?.trim() || '';
-
 const getPageTitle = (document) =>
   document.querySelector('title')?.textContent?.trim() || '';
 
-const getCanonicalUrl = (path, metadataUrl = '') => {
-  const rawUrl = metadataUrl || `${EXL_HOST}${path}`;
+const resolveCanonicalUrl = (document, path) => {
+  const rawUrl = getFirstNonEmpty(
+    `${EXL_HOST}${path}`,
+    document.head
+      ?.querySelector('link[rel="canonical"]')
+      ?.getAttribute('href')
+      ?.trim(),
+    getMetadata(document, 'og:url'),
+    getMetadata(document, 'publish-url'),
+  );
+
   try {
     const parsed = new URL(rawUrl);
     parsed.hash = '';
@@ -56,20 +59,12 @@ const getLanguageFromPath = (path = '') => {
 };
 
 const inferSchemaType = (path = '') => {
-  if (path.includes('/on-demand-events/')) return 'Event';
-  if (path.includes('/playlists/')) return 'ItemList';
-  if (path.includes('/courses/')) return 'Course';
-  if (path.includes('/docs/')) return 'Article';
+  if (path.includes('/docs/')) return 'HowTo';
   return 'WebPage';
 };
 
 const buildSchemaFromMeta = (document, path) => {
-  const canonicalSource = getFirstNonEmpty(
-    getMetadata(document, 'publish-url'),
-    getCanonicalHref(document),
-    getMetadata(document, 'og:url'),
-  );
-  const canonicalUrl = getCanonicalUrl(path, canonicalSource);
+  const canonicalUrl = resolveCanonicalUrl(document, path);
   const headline = getFirstNonEmpty(
     getMetadata(document, 'title'),
     getMetadata(document, 'og:title'),
