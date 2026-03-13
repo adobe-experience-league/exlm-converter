@@ -1,3 +1,5 @@
+import { htmlToElement } from './dom-utils.js';
+
 /**
  * Upserts a JSON-LD script in document head.
  * Returns true when a script is injected, false if schema is invalid.
@@ -15,9 +17,10 @@ export const upsertJsonLdScript = (document, schema, scriptId) => {
   const existing = document.getElementById(scriptId);
   if (existing) existing.remove();
 
-  const schemaScript = document.createElement('script');
-  schemaScript.setAttribute('id', scriptId);
-  schemaScript.setAttribute('type', 'application/ld+json');
+  const createElement = htmlToElement(document);
+  const schemaScript = createElement(
+    `<script id="${scriptId}" type="application/ld+json"></script>`,
+  );
   schemaScript.textContent = JSON.stringify(schema);
   document.head.appendChild(schemaScript);
   return true;
