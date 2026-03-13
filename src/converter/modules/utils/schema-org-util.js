@@ -5,6 +5,11 @@ import { upsertJsonLdScript } from './json-ld-util.js';
 const EXL_HOST = 'https://experienceleague.adobe.com';
 const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
+const ADOBE_PUBLISHER = {
+  '@type': 'Organization',
+  name: 'Adobe',
+  url: EXL_HOST,
+};
 
 const toIsoDate = (value) => {
   if (!value) return '';
@@ -125,11 +130,7 @@ const buildSchemaFromMeta = (document, path) => {
     headline,
     description,
     inLanguage,
-    publisher: {
-      '@type': 'Organization',
-      name: 'Adobe',
-      url: EXL_HOST,
-    },
+    publisher: ADOBE_PUBLISHER,
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': canonicalUrl,
