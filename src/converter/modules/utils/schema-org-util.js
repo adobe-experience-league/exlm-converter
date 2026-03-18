@@ -6,6 +6,7 @@ const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
 const EXL_HOST = 'https://experienceleague.adobe.com';
 const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 const WEB_PAGE_TYPE = 'WebPage';
+const SCHEMA_TYPE = 'HowTo';
 const AUDIENCE_TYPE = 'Audience';
 const SOFTWARE_APPLICATION_TYPE = 'SoftwareApplication';
 const ADOBE_PUBLISHER = {
@@ -59,11 +60,6 @@ const resolveCanonicalUrl = (document, path) => {
 const getLanguageFromPath = (path = '') => {
   const lang = path.split('/')[1];
   return lang || 'en';
-};
-
-const inferSchemaType = (path = '') => {
-  if (path.includes('/docs/')) return 'HowTo';
-  return WEB_PAGE_TYPE;
 };
 
 const addIfPresent = (target, key, value) => {
@@ -149,7 +145,7 @@ const buildSchemaFromMeta = (document, path) => {
   );
   const type = getFirstNonEmpty(
     getMetadata(document, 'coveo-content-type'),
-    inferSchemaType(path),
+    SCHEMA_TYPE,
   );
   const inLanguage = getLanguageFromPath(path);
 
