@@ -147,7 +147,10 @@ const buildSchemaFromMeta = (document, path) => {
     getMetadata(document, 'twitter:description'),
     headline,
   );
-  const type = inferSchemaType(path);
+  const type = getFirstNonEmpty(
+    getMetadata(document, 'coveo-content-type'),
+    inferSchemaType(path),
+  );
   const inLanguage = getLanguageFromPath(path);
 
   if (!canonicalUrl || !headline || !description) {
