@@ -90,6 +90,29 @@ export function decodeCQMetadata(document, metaName) {
   setMetadata(document, metaName, decodedCQTags.join(', '));
 }
 
+/**
+ * Extracts labels from comma-separated JSON objects in *_v2 format.
+ * e.g. '{"id":"...","internal-label":"Admin"},{"id":"...","internal-label":"Dev"}'
+ * returns 'Admin,Dev'
+ * @param {string} value - raw *_v2 meta content
+ * @returns {string} - comma-separated labels or original value if not parseable
+ */
+function extractLabelsFromV2(value) {
+  if (!value) return value;
+  try {
+    const parsed = JSON.parse(`[${value}]`);
+    if (Array.isArray(parsed)) {
+      const labels = parsed
+        .map((item) => item?.['internal-label'])
+        .filter(Boolean);
+      return labels.length ? labels.join(',') : value;
+    }
+  } catch {
+    // not JSON — legacy plain string, return as-is
+  }
+  return value;
+}
+
 // HTML entity decoder utility
 function decodeHtmlEntities(str) {
   if (!str || typeof str !== 'string') return str;
@@ -120,7 +143,7 @@ export function updateTQTagsForCoveo(document) {
     const value = getMetadata(document, sourceKey);
     if (!value) return;
 
-    let formatted = value.trim();
+    let formatted = extractLabelsFromV2(value).trim();
 
     // Only product needs different separator
     if (sourceKey === 'product_v2') {
@@ -152,6 +175,61 @@ export function updateTQTagsForCoveo(document) {
 }
 
 /**
+ * Updates *_v2 and legacy Coveo meta tags from the generateTags API response.
+ * @param {Document} document
+ * @param {Object} tqResponse - response object from generateTags API
+ */
+export function updateMetaFromTQResponse(document, tqResponse) {
+  if (!tqResponse) return;
+
+  const fieldMapping = [
+    ['role', 'role_v2', 'role', false],
+    ['level', 'level_v2', 'level', false],
+    ['product', 'product_v2', 'coveo-solution', true],
+    ['feature', 'feature_v2', 'feature', false],
+    ['topic', 'topic_v2', 'topic', false],
+    ['industry', 'industry_v2', 'industry', false],
+    ['subFeature', 'subfeature_v2', 'sub-feature', false],
+  ];
+
+  fieldMapping.forEach(([field, v2Key, legacyKey, useSemicolon]) => {
+    const items = tqResponse[field];
+    if (!Array.isArray(items) || items.length === 0) return;
+
+    const tagObjects = items
+      .map((item) => {
+        const id = item?.uri?.split('/').pop();
+        const label = item?.label || '';
+        if (!id || !label) return null;
+        return JSON.stringify({ id, 'internal-label': label });
+      })
+      .filter(Boolean)
+      .join(',');
+    if (tagObjects) setMetadata(document, v2Key, tagObjects);
+
+    const labels = items.map((item) => item?.label).filter(Boolean);
+    if (labels.length) {
+      const separator = useSemicolon ? ';' : ',';
+      setMetadata(document, legacyKey, labels.join(separator));
+    }
+  });
+
+  const coveoSolutions = getMetadata(document, 'coveo-solution');
+  if (coveoSolutions) {
+    const parts = [
+      ...new Set(
+        coveoSolutions
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      ),
+    ];
+    setMetadata(document, 'solution', parts.join(','));
+    setMetadata(document, 'original-solution', parts.join(', '));
+  }
+}
+
+/**
  * Update TQ Tags metadata
  * Converts JSON metadata -> label-only metadata
  * @param {Document} document
@@ -176,13 +254,19 @@ export function updateTQTagsMetadata(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const labels = parsed
-          .map((item) => item?.label)
+        const tagObjects = parsed
+          .map((item) => {
+            const uri = item?.uri || '';
+            const id = uri.split('/').pop();
+            const label = item?.label || item?.['internal-label'] || '';
+            if (!id || !label) return null;
+            return JSON.stringify({ id, 'internal-label': label });
+          })
           .filter(Boolean)
-          .join(', ');
+          .join(',');
 
-        if (labels) {
-          setMetadata(document, newKey, labels);
+        if (tagObjects) {
+          setMetadata(document, newKey, tagObjects);
         }
       }
     } catch (e) {

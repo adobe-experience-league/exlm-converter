@@ -12,6 +12,8 @@ import {
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
   updateTQTagsMetadata,
+  updateTQTagsForCoveo,
+  updateMetaFromTQResponse,
   decodeCQMetadata,
   generateHash,
   createTranslatedMetadata,
@@ -23,11 +25,33 @@ import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-uti
 import FranklinServletClient from './utils/franklin-servlet-client.js';
 import { translateBlockTags } from './utils/tag-translation-utils.js';
 import hashQuizAnswers from './utils/hash-quiz-answers.js';
+import { callGenerateTags } from './utils/generate-tags-client.js';
+import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 
 export const aioLogger = Logger('render-aem');
 
 const byteSize = (str) => new Blob([str]).size;
 const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 for good measure :)
+
+/**
+ * Parses tq-* meta JSON and returns array of uri strings.
+ * @param {Document} document
+ * @param {string} metaName - e.g. 'tq-roles', 'tq-levels', 'tq-products', 'tq-versions'
+ * @returns {string[]}
+ */
+function extractTQUris(document, metaName) {
+  const raw = getMetadata(document, metaName);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.map((item) => item?.uri).filter(Boolean);
+    }
+    return [];
+  } catch {
+    return [];
+  }
+}
 
 /**
  * Transforms page metadata
@@ -39,6 +63,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
   const lang = path.split('/')[1];
   decodeCQMetadata(document, 'cq-tags');
   updateTQTagsMetadata(document);
+  updateTQTagsForCoveo(document);
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
@@ -88,6 +113,56 @@ async function transformAemPageMetadata(htmlString, params, path) {
       }
     }
   }
+
+  if (
+    path.includes('/perspectives/') &&
+    !path.includes('/perspectives/authors')
+  ) {
+    const { exlmiaHost } = paramMemoryStore.get() || {};
+    const payload = {
+      perspective: {
+        title: getMetadata(document, 'title') || '',
+        description: getMetadata(document, 'description') || '',
+        author: getMetadata(document, 'author-name') || '',
+        path,
+        level: extractTQUris(document, 'tq-levels'),
+        product: extractTQUris(document, 'tq-products'),
+        role: extractTQUris(document, 'tq-roles'),
+        version: extractTQUris(document, 'tq-versions'),
+      },
+    };
+    const tqResponse = await callGenerateTags(
+      'perspectives',
+      payload,
+      exlmiaHost,
+    );
+    updateMetaFromTQResponse(document, tqResponse);
+  }
+
+  const isCoursesBasePage =
+    path.includes('/courses/') &&
+    !path.includes('/courses/instructors') &&
+    !path.includes('/courses/course-fragments');
+  if (isCoursesBasePage) {
+    const slug = path.split('/courses/')[1].split('/')[0];
+    if (path.endsWith(`/courses/${slug}`)) {
+      const { exlmiaHost } = paramMemoryStore.get() || {};
+      const payload = {
+        course: {
+          courseTitle: getMetadata(document, 'title') || '',
+          courseDescription: getMetadata(document, 'description') || '',
+          coursePath: path,
+          level: extractTQUris(document, 'tq-levels'),
+          product: extractTQUris(document, 'tq-products'),
+          role: extractTQUris(document, 'tq-roles'),
+          version: extractTQUris(document, 'tq-versions'),
+        },
+      };
+      const tqResponse = await callGenerateTags('course', payload, exlmiaHost);
+      updateMetaFromTQResponse(document, tqResponse);
+    }
+  }
+
   return dom.serialize();
 }
 
