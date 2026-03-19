@@ -8,6 +8,14 @@ const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 const WEB_PAGE_TYPE = 'WebPage';
 const SCHEMA_TYPE = 'HowTo';
 const AUDIENCE_TYPE = 'Audience';
+const CONTENT_TYPE_TO_SCHEMA_TYPE = {
+  Documentation: 'HowTo',
+  Certification: 'HowTo',
+  Tutorial: 'TechArticle',
+  Troubleshooting: 'TechArticle',
+  Event: 'Event',
+};
+
 const SOFTWARE_APPLICATION_TYPE = 'SoftwareApplication';
 const ADOBE_PUBLISHER = {
   '@type': 'Organization',
@@ -143,10 +151,9 @@ const buildSchemaFromMeta = (document, path) => {
     getMetadata(document, 'twitter:description'),
     headline,
   );
-  const type = getFirstNonEmpty(
-    getMetadata(document, 'coveo-content-type'),
-    SCHEMA_TYPE,
-  );
+  const type =
+    CONTENT_TYPE_TO_SCHEMA_TYPE[getMetadata(document, 'coveo-content-type')] ||
+    SCHEMA_TYPE;
   const inLanguage = getLanguageFromPath(path);
 
   if (!canonicalUrl || !headline || !description) {
