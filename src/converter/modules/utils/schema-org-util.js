@@ -15,19 +15,20 @@ const CONTENT_TYPE_TO_SCHEMA_TYPE = {
   Troubleshooting: 'TechArticle',
   Event: 'Event',
 };
-
 const SOFTWARE_APPLICATION_TYPE = 'SoftwareApplication';
 const ADOBE_PUBLISHER = {
   '@type': 'Organization',
   name: 'Adobe',
   url: `${EXL_HOST}/`,
 };
+const EPOCH_ISO_DATE = '1970-01-01';
 
 const toIsoDate = (value) => {
   if (!value) return '';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
-  return date.toISOString().slice(0, 10);
+  const isoDate = date.toISOString().slice(0, 10);
+  return isoDate === EPOCH_ISO_DATE ? '' : isoDate;
 };
 
 const getCsvValues = (value = '') =>
@@ -46,12 +47,12 @@ const getPageTitle = (document) =>
 
 const resolveCanonicalUrl = (document, path) => {
   const rawUrl = getFirstNonEmpty(
-    `${EXL_HOST}${path}`,
     document.head
       ?.querySelector('link[rel="canonical"]')
       ?.getAttribute('href')
       ?.trim(),
     getMetadata(document, 'og:url'),
+    `${EXL_HOST}${path}`,
     getMetadata(document, 'publish-url'),
   );
 
