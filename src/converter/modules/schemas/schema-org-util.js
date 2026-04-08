@@ -2,7 +2,6 @@ import jsdom from 'jsdom';
 import { getMetadata } from '../utils/dom-utils.js';
 import { upsertJsonLdScript } from './json-ld-util.js';
 import { buildArticleSchema } from './builders/article-schema.js';
-import { buildEventSchema } from './builders/event-schema.js';
 import { buildPerspectiveSchema } from './builders/perspective-schema.js';
 import { buildCourseSchema } from './builders/course-schema.js';
 
@@ -13,7 +12,6 @@ const SCHEMA_BUILDERS = {
   Certification: buildArticleSchema,
   Tutorial: buildArticleSchema,
   Troubleshooting: buildArticleSchema,
-  Event: buildEventSchema,
   Perspective: buildPerspectiveSchema,
   Course: buildCourseSchema,
 };
