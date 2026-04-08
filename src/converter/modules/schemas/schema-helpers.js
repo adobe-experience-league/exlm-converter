@@ -100,6 +100,7 @@ export const extractCommonMetadata = (document, path) => {
   const datePublished = toIsoDate(
     getFirstNonEmpty(getMetadata(document, 'published-time'), dateModified),
   );
+  // fallback to published date as created date in meta is not available
   const dateCreated = toIsoDate(getFirstNonEmpty(datePublished));
   const image = getFirstNonEmpty(
     getMetadata(document, 'og:image:secure_url'),
