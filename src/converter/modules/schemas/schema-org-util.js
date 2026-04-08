@@ -29,10 +29,19 @@ export const injectSchemaOrg = ({ path, body, headers = {} }) => {
   if (!contentType.toLowerCase().includes('text/html')) return body;
   if (path.startsWith('/fragments/')) return body;
 
-  const dom = new jsdom.JSDOM(body);
-  const { document } = dom.window;
-  const schema = buildSchemaFromMeta(document, path);
-  if (!schema) return body;
-  upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
-  return dom.serialize();
+  try {
+    const dom = new jsdom.JSDOM(body);
+    const { document } = dom.window;
+    const schema = buildSchemaFromMeta(document, path);
+    if (!schema) return body;
+    upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
+    return dom.serialize();
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(
+      '[schema-org] Failed to inject schema, returning original body:',
+      e,
+    );
+    return body;
+  }
 };

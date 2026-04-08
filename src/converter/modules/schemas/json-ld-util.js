@@ -21,7 +21,10 @@ export const upsertJsonLdScript = (document, schema, scriptId) => {
   const schemaScript = createElement(
     `<script id="${scriptId}" type="application/ld+json"></script>`,
   );
-  schemaScript.textContent = JSON.stringify(schema);
+  schemaScript.textContent = JSON.stringify(schema).replace(
+    /<\/script>/gi,
+    '<\\/script>',
+  );
   document.head.appendChild(schemaScript);
   return true;
 };

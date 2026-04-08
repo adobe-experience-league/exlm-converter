@@ -31,7 +31,6 @@ export const buildArticleSchema = (document, path, contentType = '') => {
     dateCreated,
     datePublished,
     dateModified,
-    image,
     audienceType,
     about,
     keywords,
@@ -55,7 +54,6 @@ export const buildArticleSchema = (document, path, contentType = '') => {
   addIfPresent(schema, 'dateCreated', dateCreated);
   addIfPresent(schema, 'datePublished', datePublished);
   addIfPresent(schema, 'dateModified', dateModified);
-  addIfPresent(schema, 'image', image);
   addIfPresent(schema, 'publisher', ADOBE_PUBLISHER);
 
   if (audienceType.length > 0) {
