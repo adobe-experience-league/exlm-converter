@@ -115,6 +115,7 @@ export function updateLegacyAndV2Tags(document) {
     'sub-feature': 'subfeature_v1',
     industry: 'industry_v1',
     topic: 'topic_v1',
+    solution: 'solution_v1',
   };
 
   Object.entries(legacyToV1Mapping).forEach(([legacyKey, v1Key]) => {
@@ -412,7 +413,11 @@ export const createTranslatedMetadata = async (document, lang) => {
           result.status === 'fulfilled' ? result.value : tags[index],
         );
 
-        setMetadata(document, `loc-${metaType}`, localizedLabels.join(','));
+        setMetadata(
+          document,
+          `loc-legacy-${metaType}`,
+          localizedLabels.join(','),
+        );
       }
     }),
   );
