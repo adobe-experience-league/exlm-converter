@@ -17,12 +17,14 @@ import {
   createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
+  updateLegacyAndV2Tags,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
 import { translateBlockTags } from './utils/tag-translation-utils.js';
 import hashQuizAnswers from './utils/hash-quiz-answers.js';
+import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 
 export const aioLogger = Logger('render-aem');
 
@@ -42,7 +44,13 @@ async function transformAemPageMetadata(htmlString, params, path) {
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
+
   await createTranslatedMetadata(document, lang);
+
+  // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
+  if (paramMemoryStore.hasFeatureFlag('usetq')) {
+    updateLegacyAndV2Tags(document);
+  }
 
   const publishedTime = getMetadata(document, 'published-time');
   const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
