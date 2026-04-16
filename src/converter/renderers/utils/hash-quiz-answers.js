@@ -4,6 +4,21 @@
 import { generateHash } from './aem-page-meta-utils.js';
 import { setMetadata } from '../../modules/utils/dom-utils.js';
 
+const QUIZ_FRAGMENT_PATH = '/quiz-completion-fragments/quiz-';
+
+/**
+ * @param {Element} el
+ * @returns {boolean} true if this child should be processed as a quiz question
+ */
+function isQuizQuestionChild(el) {
+  const anchor = el.querySelector('a');
+  const href = anchor?.getAttribute('href');
+  if (href?.includes(QUIZ_FRAGMENT_PATH)) {
+    return false;
+  }
+  return true;
+}
+
 /**
  * Creates a canonical version of text (trimmed, lowercase)
  * @param {string} text The text to canonicalize
@@ -119,6 +134,7 @@ export default async function hashQuizAnswers(document, path) {
     // Skip the other elements and process only the questions
     Array.from(quizBlock.children)
       .slice(4)
+      .filter(isQuizQuestionChild)
       .forEach((question, index) => {
         promises.push(processQuestion(question, index, path, salt));
       });
