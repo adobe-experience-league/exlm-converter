@@ -151,7 +151,7 @@ function getLocalToken(isProd) {
  * @param {string} params.coveoSecretPath - Vault path to Coveo tokens (same path for both prod and nonprod)
  * @param {string} params.coveoSecretKeyProd - The key name for production token in Vault (default: 'prod_token')
  * @param {string} params.coveoSecretKeyNonprod - The key name for nonprod token in Vault (default: 'nonprod_token')
- * @param {number} params.cacheTtlHours - Cache TTL in hours (default: 24)
+ * @param {number} params.vaultTokenCacheTtlSeconds - Vault token cache TTL in seconds
  * @returns {Promise<Object>} - The token response
  */
 export const main = async function main(params) {
@@ -162,7 +162,7 @@ export const main = async function main(params) {
     coveoSecretPath,
     coveoSecretKeyProd = 'prod_token',
     coveoSecretKeyNonprod = 'nonprod_token',
-    vaulTokenCacheTtlHours = 24,
+    vaultTokenCacheTtlSeconds, // No default - caching disabled if not provided
     __ow_headers, // eslint-disable-line camelcase
   } = params;
 
@@ -196,9 +196,7 @@ export const main = async function main(params) {
 
     // 1. Primary: Use Vault with AppRole authentication (production path)
     if (hasVaultConfig) {
-      aioLogger.info(
-        `Fetching Coveo token from Vault using AppRole for ${environment} environment`,
-      );
+      aioLogger.info(`Determined environment - ${environment}`);
 
       // Validate secret path
       if (!coveoSecretPath) {
@@ -216,15 +214,15 @@ export const main = async function main(params) {
       );
 
       // Initialize AIO state for caching
-      const state = await stateLib.init();
+      const adobeIOState = await stateLib.init();
 
       // Create Vault service with AppRole authentication
       const vaultService = createVaultService({
         endpoint: vaultEndpoint,
         roleId: vaultRoleId,
         secretId: vaultSecretId,
-        state,
-        vaulTokenCacheTtlHours,
+        state: adobeIOState,
+        cacheTtlSeconds: vaultTokenCacheTtlSeconds,
       });
 
       const token = await vaultService.readSecretKey(
@@ -238,10 +236,6 @@ export const main = async function main(params) {
         );
         return sendError(500, 'Failed to retrieve valid token from Vault');
       }
-
-      aioLogger.info(
-        `Successfully retrieved Coveo token from Vault for ${environment} environment`,
-      );
 
       return {
         statusCode: 200,

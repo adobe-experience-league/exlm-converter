@@ -20,7 +20,7 @@ const aioLogger = Logger('vault-service');
  * Uses AppRole authentication and Adobe I/O state library for caching
  */
 export class VaultService {
-  constructor({ endpoint, roleId, secretId, state, cacheTtlHours }) {
+  constructor({ endpoint, roleId, secretId, state, cacheTtlSeconds }) {
     if (!roleId || !secretId) {
       throw new Error('AppRole credentials (roleId and secretId) are required');
     }
@@ -28,8 +28,6 @@ export class VaultService {
     if (!state) {
       throw new Error('State store is required');
     }
-
-    aioLogger.info(cacheTtlHours);
 
     this.vaultClient = vault({
       apiVersion: 'v1',
@@ -40,34 +38,65 @@ export class VaultService {
     this.secretId = secretId;
     this.authenticated = false;
 
-    this.cacheTtlSeconds = Math.floor(cacheTtlHours * 3600);
+    // Parse and validate cacheTtlSeconds (convert string to number if needed)
+    // If not provided or invalid, caching is disabled (null)
+    let ttl = null;
+    if (cacheTtlSeconds !== undefined && cacheTtlSeconds !== null) {
+      const parsed = Number(cacheTtlSeconds);
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        ttl = parsed;
+      }
+    }
+    this.cacheTtlSeconds = ttl;
+    this.cachingEnabled = ttl !== null;
     this.stateStore = state;
-    aioLogger.info(
-      `[VAULT] Initialized with endpoint: ${endpoint}, cache TTL: ${this.cacheTtlSeconds}s`,
-    );
+
+    if (this.cachingEnabled) {
+      aioLogger.info(
+        `[VAULT] Initialized with endpoint: ${endpoint}, caching ENABLED with TTL: ${this.cacheTtlSeconds}s`,
+      );
+    } else {
+      aioLogger.info(
+        `[VAULT] Initialized with endpoint: ${endpoint}, caching DISABLED (no TTL configured)`,
+      );
+    }
   }
 
   // Generate unique cache key for vault path using base64 encoding
 
   static getCacheKey(path) {
-    return `vault_${Buffer.from(path).toString('base64')}`;
+    const sanitized = path.replace(/[^a-zA-Z0-9-_.]/g, '_');
+    return `vault__${sanitized}`;
   }
 
   // Get cached data if valid, otherwise return null
 
   async getCachedData(cacheKey) {
+    // Skip caching if disabled
+    if (!this.cachingEnabled) {
+      return null;
+    }
+
     try {
       const result = await this.stateStore.get(cacheKey);
       const value = result?.value ?? null;
-      aioLogger.info(value);
+
       if (value) {
-        aioLogger.info(`[VAULT] ✅ CACHE HIT for key: ${cacheKey}`);
+        aioLogger.info(`[VAULT] Using cached data`);
+        try {
+          return JSON.parse(value);
+        } catch (parseError) {
+          aioLogger.error(
+            `[VAULT] Failed to parse cached data: ${parseError.message}`,
+          );
+          return null;
+        }
       } else {
-        aioLogger.info(`[VAULT] ❌ CACHE MISS for key: ${cacheKey}`);
+        aioLogger.info(`[VAULT] Cache miss, fetching from Vault`);
       }
-      return value;
+      return null;
     } catch (error) {
-      aioLogger.warn(`[VAULT] Cache read error: ${error.message}`);
+      aioLogger.error(`[VAULT] Cache read error: ${error.message}`);
       return null;
     }
   }
@@ -75,11 +104,31 @@ export class VaultService {
   // Cache data with TTL
 
   async setCachedData(cacheKey, data, ttlSeconds = this.cacheTtlSeconds) {
+    // Skip caching if disabled
+    if (!this.cachingEnabled) {
+      aioLogger.debug(`[VAULT] Caching disabled, skipping cache write`);
+      return;
+    }
+
     try {
-      await this.stateStore.put(cacheKey, data, { ttl: ttlSeconds });
-      aioLogger.info(`[VAULT] Data cached (${ttlSeconds}s)`);
+      // Ensure ttl is a number (convert from string if needed)
+      const ttl =
+        typeof ttlSeconds === 'number'
+          ? ttlSeconds
+          : Number(ttlSeconds) || this.cacheTtlSeconds;
+      const valueToStore =
+        typeof data === 'string' ? data : JSON.stringify(data);
+
+      await this.stateStore.put(cacheKey, valueToStore, { ttl });
+      const expiresAt = new Date(Date.now() + ttl * 1000);
+      aioLogger.info(
+        `[VAULT] Cached | Expires: ${expiresAt.toISOString()} | TTL: ${ttl}s (${(
+          ttl / 3600
+        ).toFixed(1)}h)`,
+      );
     } catch (error) {
-      aioLogger.warn(`[VAULT] Cache write error: ${error.message}`);
+      aioLogger.error(`[VAULT] Cache write failed: ${error.message}`);
+      throw error;
     }
   }
 
@@ -101,9 +150,6 @@ export class VaultService {
     if (cachedAuth?.token) {
       this.vaultClient.token = cachedAuth.token;
       this.authenticated = true;
-      aioLogger.info(
-        '[VAULT] Using cached auth token (no re-authentication needed)',
-      );
       return;
     }
 
