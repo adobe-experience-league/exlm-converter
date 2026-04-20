@@ -10,7 +10,6 @@ import {
 
 const ARTICLE_TYPE_MAP = {
   Documentation: 'HowTo',
-  Certification: 'HowTo',
   Tutorial: 'TechArticle',
   Troubleshooting: 'TechArticle',
 };
