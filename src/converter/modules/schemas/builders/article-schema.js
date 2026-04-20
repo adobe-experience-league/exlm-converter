@@ -6,6 +6,7 @@ import {
   ADOBE_PUBLISHER,
   addIfPresent,
   extractCommonMetadata,
+  toSingleOrArray,
 } from '../schema-helpers.js';
 
 const ARTICLE_TYPE_MAP = {
@@ -13,6 +14,9 @@ const ARTICLE_TYPE_MAP = {
   Tutorial: 'TechArticle',
   Troubleshooting: 'TechArticle',
 };
+
+// These content types use a single object (not array) for `about` when there is only one entry
+const SINGLE_ABOUT_TYPES = new Set(['Troubleshooting', 'Tutorial']);
 
 const ARTICLE_ID_FRAGMENT_MAP = {
   Tutorial: 'techarticle',
@@ -58,18 +62,21 @@ export const buildArticleSchema = (document, path, contentType = '') => {
   if (audienceType.length > 0) {
     addIfPresent(schema, 'audience', {
       '@type': AUDIENCE_TYPE,
-      audienceType,
+      audienceType: toSingleOrArray(audienceType),
     });
   }
 
   if (about.length > 0) {
+    const aboutObjects = about.map((name) => ({
+      '@type': SOFTWARE_APPLICATION_TYPE,
+      name,
+    }));
     addIfPresent(
       schema,
       'about',
-      about.map((name) => ({
-        '@type': SOFTWARE_APPLICATION_TYPE,
-        name,
-      })),
+      SINGLE_ABOUT_TYPES.has(contentType)
+        ? toSingleOrArray(aboutObjects)
+        : aboutObjects,
     );
   }
 

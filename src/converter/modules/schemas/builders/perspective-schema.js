@@ -6,6 +6,7 @@ import {
   ADOBE_PUBLISHER,
   addIfPresent,
   extractCommonMetadata,
+  toSingleOrArray,
 } from '../schema-helpers.js';
 
 const PERSPECTIVE_TYPE = 'BlogPosting';
@@ -53,7 +54,7 @@ export const buildPerspectiveSchema = (document, path) => {
   if (audienceType.length > 0) {
     addIfPresent(schema, 'audience', {
       '@type': AUDIENCE_TYPE,
-      audienceType,
+      audienceType: toSingleOrArray(audienceType),
     });
   }
 
