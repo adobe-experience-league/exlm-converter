@@ -15,9 +15,6 @@ const ARTICLE_TYPE_MAP = {
   Troubleshooting: 'TechArticle',
 };
 
-// These content types use a single object (not array) for `about` when there is only one entry
-const SINGLE_ABOUT_TYPES = new Set(['Troubleshooting', 'Tutorial']);
-
 const ARTICLE_ID_FRAGMENT_MAP = {
   Tutorial: 'techarticle',
 };
@@ -71,13 +68,7 @@ export const buildArticleSchema = (document, path, contentType = '') => {
       '@type': SOFTWARE_APPLICATION_TYPE,
       name,
     }));
-    addIfPresent(
-      schema,
-      'about',
-      SINGLE_ABOUT_TYPES.has(contentType)
-        ? toSingleOrArray(aboutObjects)
-        : aboutObjects,
-    );
+    addIfPresent(schema, 'about', toSingleOrArray(aboutObjects));
   }
 
   addIfPresent(schema, 'keywords', keywords);
