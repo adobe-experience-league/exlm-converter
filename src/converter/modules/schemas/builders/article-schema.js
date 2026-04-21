@@ -6,11 +6,11 @@ import {
   ADOBE_PUBLISHER,
   addIfPresent,
   extractCommonMetadata,
+  toSingleOrArray,
 } from '../schema-helpers.js';
 
 const ARTICLE_TYPE_MAP = {
   Documentation: 'HowTo',
-  Certification: 'HowTo',
   Tutorial: 'TechArticle',
   Troubleshooting: 'TechArticle',
 };
@@ -59,19 +59,16 @@ export const buildArticleSchema = (document, path, contentType = '') => {
   if (audienceType.length > 0) {
     addIfPresent(schema, 'audience', {
       '@type': AUDIENCE_TYPE,
-      audienceType,
+      audienceType: toSingleOrArray(audienceType),
     });
   }
 
   if (about.length > 0) {
-    addIfPresent(
-      schema,
-      'about',
-      about.map((name) => ({
-        '@type': SOFTWARE_APPLICATION_TYPE,
-        name,
-      })),
-    );
+    const aboutObjects = about.map((name) => ({
+      '@type': SOFTWARE_APPLICATION_TYPE,
+      name,
+    }));
+    addIfPresent(schema, 'about', toSingleOrArray(aboutObjects));
   }
 
   addIfPresent(schema, 'keywords', keywords);

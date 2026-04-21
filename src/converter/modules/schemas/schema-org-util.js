@@ -9,11 +9,11 @@ const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
 
 const SCHEMA_BUILDERS = {
   Documentation: buildArticleSchema,
-  Certification: buildArticleSchema,
   Tutorial: buildArticleSchema,
   Troubleshooting: buildArticleSchema,
   Perspective: buildPerspectiveSchema,
   Course: buildCourseSchema,
+  Certification: buildCourseSchema,
 };
 
 const buildSchemaFromMeta = (document, path) => {
