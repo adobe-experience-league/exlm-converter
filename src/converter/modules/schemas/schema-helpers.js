@@ -29,6 +29,8 @@ export const getCsvValues = (value = '') =>
 
 export const dedupeStrings = (values = []) => [...new Set(values)];
 
+export const toSingleOrArray = (arr) => (arr.length === 1 ? arr[0] : arr);
+
 export const getFirstNonEmpty = (...values) =>
   values.find((value) => typeof value === 'string' && value.trim()) || '';
 
