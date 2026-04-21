@@ -63,7 +63,7 @@ try {
 export const render = async function render(path, params) {
   paramMemoryStore.set(params);
   const withSchema = (response) => {
-    if (!response?.error) {
+    if (!response?.error && paramMemoryStore.hasFeatureFlag('schema-org')) {
       return {
         ...response,
         body: injectSchemaOrg({
