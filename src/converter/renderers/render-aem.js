@@ -53,13 +53,21 @@ async function transformAemPageMetadata(htmlString, params, path) {
   }
 
   const publishedTime = getMetadata(document, 'published-time');
-  const lastContentModifiedTime = getMetadata(
-    document,
-    'content-modified-time',
-  );
-  const lastUpdate = lastContentModifiedTime
-    ? new Date(lastContentModifiedTime)
+  const modifiedTime = getMetadata(document, 'modified-time');
+
+  let contentModifiedTime = getMetadata(document, 'content-modified-time');
+
+  // If not present, initialize it with modified-time
+  if (!contentModifiedTime) {
+    contentModifiedTime = modifiedTime;
+    setMetadata(document, 'content-modified-time', contentModifiedTime);
+  }
+
+  // Always prefer content-modified-time for last-update
+  const lastUpdate = contentModifiedTime
+    ? new Date(contentModifiedTime)
     : new Date(publishedTime);
+
   setMetadata(document, 'last-update', lastUpdate);
 
   if (
