@@ -21,16 +21,12 @@ import {
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
-import { getLastUpdateOverride } from '../modules/utils/perspective-last-update-overrides.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
 import { translateBlockTags } from './utils/tag-translation-utils.js';
 import hashQuizAnswers from './utils/hash-quiz-answers.js';
 
 export const aioLogger = Logger('render-aem');
-
-const PERSPECTIVE_LAST_UPDATE_OVERRIDES_FLAG =
-  'perspective-last-update-overrides';
 
 const byteSize = (str) => new Blob([str]).size;
 const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 for good measure :)
@@ -57,17 +53,13 @@ async function transformAemPageMetadata(htmlString, params, path) {
   }
 
   const publishedTime = getMetadata(document, 'published-time');
-  const defaultLastUpdate = publishedTime
-    ? new Date(publishedTime)
-    : new Date();
-  const isPerspectiveArticle =
-    path.includes('/perspectives/') && !path.includes('/perspectives/authors');
-  const override =
-    isPerspectiveArticle &&
-    paramMemoryStore.hasFeatureFlag(PERSPECTIVE_LAST_UPDATE_OVERRIDES_FLAG)
-      ? getLastUpdateOverride(path)
-      : null;
-  const lastUpdate = override ?? defaultLastUpdate;
+  const lastContentModifiedTime = getMetadata(
+    document,
+    'content-modified-time',
+  );
+  const lastUpdate = lastContentModifiedTime
+    ? new Date(lastContentModifiedTime)
+    : new Date(publishedTime);
   setMetadata(document, 'last-update', lastUpdate);
 
   if (
