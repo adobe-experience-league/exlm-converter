@@ -57,9 +57,19 @@ async function transformAemPageMetadata(htmlString, params, path) {
   }
 
   const publishedTime = getMetadata(document, 'published-time');
-  const defaultLastUpdate = publishedTime
-    ? new Date(publishedTime)
-    : new Date();
+  let contentModifiedTime = getMetadata(document, 'content-modified-time');
+
+  // If not present, initialize it with published-time
+  if (!contentModifiedTime) {
+    contentModifiedTime = publishedTime;
+    setMetadata(document, 'content-modified-time', contentModifiedTime);
+  }
+  const parseDate = (dateStr) =>
+    dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
+
+  const defaultLastUpdate = contentModifiedTime
+    ? parseDate(contentModifiedTime)
+    : parseDate(publishedTime);
   const isPerspectiveArticle =
     path.includes('/perspectives/') && !path.includes('/perspectives/authors');
   const override =
@@ -68,7 +78,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
       ? getLastUpdateOverride(path)
       : null;
   const lastUpdate = override ?? defaultLastUpdate;
-  setMetadata(document, 'last-update', lastUpdate);
+  setMetadata(document, 'last-update', lastUpdate.toString());
 
   if (
     path.includes('/perspectives/') &&
