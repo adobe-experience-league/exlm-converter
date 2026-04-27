@@ -57,13 +57,8 @@ async function transformAemPageMetadata(htmlString, params, path) {
   }
 
   const publishedTime = getMetadata(document, 'published-time');
-  let contentModifiedTime = getMetadata(document, 'content-modified-time');
+  const contentModifiedTime = getMetadata(document, 'content-modified-time');
 
-  // If not present, initialize it with published-time
-  if (!contentModifiedTime) {
-    contentModifiedTime = publishedTime;
-    setMetadata(document, 'content-modified-time', contentModifiedTime);
-  }
   const parseDate = (dateStr) =>
     dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
 
