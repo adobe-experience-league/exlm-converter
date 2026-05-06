@@ -98,7 +98,10 @@ export const render = async function render(path, params) {
   }
 
   if (isPlaylistsPath(path)) {
-    return renderPlaylist(path, params?.authorization);
+    const playlistResponse = await renderPlaylist(path, params?.authorization);
+    return paramMemoryStore.hasFeatureFlag('schema-org-playlist')
+      ? withSchema(playlistResponse)
+      : playlistResponse;
   }
 
   if (isSlidesPath(path)) {

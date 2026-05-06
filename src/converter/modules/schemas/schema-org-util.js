@@ -4,8 +4,9 @@ import { upsertJsonLdScript } from './json-ld-util.js';
 import { buildArticleSchema } from './builders/article-schema.js';
 import { buildPerspectiveSchema } from './builders/perspective-schema.js';
 import { buildCourseSchema } from './builders/course-schema.js';
+import { buildPlaylistSchema } from './builders/playlist-schema.js';
 
-const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
+export const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
 
 const SCHEMA_BUILDERS = {
   Documentation: buildArticleSchema,
@@ -17,6 +18,9 @@ const SCHEMA_BUILDERS = {
 };
 
 const buildSchemaFromMeta = (document, path) => {
+  if (path.includes('/playlists/')) {
+    return buildPlaylistSchema(document, path);
+  }
   const contentType = getMetadata(document, 'coveo-content-type');
   const builder = SCHEMA_BUILDERS[contentType];
   if (!builder) return null;
@@ -34,6 +38,11 @@ export const injectSchemaOrg = ({ path, body, headers = {} }) => {
     const { document } = dom.window;
     const schema = buildSchemaFromMeta(document, path);
     if (!schema) return body;
+    if (path.includes('/playlists/')) {
+      document
+        .querySelectorAll('script[type="application/ld+json"]')
+        .forEach((el) => el.remove());
+    }
     upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
     return dom.serialize();
   } catch (e) {
