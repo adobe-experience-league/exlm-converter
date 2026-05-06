@@ -10,6 +10,10 @@ import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { createPlaylist } from './playlists/create-playlist.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
+import { upsertJsonLdScript } from '../modules/schemas/json-ld-util.js';
+import { buildPlaylistSchema } from '../modules/schemas/builders/playlist-schema.js';
+
+const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
 
 async function renderPlaylistV1({ path, playlistId, lang }) {
   const defaultExlClient = await createDefaultExlClient();
@@ -57,15 +61,16 @@ async function renderPlaylistV1({ path, playlistId, lang }) {
 async function renderPlaylistV2({ playlistId, lang, authorization }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
 
-  const playlistHtmlResponse = await defaultExlClientv2.getPlaylistHtmlById(
-    playlistId,
-    lang,
-    {
+  const [playlistHtmlResponse, playlistJsonResponse] = await Promise.all([
+    defaultExlClientv2.getPlaylistHtmlById(playlistId, lang, {
       headers: {
         ...(authorization && { authorization }),
       },
-    },
-  );
+    }),
+    paramMemoryStore.hasFeatureFlag('schema-org')
+      ? defaultExlClientv2.getPlaylistJsonById(playlistId, lang)
+      : Promise.resolve(null),
+  ]);
 
   if (!playlistHtmlResponse.ok) {
     return {
@@ -76,7 +81,22 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
     };
   }
 
-  const html = await playlistHtmlResponse.text();
+  let html = await playlistHtmlResponse.text();
+
+  if (playlistJsonResponse?.ok) {
+    try {
+      const { data } = await playlistJsonResponse.json();
+      const schema = buildPlaylistSchema(data, lang);
+      if (schema) {
+        const dom = new jsdom.JSDOM(html);
+        upsertJsonLdScript(dom.window.document, schema, SCHEMA_SCRIPT_ID);
+        html = dom.serialize();
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[schema-org] Failed to inject playlist schema:', e);
+    }
+  }
 
   return {
     body: html,

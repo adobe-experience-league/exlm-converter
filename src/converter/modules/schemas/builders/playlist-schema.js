@@ -1,0 +1,109 @@
+import {
+  SCHEMA_ORG_CONTEXT,
+  SOFTWARE_APPLICATION_TYPE,
+  ADOBE_PUBLISHER,
+  addIfPresent,
+  toIsoDate,
+  dedupeStrings,
+  EXL_HOST,
+} from '../schema-helpers.js';
+import { getThumbnail } from '../../../renderers/playlists/create-playlist.js';
+
+const getFirstProductAbout = (products = []) => {
+  const id = products[0]?.id;
+  if (!id) return undefined;
+  return { '@type': SOFTWARE_APPLICATION_TYPE, name: id };
+};
+
+const buildKeywords = (products = [], features = []) =>
+  dedupeStrings([...products.map((p) => p.id).filter(Boolean), ...features]);
+
+const safeGetThumbnail = (thumbnailUrls) => {
+  if (!Array.isArray(thumbnailUrls) || thumbnailUrls.length === 0)
+    return undefined;
+  try {
+    return getThumbnail(thumbnailUrls);
+  } catch {
+    return undefined;
+  }
+};
+
+const buildVideoObject = (video, itemListId) => {
+  const jld = video.jsonLinkedData || {};
+  const obj = { '@type': 'VideoObject' };
+  addIfPresent(obj, '@id', video.url ? `${video.url}#video` : undefined);
+  addIfPresent(obj, 'name', jld.name);
+  addIfPresent(obj, 'url', video.url);
+  addIfPresent(obj, 'description', jld.description);
+  addIfPresent(obj, 'uploadDate', toIsoDate(jld.uploadDate));
+  if (Array.isArray(jld.thumbnailUrl) && jld.thumbnailUrl.length > 0) {
+    obj.thumbnailUrl = jld.thumbnailUrl;
+  }
+  addIfPresent(obj, 'duration', jld.duration);
+  addIfPresent(obj, 'embedUrl', jld.embedUrl);
+  addIfPresent(obj, 'isPartOf', { '@id': itemListId });
+  return obj;
+};
+
+/**
+ * Builds a schema.org @graph for a playlist page from the raw API JSON payload.
+ *
+ * @param {Object} data - The `data` field from the playlist API JSON response
+ * @param {string} lang - BCP-47 language code (e.g. "en")
+ * @returns {Object|null} JSON-LD schema object, or null if required fields are missing
+ */
+export const buildPlaylistSchema = (data, lang) => {
+  if (!data || !data.path || !data.title) return null;
+
+  const canonicalUrl = `${EXL_HOST}${data.path}`;
+  const itemListId = `${canonicalUrl}#/itemlist`;
+  const videos = data.videos || [];
+  const products = data.product || [];
+  const features = data.frontmatter?.feature || [];
+
+  const about = getFirstProductAbout(products);
+  const keywords = buildKeywords(products, features);
+  const primaryImageUrl = safeGetThumbnail(
+    videos[0]?.jsonLinkedData?.thumbnailUrl,
+  );
+
+  const webPage = { '@type': 'WebPage' };
+  addIfPresent(webPage, '@id', canonicalUrl);
+  addIfPresent(webPage, 'url', canonicalUrl);
+  addIfPresent(webPage, 'name', data.title);
+  addIfPresent(webPage, 'description', data.description);
+  addIfPresent(webPage, 'inLanguage', lang);
+  addIfPresent(webPage, 'datePublished', toIsoDate(data.git?.created));
+  addIfPresent(webPage, 'dateModified', toIsoDate(data.git?.updated));
+  addIfPresent(webPage, 'publisher', ADOBE_PUBLISHER);
+  addIfPresent(webPage, 'about', about);
+  addIfPresent(webPage, 'keywords', keywords.length > 0 ? keywords : undefined);
+  if (primaryImageUrl) {
+    webPage.primaryImageOfPage = {
+      '@type': 'ImageObject',
+      url: primaryImageUrl,
+    };
+  }
+  webPage.mainEntity = { '@id': itemListId };
+
+  const itemList = { '@type': 'ItemList', '@id': itemListId };
+  addIfPresent(itemList, 'url', canonicalUrl);
+  addIfPresent(itemList, 'name', data.title);
+  addIfPresent(itemList, 'description', data.description);
+  addIfPresent(itemList, 'numberOfItems', videos.length);
+  itemList.itemListOrder = 'https://schema.org/ItemListOrderAscending';
+  itemList.itemListElement = videos.map((video, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: video.url,
+  }));
+
+  const videoObjects = videos.map((video) =>
+    buildVideoObject(video, itemListId),
+  );
+
+  return {
+    '@context': SCHEMA_ORG_CONTEXT,
+    '@graph': [webPage, itemList, ...videoObjects],
+  };
+};
