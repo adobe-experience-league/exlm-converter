@@ -1,13 +1,28 @@
 import {
   SCHEMA_ORG_CONTEXT,
   SOFTWARE_APPLICATION_TYPE,
-  ADOBE_PUBLISHER,
   addIfPresent,
   toIsoDate,
   dedupeStrings,
   EXL_HOST,
 } from '../schema-helpers.js';
 import { getThumbnail } from '../../../renderers/playlists/create-playlist.js';
+
+const PUBLISHER_ID = `${EXL_HOST}/#/publisher`;
+
+// Full publisher used on the WebPage node (includes name and url for discoverability)
+const PLAYLIST_PAGE_PUBLISHER = {
+  '@type': 'Organization',
+  '@id': PUBLISHER_ID,
+  name: 'Adobe',
+  url: EXL_HOST,
+};
+
+// Compact publisher reference used on each VideoObject (linked by @id, no redundant fields)
+const VIDEO_PUBLISHER = {
+  '@type': 'Organization',
+  '@id': PUBLISHER_ID,
+};
 
 const getFirstProductAbout = (products = []) => {
   const id = products[0]?.id;
@@ -100,13 +115,13 @@ export const buildPlaylistSchema = (data, lang) => {
   addIfPresent(webPage, 'inLanguage', lang);
   addIfPresent(webPage, 'datePublished', toIsoDate(data.git?.created));
   addIfPresent(webPage, 'dateModified', toIsoDate(data.git?.updated));
-  addIfPresent(webPage, 'publisher', ADOBE_PUBLISHER);
+  addIfPresent(webPage, 'publisher', PLAYLIST_PAGE_PUBLISHER);
   addIfPresent(webPage, 'about', about);
   addIfPresent(webPage, 'keywords', keywords.length > 0 ? keywords : undefined);
   if (primaryImageUrl) {
     webPage.primaryImageOfPage = {
       '@type': 'ImageObject',
-      '@id': primaryImageUrl,
+      '@id': `${canonicalUrl}#hero`,
       url: primaryImageUrl,
     };
   }
@@ -127,7 +142,7 @@ export const buildPlaylistSchema = (data, lang) => {
   }));
 
   const videoObjects = videos.map((video) =>
-    buildVideoObject(video, itemListId, lang, ADOBE_PUBLISHER, about),
+    buildVideoObject(video, itemListId, lang, VIDEO_PUBLISHER, about),
   );
 
   return {
