@@ -89,7 +89,11 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
       const schema = buildPlaylistSchema(data, lang);
       if (schema) {
         const dom = new jsdom.JSDOM(html);
-        upsertJsonLdScript(dom.window.document, schema, SCHEMA_SCRIPT_ID);
+        const { document } = dom.window;
+        document
+          .querySelectorAll('script[type="application/ld+json"]')
+          .forEach((el) => el.remove());
+        upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
         html = dom.serialize();
       }
     } catch (e) {
