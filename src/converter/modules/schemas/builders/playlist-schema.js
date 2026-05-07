@@ -28,6 +28,30 @@ const safeGetThumbnail = (thumbnailUrls) => {
   }
 };
 
+// Strips zero-value hour/minute designators from ISO 8601 duration strings.
+// PT0H1M35S → PT1M35S, PT0H0M35S → PT35S, PT1H0M0S → PT1H0M0S
+const normalizeDuration = (duration) => {
+  if (!duration || typeof duration !== 'string') return duration;
+  const match = duration.match(/^PT(\d+)H(\d+)M(\d+)S$/);
+  if (!match) return duration;
+  const [h, m, s] = match.slice(1).map(Number);
+  if (h > 0) return `PT${h}H${m}M${s}S`;
+  if (m > 0) return `PT${m}M${s}S`;
+  return `PT${s}S`;
+};
+
+// Preserves full ISO 8601 datetime if the value is a valid date-time string,
+// otherwise falls back to date-only via toIsoDate.
+const toUploadDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  // Keep the full timestamp when the source includes time info
+  return typeof value === 'string' && value.includes('T')
+    ? date.toISOString()
+    : toIsoDate(value);
+};
+
 const buildVideoObject = (video, itemListId) => {
   const jld = video.jsonLinkedData || {};
   const obj = { '@type': 'VideoObject' };
@@ -35,11 +59,9 @@ const buildVideoObject = (video, itemListId) => {
   addIfPresent(obj, 'name', jld.name);
   addIfPresent(obj, 'url', video.url);
   addIfPresent(obj, 'description', jld.description);
-  addIfPresent(obj, 'uploadDate', toIsoDate(jld.uploadDate));
-  if (Array.isArray(jld.thumbnailUrl) && jld.thumbnailUrl.length > 0) {
-    obj.thumbnailUrl = jld.thumbnailUrl;
-  }
-  addIfPresent(obj, 'duration', jld.duration);
+  addIfPresent(obj, 'uploadDate', toUploadDate(jld.uploadDate));
+  addIfPresent(obj, 'thumbnailUrl', safeGetThumbnail(jld.thumbnailUrl));
+  addIfPresent(obj, 'duration', normalizeDuration(jld.duration));
   addIfPresent(obj, 'embedUrl', jld.embedUrl);
   addIfPresent(obj, 'isPartOf', { '@id': itemListId });
   return obj;
@@ -91,11 +113,13 @@ export const buildPlaylistSchema = (data, lang) => {
   addIfPresent(itemList, 'name', data.title);
   addIfPresent(itemList, 'description', data.description);
   addIfPresent(itemList, 'numberOfItems', videos.length);
+  addIfPresent(itemList, 'isPartOf', { '@id': canonicalUrl });
   itemList.itemListOrder = 'https://schema.org/ItemListOrderAscending';
   itemList.itemListElement = videos.map((video, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     url: video.url,
+    ...(video.url && { item: { '@id': `${video.url}#video` } }),
   }));
 
   const videoObjects = videos.map((video) =>
