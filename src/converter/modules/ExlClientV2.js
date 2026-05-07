@@ -93,6 +93,26 @@ export default class ExlClientV2 {
       },
     });
   }
+
+  /**
+   * Get Playlist By ID as JSON
+   * @param {string} id
+   * @param {string} lang
+   * @param {RequestInit} requestOptions
+   * @returns {Promise<Response>}
+   */
+  async getPlaylistJsonById(id, lang = 'en', requestOptions = {}) {
+    const path = `api/v2/playlists/${id}?lang=${lang}`;
+    return this.doFetchJson(path, requestOptions);
+  }
+
+  async doFetchJson(path, requestOptions = {}) {
+    const url = new URL(path, this.host);
+    return fetch(url, {
+      ...requestOptions,
+      headers: { Accept: 'application/json', ...requestOptions.headers },
+    });
+  }
 }
 
 export const createDefaultExlClientV2 = async () => {
