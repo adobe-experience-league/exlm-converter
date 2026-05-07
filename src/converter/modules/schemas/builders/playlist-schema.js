@@ -52,17 +52,20 @@ const toUploadDate = (value) => {
     : toIsoDate(value);
 };
 
-const buildVideoObject = (video, itemListId) => {
+const buildVideoObject = (video, itemListId, lang, publisher, about) => {
   const jld = video.jsonLinkedData || {};
   const obj = { '@type': 'VideoObject' };
   addIfPresent(obj, '@id', video.url ? `${video.url}#video` : undefined);
   addIfPresent(obj, 'name', jld.name);
   addIfPresent(obj, 'url', video.url);
   addIfPresent(obj, 'description', jld.description);
+  addIfPresent(obj, 'inLanguage', lang);
   addIfPresent(obj, 'uploadDate', toUploadDate(jld.uploadDate));
   addIfPresent(obj, 'thumbnailUrl', safeGetThumbnail(jld.thumbnailUrl));
   addIfPresent(obj, 'duration', normalizeDuration(jld.duration));
   addIfPresent(obj, 'embedUrl', jld.embedUrl);
+  addIfPresent(obj, 'publisher', publisher);
+  addIfPresent(obj, 'about', about);
   addIfPresent(obj, 'isPartOf', { '@id': itemListId });
   return obj;
 };
@@ -103,6 +106,7 @@ export const buildPlaylistSchema = (data, lang) => {
   if (primaryImageUrl) {
     webPage.primaryImageOfPage = {
       '@type': 'ImageObject',
+      '@id': primaryImageUrl,
       url: primaryImageUrl,
     };
   }
@@ -123,7 +127,7 @@ export const buildPlaylistSchema = (data, lang) => {
   }));
 
   const videoObjects = videos.map((video) =>
-    buildVideoObject(video, itemListId),
+    buildVideoObject(video, itemListId, lang, ADOBE_PUBLISHER, about),
   );
 
   return {
