@@ -68,7 +68,11 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
       },
     }),
     paramMemoryStore.hasFeatureFlag('schema-org-playlist')
-      ? defaultExlClientv2.getPlaylistJsonById(playlistId, lang)
+      ? defaultExlClientv2.getPlaylistJsonById(playlistId, lang, {
+          headers: {
+            ...(authorization && { authorization }),
+          },
+        })
       : Promise.resolve(null),
   ]);
 

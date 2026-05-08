@@ -25,9 +25,9 @@ const VIDEO_PUBLISHER = {
 };
 
 const getFirstProductAbout = (products = []) => {
-  const id = products[0]?.id;
-  if (!id) return undefined;
-  return { '@type': SOFTWARE_APPLICATION_TYPE, name: id };
+  const productName = products[0]?.id;
+  if (!productName) return undefined;
+  return { '@type': SOFTWARE_APPLICATION_TYPE, name: productName };
 };
 
 const buildKeywords = (products = [], features = []) =>
