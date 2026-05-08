@@ -5,6 +5,10 @@ import {
   createDefaultExlClient,
   EXL_LABEL_ENDPOINTS,
 } from '../../modules/ExlClient.js';
+import {
+  createExliaTaxonomyLabelResolver,
+  extractTqUuid,
+} from '../../modules/exlia-taxonomy-client.js';
 
 /**
  * Generates a unique immutable hash for a given input string and truncates it under 50 characters.
@@ -187,23 +191,63 @@ export function updateLegacyAndV2Tags(document) {
   });
 }
 
+const LOC_V2_AND_PLAIN_BY_V2_META = {
+  role_v2: ['loc-v2-role', 'loc-role'],
+  level_v2: ['loc-v2-level', 'loc-level'],
+  feature_v2: ['loc-v2-feature', 'loc-feature'],
+};
+
+/**
+ * @param {Record<string, unknown>} item
+ * @returns {string}
+ */
+function englishLabelFromTqItem(item) {
+  if (!item || typeof item !== 'object') return '';
+  const label =
+    item.label ??
+    item['internal-label'] ??
+    item.internalLabel ??
+    item.prefLabel ??
+    '';
+  return typeof label === 'string' ? label.trim() : '';
+}
+
+/**
+ * @param {Record<string, unknown>} item
+ * @returns {string|null}
+ */
+function tqUuidFromTqItem(item) {
+  if (!item || typeof item !== 'object') return null;
+  if (item.uri != null) {
+    const fromUri = extractTqUuid(String(item.uri));
+    if (fromUri) return fromUri;
+  }
+  if (item.id != null) {
+    const idStr = String(item.id).trim();
+    return (
+      extractTqUuid(idStr) ?? extractTqUuid(idStr.replace(/^https?:\/\//i, ''))
+    );
+  }
+  return null;
+}
+
+const TQ_KEY_TO_V2_META = {
+  'tq-roles': 'role_v2',
+  'tq-levels': 'level_v2',
+  'tq-products': 'product_v2',
+  'tq-features': 'feature_v2',
+  'tq-subfeatures': 'subfeature_v2',
+  'tq-industries': 'industry_v2',
+  'tq-topics': 'topic_v2',
+};
+
 /**
  * Update TQ Tags metadata
  * Converts JSON metadata -> label-only metadata
  * @param {Document} document
  */
 export function updateTQTagsMetadata(document) {
-  const keyMapping = {
-    'tq-roles': 'role_v2',
-    'tq-levels': 'level_v2',
-    'tq-products': 'product_v2',
-    'tq-features': 'feature_v2',
-    'tq-subfeatures': 'subfeature_v2',
-    'tq-industries': 'industry_v2',
-    'tq-topics': 'topic_v2',
-  };
-
-  Object.entries(keyMapping).forEach(([key, newKey]) => {
+  Object.entries(TQ_KEY_TO_V2_META).forEach(([key, newKey]) => {
     const metaTag = getMetadata(document, key);
     if (!metaTag) return;
 
@@ -211,20 +255,88 @@ export function updateTQTagsMetadata(document) {
       const decoded = decodeHtmlEntities(metaTag);
       const parsed = JSON.parse(decoded);
 
-      if (Array.isArray(parsed)) {
-        const labels = parsed
-          .map((item) => item?.label)
-          .filter(Boolean)
-          .join(', ');
+      if (!Array.isArray(parsed)) return;
 
-        if (labels) {
-          setMetadata(document, newKey, labels);
-        }
-      }
+      const labels = parsed
+        .map((item) => {
+          if (!item || typeof item !== 'object') return '';
+          const raw = item.label;
+          return typeof raw === 'string' ? raw.trim() : '';
+        })
+        .filter(Boolean);
+
+      const joined = labels.join(', ');
+      if (!joined) return;
+
+      setMetadata(document, newKey, joined);
     } catch (e) {
       console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
     }
   });
+}
+
+/**
+ * Exlia/localized TQ v2: JSON tq-* -> *_v2 (and loc-v2-* / loc-* when non-English and resolver enabled).
+ *
+ * @param {Document} document
+ * @param {string} pathLang First URL segment locale (e.g. fr).
+ * @returns {Promise<void>}
+ */
+export async function createTranslatedV2TQMetadata(document, pathLang) {
+  const resolver = await createExliaTaxonomyLabelResolver();
+  const localize =
+    resolver.isEnabled() &&
+    typeof pathLang === 'string' &&
+    pathLang.toLowerCase() !== 'en';
+
+  const inFlightLabels = new Map();
+
+  const getLocalizedOrNull = (uuid) => {
+    if (!localize || !uuid) return Promise.resolve(null);
+    const existing = inFlightLabels.get(uuid);
+    if (existing) return existing;
+    const p = resolver.getDisplayLabel(uuid, pathLang);
+    inFlightLabels.set(uuid, p);
+    return p;
+  };
+
+  await Promise.all(
+    Object.entries(TQ_KEY_TO_V2_META).map(async ([key, newKey]) => {
+      const metaTag = getMetadata(document, key);
+      if (!metaTag) return;
+
+      try {
+        const decoded = decodeHtmlEntities(metaTag);
+        const parsed = JSON.parse(decoded);
+
+        if (!Array.isArray(parsed)) return;
+
+        const displayLabels = await Promise.all(
+          parsed.map(async (item) => {
+            const en = englishLabelFromTqItem(item);
+            const uuid = tqUuidFromTqItem(item);
+            if (!localize || !uuid) return en || null;
+            const loc = await getLocalizedOrNull(uuid);
+            return loc || en || null;
+          }),
+        );
+
+        const joined = displayLabels.filter(Boolean).join(', ');
+        if (!joined) return;
+
+        setMetadata(document, newKey, joined);
+
+        const locPair = LOC_V2_AND_PLAIN_BY_V2_META[newKey];
+        if (localize && locPair) {
+          const [locV2name, locPlain] = locPair;
+          setMetadata(document, locV2name, joined);
+          setMetadata(document, locPlain, joined);
+        }
+      } catch (e) {
+        console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
+      }
+    }),
+  );
 }
 
 /**
