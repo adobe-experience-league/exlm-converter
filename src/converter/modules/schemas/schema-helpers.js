@@ -94,8 +94,8 @@ export const extractCommonMetadata = (document, path) => {
   const inLanguage = getLanguageFromPath(path);
   const dateModified = toIsoDate(
     getFirstNonEmpty(
-      getMetadata(document, 'modified-time'),
       getMetadata(document, 'last-update'),
+      getMetadata(document, 'modified-time'),
       getMetadata(document, 'published-time'),
     ),
   );
