@@ -117,7 +117,7 @@ export const buildPlaylistSchema = (data, lang) => {
   addIfPresent(webPage, 'dateModified', toIsoDate(data.git?.updated));
   addIfPresent(webPage, 'publisher', PLAYLIST_PAGE_PUBLISHER);
   addIfPresent(webPage, 'about', about);
-  addIfPresent(webPage, 'keywords', keywords.length > 0 ? keywords : undefined);
+  addIfPresent(webPage, 'keywords', keywords);
   if (primaryImageUrl) {
     webPage.primaryImageOfPage = {
       '@type': 'ImageObject',
