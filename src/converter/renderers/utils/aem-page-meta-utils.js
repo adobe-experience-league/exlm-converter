@@ -191,12 +191,6 @@ export function updateLegacyAndV2Tags(document) {
   });
 }
 
-const LOC_V2_AND_PLAIN_BY_V2_META = {
-  role_v2: ['loc-v2-role', 'loc-role'],
-  level_v2: ['loc-v2-level', 'loc-level'],
-  feature_v2: ['loc-v2-feature', 'loc-feature'],
-};
-
 /**
  * @param {Record<string, unknown>} item
  * @returns {string}
@@ -231,14 +225,14 @@ function tqUuidFromTqItem(item) {
   return null;
 }
 
-const TQ_KEY_TO_V2_META = {
-  'tq-roles': 'role_v2',
-  'tq-levels': 'level_v2',
+const TQ_KEY_TO_META = {
+  'tq-roles': 'role',
+  'tq-levels': 'level',
   'tq-products': 'product_v2',
-  'tq-features': 'feature_v2',
-  'tq-subfeatures': 'subfeature_v2',
-  'tq-industries': 'industry_v2',
-  'tq-topics': 'topic_v2',
+  'tq-features': 'feature',
+  'tq-subfeatures': 'sub-feature',
+  'tq-industries': 'industry',
+  'tq-topics': 'topic',
 };
 
 /**
@@ -247,7 +241,7 @@ const TQ_KEY_TO_V2_META = {
  * @param {Document} document
  */
 export function updateTQTagsMetadata(document) {
-  Object.entries(TQ_KEY_TO_V2_META).forEach(([key, newKey]) => {
+  Object.entries(TQ_KEY_TO_META).forEach(([key, targetKey]) => {
     const metaTag = getMetadata(document, key);
     if (!metaTag) return;
 
@@ -268,7 +262,7 @@ export function updateTQTagsMetadata(document) {
       const joined = labels.join(', ');
       if (!joined) return;
 
-      setMetadata(document, newKey, joined);
+      setMetadata(document, targetKey, joined);
     } catch (e) {
       console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
     }
@@ -276,7 +270,7 @@ export function updateTQTagsMetadata(document) {
 }
 
 /**
- * Exlia/localized TQ v2: JSON tq-* -> *_v2 (and loc-v2-* / loc-* when non-English and resolver enabled).
+ * Exlia/localized TQ metadata: JSON tq-* -> target meta keys from TQ_KEY_TO_META.
  *
  * @param {Document} document
  * @param {string} pathLang First URL segment locale (e.g. fr).
@@ -301,7 +295,7 @@ export async function createTranslatedV2TQMetadata(document, pathLang) {
   };
 
   await Promise.all(
-    Object.entries(TQ_KEY_TO_V2_META).map(async ([key, newKey]) => {
+    Object.entries(TQ_KEY_TO_META).map(async ([key, targetKey]) => {
       const metaTag = getMetadata(document, key);
       if (!metaTag) return;
 
@@ -324,14 +318,7 @@ export async function createTranslatedV2TQMetadata(document, pathLang) {
         const joined = displayLabels.filter(Boolean).join(', ');
         if (!joined) return;
 
-        setMetadata(document, newKey, joined);
-
-        const locPair = LOC_V2_AND_PLAIN_BY_V2_META[newKey];
-        if (localize && locPair) {
-          const [locV2name, locPlain] = locPair;
-          setMetadata(document, locV2name, joined);
-          setMetadata(document, locPlain, joined);
-        }
+        setMetadata(document, targetKey, joined);
       } catch (e) {
         console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
       }
