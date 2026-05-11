@@ -5,7 +5,7 @@ import { createExliaTaxonomyLabelResolver } from '../../modules/exlia-taxonomy-c
 const MAPPING_TO_TRANSLATE = [
   {
     name: 'browse-filters',
-    tagsPosition: 2,
+    tagsPositions: [2, 5, 6],
   },
 ];
 
@@ -57,6 +57,40 @@ function formattedTags(inputString) {
 }
 
 /**
+ * Fetch taxonomy data directly from API to get both prefLabel and displayLabel
+ * @param {string} uuid
+ * @param {string} lang
+ * @param {string} baseUrl
+ * @returns {Promise<{prefLabel: string|null, displayLabel: string|null}>}
+ */
+async function fetchTaxonomyLabels(uuid, lang, baseUrl) {
+  try {
+    const url = new URL(`${baseUrl}/getTaxonomy`);
+    url.searchParams.set('uri', uuid);
+    url.searchParams.set('lang', lang);
+
+    const response = await fetch(url.toString());
+    if (!response.ok) return { prefLabel: null, displayLabel: null };
+
+    const body = await response.json();
+    if (
+      body?.success !== true ||
+      !Array.isArray(body.data) ||
+      body.data.length < 1
+    ) {
+      return { prefLabel: null, displayLabel: null };
+    }
+
+    return {
+      prefLabel: body.data[0]?.prefLabel || null,
+      displayLabel: body.data[0]?.displayLabel || null,
+    };
+  } catch {
+    return { prefLabel: null, displayLabel: null };
+  }
+}
+
+/**
  * Browse-filters / author dialog may include bare TQ UUIDs or unified_taxonomy URLs in the tag cell.
  * Resolve them via exlia getTaxonomy (parallel to legacy ExL tag translation).
  * @param {string} rawTags
@@ -80,11 +114,27 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
 
   if (uuids.size === 0) return '';
 
+  // Get base URL from params
+  const { paramMemoryStore } = await import(
+    '../../modules/utils/param-memory-store.js'
+  );
+  const params = paramMemoryStore.get();
+  const baseUrl = params?.exliaTaxonomyBaseUrl?.replace(/\/$/, '') || '';
+
+  if (!baseUrl) return '';
+
   const parts = await Promise.all(
     [...uuids].map(async (uuid) => {
-      const label = await resolver.getDisplayLabel(uuid, lang);
-      if (!label) return null;
-      return `tq/${uuid}:${label}`;
+      const { prefLabel, displayLabel } = await fetchTaxonomyLabels(
+        uuid,
+        lang,
+        baseUrl,
+      );
+      if (!displayLabel) return null;
+
+      // Use prefLabel for English, displayLabel for translated
+      const enLabel = prefLabel || displayLabel;
+      return `tq/${uuid}:${enLabel}:${displayLabel}`;
     }),
   );
 
@@ -107,48 +157,76 @@ export const translateBlockTags = async (document, lang) => {
       const block = document.querySelector(`.${blockDetails.name}`);
       if (!block) return;
 
-      const rawTags =
-        block.children[blockDetails.tagsPosition].firstElementChild.textContent;
+      // Process each possible tag position in parallel
+      await Promise.all(
+        blockDetails.tagsPositions.map(async (position) => {
+          const tagElement = block.children[position]?.firstElementChild;
+          if (!tagElement) return;
 
-      // Wait for all tag translations to complete
-      const translatedTags = await Promise.all(
-        formattedTags(rawTags).map(async (rawTag) => {
-          const values = rawTag.split('/').reverse();
-          const tag = values.shift().trim();
-          const key = `${values.pop().replace('exl:', '').trim()}`;
-          const keyMapping = TAGS_LABEL_MAPPING[key];
-          const solution = values.length ? values[0] : '';
-          if (!keyMapping) return { solution, key, tag, result: tag };
-          const result = await defaultExlClient.getLabelFromEndpoint(
-            keyMapping,
-            tag,
-            lang,
-          );
-          return { solution, key, tag, result };
+          const rawTags = tagElement.textContent.trim();
+          if (!rawTags) return;
+
+          let legacyTags = '';
+          let taxonomyTags = '';
+
+          // Check if rawTags is in JSON format [{uri:'', label:''}]
+          if (rawTags.startsWith('[') && rawTags.includes('{')) {
+            // TQ format - translate via taxonomy resolver
+            taxonomyTags = await translateTaxonomySegmentsInRawTags(
+              rawTags,
+              lang,
+              taxonomyResolver,
+            );
+          } else if (rawTags.includes('exl:')) {
+            // Legacy ExL format - translate via ExL client
+            const translatedTags = await Promise.all(
+              formattedTags(rawTags).map(async (rawTag) => {
+                const values = rawTag.split('/').reverse();
+                const tag = values.shift().trim();
+                const key = `${values.pop().replace('exl:', '').trim()}`;
+                const keyMapping = TAGS_LABEL_MAPPING[key];
+                const solution = values.length ? values[0] : '';
+                if (!keyMapping) return { solution, key, tag, result: tag };
+                const result = await defaultExlClient.getLabelFromEndpoint(
+                  keyMapping,
+                  tag,
+                  lang,
+                );
+                return { solution, key, tag, result };
+              }),
+            );
+
+            legacyTags = translatedTags
+              .map((translatedTag) => {
+                const { solution, key, tag, result } = translatedTag;
+                return solution
+                  ? `${key}/${solution}/${tag}:${result}`
+                  : `${key}/${tag}:${result}`;
+              })
+              .join(',');
+
+            // Also check for any taxonomy UUIDs in legacy format
+            const additionalTaxonomyTags =
+              await translateTaxonomySegmentsInRawTags(
+                rawTags,
+                lang,
+                taxonomyResolver,
+              );
+            if (additionalTaxonomyTags) {
+              taxonomyTags = additionalTaxonomyTags;
+            }
+          }
+
+          const tags = [legacyTags, taxonomyTags].filter(Boolean).join(',');
+
+          // Create and append the translated tags container with both TQ and legacy tags in the same div
+          if (tags) {
+            const tagsContainer = document.createElement('div');
+            tagsContainer.textContent = tags;
+            block.append(tagsContainer);
+          }
         }),
       );
-
-      // Create the tags string in format :[ key / solution /  tag_en : tag_translated ]
-      const legacyTags = translatedTags
-        .map((translatedTag) => {
-          const { solution, key, tag, result } = translatedTag;
-          return solution
-            ? `${key}/${solution}/${tag}:${result}`
-            : `${key}/${tag}:${result}`;
-        })
-        .join(',');
-
-      const taxonomyTags = await translateTaxonomySegmentsInRawTags(
-        rawTags,
-        lang,
-        taxonomyResolver,
-      );
-      const tags = [legacyTags, taxonomyTags].filter(Boolean).join(',');
-
-      // Create and append the translated tags container
-      const tagsContainer = document.createElement('div');
-      tagsContainer.innerHTML = `<div>${tags}</div>`;
-      block.append(tagsContainer);
     }),
   );
 };
