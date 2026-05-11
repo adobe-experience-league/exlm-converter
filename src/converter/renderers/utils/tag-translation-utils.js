@@ -1,4 +1,5 @@
 import { createDefaultExlClient } from '../../modules/ExlClient.js';
+import { createExliaTaxonomyLabelResolver } from '../../modules/exlia-taxonomy-client.js';
 
 // List of blocks and position of the tags inside blocks to translate.
 const MAPPING_TO_TRANSLATE = [
@@ -18,6 +19,9 @@ const TAGS_LABEL_MAPPING = {
   solution: null,
   topic: 'topics',
 };
+
+const taxonomyUuidRegex =
+  /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/gi;
 
 /**
  * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
@@ -53,6 +57,41 @@ function formattedTags(inputString) {
 }
 
 /**
+ * Browse-filters / author dialog may include bare TQ UUIDs or unified_taxonomy URLs in the tag cell.
+ * Resolve them via exlia getTaxonomy (parallel to legacy ExL tag translation).
+ * @param {string} rawTags
+ * @param {string} lang
+ * @param {Awaited<ReturnType<typeof createExliaTaxonomyLabelResolver>>} resolver
+ * @returns {Promise<string>}
+ */
+async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
+  if (
+    !rawTags ||
+    !lang ||
+    lang.toLowerCase() === 'en' ||
+    !resolver.isEnabled()
+  ) {
+    return '';
+  }
+
+  const uuids = new Set(
+    [...rawTags.matchAll(taxonomyUuidRegex)].map((m) => m[1].toLowerCase()),
+  );
+
+  if (uuids.size === 0) return '';
+
+  const parts = await Promise.all(
+    [...uuids].map(async (uuid) => {
+      const label = await resolver.getDisplayLabel(uuid, lang);
+      if (!label) return null;
+      return `tq/${uuid}:${label}`;
+    }),
+  );
+
+  return parts.filter(Boolean).join(',');
+}
+
+/**
  * Translate the required tags in a block
  * (Update MAPPING_TO_TRANSLATE in tag-translation-utils.js
  * to add new tags for translation).
@@ -62,6 +101,7 @@ function formattedTags(inputString) {
  */
 export const translateBlockTags = async (document, lang) => {
   const defaultExlClient = await createDefaultExlClient();
+  const taxonomyResolver = await createExliaTaxonomyLabelResolver();
   await Promise.all(
     MAPPING_TO_TRANSLATE.map(async (blockDetails) => {
       const block = document.querySelector(`.${blockDetails.name}`);
@@ -89,7 +129,7 @@ export const translateBlockTags = async (document, lang) => {
       );
 
       // Create the tags string in format :[ key / solution /  tag_en : tag_translated ]
-      const tags = translatedTags
+      const legacyTags = translatedTags
         .map((translatedTag) => {
           const { solution, key, tag, result } = translatedTag;
           return solution
@@ -97,6 +137,13 @@ export const translateBlockTags = async (document, lang) => {
             : `${key}/${tag}:${result}`;
         })
         .join(',');
+
+      const taxonomyTags = await translateTaxonomySegmentsInRawTags(
+        rawTags,
+        lang,
+        taxonomyResolver,
+      );
+      const tags = [legacyTags, taxonomyTags].filter(Boolean).join(',');
 
       // Create and append the translated tags container
       const tagsContainer = document.createElement('div');
