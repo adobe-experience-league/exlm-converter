@@ -134,7 +134,7 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
 
       // Use prefLabel for English, displayLabel for translated
       const enLabel = prefLabel || displayLabel;
-      return `tq/${uuid}:${enLabel}:${displayLabel}`;
+      return `tq/${uuid}/${enLabel}:${displayLabel}`;
     }),
   );
 
