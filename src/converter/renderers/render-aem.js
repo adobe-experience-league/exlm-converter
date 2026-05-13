@@ -12,6 +12,7 @@ import {
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
   updateTQTagsMetadata,
+  createTranslatedV2TQMetadata,
   decodeCQMetadata,
   generateHash,
   createTranslatedMetadata,
@@ -41,10 +42,10 @@ async function transformAemPageMetadata(htmlString, params, path) {
   const lang = path.split('/')[1];
   decodeCQMetadata(document, 'cq-tags');
   updateTQTagsMetadata(document);
+  await createTranslatedV2TQMetadata(document, lang);
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
-
   await createTranslatedMetadata(document, lang);
 
   // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
