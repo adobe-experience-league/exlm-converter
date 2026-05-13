@@ -223,12 +223,14 @@ export const translateBlockTags = async (document, lang) => {
         }),
       );
 
-      // Combine all translations from all positions into a single div
+      // Combine all translations from all positions into a single nested div structure
       const allTags = allTranslations.filter(Boolean).join(',');
       if (allTags) {
-        const tagsContainer = document.createElement('div');
-        tagsContainer.textContent = allTags;
-        block.append(tagsContainer);
+        const outerDiv = document.createElement('div');
+        const innerDiv = document.createElement('div');
+        innerDiv.textContent = allTags;
+        outerDiv.appendChild(innerDiv);
+        block.appendChild(outerDiv);
       }
     }),
   );
