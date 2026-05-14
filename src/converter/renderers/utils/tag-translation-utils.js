@@ -157,14 +157,14 @@ export const translateBlockTags = async (document, lang) => {
       const block = document.querySelector(`.${blockDetails.name}`);
       if (!block) return;
 
-      // Process each possible tag position in parallel
-      await Promise.all(
+      // Collect translations from all positions first
+      const allTranslations = await Promise.all(
         blockDetails.tagsPositions.map(async (position) => {
           const tagElement = block.children[position]?.firstElementChild;
-          if (!tagElement) return;
+          if (!tagElement) return '';
 
           const rawTags = tagElement.textContent.trim();
-          if (!rawTags) return;
+          if (!rawTags) return '';
 
           let legacyTags = '';
           let taxonomyTags = '';
@@ -177,7 +177,9 @@ export const translateBlockTags = async (document, lang) => {
               lang,
               taxonomyResolver,
             );
-          } else if (rawTags.includes('exl:')) {
+          }
+
+          if (rawTags.includes('exl:')) {
             // Legacy ExL format - translate via ExL client
             const translatedTags = await Promise.all(
               formattedTags(rawTags).map(async (rawTag) => {
@@ -217,16 +219,19 @@ export const translateBlockTags = async (document, lang) => {
             }
           }
 
-          const tags = [legacyTags, taxonomyTags].filter(Boolean).join(',');
-
-          // Create and append the translated tags container with both TQ and legacy tags in the same div
-          if (tags) {
-            const tagsContainer = document.createElement('div');
-            tagsContainer.textContent = tags;
-            block.append(tagsContainer);
-          }
+          return [legacyTags, taxonomyTags].filter(Boolean).join(',');
         }),
       );
+
+      // Combine all translations from all positions into a single nested div structure
+      const allTags = allTranslations.filter(Boolean).join(',');
+      if (allTags) {
+        const outerDiv = document.createElement('div');
+        const innerDiv = document.createElement('div');
+        innerDiv.textContent = allTags;
+        outerDiv.appendChild(innerDiv);
+        block.appendChild(outerDiv);
+      }
     }),
   );
 };
