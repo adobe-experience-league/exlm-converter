@@ -3,8 +3,8 @@ import Logger from '@adobe/aio-lib-core-logging';
 
 const aioLogger = Logger('FranklinServletClient');
 
-// Cache for infinity.json with 24-hour TTL
-const infinityJsonCache = new Map();
+// Cache for jcr:content.json with 24-hour TTL
+const jsonCache = new Map();
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 /**
@@ -13,13 +13,13 @@ const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
  * @returns {Object|null} Cached data or null if expired/not found
  */
 function getCachedData(key) {
-  const cached = infinityJsonCache.get(key);
+  const cached = jsonCache.get(key);
   if (!cached) return null;
 
   const now = Date.now();
   if (now - cached.timestamp > CACHE_TTL) {
     // Cache expired, remove it
-    infinityJsonCache.delete(key);
+    jsonCache.delete(key);
     return null;
   }
 
@@ -33,7 +33,7 @@ function getCachedData(key) {
  * @param {Object} data - Data to cache
  */
 function setCachedData(key, data) {
-  infinityJsonCache.set(key, {
+  jsonCache.set(key, {
     data,
     timestamp: Date.now(),
   });
@@ -79,13 +79,13 @@ class FranklinServletClient {
   }
 
   /**
-   * Fetch infinity.json from AEM with 24-hour caching
+   * Fetch jcr:content.json from AEM with 24-hour caching
    * @param {string} path - The content path
    * @returns {Promise<Object|null>} The parsed JSON or null if fetch fails
    */
-  async fetchInfinityJson(path) {
+  async fetchPageJcrJson(path) {
     const { aemAuthorUrl } = this.config;
-    const cacheKey = `${aemAuthorUrl}/content/exlm/global/${path}/jcr:content.infinity.json`;
+    const cacheKey = `${path}/jcr:content.json`;
 
     // Check cache first
     const cachedData = getCachedData(cacheKey);
@@ -95,16 +95,17 @@ class FranklinServletClient {
 
     // Cache miss or expired, fetch from AEM
     const { authorization } = this.config;
-    const infinityUrl = `${aemAuthorUrl}/content/exlm/global/${path}/jcr:content.infinity.json`;
+    // Example: https://author-p122525-e1200861.adobeaemcloud.com/content/exlm/global/de/browse/jcr:content.json
+    const jsonUrl = `${aemAuthorUrl}/content/exlm/global/${path}/jcr:content.json`;
     const headers = { 'cache-control': 'no-cache' };
     if (authorization) headers.authorization = authorization;
 
     try {
-      aioLogger.info('fetching infinity.json', infinityUrl);
-      const response = await fetch(infinityUrl, { headers });
+      aioLogger.info('fetching jcr:content.json', jsonUrl);
+      const response = await fetch(jsonUrl, { headers });
 
       if (!response.ok) {
-        aioLogger.warn(`Failed to fetch infinity.json: ${response.status}`);
+        aioLogger.warn(`Failed to fetch jcr:content.json: ${response.status}`);
         return null;
       }
 
@@ -115,7 +116,7 @@ class FranklinServletClient {
 
       return data;
     } catch (error) {
-      aioLogger.error('Error fetching infinity.json', error);
+      aioLogger.error('Error fetching jcr:content.json', error);
       return null;
     }
   }

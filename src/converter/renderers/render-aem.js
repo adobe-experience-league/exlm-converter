@@ -53,17 +53,17 @@ async function transformAemPageMetadata(htmlString, params, path) {
     updateLegacyAndV2Tags(document);
   }
 
-  // Fetch and set cq:translationMethod from infinity.json
-  // Note: fetchInfinityJson uses 24-hour cache - fetches from cache if available, otherwise from API
+  // Fetch and set cq:translationMethod from jcr:content.json
+  // Note: fetchJson uses 24-hour cache - fetches from cache if available, otherwise from API
   if (lang !== 'en') {
     try {
       const client = new FranklinServletClient(params);
-      const infinityJson = await client.fetchInfinityJson(path);
-      if (infinityJson && infinityJson['cq:translationMethod']) {
+      const json = await client.fetchPageJcrJson(path);
+      if (json && json['cq:translationMethod']) {
         setMetadata(
           document,
           'cq-translation-method',
-          infinityJson['cq:translationMethod'],
+          json['cq:translationMethod'],
         );
       }
     } catch (error) {
