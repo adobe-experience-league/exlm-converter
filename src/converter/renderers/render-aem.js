@@ -59,16 +59,17 @@ async function transformAemPageMetadata(htmlString, params, path) {
     try {
       const client = new FranklinServletClient(params);
       const json = await client.fetchPageJcrJson(path);
-      if (json && json['cq:translationMethod']) {
-        let translationMethod;
-        if (json['cq:translationMethod'] === 'HUMAN_TRANSLATION') {
-          translationMethod = 'HT';
-        } else if (
-          json['cq:translationMethod'] === 'MACHINE_TRANSLATION' ||
-          json['cq:translationMethod'] === 'GENAI_TRANSLATION'
-        ) {
-          translationMethod = 'MT';
-        }
+      const translationMap = {
+        HUMAN_TRANSLATION: 'HT',
+        MACHINE_TRANSLATION: 'MT',
+        GENAI_TRANSLATION: 'MT',
+      };
+
+      const translationMethod =
+        json?.['cq:translationMethod'] &&
+        translationMap[json['cq:translationMethod']];
+
+      if (translationMethod) {
         setMetadata(document, 'translation-mechanism', translationMethod);
       }
     } catch (error) {
