@@ -63,10 +63,13 @@ async function transformAemPageMetadata(htmlString, params, path) {
         let translationMethod;
         if (json['cq:translationMethod'] === 'HUMAN_TRANSLATION') {
           translationMethod = 'HT';
-        } else if (json['cq:translationMethod'] === 'MACHINE_TRANSLATION') {
+        } else if (
+          json['cq:translationMethod'] === 'MACHINE_TRANSLATION' ||
+          json['cq:translationMethod'] === 'GENAI_TRANSLATION'
+        ) {
           translationMethod = 'MT';
         }
-        setMetadata(document, 'translationMechanism', translationMethod);
+        setMetadata(document, 'translation-mechanism', translationMethod);
       }
     } catch (error) {
       aioLogger.warn('Failed to fetch or set cq:translationMethod', error);
