@@ -53,6 +53,26 @@ async function transformAemPageMetadata(htmlString, params, path) {
     updateLegacyAndV2Tags(document);
   }
 
+  // Fetch and set cq:translationMethod from jcr:content.json
+  // Note: fetchJson uses 24-hour cache - fetches from cache if available, otherwise from API
+  if (lang !== 'en') {
+    try {
+      const client = new FranklinServletClient(params);
+      const json = await client.fetchPageJcrJson(path);
+      if (json && json['cq:translationMethod']) {
+        let translationMethod;
+        if (json['cq:translationMethod'] === 'HUMAN_TRANSLATION') {
+          translationMethod = 'HT';
+        } else if (json['cq:translationMethod'] === 'MACHINE_TRANSLATION') {
+          translationMethod = 'MT';
+        }
+        setMetadata(document, 'translationMechanism', translationMethod);
+      }
+    } catch (error) {
+      aioLogger.warn('Failed to fetch or set cq:translationMethod', error);
+    }
+  }
+
   const publishedTime = getMetadata(document, 'published-time');
   const contentModifiedTime = getMetadata(document, 'content-modified-time');
 
