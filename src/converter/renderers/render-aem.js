@@ -12,13 +12,16 @@ import {
   updateEncodedMetadata,
   updateCoveoSolutionMetadata,
   updateTQTagsMetadata,
+  createTranslatedV2TQMetadata,
   decodeCQMetadata,
   generateHash,
   createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
+  updateLegacyAndV2Tags,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
+import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
 import { translateBlockTags } from './utils/tag-translation-utils.js';
@@ -39,14 +42,28 @@ async function transformAemPageMetadata(htmlString, params, path) {
   const lang = path.split('/')[1];
   decodeCQMetadata(document, 'cq-tags');
   updateTQTagsMetadata(document);
+  await createTranslatedV2TQMetadata(document, lang);
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
   await createTranslatedMetadata(document, lang);
 
+  // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
+  if (paramMemoryStore.hasFeatureFlag('usetq')) {
+    updateLegacyAndV2Tags(document);
+  }
+
   const publishedTime = getMetadata(document, 'published-time');
-  const lastUpdate = publishedTime ? new Date(publishedTime) : new Date();
-  setMetadata(document, 'last-update', lastUpdate);
+  const contentModifiedTime = getMetadata(document, 'content-modified-time');
+
+  const parseDate = (dateStr) =>
+    dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
+
+  const lastUpdate = contentModifiedTime
+    ? parseDate(contentModifiedTime)
+    : parseDate(publishedTime);
+
+  setMetadata(document, 'last-update', lastUpdate.toString());
 
   if (
     path.includes('/perspectives/') &&

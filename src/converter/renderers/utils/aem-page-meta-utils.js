@@ -5,6 +5,10 @@ import {
   createDefaultExlClient,
   EXL_LABEL_ENDPOINTS,
 } from '../../modules/ExlClient.js';
+import {
+  createExliaTaxonomyLabelResolver,
+  extractTqUuid,
+} from '../../modules/exlia-taxonomy-client.js';
 
 /**
  * Generates a unique immutable hash for a given input string and truncates it under 50 characters.
@@ -102,11 +106,31 @@ function decodeHtmlEntities(str) {
 }
 
 /**
- * Update TQ Tags metadata for Coveo
+ * Update Legacy and TQ Tags metadata when usetq FF is enabled
  * @param {Document} document
  */
-export function updateTQTagsForCoveo(document) {
-  const keyMapping = {
+export function updateLegacyAndV2Tags(document) {
+  // First, migrate legacy tags to _v1
+  const legacyToV1Mapping = {
+    role: 'role_v1',
+    level: 'level_v1',
+    'coveo-solution': 'product_v1',
+    feature: 'feature_v1',
+    'sub-feature': 'subfeature_v1',
+    industry: 'industry_v1',
+    topic: 'topic_v1',
+    solution: 'solution_v1',
+  };
+
+  Object.entries(legacyToV1Mapping).forEach(([legacyKey, v1Key]) => {
+    const value = getMetadata(document, legacyKey);
+    if (value) {
+      setMetadata(document, v1Key, value);
+    }
+  });
+
+  // Then, migrate _v2 tags to legacy (without suffix)
+  const v2ToLegacyMapping = {
     role_v2: 'role',
     level_v2: 'level',
     product_v2: 'coveo-solution',
@@ -116,7 +140,7 @@ export function updateTQTagsForCoveo(document) {
     topic_v2: 'topic',
   };
 
-  Object.entries(keyMapping).forEach(([sourceKey, targetKey]) => {
+  Object.entries(v2ToLegacyMapping).forEach(([sourceKey, targetKey]) => {
     const value = getMetadata(document, sourceKey);
     if (!value) return;
 
@@ -149,6 +173,32 @@ export function updateTQTagsForCoveo(document) {
     setMetadata(document, 'solution', solutionParts.join(','));
     setMetadata(document, 'original-solution', solutionParts.join(', '));
   }
+
+  // Remove _v2 tags after processing
+  const v2TagsToRemove = [
+    'role_v2',
+    'level_v2',
+    'product_v2',
+    'feature_v2',
+    'subfeature_v2',
+    'industry_v2',
+    'topic_v2',
+  ];
+
+  v2TagsToRemove.forEach((tag) => {
+    const metaTags = document.head.querySelectorAll(`meta[name="${tag}"]`);
+    metaTags.forEach((metaTag) => metaTag.remove());
+  });
+}
+
+/**
+ * @param {Record<string, unknown>} item
+ * @returns {string}
+ */
+function englishLabelFromTqItem(item) {
+  if (!item || typeof item !== 'object') return '';
+  const label = item.displayLabel ?? item.prefLabel ?? '';
+  return typeof label === 'string' ? label.trim() : '';
 }
 
 /**
@@ -189,6 +239,85 @@ export function updateTQTagsMetadata(document) {
       console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
     }
   });
+}
+
+/**
+ * Exlia/localized TQ metadata: JSON tq-* -> target meta keys from TQ_KEY_TO_META.
+ *
+ * @param {Document} document
+ * @param {string} pathLang First URL segment locale (e.g. fr).
+ * @returns {Promise<void>}
+ */
+export async function createTranslatedV2TQMetadata(document, pathLang) {
+  const TQ_KEY_TO_META = {
+    'tq-roles': 'loc-v2-role',
+    'tq-levels': 'loc-v2-level',
+    'tq-features': 'loc-v2-feature',
+    'tq-subfeatures': 'loc-v2-sub-feature',
+    'tq-industries': 'loc-v2-industry',
+    'tq-topics': 'loc-v2-topic',
+  };
+  const resolver = await createExliaTaxonomyLabelResolver();
+  const localize =
+    resolver.isEnabled() &&
+    typeof pathLang === 'string' &&
+    pathLang.toLowerCase() !== 'en';
+
+  const inFlightLabels = new Map();
+
+  const getLocalizedOrNull = async (tagId) => {
+    if (!localize || !tagId) return null;
+
+    // Extract UUID from tag ID if it's a full URI
+    const uuid = extractTqUuid(tagId);
+    if (!uuid) return null;
+
+    const existing = inFlightLabels.get(uuid);
+    if (existing) return existing;
+
+    const p = resolver.getDisplayLabel(uuid, pathLang);
+    inFlightLabels.set(uuid, p);
+    return p;
+  };
+
+  await Promise.all(
+    Object.entries(TQ_KEY_TO_META).map(async ([key, targetKey]) => {
+      const metaTag = getMetadata(document, key);
+      if (!metaTag) return;
+
+      try {
+        const decoded = decodeHtmlEntities(metaTag);
+        const parsed = JSON.parse(decoded);
+
+        if (!Array.isArray(parsed)) return;
+
+        const displayLabels = await Promise.all(
+          parsed.map(async (item) => {
+            if (!item || typeof item !== 'object') return null;
+
+            // Get English label as fallback
+            const en = englishLabelFromTqItem(item);
+
+            // Get tag ID for translation lookup
+            const tagId = item.id || item.uri || item.tag || null;
+
+            if (!localize || !tagId) return en || null;
+
+            // Try to get localized label
+            const loc = await getLocalizedOrNull(tagId);
+            return loc || en || null;
+          }),
+        );
+
+        const joined = displayLabels.filter(Boolean).join(', ');
+        if (!joined) return;
+
+        setMetadata(document, targetKey, joined);
+      } catch (e) {
+        console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
+      }
+    }),
+  );
 }
 
 /**
@@ -377,7 +506,11 @@ export const createTranslatedMetadata = async (document, lang) => {
           result.status === 'fulfilled' ? result.value : tags[index],
         );
 
-        setMetadata(document, `loc-${metaType}`, localizedLabels.join(','));
+        setMetadata(
+          document,
+          `loc-legacy-${metaType}`,
+          localizedLabels.join(','),
+        );
       }
     }),
   );

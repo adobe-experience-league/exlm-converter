@@ -40,6 +40,7 @@ const {
   GAINSIGHT_OAUTH2_CLIENT_SECRET,
   GAINSIGHT_OAUTH2_SCOPE,
   GAINSIGHT_COMMUNITY_URL,
+  EXLIA_TAXONOMY_BASE_URL,
 } = process.env;
 
 // https://stackoverflow.com/a/75916716
@@ -86,6 +87,7 @@ const converterHandler = async (req, res) => {
     exlApiHost: EXL_API_HOST,
     featureFlags: FEATURE_FLAGS,
     v2Paths: V2_PATHS,
+    exliaTaxonomyBaseUrl: EXLIA_TAXONOMY_BASE_URL,
   };
 
   const { body, headers, md, original, error, statusCode } = await render(

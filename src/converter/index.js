@@ -33,6 +33,7 @@ import renderIoFile from './renderers/render-io-file.js';
 import renderSlide from './renderers/render-slide.js';
 import renderToc from './renderers/render-toc.js';
 import renderOnDemandEvent from './renderers/render-on-demand-events.js';
+import { injectSchemaOrg } from './modules/schemas/schema-org-util.js';
 
 // need this to work with both esm and commonjs
 let dir;
@@ -61,6 +62,19 @@ try {
  */
 export const render = async function render(path, params) {
   paramMemoryStore.set(params);
+  const withSchema = (response) => {
+    if (!response?.error && paramMemoryStore.hasFeatureFlag('schema-org')) {
+      return {
+        ...response,
+        body: injectSchemaOrg({
+          path,
+          body: response.body,
+          headers: response.headers,
+        }),
+      };
+    }
+    return response;
+  };
 
   // specifically return 404 for courses, untill they are migrated.
   if (isCoursesPath(path)) {
@@ -76,7 +90,7 @@ export const render = async function render(path, params) {
   }
 
   if (isDocsPath(path)) {
-    return renderDoc(path, params?.authorization);
+    return withSchema(await renderDoc(path, params?.authorization));
   }
 
   if (isTocPath(path)) {
@@ -105,7 +119,7 @@ export const render = async function render(path, params) {
   }
 
   // Handle AEM UE Pages by default
-  return renderAem(path, params);
+  return withSchema(await renderAem(path, params));
 };
 
 export const main = async function main(params) {
