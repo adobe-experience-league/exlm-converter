@@ -37,7 +37,14 @@ At a minimum, you need to create a file at `build/.local.env` in this repo, that
 
 ```
 EXL_API_HOST=https://experienceleague.adobe.com
+
+# Optional: simulate review environment locally (requires EXL_DELIVERY_API_SCRET)
+# EXL_ENV=review
+# EXL_DELIVERY_API_SCRET=<pre-computed-secret>
 ```
+
+> Review environment auth is auto-detected from the Runtime namespace (`*-review`) when deployed.
+> `EXL_ENV=review` is for local development only and is not passed during deploy.
 
 > see description of this env variables in the `Application environment variables` section.
 
@@ -187,6 +194,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `IMS_AUTHORIZATION_CODE`    | secret | no                 | the IMS auth code to use for IMS authentication                       |
 | `IPASS_API_KEY`             | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments          |
 | `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
+| `EXL_DELIVERY_API_SCRET`      | secret | review only        | Pre-computed secret for EXL delivery API auth in review environment   |
 | `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior          |
 | `V2_PATHS`                  | var    | no                 | comma separated path-to-regexp to render v2 docs                      |
 | `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |

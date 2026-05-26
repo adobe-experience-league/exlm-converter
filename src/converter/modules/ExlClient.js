@@ -2,6 +2,7 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { addExtension, removeExtension } from './utils/path-utils.js';
 import { getMatchLanguage } from '../../common/utils/language-utils.js';
 import stateLib from '../../common/utils/state-lib-util.js';
+import { buildExlClientAuthOptions } from './exl-client-auth.js';
 import { paramMemoryStore } from './utils/param-memory-store.js';
 
 export const aioLogger = Logger('ExlClient');
@@ -63,6 +64,8 @@ export const EXL_LABEL_ENDPOINTS = {
  * @typedef {Object} ExlClientOptions
  * @property {string} host
  * @property {StateStore} state
+ * @property {boolean} [isReview]
+ * @property {Record<string, string>} [reviewAuthHeaders]
  */
 
 export default class ExlClient {
@@ -70,9 +73,16 @@ export default class ExlClient {
    *
    * @param {ExlClientOptions} options
    */
-  constructor({ host = 'https://experienceleague.adobe.com', state } = {}) {
+  constructor({
+    host = 'https://experienceleague.adobe.com',
+    state,
+    isReview = false,
+    reviewAuthHeaders,
+  } = {}) {
     this.host = host;
     this.state = state;
+    this.isReview = isReview;
+    this.reviewAuthHeaders = reviewAuthHeaders;
   }
 
   /**
@@ -236,7 +246,9 @@ export default class ExlClient {
   async doFetch(path) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);
-    const response = await fetch(url);
+    const response = this.isReview
+      ? await fetch(url, { headers: this.reviewAuthHeaders })
+      : await fetch(url);
     return response.json();
   }
 
@@ -257,10 +269,11 @@ export default class ExlClient {
 
 export const createDefaultExlClient = async () => {
   const params = paramMemoryStore.get();
-  const { exlApiHost } = params;
+  const { exlApiHost, exlDeliveryApiSecret } = params;
   const state = await stateLib.init();
   return new ExlClient({
     host: exlApiHost,
     state,
+    ...buildExlClientAuthOptions(exlDeliveryApiSecret),
   });
 };
