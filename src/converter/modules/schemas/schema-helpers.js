@@ -124,22 +124,18 @@ export const extractCommonMetadata = (document, path) => {
       getFirstNonEmpty(
         getMetadata(document, 'feature_v1'),
         getMetadata(document, 'feature'),
-        getMetadata(document, 'feature_v2'),
-        getPageTitle(document),
       ),
     ),
     ...getCsvValues(
       getFirstNonEmpty(
         getMetadata(document, 'subfeature_v1'),
         getMetadata(document, 'sub-feature'),
-        getMetadata(document, 'subfeature_v2'),
       ),
     ),
     ...getCsvValues(
       getFirstNonEmpty(
         getMetadata(document, 'topic_v1'),
         getMetadata(document, 'topic'),
-        getMetadata(document, 'topic_v2'),
       ),
     ),
   ]).slice(0, 10);
