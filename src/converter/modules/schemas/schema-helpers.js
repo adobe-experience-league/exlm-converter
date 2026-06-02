@@ -113,32 +113,23 @@ export const extractCommonMetadata = (document, path) => {
     getCsvValues(getMetadata(document, 'role')),
   );
   const about = dedupeStrings(getCsvValues(getMetadata(document, 'solution')));
-  const keywords = dedupeStrings([
-    ...getCsvValues(
-      getFirstNonEmpty(
-        getMetadata(document, 'solution_v1'),
-        getMetadata(document, 'solution'),
+  const keywordMetadataKeys = [
+    ['solution_v1', 'solution'],
+    ['feature_v1', 'feature'],
+    ['subfeature_v1', 'sub-feature'],
+    ['topic_v1', 'topic'],
+  ];
+
+  const keywords = dedupeStrings(
+    keywordMetadataKeys.flatMap(([primaryKey, fallbackKey]) =>
+      getCsvValues(
+        getFirstNonEmpty(
+          getMetadata(document, primaryKey),
+          getMetadata(document, fallbackKey),
+        ),
       ),
     ),
-    ...getCsvValues(
-      getFirstNonEmpty(
-        getMetadata(document, 'feature_v1'),
-        getMetadata(document, 'feature'),
-      ),
-    ),
-    ...getCsvValues(
-      getFirstNonEmpty(
-        getMetadata(document, 'subfeature_v1'),
-        getMetadata(document, 'sub-feature'),
-      ),
-    ),
-    ...getCsvValues(
-      getFirstNonEmpty(
-        getMetadata(document, 'topic_v1'),
-        getMetadata(document, 'topic'),
-      ),
-    ),
-  ]).slice(0, 10);
+  ).slice(0, 10);
   return {
     canonicalUrl,
     headline,
