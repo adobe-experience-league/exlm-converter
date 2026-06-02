@@ -113,12 +113,23 @@ export const extractCommonMetadata = (document, path) => {
     getCsvValues(getMetadata(document, 'role')),
   );
   const about = dedupeStrings(getCsvValues(getMetadata(document, 'solution')));
-  const keywords = dedupeStrings([
-    ...getCsvValues(getMetadata(document, 'solution')),
-    ...getCsvValues(getMetadata(document, 'feature')),
-    ...getCsvValues(getMetadata(document, 'sub-feature')),
-    ...getCsvValues(getMetadata(document, 'topic')),
-  ]).slice(0, 10);
+  const keywordMetadataKeys = [
+    ['solution_v1', 'solution'],
+    ['feature_v1', 'feature'],
+    ['subfeature_v1', 'sub-feature'],
+    ['topic_v1', 'topic'],
+  ];
+
+  const keywords = dedupeStrings(
+    keywordMetadataKeys.flatMap(([primaryKey, fallbackKey]) =>
+      getCsvValues(
+        getFirstNonEmpty(
+          getMetadata(document, primaryKey),
+          getMetadata(document, fallbackKey),
+        ),
+      ),
+    ),
+  ).slice(0, 10);
   return {
     canonicalUrl,
     headline,
