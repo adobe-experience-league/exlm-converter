@@ -1,5 +1,6 @@
 import Logger from '@adobe/aio-lib-core-logging';
 import stateLib from '../../common/utils/state-lib-util.js';
+import { buildExlClientAuthOptions } from './exl-client-auth.js';
 import { paramMemoryStore } from './utils/param-memory-store.js';
 
 export const aioLogger = Logger('ExlClientV2');
@@ -9,9 +10,16 @@ export default class ExlClientV2 {
    *
    * @param {ExlClientOptions} options
    */
-  constructor({ host = 'https://experienceleague.adobe.com', state } = {}) {
+  constructor({
+    host = 'https://experienceleague.adobe.com',
+    state,
+    isReview = false,
+    reviewAuthHeaders,
+  } = {}) {
     this.host = host;
     this.state = state;
+    this.isReview = isReview;
+    this.reviewAuthHeaders = reviewAuthHeaders;
   }
 
   /**
@@ -85,12 +93,16 @@ export default class ExlClientV2 {
   async doFetchHtml(path, requestOptions = {}) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);
+    const headers = {
+      Accept: 'text/html',
+      ...requestOptions.headers,
+    };
+    if (this.isReview) {
+      Object.assign(headers, this.reviewAuthHeaders);
+    }
     return fetch(url, {
       ...requestOptions,
-      headers: {
-        Accept: 'text/html',
-        ...requestOptions.headers,
-      },
+      headers,
     });
   }
 
@@ -108,19 +120,27 @@ export default class ExlClientV2 {
 
   async doFetchJson(path, requestOptions = {}) {
     const url = new URL(path, this.host);
+    const headers = {
+      Accept: 'application/json',
+      ...requestOptions.headers,
+    };
+    if (this.isReview) {
+      Object.assign(headers, this.reviewAuthHeaders);
+    }
     return fetch(url, {
       ...requestOptions,
-      headers: { Accept: 'application/json', ...requestOptions.headers },
+      headers,
     });
   }
 }
 
 export const createDefaultExlClientV2 = async () => {
   const params = paramMemoryStore.get();
-  const { exlApiHost } = params;
+  const { exlApiHost, exlDeliveryApiSecret } = params;
   const state = await stateLib.init();
   return new ExlClientV2({
     host: exlApiHost,
     state,
+    ...buildExlClientAuthOptions(exlDeliveryApiSecret),
   });
 };
