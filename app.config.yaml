@@ -20,7 +20,6 @@ application:
               aemRepo: $REPO
               aemBranch: $BRANCH
               exlApiHost: $EXL_API_HOST
-              exlDeliveryApiSecret: $EXL_DELIVERY_API_SECRET
               exliaTaxonomyBaseUrl: $EXLIA_TAXONOMY_BASE_URL
               featureFlags: $FEATURE_FLAGS
               v2Paths: $V2_PATHS
