@@ -67,7 +67,7 @@ const toUploadDate = (value) => {
     : toIsoDate(value);
 };
 
-const buildVideoObject = (video, itemListId, lang, publisher, about) => {
+const buildVideoObject = (video, lang, publisher, about) => {
   const jld = video.jsonLinkedData || {};
   const obj = { '@type': 'VideoObject' };
   addIfPresent(obj, '@id', video.url ? `${video.url}#video` : undefined);
@@ -81,7 +81,6 @@ const buildVideoObject = (video, itemListId, lang, publisher, about) => {
   addIfPresent(obj, 'embedUrl', jld.embedUrl);
   addIfPresent(obj, 'publisher', publisher);
   addIfPresent(obj, 'about', about);
-  addIfPresent(obj, 'isPartOf', { '@id': itemListId });
   return obj;
 };
 
@@ -96,7 +95,7 @@ export const buildPlaylistSchema = (data, lang) => {
   if (!data || !data.path || !data.title) return null;
 
   const canonicalUrl = `${EXL_HOST}${data.path}`;
-  const itemListId = `${canonicalUrl}#/itemlist`;
+  const itemListId = `${canonicalUrl}#itemlist`;
   const videos = data.videos || [];
   const products = data.product || [];
   const features = data.frontmatter?.feature || [];
@@ -132,17 +131,18 @@ export const buildPlaylistSchema = (data, lang) => {
   addIfPresent(itemList, 'name', data.title);
   addIfPresent(itemList, 'description', data.description);
   addIfPresent(itemList, 'numberOfItems', videos.length);
-  addIfPresent(itemList, 'isPartOf', { '@id': canonicalUrl });
   itemList.itemListOrder = 'https://schema.org/ItemListOrderAscending';
   itemList.itemListElement = videos.map((video, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     url: video.url,
-    ...(video.url && { item: { '@id': `${video.url}#video` } }),
+    ...(video.url && {
+      item: { '@type': 'VideoObject', '@id': `${video.url}#video` },
+    }),
   }));
 
   const videoObjects = videos.map((video) =>
-    buildVideoObject(video, itemListId, lang, VIDEO_PUBLISHER, about),
+    buildVideoObject(video, lang, VIDEO_PUBLISHER, about),
   );
 
   return {
