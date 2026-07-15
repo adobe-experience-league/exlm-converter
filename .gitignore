@@ -8,3 +8,11 @@ src/converter/static/.DS_Store
 
 load-test/logs/
 exlmconverter-51837-*.json
+
+# Local AI skill artifacts (developer-machine only)
+.agents/
+.skills/
+.upskill/
+.claude/
+.cursor/
+skills/

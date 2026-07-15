@@ -8,12 +8,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "serve": "node ./build/serve.js",
+    "stop": "node ./build/stop-serve.js",
     "build": "node ./build/ensure-env.js && node ./build/build.js",
     "deploy": "./node_modules/.bin/aio app deploy",
     "publish-fragments": "node ./build/publish-fragments.js",
     "test": "instant-mocha",
     "prepare": "husky install",
-    "quality": "npm run format:check && npm run lint:js"
+    "quality": "npm run format:check && npm run lint:js",
+    "setup:skills": "npx skills add adobe/skills --skill appbuilder-project-init --skill appbuilder-action-scaffolder --skill appbuilder-testing --skill appbuilder-cicd-pipeline"
   },
   "mocha": {
     "spec": "test/**/*.test.js",

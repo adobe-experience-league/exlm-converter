@@ -1,5 +1,7 @@
 # EXLM Converter
 
+For AI coding agents, see [AGENTS.md](AGENTS.md).
+
 Despite the name, this is a collection of Web Actions (on adobe io):
 
 1. `converter`: The entry point for Experience League [Edge Deliver BYOM](https://www.aem.live/developer/byom). AKA where EDS sources the HTML for exl pages when they are published.

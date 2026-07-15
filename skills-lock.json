@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "appbuilder-action-scaffolder": {
+      "source": "adobe/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/app-builder/skills/appbuilder-action-scaffolder/SKILL.md",
+      "computedHash": "4b55278a3f20f1982dee619fb727fe3a3aed94b5d51df90ac8a9ccdc3d48eeff"
+    },
+    "appbuilder-cicd-pipeline": {
+      "source": "adobe/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/app-builder/skills/appbuilder-cicd-pipeline/SKILL.md",
+      "computedHash": "6870cd79d9be09202ca7ca71008522a5239ee8d3bd13538bdaf30207ce40e98e"
+    },
+    "appbuilder-project-init": {
+      "source": "adobe/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/app-builder/skills/appbuilder-project-init/SKILL.md",
+      "computedHash": "c5265cacec166488472b1cb2b33456c893f7389810c26f5b6f1c8e4d0668b1f1"
+    },
+    "appbuilder-testing": {
+      "source": "adobe/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/app-builder/skills/appbuilder-testing/SKILL.md",
+      "computedHash": "c3d2d54787d5de42751e964124f3a90cfac5c8505a52d6f55c79fdd057d4f232"
+    }
+  }
+}
