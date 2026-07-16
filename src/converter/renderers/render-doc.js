@@ -1,3 +1,4 @@
+import Logger from '@adobe/aio-lib-core-logging';
 import { createDefaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
@@ -8,6 +9,8 @@ import {
 } from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
+
+export const aioLogger = Logger('render-doc');
 
 async function renderDocV1({ path, lang, solution, docRelPath }) {
   // construct the path in the articles API
@@ -65,6 +68,10 @@ async function renderDocV2({ path, lang, authorization }) {
   );
 
   if (!docHtmlResponse.ok) {
+    const errorBody = await docHtmlResponse.text().catch(() => '');
+    aioLogger.error(
+      `Failed to fetch doc HTML: path=${path} lang=${lang} url=${docHtmlResponse.url} status=${docHtmlResponse.status} statusText=${docHtmlResponse.statusText} body=${errorBody}`,
+    );
     return {
       statusCode: docHtmlResponse.status,
       error: new Error(
