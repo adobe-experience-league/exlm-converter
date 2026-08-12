@@ -4,20 +4,27 @@ import { getDefaultImsService } from '../../khoros/utils/IMSService.js';
 /**
  * Auth headers for EXL delivery API calls in review.
  * The review environment sits behind a Cluster Gateway that validates a
- * real IMS service token, so we fetch one via the client_credentials grant
- * using a dedicated technical account rather than relying on a static shared secret.
+ * real IMS service token. Per Adobe IMS, a service token is obtained by
+ * exchanging a pre-issued technical-account authorization code (via the
+ * `authorization_code` grant), not `client_credentials`.
  *
- * @param {{ imsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string }} config
+ * @param {{ imsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string, exlDeliveryApiClientCode: string }} config
  * @returns {Promise<Record<string, string>>}
  */
 async function getExlDeliveryApiAuthHeaders({
   imsOrigin,
   exlDeliveryApiClientId,
   exlDeliveryApiClientSecret,
+  exlDeliveryApiClientCode,
 }) {
-  if (!imsOrigin || !exlDeliveryApiClientId || !exlDeliveryApiClientSecret) {
+  if (
+    !imsOrigin ||
+    !exlDeliveryApiClientId ||
+    !exlDeliveryApiClientSecret ||
+    !exlDeliveryApiClientCode
+  ) {
     throw new Error(
-      'Missing IMS config (imsOrigin/exlDeliveryApiClientId/exlDeliveryApiClientSecret): required when running in review environment',
+      'Missing IMS config (imsOrigin/exlDeliveryApiClientId/exlDeliveryApiClientSecret/exlDeliveryApiClientCode): required when running in review environment',
     );
   }
 
@@ -25,7 +32,8 @@ async function getExlDeliveryApiAuthHeaders({
     imsOrigin,
     clientId: exlDeliveryApiClientId,
     clientSecret: exlDeliveryApiClientSecret,
-    grantType: 'client_credentials',
+    authorizationCode: exlDeliveryApiClientCode,
+    grantType: 'authorization_code',
     storeName: 'exl-delivery-api-ims',
   });
 
@@ -44,7 +52,7 @@ async function getExlDeliveryApiAuthHeaders({
 /**
  * Client options for EXL API clients. Environment is resolved once at construction.
  *
- * @param {{ imsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string }} config
+ * @param {{ imsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string, exlDeliveryApiClientCode: string }} config
  * @returns {Promise<{ isReview: boolean, reviewAuthHeaders?: Record<string, string> }>}
  */
 export async function buildExlClientAuthOptions(config) {

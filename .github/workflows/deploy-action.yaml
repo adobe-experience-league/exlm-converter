@@ -73,6 +73,7 @@ jobs:
           EXL_API_HOST: ${{ vars.EXL_API_HOST }}
           EXL_DELIVERY_API_CLIENT_ID: ${{ needs.env-select.outputs.env_name == 'review' && secrets.EXL_DELIVERY_API_CLIENT_ID || '' }}
           EXL_DELIVERY_API_CLIENT_SECRET: ${{ needs.env-select.outputs.env_name == 'review' && secrets.EXL_DELIVERY_API_CLIENT_SECRET || '' }}
+          EXL_DELIVERY_API_CLIENT_CODE: ${{ needs.env-select.outputs.env_name == 'review' && secrets.EXL_DELIVERY_API_CLIENT_CODE || '' }}
           EXLIA_TAXONOMY_BASE_URL: ${{ vars.EXLIA_TAXONOMY_BASE_URL }}
           OWNER: ${{ vars.OWNER }}
           REPO: ${{ vars.REPO }}

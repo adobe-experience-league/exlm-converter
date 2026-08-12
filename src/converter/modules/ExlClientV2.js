@@ -154,6 +154,7 @@ export const createDefaultExlClientV2 = async () => {
     imsOrigin,
     exlDeliveryApiClientId,
     exlDeliveryApiClientSecret,
+    exlDeliveryApiClientCode,
   } = params;
   const state = await stateLib.init();
   return new ExlClientV2({
@@ -163,6 +164,7 @@ export const createDefaultExlClientV2 = async () => {
       imsOrigin,
       exlDeliveryApiClientId,
       exlDeliveryApiClientSecret,
+      exlDeliveryApiClientCode,
     })),
   });
 };
