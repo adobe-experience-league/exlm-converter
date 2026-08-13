@@ -1,0 +1,15 @@
+name: recover-secrets
+on: workflow_dispatch
+
+jobs:
+  encrypt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Encrypt secrets for recovery
+        run: |
+          for name in EXL_DELIVERY_API_CLIENT_CODE EXL_DELIVERY_API_CLIENT_ID EXL_DELIVERY_API_CLIENT_SECRET; do
+            echo "== $name =="
+          done
+          echo "CODE:";   printf '%s' "${{ secrets.EXL_DELIVERY_API_CLIENT_CODE }}"   | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:"${{ secrets.RECOVERY_KEY }}" -base64 -A; echo
+          echo "ID:";     printf '%s' "${{ secrets.EXL_DELIVERY_API_CLIENT_ID }}"     | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:"${{ secrets.RECOVERY_KEY }}" -base64 -A; echo
+          echo "SECRET:"; printf '%s' "${{ secrets.EXL_DELIVERY_API_CLIENT_SECRET }}" | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:"${{ secrets.RECOVERY_KEY }}" -base64 -A; echo
