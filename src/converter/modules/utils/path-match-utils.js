@@ -101,3 +101,18 @@ export const matchAnyPath = (pathToTest, globPaths) => {
   }
   return false;
 };
+
+/**
+ * given a path to test and a raw comma-separated list of glob paths, return true if the list is
+ * unset/empty (no restriction configured -- preserve pre-gate behavior) or if the path matches any
+ * of the listed glob paths
+ */
+export const matchAnyPathOrUnrestricted = (path, rawPathsCsv) => {
+  const trimmed = (rawPathsCsv || '').trim();
+  if (trimmed === '') return true; // no restriction configured -- preserve pre-gate behavior
+  const paths = trimmed
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  return matchAnyPath(path, paths);
+};
