@@ -78,6 +78,7 @@ jobs:
           HLX_API_KEY: ${{ secrets.HLX_API_KEY }}
           FEATURE_FLAGS: ${{ vars.FEATURE_FLAGS }}
           V2_PATHS: ${{ vars.V2_PATHS }}
+          EVENTS_V2_PATHS: ${{ vars.EVENTS_V2_PATHS }}
           VAULT_ENDPOINT: ${{ secrets.VAULT_ENDPOINT }}
           VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
           VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}

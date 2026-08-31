@@ -191,6 +191,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
 | `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior          |
 | `V2_PATHS`                  | var    | no                 | comma separated path-to-regexp to render v2 docs                      |
+| `EVENTS_V2_PATHS`           | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events      |
 | `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |
 | `VAULT_ROLE_ID`             | secret | yes                | Vault AppRole role_id for authentication                              |
 | `VAULT_SECRET_ID`           | secret | yes                | Vault AppRole secret_id for authentication                            |
@@ -201,6 +202,10 @@ The action requires the follwoing environment variables/secrets to be set:
 > `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
 > for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication
 > `IMS_CLIENT_ID` is required in all envs sincve we need it for IMS token validation
+
+> `EVENTS_V2_PATHS` empty/unset means unrestricted (all on-demand events render via v2,
+> today's behavior); once populated, only matching paths render via v2 and non-matching
+> paths return a 404.
 
 > **Vault Authentication (Primary)**: The Coveo token action uses AppRole authentication for secure Vault
 > access. When Vault credentials (`VAULT_ENDPOINT`, `VAULT_ROLE_ID`, `VAULT_SECRET_ID`) are provided,
