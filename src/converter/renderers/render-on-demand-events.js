@@ -25,11 +25,13 @@ export default async function renderOnDemandEvent(path, authorization) {
   // allowlist before serving V2 content. Expected to be retired once a real
   // author-controlled visibility field is built and enforced (separate future ticket).
   if (!matchEventsV2Path(path)) {
+    // Deliberately does not echo the request path into the client-facing message: the
+    // response has no explicit Content-Type here, and reflecting unescaped user input into
+    // a body that could be interpreted as HTML is a reflected-content vector (PR #794 review,
+    // Matt Lawrence). The path is still visible in the platform's own activation/request logs.
     return {
       statusCode: 404,
-      error: new Error(
-        `On-demand event not yet available at this path: ${path}`,
-      ),
+      error: new Error('On-demand event not yet available at this path'),
     };
   }
 
