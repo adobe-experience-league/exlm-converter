@@ -41,7 +41,6 @@ import { createRecommendationMoreHelp } from './blocks/create-recommendation-mor
 import createDocsCards from './blocks/create-docs-cards.js';
 import { createMetaData } from './utils/metadata-util.js';
 import { createDefaultExlClient } from './ExlClient.js';
-import handleTooManyImages from './blocks/too-many-images.js';
 import createSlideEmbed from './blocks/create-slide-embed.js';
 
 const doAmf = (md) => {
@@ -63,7 +62,6 @@ export default async function md2html({
   data,
   pageType,
   reqLang,
-  path,
 }) {
   const amfProcessed = doAmf(mdString, 'extension');
   const convertedHtml = markdownItToHtml(amfProcessed);
@@ -148,8 +146,7 @@ export default async function md2html({
     createRecommendationMoreHelp(document);
     // leave this at the end
     handleNestedBlocks(document);
-    // leave this at the end - UGP-10894 Handle Too Many Images
-    handleTooManyImages(document, path);
+
     // leave this at the end - EXLM 1442 1510 Splitting into multiple Sections
     createSections(document);
   }
