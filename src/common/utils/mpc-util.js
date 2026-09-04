@@ -92,6 +92,26 @@ export function isMpcVideoUrl(url) {
   }
 }
 
+/**
+ * Fetches the MPC video metadata JSON for an MPC video url via `?format=json`.
+ * @param {string} url MPC video url (https://video.tv.adobe.com/v/{id})
+ * @returns {Promise<MPCVideo|null>} parsed video metadata, or null on any failure
+ */
+export async function fetchMpcVideoData(url) {
+  if (!isMpcVideoUrl(url)) return null;
+  const jsonUrl = `${url.split('#')[0].split('?')[0]}?format=json`;
+  try {
+    const response = await fetch(jsonUrl, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (e) {
+    aioLogger.error('Error fetching MPC video JSON, skipping', e);
+    return null;
+  }
+}
+
 // /**
 //  * Extracts the video id from an MPC video url
 //  * @param {string} url mpc video url

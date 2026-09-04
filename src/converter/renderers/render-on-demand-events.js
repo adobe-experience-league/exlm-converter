@@ -74,7 +74,7 @@ export default async function renderOnDemandEvent(path, authorization) {
     // so schema generation never breaks page rendering.
     if (paramMemoryStore.hasFeatureFlag('schema-org')) {
       try {
-        const schema = buildOnDemandEventSchema(document, path);
+        const schema = await buildOnDemandEventSchema(document, path);
         if (schema) {
           document
             .querySelectorAll('script[type="application/ld+json"]')
