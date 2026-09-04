@@ -187,14 +187,16 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     !path.includes('/courses/instructors') &&
     !path.includes('/courses/course-fragments')
   ) {
-    const slug = path.split('/courses/')[1].split('/')[0];
+    const segments = path.split('/courses/')[1].split('/').filter(Boolean);
+    const [slug, moduleSlug, stepSlug] = segments;
+
+    const courseID = generateHash(`/courses/${slug}`);
+    setMetadata(document, 'course-id', courseID);
 
     // Base course page only
-    if (path.endsWith(`/courses/${slug}`)) {
-      const courseID = generateHash(`/courses/${slug}`);
+    if (segments.length === 1) {
       setMetadata(document, 'coveo-content-type', 'Course');
       setMetadata(document, 'type', 'Course');
-      setMetadata(document, 'course-id', courseID);
 
       const moduleCount = getModuleCount(document);
       if (moduleCount) {
@@ -205,6 +207,16 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
       if (courseDuration) {
         setMetadata(document, 'course-duration', courseDuration);
       }
+    } else if (segments.length === 2) {
+      // Module page
+      const moduleID = generateHash(`/courses/${slug}/${moduleSlug}`);
+      setMetadata(document, 'module-id', moduleID);
+    } else if (segments.length >= 3) {
+      // Step page
+      const moduleID = generateHash(`/courses/${slug}/${moduleSlug}`);
+      const stepID = generateHash(`/courses/${slug}/${moduleSlug}/${stepSlug}`);
+      setMetadata(document, 'module-id', moduleID);
+      setMetadata(document, 'step-id', stepID);
     }
 
     // Quiz check
