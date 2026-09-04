@@ -6,6 +6,10 @@ import {
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
+import { upsertJsonLdScript } from '../modules/schemas/json-ld-util.js';
+import { buildOnDemandEventSchema } from '../modules/schemas/builders/on-demand-event-schema.js';
+
+const SCHEMA_SCRIPT_ID = 'exl-schema-org-jsonld';
 
 export const matchEventsV2Path = (path) =>
   matchAnyPathOrUnrestricted(path, paramMemoryStore.get()?.eventsV2Paths);
@@ -63,6 +67,27 @@ export default async function renderOnDemandEvent(path, authorization) {
     }
     if (!getMetadata(document, 'type')) {
       setMetadata(document, 'type', 'Event');
+    }
+
+    // Inject a schema.org VideoObject for the on-demand event (EXLM-5756). Gated on the
+    // same `schema-org` feature flag as every other content type; failures are swallowed
+    // so schema generation never breaks page rendering.
+    if (paramMemoryStore.hasFeatureFlag('schema-org')) {
+      try {
+        const schema = buildOnDemandEventSchema(document, path);
+        if (schema) {
+          document
+            .querySelectorAll('script[type="application/ld+json"]')
+            .forEach((el) => el.remove());
+          upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(
+          '[schema-org] Failed to inject on-demand event schema:',
+          e,
+        );
+      }
     }
 
     transformedHtml = dom.serialize();
