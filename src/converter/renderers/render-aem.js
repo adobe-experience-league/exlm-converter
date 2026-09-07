@@ -189,9 +189,9 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     !path.includes('/courses/course-fragments')
   ) {
     const segments = path.split('/courses/')[1].split('/').filter(Boolean);
-    const [slug, moduleSlug, stepSlug] = segments;
+    const [course, module, step] = segments;
 
-    const courseID = generateHash(`/courses/${slug}`);
+    const courseID = generateHash(`/courses/${course}`);
     setMetadata(document, 'course-id', courseID);
 
     // Base course page only
@@ -209,23 +209,23 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
         setMetadata(document, 'course-duration', courseDuration);
       }
 
-      const moduleIDs = getChildPageIds(document, [slug]);
+      const moduleIDs = getChildPageIds(document, [course]);
       if (moduleIDs.length) {
         setMetadata(document, 'module-ids', moduleIDs.join(','));
       }
     } else if (segments.length === 2) {
       // Module page
-      const moduleID = generateHash(`/courses/${slug}/${moduleSlug}`);
+      const moduleID = generateHash(`/courses/${course}/${module}`);
       setMetadata(document, 'module-id', moduleID);
 
-      const stepIDs = getChildPageIds(document, [slug, moduleSlug]);
+      const stepIDs = getChildPageIds(document, [course, module]);
       if (stepIDs.length) {
         setMetadata(document, 'step-ids', stepIDs.join(','));
       }
     } else if (segments.length >= 3) {
       // Step page
-      const moduleID = generateHash(`/courses/${slug}/${moduleSlug}`);
-      const stepID = generateHash(`/courses/${slug}/${moduleSlug}/${stepSlug}`);
+      const moduleID = generateHash(`/courses/${course}/${module}`);
+      const stepID = generateHash(`/courses/${course}/${module}/${step}`);
       setMetadata(document, 'module-id', moduleID);
       setMetadata(document, 'step-id', stepID);
     }
