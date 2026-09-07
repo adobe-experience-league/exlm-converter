@@ -18,6 +18,7 @@ import {
   createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
+  getChildPageIds,
   updateLegacyAndV2Tags,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
@@ -207,10 +208,20 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
       if (courseDuration) {
         setMetadata(document, 'course-duration', courseDuration);
       }
+
+      const moduleIDs = getChildPageIds(document, [slug]);
+      if (moduleIDs.length) {
+        setMetadata(document, 'module-ids', moduleIDs.join(','));
+      }
     } else if (segments.length === 2) {
       // Module page
       const moduleID = generateHash(`/courses/${slug}/${moduleSlug}`);
       setMetadata(document, 'module-id', moduleID);
+
+      const stepIDs = getChildPageIds(document, [slug, moduleSlug]);
+      if (stepIDs.length) {
+        setMetadata(document, 'step-ids', stepIDs.join(','));
+      }
     } else if (segments.length >= 3) {
       // Step page
       const moduleID = generateHash(`/courses/${slug}/${moduleSlug}`);
