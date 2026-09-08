@@ -5,6 +5,7 @@ import {
   addIfPresent,
   extractCommonMetadata,
   getCsvValues,
+  toSingleOrArray,
 } from '../schema-helpers.js';
 import { getMetadata } from '../../utils/dom-utils.js';
 import {
@@ -52,11 +53,6 @@ const findVideoUrl = (document) => {
   return undefined;
 };
 
-const buildAbout = (productName) => {
-  if (!productName) return undefined;
-  return { '@type': SOFTWARE_APPLICATION_TYPE, name: productName };
-};
-
 /**
  * Builds a schema.org VideoObject for an on-demand event page.
  *
@@ -90,9 +86,10 @@ export const buildOnDemandEventSchema = async (document, path) => {
   const uploadDate = toUploadDate(
     mpcVideo.uploadDate || getMetadata(document, 'last-substantial-update'),
   );
-  // Product comes from the page's `product` metadata (first value when comma-separated).
-  const productName =
-    getCsvValues(getMetadata(document, 'product'))[0] || about[0];
+  // Products come from the page's `product` metadata (comma-separated), falling back to
+  // the common `solution` metadata (`about`) when `product` is absent.
+  const productNames = getCsvValues(getMetadata(document, 'product'));
+  const aboutNames = productNames.length > 0 ? productNames : about;
 
   const schema = {};
   addIfPresent(schema, '@context', SCHEMA_ORG_CONTEXT);
@@ -107,7 +104,13 @@ export const buildOnDemandEventSchema = async (document, path) => {
   addIfPresent(schema, 'duration', getMetadata(document, 'duration'));
   addIfPresent(schema, 'embedUrl', `${videoUrl}/`);
   addIfPresent(schema, 'publisher', VIDEO_PUBLISHER);
-  addIfPresent(schema, 'about', buildAbout(productName));
+  if (aboutNames.length > 0) {
+    const aboutObjects = aboutNames.map((name) => ({
+      '@type': SOFTWARE_APPLICATION_TYPE,
+      name,
+    }));
+    addIfPresent(schema, 'about', toSingleOrArray(aboutObjects));
+  }
 
   return schema;
 };
