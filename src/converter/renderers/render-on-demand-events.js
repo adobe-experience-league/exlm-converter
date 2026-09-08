@@ -69,25 +69,19 @@ export default async function renderOnDemandEvent(path, authorization) {
       setMetadata(document, 'type', 'Event');
     }
 
-    // Inject a schema.org VideoObject for the on-demand event (EXLM-5756). Gated on the
-    // same `schema-org` feature flag as every other content type; failures are swallowed
-    // so schema generation never breaks page rendering.
-    if (paramMemoryStore.hasFeatureFlag('schema-org')) {
-      try {
-        const schema = await buildOnDemandEventSchema(document, path);
-        if (schema) {
-          document
-            .querySelectorAll('script[type="application/ld+json"]')
-            .forEach((el) => el.remove());
-          upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
-        }
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(
-          '[schema-org] Failed to inject on-demand event schema:',
-          e,
-        );
+    // Inject a schema.org VideoObject for the on-demand event. Failures are
+    // swallowed so schema generation never breaks page rendering.
+    try {
+      const schema = await buildOnDemandEventSchema(document, path);
+      if (schema) {
+        document
+          .querySelectorAll('script[type="application/ld+json"]')
+          .forEach((el) => el.remove());
+        upsertJsonLdScript(document, schema, SCHEMA_SCRIPT_ID);
       }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[schema-org] Failed to inject on-demand event schema:', e);
     }
 
     transformedHtml = dom.serialize();
