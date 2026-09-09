@@ -84,8 +84,17 @@ export const isTocPath = (path) => matchTocPath(path) !== false;
 export const isIoFile = (path) => ioFiles.includes(path);
 
 const matchesPath = (path, matchPath) => {
-  const docsMatcher = match(matchPath, { decode: decodeURIComponent });
-  return docsMatcher(path) !== false;
+  try {
+    const docsMatcher = match(matchPath, { decode: decodeURIComponent });
+    return docsMatcher(path) !== false;
+  } catch {
+    // A malformed path-to-regexp template (e.g. an unbalanced group) throws synchronously at
+    // compile time. globPaths often comes from an ops-populated CSV env var (V2_PATHS,
+    // EVENTS_V2_PATHS) that can contain a typo -- fail closed for this one entry instead of
+    // throwing, which would otherwise crash matchAnyPath's whole loop and 500 every request
+    // that reaches it, not just ones matching the bad pattern (PR #794 review, Matt Lawrence).
+    return false;
+  }
 };
 
 /**
@@ -100,4 +109,24 @@ export const matchAnyPath = (pathToTest, globPaths) => {
     i += 1;
   }
   return false;
+};
+
+/**
+ * given a path to test and a raw comma-separated list of glob paths, return true if the list is
+ * unset/empty (no restriction configured -- preserve pre-gate behavior) or if the path matches any
+ * of the listed glob paths
+ */
+export const matchAnyPathOrUnrestricted = (path, rawPathsCsv) => {
+  const trimmed = (rawPathsCsv || '').trim();
+  if (trimmed === '') return true; // no restriction configured -- preserve pre-gate behavior
+  const paths = trimmed
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  // A separators-only value (e.g. "," or ", ,") passes the trimmed === '' check above but
+  // filters down to an empty array here -- without this check, matchAnyPath would return false
+  // for every path, silently flipping a stray comma into a full lockout of every on-demand
+  // event instead of the intended "no restriction configured" (PR #794 review, Matt Lawrence).
+  if (paths.length === 0) return true;
+  return matchAnyPath(path, paths);
 };
