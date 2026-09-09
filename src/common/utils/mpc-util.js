@@ -80,6 +80,10 @@ const MPC_ORIGIN = 'https://video.tv.adobe.com';
  * @returns {boolean} true if the url is a valid MPC video url matching https://video.tv.adobe.com/v/{videoId}
  */
 export function isMpcVideoUrl(url) {
+  // Most anchors/iframes on a page are relative, in-page, or non-http links (e.g. `/en/events`,
+  // `#section`, `mailto:...`); those can never be an MPC video url, so skip them here rather
+  // than letting `new URL()` throw and log a misleading error for routine page markup.
+  if (!/^https?:\/\//i.test(url || '')) return false;
   try {
     const urlObj = new URL(url);
     const hasMpcOrigin = urlObj.origin === MPC_ORIGIN;
