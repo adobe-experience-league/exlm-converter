@@ -23,6 +23,7 @@ application:
               exliaTaxonomyBaseUrl: $EXLIA_TAXONOMY_BASE_URL
               featureFlags: $FEATURE_FLAGS
               v2Paths: $V2_PATHS
+              eventsV2Paths: $EVENTS_V2_PATHS
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
