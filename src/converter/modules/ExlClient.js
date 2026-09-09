@@ -122,11 +122,16 @@ export default class ExlClient {
     }
 
     const key = `${endpoint}-${lang}`;
-    const labelState = await this.state.get(key);
 
-    if (labelState && labelState.value) {
-      aioLogger.debug(`Using cached value for ${key}`);
-      return JSON.parse(labelState.value)[id];
+    try {
+      const labelState = await this.state.get(key);
+
+      if (labelState && labelState.value) {
+        aioLogger.debug(`Using cached value for ${key}`);
+        return JSON.parse(labelState.value)[id] || id;
+      }
+    } catch (e) {
+      aioLogger.error(`Failed to read cached labels for ${key}: ${e.message}`);
     }
 
     aioLogger.debug(`Fetching ${key} from API`);
@@ -134,36 +139,47 @@ export default class ExlClient {
     let next = `api/${endpoint}?lang=${lang}&page_size=2000`;
     const results = {};
 
-    do {
-      /* eslint-disable-next-line no-await-in-loop */
-      const response = await this.doFetch(next);
+    try {
+      do {
+        /* eslint-disable-next-line no-await-in-loop */
+        const response = await this.doFetch(next);
 
-      if (response.error) {
-        aioLogger.error(response.error);
-      } else {
-        const raw = response?.data;
+        if (response.error) {
+          aioLogger.error(response.error);
+        } else {
+          const raw = response?.data;
 
-        if (raw === undefined || raw.length <= 0) {
-          aioLogger.error(`${endpoint} request returned no labels for ${lang}`);
+          if (!Array.isArray(raw) || raw.length <= 0) {
+            aioLogger.error(
+              `${endpoint} request returned no labels for ${lang}`,
+            );
+          } else {
+            raw.forEach((item) => {
+              results[item.Name_en] = item.Name;
+            });
+          }
         }
 
-        raw.forEach((item) => {
-          results[item.Name_en] = item.Name;
+        // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
+        const nextUriObject =
+          response?.links?.find((link) => link.rel === 'next') ||
+          response?.links?.find((link) => link.rel === 'last');
+        next = nextUriObject?.uri;
+      } while (next !== undefined);
+
+      if (Object.keys(results).length > 0) {
+        // store for 24 hours (86400 seconds)
+        await this.state.put(key, JSON.stringify(results), {
+          ttl: 86400,
         });
       }
-
-      // "Next" is always used when page size < remaining items, "Last" is used when page size > items remaining
-      const nextUriObject =
-        response?.links.find((link) => link.rel === 'next') ||
-        response?.links.find((link) => link.rel === 'last');
-      next = nextUriObject?.uri;
-    } while (next !== undefined);
-
-    if (Object.keys(results).length > 0) {
-      // store for 24 hours (86400 seconds)
-      await this.state.put(key, JSON.stringify(results), {
-        ttl: 86400,
-      });
+    } catch (e) {
+      // Endpoint missing/decommissioned (e.g. 404) or a malformed/non-JSON
+      // response: fall back to the English label instead of throwing, so
+      // non-English page rendering keeps working without these endpoints.
+      aioLogger.error(
+        `Failed to fetch labels for ${key}, falling back to id "${id}": ${e.message}`,
+      );
     }
 
     return results[id] || id;
