@@ -149,7 +149,7 @@ export default class ExlClient {
         } else {
           const raw = response?.data;
 
-          if (!Array.isArray(raw) || raw.length <= 0) {
+          if (raw === undefined || !Array.isArray(raw) || raw.length <= 0) {
             aioLogger.error(
               `${endpoint} request returned no labels for ${lang}`,
             );
