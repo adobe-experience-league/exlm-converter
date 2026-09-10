@@ -461,6 +461,37 @@ export function getCourseDuration(document) {
 }
 
 /**
+ * Derives the hashed ids of direct child course pages (modules under a course,
+ * or steps under a module) that are already linked from the current page's
+ * own DOM, so no extra network fetches are needed to compute them. Matches
+ * on path structure (one segment deeper than the given prefix) rather than a
+ * specific block/component, since not all step-like pages (e.g. key-takeaways,
+ * quiz) are tagged with the same data-aue-model.
+ * @param {Document} document - The DOM document
+ * @param {string[]} prefixSegments - Path segments (after '/courses/') identifying the current course/module
+ * @returns {string[]} - Unique, hashed ids for each linked direct child page
+ */
+export function getChildPageIds(document, prefixSegments) {
+  const ids = new Set();
+  const prefixPath = prefixSegments.join('/');
+
+  document.querySelectorAll('a[href*="/courses/"]').forEach((anchor) => {
+    const href = anchor.getAttribute('href');
+    const afterCourses = href.split('/courses/')[1];
+    if (!afterCourses) return;
+
+    const segments = afterCourses.split('/').filter(Boolean);
+    if (segments.length !== prefixSegments.length + 1) return;
+    if (segments.slice(0, prefixSegments.length).join('/') !== prefixPath)
+      return;
+
+    ids.add(generateHash(`/courses/${segments.join('/')}`));
+  });
+
+  return [...ids];
+}
+
+/**
  * Creates translated metadata for role, level, and feature meta types.
  *
  * @param {Document} document
