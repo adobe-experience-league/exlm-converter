@@ -38,6 +38,21 @@ const toAbsoluteUrl = (url) => {
   return url.startsWith('//') ? `https:${url}` : url;
 };
 
+// The page's `duration` metadata is a plain seconds count (e.g. "1934"), but schema.org's
+// VideoObject.duration must be an ISO 8601 duration (e.g. "PT32M14S"); convert it here so
+// validators don't reject the field.
+const toIso8601Duration = (rawSeconds) => {
+  if (!rawSeconds) return undefined;
+  const totalSeconds = Number(rawSeconds);
+  if (!Number.isFinite(totalSeconds) || totalSeconds < 0) return undefined;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  return `PT${hours ? `${hours}H` : ''}${minutes ? `${minutes}M` : ''}${
+    seconds || (!hours && !minutes) ? `${seconds}S` : ''
+  }`;
+};
+
 // Finds the primary MPC video URL (https://video.tv.adobe.com/v/{id}) embedded in the
 // on-demand event page, scanning anchors and iframes. Returns the URL without a trailing
 // slash, query, or hash so callers can derive @id/embedUrl/thumbnail consistently.
@@ -101,7 +116,11 @@ export const buildOnDemandEventSchema = async (document, path) => {
   addIfPresent(schema, 'inLanguage', inLanguage);
   addIfPresent(schema, 'uploadDate', uploadDate);
   addIfPresent(schema, 'thumbnailUrl', thumbnailUrl);
-  addIfPresent(schema, 'duration', getMetadata(document, 'duration'));
+  addIfPresent(
+    schema,
+    'duration',
+    toIso8601Duration(getMetadata(document, 'duration')),
+  );
   addIfPresent(schema, 'embedUrl', `${videoUrl}/`);
   addIfPresent(schema, 'publisher', VIDEO_PUBLISHER);
   if (aboutNames.length > 0) {
