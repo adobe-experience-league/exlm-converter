@@ -5,6 +5,8 @@ import {
   addIfPresent,
   extractCommonMetadata,
   getCsvValues,
+  getFirstNonEmpty,
+  dedupeStrings,
   toSingleOrArray,
 } from '../schema-helpers.js';
 import { getMetadata } from '../../utils/dom-utils.js';
@@ -52,6 +54,28 @@ const toIso8601Duration = (rawSeconds) => {
     seconds || (!hours && !minutes) ? `${seconds}S` : ''
   }`;
 };
+
+// On-demand events don't carry the `solution` tag the common keyword extraction looks for;
+// they use `product` instead, alongside `feature`/`sub-feature`/`topic`. Each falls back to
+// its `_v2` counterpart since that's the only variant some event pages emit (e.g. `topic_v2`).
+const KEYWORD_METADATA_KEYS = [
+  ['product', 'product_v2'],
+  ['feature', 'feature_v2'],
+  ['sub-feature', 'subfeature_v2'],
+  ['topic', 'topic_v2'],
+];
+
+const getKeywords = (document) =>
+  dedupeStrings(
+    KEYWORD_METADATA_KEYS.flatMap(([primaryKey, fallbackKey]) =>
+      getCsvValues(
+        getFirstNonEmpty(
+          getMetadata(document, primaryKey),
+          getMetadata(document, fallbackKey),
+        ),
+      ),
+    ),
+  ).slice(0, 10);
 
 // Finds the primary MPC video URL (https://video.tv.adobe.com/v/{id}) embedded in the
 // on-demand event page, scanning anchors and iframes. Returns the URL without a trailing
@@ -106,6 +130,8 @@ export const buildOnDemandEventSchema = async (document, path) => {
   const productNames = getCsvValues(getMetadata(document, 'product'));
   const aboutNames = productNames.length > 0 ? productNames : about;
 
+  const keywordValues = getKeywords(document);
+
   const schema = {};
   addIfPresent(schema, '@context', SCHEMA_ORG_CONTEXT);
   addIfPresent(schema, '@type', VIDEO_OBJECT_TYPE);
@@ -123,6 +149,7 @@ export const buildOnDemandEventSchema = async (document, path) => {
   );
   addIfPresent(schema, 'embedUrl', `${videoUrl}/`);
   addIfPresent(schema, 'publisher', VIDEO_PUBLISHER);
+  addIfPresent(schema, 'keywords', keywordValues);
   if (aboutNames.length > 0) {
     const aboutObjects = aboutNames.map((name) => ({
       '@type': SOFTWARE_APPLICATION_TYPE,
