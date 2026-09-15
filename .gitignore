@@ -16,9 +16,3 @@ exlmconverter-51837-*.json
 .claude/
 .cursor/
 skills/
-
-# IDE / editor / OS
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
