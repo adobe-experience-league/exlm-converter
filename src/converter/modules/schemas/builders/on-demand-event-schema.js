@@ -56,13 +56,14 @@ const toIso8601Duration = (rawSeconds) => {
 };
 
 // On-demand events don't carry the `solution` tag the common keyword extraction looks for;
-// they use `product` instead, alongside `feature`/`sub-feature`/`topic`. Each falls back to
-// its `_v2` counterpart since that's the only variant some event pages emit (e.g. `topic_v2`).
+// they use `product` instead, alongside `feature`/`sub-feature`/`topic`. Each key prefers its
+// `_v2` variant (e.g. `product_v2`, `topic_v2`) since that's the richer/more current field,
+// falling back to the plain tag when the `_v2` variant is absent.
 const KEYWORD_METADATA_KEYS = [
-  ['product', 'product_v2'],
-  ['feature', 'feature_v2'],
-  ['sub-feature', 'subfeature_v2'],
-  ['topic', 'topic_v2'],
+  ['product_v2', 'product'],
+  ['feature_v2', 'feature'],
+  ['subfeature_v2', 'sub-feature'],
+  ['topic_v2', 'topic'],
 ];
 
 const getKeywords = (document) =>
