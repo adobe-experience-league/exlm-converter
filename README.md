@@ -39,7 +39,19 @@ At a minimum, you need to create a file at `build/.local.env` in this repo, that
 
 ```
 EXL_API_HOST=https://experienceleague.adobe.com
+
+# Optional: simulate review environment locally (requires IMS_ORIGIN/EXL_DELIVERY_API_CLIENT_ID/EXL_DELIVERY_API_CLIENT_SECRET/EXL_DELIVERY_API_CLIENT_CODE)
+# EXL_ENV=review
 ```
+
+> Review environment auth is auto-detected from the Runtime namespace (`*-review`) when deployed.
+> `EXL_ENV=review` is for local development only and is not passed during deploy.
+> In review, the EXL delivery API sits behind a Cluster Gateway that requires an IMS service token.
+> Per Adobe IMS, a service token is obtained by exchanging a pre-issued technical-account authorization
+> code via the `authorization_code` grant (not `client_credentials`), using `IMS_ORIGIN`/
+> `EXL_DELIVERY_API_CLIENT_ID`/`EXL_DELIVERY_API_CLIENT_SECRET`/`EXL_DELIVERY_API_CLIENT_CODE`
+> (a dedicated technical account, separate from `IMS_CLIENT_ID`/`IMS_CLIENT_SECRET`/`IMS_AUTHORIZATION_CODE`
+> which are registered for the Khoros/iPaaS integration).
 
 > see description of this env variables in the `Application environment variables` section.
 
@@ -175,29 +187,32 @@ The action requires the follwoing environment variables/secrets to be set:
 
 ## Application environment variables
 
-| Name                        | Type   | required for Prod? | description                                                           |
-| --------------------------- | ------ | ------------------ | --------------------------------------------------------------------- |
-| `OWNER`                     | var    | yes                | this repo owner, sent to AEM for AEM content                          |
-| `REPO`                      | var    | yes                | this repo name, sent to AEM for AEM content                           |
-| `BRANCH`                    | var    | yes                | this repo branch, sent to AEM for AEM content                         |
-| `AEM_AUTHOR_URL`            | var    | yes                | AEM author instance url to get content from                           |
-| `KHOROS_ORIGIN`             | secret | yes                | the origin used to proxy khoros requests                              |
-| `KHOROS_API_SECRET`         | secret | yes                | the API secret used for khoros requests                               |
-| `IMS_ORIGIN`                | secret | yes                | the IMS origin to call for IMS authentication                         |
-| `IMS_CLIENT_ID`             | secret | no                 | the IMS client id to use for IMS authentication                       |
-| `IMS_CLIENT_SECRET`         | secret | no                 | the IMS client secret to use for IMS authentication                   |
-| `IMS_AUTHORIZATION_CODE`    | secret | no                 | the IMS auth code to use for IMS authentication                       |
-| `IPASS_API_KEY`             | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments          |
-| `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
-| `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior          |
-| `V2_PATHS`                  | var    | no                 | comma separated path-to-regexp to render v2 docs                      |
-| `EVENTS_V2_PATHS`           | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events      |
-| `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |
-| `VAULT_ROLE_ID`             | secret | yes                | Vault AppRole role_id for authentication                              |
-| `VAULT_SECRET_ID`           | secret | yes                | Vault AppRole secret_id for authentication                            |
-| `COVEO_SECRET_PATH_PROD`    | var    | yes                | Vault path to production Coveo token (e.g., `secret/data/coveo/prod`) |
-| `COVEO_SECRET_PATH_NONPROD` | var    | yes                | Vault path to nonprod Coveo token (e.g., `secret/data/coveo/nonprod`) |
-| `COVEO_SECRET_KEY`          | var    | no                 | Key name for token in Vault secret (default: `token`)                 |
+| Name                             | Type   | required for Prod? | description                                                                                            |
+| -------------------------------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------ |
+| `OWNER`                          | var    | yes                | this repo owner, sent to AEM for AEM content                                                           |
+| `REPO`                           | var    | yes                | this repo name, sent to AEM for AEM content                                                            |
+| `BRANCH`                         | var    | yes                | this repo branch, sent to AEM for AEM content                                                          |
+| `AEM_AUTHOR_URL`                 | var    | yes                | AEM author instance url to get content from                                                            |
+| `KHOROS_ORIGIN`                  | secret | yes                | the origin used to proxy khoros requests                                                               |
+| `KHOROS_API_SECRET`              | secret | yes                | the API secret used for khoros requests                                                                |
+| `IMS_ORIGIN`                     | secret | yes                | the IMS origin to call for IMS authentication                                                          |
+| `IMS_CLIENT_ID`                  | secret | no                 | the IMS client id to use for IMS authentication                                                        |
+| `IMS_CLIENT_SECRET`              | secret | no                 | the IMS client secret to use for IMS authentication                                                    |
+| `IMS_AUTHORIZATION_CODE`         | secret | no                 | the IMS auth code to use for IMS authentication                                                        |
+| `IPASS_API_KEY`                  | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments                                           |
+| `EXL_API_HOST`                   | var    | no                 | `https://experienceleague.adobe.com`                                                                   |
+| `EXL_DELIVERY_API_CLIENT_ID`     | secret | review only        | dedicated IMS client id (authorization_code grant) for the review Cluster Gateway                      |
+| `EXL_DELIVERY_API_CLIENT_SECRET` | secret | review only        | dedicated IMS client secret (authorization_code grant) for the review Cluster Gateway                  |
+| `EXL_DELIVERY_API_CLIENT_CODE`   | secret | review only        | pre-issued technical-account authorization code exchanged for the review Cluster Gateway service token |
+| `FEATURE_FLAGS`                  | var    | no                 | comma separated feature flags that affect converter behavior                                           |
+| `V2_PATHS`                       | var    | no                 | comma separated path-to-regexp to render v2 docs                                                       |
+| `EVENTS_V2_PATHS`                | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events                                       |
+| `VAULT_ENDPOINT`                 | secret | yes                | HashiCorp Vault endpoint URL                                                                           |
+| `VAULT_ROLE_ID`                  | secret | yes                | Vault AppRole role_id for authentication                                                               |
+| `VAULT_SECRET_ID`                | secret | yes                | Vault AppRole secret_id for authentication                                                             |
+| `COVEO_SECRET_PATH_PROD`         | var    | yes                | Vault path to production Coveo token (e.g., `secret/data/coveo/prod`)                                  |
+| `COVEO_SECRET_PATH_NONPROD`      | var    | yes                | Vault path to nonprod Coveo token (e.g., `secret/data/coveo/nonprod`)                                  |
+| `COVEO_SECRET_KEY`               | var    | no                 | Key name for token in Vault secret (default: `token`)                                                  |
 
 > `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
 > for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication
