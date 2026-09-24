@@ -85,24 +85,13 @@ export default class ExlClientV2 {
   async doFetchHtml(path, requestOptions = {}) {
     const url = new URL(path, this.host);
     console.log(`[FETCH] ${url.toString()}`);
-    try {
-      const response = await fetch(url, {
-        ...requestOptions,
-        headers: {
-          Accept: 'text/html',
-          ...requestOptions.headers,
-        },
-      });
-      if (!response.ok) {
-        console.error(
-          `[ExlClientV2] ${response.status} ${response.statusText} ${url}`,
-        );
-      }
-      return response;
-    } catch (err) {
-      console.error(`[ExlClientV2] fetch failed ${url}`, err);
-      throw err;
-    }
+    return fetch(url, {
+      ...requestOptions,
+      headers: {
+        Accept: 'text/html',
+        ...requestOptions.headers,
+      },
+    });
   }
 
   /**
