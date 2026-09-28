@@ -38,6 +38,7 @@ const {
   EXL_DELIVERY_API_CLIENT_CODE,
   FEATURE_FLAGS,
   V2_PATHS,
+  EVENTS_V2_PATHS,
   GAINSIGHT_API_URL,
   GAINSIGHT_OAUTH2_CLIENT_ID,
   GAINSIGHT_OAUTH2_CLIENT_SECRET,
@@ -94,6 +95,7 @@ const converterHandler = async (req, res) => {
     exlDeliveryApiClientCode: EXL_DELIVERY_API_CLIENT_CODE,
     featureFlags: FEATURE_FLAGS,
     v2Paths: V2_PATHS,
+    eventsV2Paths: EVENTS_V2_PATHS,
     exliaTaxonomyBaseUrl: EXLIA_TAXONOMY_BASE_URL,
   };
 

@@ -80,6 +80,10 @@ const MPC_ORIGIN = 'https://video.tv.adobe.com';
  * @returns {boolean} true if the url is a valid MPC video url matching https://video.tv.adobe.com/v/{videoId}
  */
 export function isMpcVideoUrl(url) {
+  // Most anchors/iframes on a page are relative, in-page, or non-http links (e.g. `/en/events`,
+  // `#section`, `mailto:...`); those can never be an MPC video url, so skip them here rather
+  // than letting `new URL()` throw and log a misleading error for routine page markup.
+  if (!/^https?:\/\//i.test(url || '')) return false;
   try {
     const urlObj = new URL(url);
     const hasMpcOrigin = urlObj.origin === MPC_ORIGIN;
@@ -89,6 +93,26 @@ export function isMpcVideoUrl(url) {
   } catch (e) {
     aioLogger.error('Error parsing MPC URL, skipping', e);
     return false;
+  }
+}
+
+/**
+ * Fetches the MPC video metadata JSON for an MPC video url via `?format=json`.
+ * @param {string} url MPC video url (https://video.tv.adobe.com/v/{id})
+ * @returns {Promise<MPCVideo|null>} parsed video metadata, or null on any failure
+ */
+export async function fetchMpcVideoData(url) {
+  if (!isMpcVideoUrl(url)) return null;
+  const jsonUrl = `${url.split('#')[0].split('?')[0]}?format=json`;
+  try {
+    const response = await fetch(jsonUrl, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (e) {
+    aioLogger.error('Error fetching MPC video JSON, skipping', e);
+    return null;
   }
 }
 

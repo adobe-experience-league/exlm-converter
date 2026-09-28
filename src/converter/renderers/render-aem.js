@@ -18,6 +18,7 @@ import {
   createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
+  getChildPageIds,
   updateLegacyAndV2Tags,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
@@ -187,14 +188,16 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
     !path.includes('/courses/instructors') &&
     !path.includes('/courses/course-fragments')
   ) {
-    const slug = path.split('/courses/')[1].split('/')[0];
+    const segments = path.split('/courses/')[1].split('/').filter(Boolean);
+    const [course, module, step] = segments;
+
+    const courseID = generateHash(`/courses/${course}`);
+    setMetadata(document, 'course-id', courseID);
 
     // Base course page only
-    if (path.endsWith(`/courses/${slug}`)) {
-      const courseID = generateHash(`/courses/${slug}`);
+    if (segments.length === 1) {
       setMetadata(document, 'coveo-content-type', 'Course');
       setMetadata(document, 'type', 'Course');
-      setMetadata(document, 'course-id', courseID);
 
       const moduleCount = getModuleCount(document);
       if (moduleCount) {
@@ -205,6 +208,26 @@ async function transformHTML(htmlString, aemAuthorUrl, path) {
       if (courseDuration) {
         setMetadata(document, 'course-duration', courseDuration);
       }
+
+      const moduleIDs = getChildPageIds(document, [course]);
+      if (moduleIDs.length) {
+        setMetadata(document, 'module-ids', moduleIDs.join(','));
+      }
+    } else if (segments.length === 2) {
+      // Module page
+      const moduleID = generateHash(`/courses/${course}/${module}`);
+      setMetadata(document, 'module-id', moduleID);
+
+      const stepIDs = getChildPageIds(document, [course, module]);
+      if (stepIDs.length) {
+        setMetadata(document, 'step-ids', stepIDs.join(','));
+      }
+    } else if (segments.length >= 3) {
+      // Step page
+      const moduleID = generateHash(`/courses/${course}/${module}`);
+      const stepID = generateHash(`/courses/${course}/${module}/${step}`);
+      setMetadata(document, 'module-id', moduleID);
+      setMetadata(document, 'step-id', stepID);
     }
 
     // Quiz check
