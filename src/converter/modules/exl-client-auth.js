@@ -3,19 +3,6 @@ import { getDefaultImsService } from '../../khoros/utils/IMSService.js';
 import { paramMemoryStore } from './utils/param-memory-store.js';
 
 /**
- * Check if the review IMS authentication feature flag is enabled
- * @returns {boolean}
- */
-function isReviewImsAuthEnabled() {
-  const params = paramMemoryStore.get();
-  const featureFlags = params?.featureFlags || process.env.FEATURE_FLAGS || '';
-  const flags = featureFlags
-    .split(',')
-    .map((flag) => flag.trim().toLowerCase());
-  return flags.includes('enable_review_ims_auth');
-}
-
-/**
  * Auth headers for EXL delivery API calls in review.
  * The review environment sits behind a Cluster Gateway that validates a
  * real IMS service token. Per Adobe IMS, a service token is obtained by
@@ -71,7 +58,10 @@ async function getExlDeliveryApiAuthHeaders({
  */
 export async function buildExlClientAuthOptions(config) {
   // Check if we're in review environment AND the feature flag is enabled
-  if (!isReviewEnvironment() || !isReviewImsAuthEnabled()) {
+  if (
+    !isReviewEnvironment() ||
+    !paramMemoryStore.hasFeatureFlag('enable_review_ims_auth')
+  ) {
     return { isReview: false };
   }
 
