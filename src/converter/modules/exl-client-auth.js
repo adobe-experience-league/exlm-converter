@@ -1,5 +1,19 @@
 import { isReviewEnvironment } from '../../common/utils/environment-utils.js';
 import { getDefaultImsService } from '../../khoros/utils/IMSService.js';
+import { paramMemoryStore } from './utils/param-memory-store.js';
+
+/**
+ * Check if the review IMS authentication feature flag is enabled
+ * @returns {boolean}
+ */
+function isReviewImsAuthEnabled() {
+  const params = paramMemoryStore.get();
+  const featureFlags = params?.featureFlags || process.env.FEATURE_FLAGS || '';
+  const flags = featureFlags
+    .split(',')
+    .map((flag) => flag.trim().toLowerCase());
+  return flags.includes('enable_review_ims_auth');
+}
 
 /**
  * Auth headers for EXL delivery API calls in review.
@@ -56,7 +70,8 @@ async function getExlDeliveryApiAuthHeaders({
  * @returns {Promise<{ isReview: boolean, reviewAuthHeaders?: Record<string, string> }>}
  */
 export async function buildExlClientAuthOptions(config) {
-  if (!isReviewEnvironment()) {
+  // Check if we're in review environment AND the feature flag is enabled
+  if (!isReviewEnvironment() || !isReviewImsAuthEnabled()) {
     return { isReview: false };
   }
 
