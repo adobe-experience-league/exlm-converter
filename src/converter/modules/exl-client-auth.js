@@ -60,7 +60,7 @@ export async function buildExlClientAuthOptions(config) {
   // Check if we're in review environment AND the feature flag is enabled
   if (
     !isReviewEnvironment() ||
-    !paramMemoryStore.hasFeatureFlag('enable_review_ims_auth')
+    !paramMemoryStore.hasFeatureFlag('enable-review-ims-auth')
   ) {
     return { isReview: false };
   }
