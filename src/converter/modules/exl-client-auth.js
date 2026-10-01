@@ -30,7 +30,7 @@ async function getExlDeliveryApiAuthHeaders({
   }
 
   const imsService = getDefaultImsService({
-    imsOrigin: exlDeliveryApiImsOrigin,
+    exlDeliveryApiImsOrigin,
     clientId: exlDeliveryApiClientId,
     clientSecret: exlDeliveryApiClientSecret,
     authorizationCode: exlDeliveryApiClientCode,
