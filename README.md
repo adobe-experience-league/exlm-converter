@@ -43,8 +43,8 @@ EXL_API_HOST=https://experienceleague.adobe.com
 # Optional: simulate review environment locally (requires IMS_ORIGIN/EXL_DELIVERY_API_CLIENT_ID/EXL_DELIVERY_API_CLIENT_SECRET/EXL_DELIVERY_API_CLIENT_CODE)
 # EXL_ENV=review
 
-# Optional: enable IMS authentication for review environment (requires enable_review_ims_auth feature flag)
-# FEATURE_FLAGS=enable_review_ims_auth
+# Optional: enable IMS authentication for review environment (requires enable-review-ims-auth feature flag)
+# FEATURE_FLAGS=enable-review-ims-auth
 ```
 
 > Review environment auth is auto-detected from the Runtime namespace (`*-review`) when deployed.
@@ -204,10 +204,11 @@ The action requires the follwoing environment variables/secrets to be set:
 | `IMS_AUTHORIZATION_CODE`    | secret | no                 | the IMS auth code to use for IMS authentication                       |
 | `IPASS_API_KEY`             | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments          |
 | `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
+| `EXL_DELIVERY_API_IMS_ORIGIN`    | secret | review only   | IMS origin for EXL Delivery API authentication (e.g., `https://ims-na1.adobelogin.com` for production) |
 | `EXL_DELIVERY_API_CLIENT_ID`     | secret | review only   | dedicated IMS client id (authorization_code grant) for the review Cluster Gateway |
 | `EXL_DELIVERY_API_CLIENT_SECRET` | secret | review only   | dedicated IMS client secret (authorization_code grant) for the review Cluster Gateway |
 | `EXL_DELIVERY_API_CLIENT_CODE`   | secret | review only   | pre-issued technical-account authorization code exchanged for the review Cluster Gateway service token |
-| `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior. Available flags: `enable_review_ims_auth` (gates IMS-authenticated Cluster Gateway for review environment) |
+| `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior. Available flags: `enable-review-ims-auth` (gates IMS-authenticated Cluster Gateway for review environment) |
 | `V2_PATHS`                  | var    | no                 | comma separated path-to-regexp to render v2 docs                      |
 | `EVENTS_V2_PATHS`           | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events      |
 | `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |
