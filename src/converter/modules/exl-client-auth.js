@@ -53,7 +53,7 @@ async function getExlDeliveryApiAuthHeaders({
 /**
  * Client options for EXL API clients. Environment is resolved once at construction.
  *
- * @param {{ imsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string, exlDeliveryApiClientCode: string }} config
+ * @param {{ exlDeliveryApiImsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string, exlDeliveryApiClientCode: string }} config
  * @returns {Promise<{ isReview: boolean, reviewAuthHeaders?: Record<string, string> }>}
  */
 export async function buildExlClientAuthOptions(config) {

@@ -40,7 +40,7 @@ At a minimum, you need to create a file at `build/.local.env` in this repo, that
 ```
 EXL_API_HOST=https://experienceleague.adobe.com
 
-# Optional: simulate review environment locally (requires IMS_ORIGIN/EXL_DELIVERY_API_CLIENT_ID/EXL_DELIVERY_API_CLIENT_SECRET/EXL_DELIVERY_API_CLIENT_CODE)
+# Optional: simulate review environment locally (requires EXL_DELIVERY_API_IMS_ORIGIN/EXL_DELIVERY_API_CLIENT_ID/EXL_DELIVERY_API_CLIENT_SECRET/EXL_DELIVERY_API_CLIENT_CODE)
 # EXL_ENV=review
 
 # Optional: enable IMS authentication for review environment (requires enable-review-ims-auth feature flag)
@@ -51,7 +51,7 @@ EXL_API_HOST=https://experienceleague.adobe.com
 > `EXL_ENV=review` is for local development only and is not passed during deploy.
 > In review, the EXL delivery API sits behind a Cluster Gateway that requires an IMS service token.
 > Per Adobe IMS, a service token is obtained by exchanging a pre-issued technical-account authorization
-> code via the `authorization_code` grant (not `client_credentials`), using `IMS_ORIGIN`/
+> code via the `authorization_code` grant (not `client_credentials`), using `EXL_DELIVERY_API_IMS_ORIGIN`/
 > `EXL_DELIVERY_API_CLIENT_ID`/`EXL_DELIVERY_API_CLIENT_SECRET`/`EXL_DELIVERY_API_CLIENT_CODE`
 > (a dedicated technical account, separate from `IMS_CLIENT_ID`/`IMS_CLIENT_SECRET`/`IMS_AUTHORIZATION_CODE`
 > which are registered for the Khoros/iPaaS integration).
