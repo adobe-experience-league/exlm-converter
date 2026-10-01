@@ -287,7 +287,7 @@ export const createDefaultExlClient = async () => {
   const params = paramMemoryStore.get();
   const {
     exlApiHost,
-    imsOrigin,
+    exlDeliveryApiImsOrigin,
     exlDeliveryApiClientId,
     exlDeliveryApiClientSecret,
     exlDeliveryApiClientCode,
@@ -297,7 +297,7 @@ export const createDefaultExlClient = async () => {
     host: exlApiHost,
     state,
     ...(await buildExlClientAuthOptions({
-      imsOrigin,
+      exlDeliveryApiImsOrigin,
       exlDeliveryApiClientId,
       exlDeliveryApiClientSecret,
       exlDeliveryApiClientCode,

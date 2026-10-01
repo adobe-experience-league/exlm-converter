@@ -201,7 +201,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `IMS_AUTHORIZATION_CODE`         | secret | no                 | the IMS auth code to use for IMS authentication                                                        |
 | `IPASS_API_KEY`                  | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments                                           |
 | `EXL_API_HOST`                   | var    | no                 | `https://experienceleague.adobe.com`                                                                   |
-| `EXL_DELIVERY_API_IMS_ORIGIN`    | secret | review only   | IMS origin for EXL Delivery API authentication (e.g., `https://ims-na1.adobelogin.com` for production) |
+| `EXL_DELIVERY_API_IMS_ORIGIN`    | secret | review only        | IMS origin for EXL Delivery API authentication (e.g., `https://ims-na1.adobelogin.com` for production) |
 | `EXL_DELIVERY_API_CLIENT_ID`     | secret | review only        | dedicated IMS client id (authorization_code grant) for the review Cluster Gateway                      |
 | `EXL_DELIVERY_API_CLIENT_SECRET` | secret | review only        | dedicated IMS client secret (authorization_code grant) for the review Cluster Gateway                  |
 | `EXL_DELIVERY_API_CLIENT_CODE`   | secret | review only        | pre-issued technical-account authorization code exchanged for the review Cluster Gateway service token |
