@@ -21,6 +21,7 @@ application:
               aemBranch: $BRANCH
               exlApiHost: $EXL_API_HOST
               imsOrigin: $IMS_ORIGIN
+              exlDeliveryApiImsOrigin: $EXL_DELIVERY_API_IMS_ORIGIN
               exlDeliveryApiClientId: $EXL_DELIVERY_API_CLIENT_ID
               exlDeliveryApiClientSecret: $EXL_DELIVERY_API_CLIENT_SECRET
               exlDeliveryApiClientCode: $EXL_DELIVERY_API_CLIENT_CODE

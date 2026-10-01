@@ -8,28 +8,28 @@ import { getDefaultImsService } from '../../khoros/utils/IMSService.js';
  * exchanging a pre-issued technical-account authorization code (via the
  * `authorization_code` grant), not `client_credentials`.
  *
- * @param {{ imsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string, exlDeliveryApiClientCode: string }} config
+ * @param {{ exlDeliveryApiImsOrigin: string, exlDeliveryApiClientId: string, exlDeliveryApiClientSecret: string, exlDeliveryApiClientCode: string }} config
  * @returns {Promise<Record<string, string>>}
  */
 async function getExlDeliveryApiAuthHeaders({
-  imsOrigin,
+  exlDeliveryApiImsOrigin,
   exlDeliveryApiClientId,
   exlDeliveryApiClientSecret,
   exlDeliveryApiClientCode,
 }) {
   if (
-    !imsOrigin ||
+    !exlDeliveryApiImsOrigin ||
     !exlDeliveryApiClientId ||
     !exlDeliveryApiClientSecret ||
     !exlDeliveryApiClientCode
   ) {
     throw new Error(
-      'Missing IMS config (imsOrigin/exlDeliveryApiClientId/exlDeliveryApiClientSecret/exlDeliveryApiClientCode): required when running in review environment',
+      'Missing IMS config (exlDeliveryApiImsOrigin/exlDeliveryApiClientId/exlDeliveryApiClientSecret/exlDeliveryApiClientCode): required when running in review environment',
     );
   }
 
   const imsService = getDefaultImsService({
-    imsOrigin,
+    exlDeliveryApiImsOrigin,
     clientId: exlDeliveryApiClientId,
     clientSecret: exlDeliveryApiClientSecret,
     authorizationCode: exlDeliveryApiClientCode,
