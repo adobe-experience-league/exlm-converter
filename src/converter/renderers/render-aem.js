@@ -313,7 +313,11 @@ export default async function renderAem(path, params) {
   }
 
   console.log(
-    `[debug-author] AEM response for ${path}: status=${resp.status} content-type=${resp.headers.get('Content-Type')} source-location=${sourceLocation ? 'set' : 'none'}`,
+    `[debug-author] AEM response for ${path}: status=${
+      resp.status
+    } content-type=${resp.headers.get('Content-Type')} source-location=${
+      sourceLocation ? 'set' : 'none'
+    }`,
   );
 
   if (!resp.ok) {
