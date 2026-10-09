@@ -95,6 +95,11 @@ async function transformAemPageMetadata(htmlString, params, path) {
     !path.includes('/perspectives/authors')
   ) {
     const authorBioPages = getMetadata(document, 'author-bio-page');
+    // DEBUG: temporary marker to confirm this converter build produced the page
+    setMetadata(document, 'debug-author-metadata', 'debug-author-metadata-v1');
+    console.log(
+      `[debug-author] ${path} author-bio-page: ${authorBioPages || '(none)'}`,
+    );
     if (authorBioPages) {
       const authorBioUrls = Array.from(
         new Set(
@@ -107,8 +112,36 @@ async function transformAemPageMetadata(htmlString, params, path) {
 
       const promises = authorBioUrls.map(async (authorBioUrl) => {
         // eslint-disable-next-line no-use-before-define
-        const { body } = await renderAem(authorBioUrl, params);
-        return getAuthorBioData(body);
+        const { body, statusCode, error } = await renderAem(
+          authorBioUrl,
+          params,
+        );
+        if (!body || error) {
+          // DEBUG: fallback so the failure is visible in published metadata
+          const reason = `status-${statusCode || error?.code || 'unknown'}`;
+          aioLogger.error(
+            `[debug-author] author bio fetch failed for ${authorBioUrl} (${reason})`,
+            error?.message || '',
+          );
+          return {
+            authorName: `DEBUG-NO-AUTHOR-BIO-${reason}`,
+            authorType: 'DEBUG-NO-AUTHOR-BIO',
+          };
+        }
+        const bioData = getAuthorBioData(body);
+        if (!bioData.authorName) {
+          aioLogger.error(
+            `[debug-author] no .author-bio data extracted from ${authorBioUrl} (status ${statusCode})`,
+          );
+          return {
+            authorName: 'DEBUG-NO-AUTHOR-BIO-BLOCK',
+            authorType: 'DEBUG-NO-AUTHOR-BIO',
+          };
+        }
+        console.log(
+          `[debug-author] ${authorBioUrl} extracted name="${bioData.authorName}" type="${bioData.authorType}"`,
+        );
+        return bioData;
       });
 
       const results = await Promise.all(promises);
@@ -262,9 +295,11 @@ export default async function renderAem(path, params) {
   } = params;
 
   if (!authorization) {
+    aioLogger.error(`[debug-author] Missing Authorization for ${path}`);
     return sendError(401, 'Missing Authorization');
   }
   if (!aemAuthorUrl || !aemOwner || !aemRepo || !aemBranch) {
+    aioLogger.error(`[debug-author] Missing AEM configuration for ${path}`);
     return sendError(500, 'Missing AEM configuration');
   }
 
@@ -273,11 +308,20 @@ export default async function renderAem(path, params) {
     const client = new FranklinServletClient(params);
     resp = await client.fetchFromServlet(path, sourceLocation);
   } catch (e) {
-    aioLogger.error('Error fetching AEM content', e);
+    aioLogger.error(`[debug-author] Error fetching AEM content for ${path}`, e);
     return sendError(500, 'Internal Server Error');
   }
 
+  console.log(
+    `[debug-author] AEM response for ${path}: status=${
+      resp.status
+    } content-type=${resp.headers.get('Content-Type')} source-location=${
+      sourceLocation ? 'set' : 'none'
+    }`,
+  );
+
   if (!resp.ok) {
+    aioLogger.error(`[debug-author] AEM returned ${resp.status} for ${path}`);
     return sendError(resp.status, 'Internal Server Error');
   }
   // note that this can contain charset, example 'text/html; charset=utf-8'
