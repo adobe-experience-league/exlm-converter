@@ -33,70 +33,6 @@ export const aioLogger = Logger('render-aem');
 const byteSize = (str) => new Blob([str]).size;
 const isLessThanOneMB = (str) => byteSize(str) < 1024 * 1024 - 1024; // -1024 for good measure :)
 
-// DEBUG: temporary author-metadata diagnostics. Revert after investigation.
-const debugLog = (event, details) =>
-  console.log(`[debug-author] ${event} ${JSON.stringify(details)}`);
-
-// Strip query string/fragment so signed values are never logged.
-const debugSafeUrl = (value) => {
-  if (!value) return { value: '(none)' };
-  const str = String(value);
-  const cut = str.search(/[?#]/);
-  return {
-    value: cut === -1 ? str : str.substring(0, cut),
-    hadQueryOrFragment: cut !== -1,
-  };
-};
-
-const debugAuthScheme = (authorization) =>
-  authorization ? String(authorization).split(' ')[0] : '(none)';
-
-// Identifies which page AEM actually returned, without logging the whole body.
-const debugSummarizeHtml = (html) => {
-  if (typeof html !== 'string' || !html) return { empty: true };
-  try {
-    const { document } = new jsdom.JSDOM(html).window;
-    const meta = (name) =>
-      document.querySelector(`meta[name="${name}"]`)?.content ||
-      document.querySelector(`meta[property="${name}"]`)?.content ||
-      '';
-    const authorBio = document.querySelector('.author-bio');
-    const main = document.querySelector('main');
-    return {
-      length: html.length,
-      title: document.title,
-      canonical:
-        document.querySelector('link[rel="canonical"]')?.href ||
-        meta('canonical'),
-      ogUrl: meta('og:url'),
-      template: meta('template'),
-      theme: meta('theme'),
-      authorBioPageMeta: meta('author-bio-page'),
-      bodyAueResource: document.body?.getAttribute('data-aue-resource') || '',
-      mainAueResource: main?.getAttribute('data-aue-resource') || '',
-      hasMain: Boolean(main),
-      hasAuthorBio: Boolean(authorBio),
-      authorBioRowCount: authorBio ? authorBio.children.length : 0,
-      authorBioRows: authorBio
-        ? [...authorBio.children].map((row) =>
-            row.textContent.trim().replace(/\s+/g, ' ').substring(0, 80),
-          )
-        : [],
-      blockClasses: [
-        ...(main || document.body || document).querySelectorAll('div[class]'),
-      ]
-        .map((el) => el.className)
-        .filter(Boolean)
-        .slice(0, 15),
-      bodyStart: (document.body?.innerHTML || html)
-        .replace(/\s+/g, ' ')
-        .substring(0, 600),
-    };
-  } catch (e) {
-    return { parseError: e.message, start: html.substring(0, 300) };
-  }
-};
-
 /**
  * Transforms page metadata
  */
@@ -159,23 +95,6 @@ async function transformAemPageMetadata(htmlString, params, path) {
     !path.includes('/perspectives/authors')
   ) {
     const authorBioPages = getMetadata(document, 'author-bio-page');
-    // DEBUG: temporary marker to confirm this converter build produced the page
-    setMetadata(document, 'debug-author-metadata', 'debug-author-metadata-v2');
-    debugLog('article-context', {
-      path,
-      authorBioPages: authorBioPages || '(none)',
-      sourceLocation: debugSafeUrl(params.sourceLocation),
-      authScheme: debugAuthScheme(params.authorization),
-      aemAuthorUrl: params.aemAuthorUrl,
-      aemOwner: params.aemOwner,
-      aemRepo: params.aemRepo,
-      aemBranch: params.aemBranch,
-      // eslint-disable-next-line no-underscore-dangle
-      incomingHeaderNames: Object.keys(params.__ow_headers || {}).sort(),
-      articleTitle: document.title,
-      articleBodyAueResource:
-        document.body?.getAttribute('data-aue-resource') || '',
-    });
     if (authorBioPages) {
       const authorBioUrls = Array.from(
         new Set(
@@ -186,105 +105,10 @@ async function transformAemPageMetadata(htmlString, params, path) {
         ),
       );
 
-      // DEBUG: refetch the raw bio with/without the article's source-location
-      // header and log what AEM returns, to pinpoint why extraction fails.
-      const probeBio = async (authorBioUrl, label, sourceLocation) => {
-        try {
-          const client = new FranklinServletClient(params);
-          const resp = await client.fetchFromServlet(
-            authorBioUrl,
-            sourceLocation,
-          );
-          const raw = await resp.text();
-          let extracted;
-          try {
-            extracted = getAuthorBioData(raw);
-          } catch (e) {
-            extracted = { extractError: e.message };
-          }
-          debugLog('bio-probe', {
-            authorBioUrl,
-            probe: label,
-            sentSourceLocation: debugSafeUrl(sourceLocation),
-            status: resp.status,
-            contentType: resp.headers.get('Content-Type'),
-            responseHeaders: Object.fromEntries(
-              [...resp.headers.entries()].filter(
-                ([name]) => !/cookie|authorization/i.test(name),
-              ),
-            ),
-            extracted,
-            summary: debugSummarizeHtml(raw),
-          });
-        } catch (e) {
-          aioLogger.error(
-            `[debug-author] bio-probe ${label} threw for ${authorBioUrl}`,
-            e,
-          );
-        }
-      };
-
       const promises = authorBioUrls.map(async (authorBioUrl) => {
         // eslint-disable-next-line no-use-before-define
-        const { body, statusCode, error } = await renderAem(
-          authorBioUrl,
-          params,
-        );
-        if (!body || error) {
-          // DEBUG: fallback so the failure is visible in published metadata
-          const reason = `status-${statusCode || error?.code || 'unknown'}`;
-          aioLogger.error(
-            `[debug-author] author bio fetch failed for ${authorBioUrl} (${reason})`,
-            error?.message || '',
-          );
-          await probeBio(
-            authorBioUrl,
-            'raw-with-source-location',
-            params.sourceLocation,
-          );
-          await probeBio(
-            authorBioUrl,
-            'raw-without-source-location',
-            undefined,
-          );
-          return {
-            authorName: `DEBUG-NO-AUTHOR-BIO-${reason}`,
-            authorType: 'DEBUG-NO-AUTHOR-BIO',
-          };
-        }
-        const bioData = getAuthorBioData(body);
-        if (!bioData.authorName) {
-          aioLogger.error(
-            `[debug-author] no .author-bio data extracted from ${authorBioUrl} (status ${statusCode})`,
-          );
-          debugLog('bio-transformed-body', {
-            authorBioUrl,
-            statusCode,
-            summary: debugSummarizeHtml(body),
-          });
-          await probeBio(
-            authorBioUrl,
-            'raw-with-source-location',
-            params.sourceLocation,
-          );
-          await probeBio(
-            authorBioUrl,
-            'raw-without-source-location',
-            undefined,
-          );
-          return {
-            authorName: 'DEBUG-NO-AUTHOR-BIO-BLOCK',
-            authorType: 'DEBUG-NO-AUTHOR-BIO',
-          };
-        }
-        debugLog('bio-ok', {
-          authorBioUrl,
-          authorName: bioData.authorName,
-          authorType: bioData.authorType,
-          sourceLocation: debugSafeUrl(params.sourceLocation),
-          title: debugSummarizeHtml(body).title,
-        });
-        return bioData;
+        const { body } = await renderAem(authorBioUrl, params);
+        return getAuthorBioData(body);
       });
 
       const results = await Promise.all(promises);
@@ -438,11 +262,9 @@ export default async function renderAem(path, params) {
   } = params;
 
   if (!authorization) {
-    aioLogger.error(`[debug-author] Missing Authorization for ${path}`);
     return sendError(401, 'Missing Authorization');
   }
   if (!aemAuthorUrl || !aemOwner || !aemRepo || !aemBranch) {
-    aioLogger.error(`[debug-author] Missing AEM configuration for ${path}`);
     return sendError(500, 'Missing AEM configuration');
   }
 
@@ -451,21 +273,11 @@ export default async function renderAem(path, params) {
     const client = new FranklinServletClient(params);
     resp = await client.fetchFromServlet(path, sourceLocation);
   } catch (e) {
-    aioLogger.error(`[debug-author] Error fetching AEM content for ${path}`, e);
+    aioLogger.error('Error fetching AEM content', e);
     return sendError(500, 'Internal Server Error');
   }
 
-  debugLog('aem-response', {
-    path,
-    requestUrl: `${aemAuthorUrl}/bin/franklin.delivery/${aemOwner}/${aemRepo}/${aemBranch}${path}`,
-    status: resp.status,
-    contentType: resp.headers.get('Content-Type'),
-    sourceLocation: debugSafeUrl(sourceLocation),
-    authScheme: debugAuthScheme(authorization),
-  });
-
   if (!resp.ok) {
-    aioLogger.error(`[debug-author] AEM returned ${resp.status} for ${path}`);
     return sendError(resp.status, 'Internal Server Error');
   }
   // note that this can contain charset, example 'text/html; charset=utf-8'
