@@ -48,6 +48,7 @@ export const buildArticleSchema = (document, path, contentType = '') => {
   addIfPresent(schema, '@type', type);
   addIfPresent(schema, '@id', `${canonicalUrl}#${idFragment}`);
   addIfPresent(schema, 'url', canonicalUrl);
+  addIfPresent(schema, 'name', headline);
   addIfPresent(schema, 'headline', headline);
   addIfPresent(schema, 'description', description);
   addIfPresent(schema, 'inLanguage', inLanguage);
