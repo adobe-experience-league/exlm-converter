@@ -28,7 +28,7 @@ application:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
           gainsight:
-            function: dist/khoros # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+            function: dist/gainsight # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:

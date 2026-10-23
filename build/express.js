@@ -12,7 +12,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
-import { main as gainsightMain } from '../src/khoros/index.js';
+import { main as gainsightMain } from '../src/gainsight/index.js';
 import { main as tocMain } from '../src/tocs/index.js';
 import { main as coveoMain } from '../src/coveo/index.js';
 import { ensureExpressEnv } from './ensure-env.js';

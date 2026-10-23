@@ -21,13 +21,13 @@ Frontend calls use `/gainsight/` URLs without `platform=gainsight`. Gainsight is
 
 ### New Files
 
-- `src/khoros/utils/GainsightProxy.js` - Gainsight API handler with OAuth2
-- `src/khoros/utils/GainsightOAuth2Service.js` - OAuth2 token management
-- `src/khoros/utils/GainsightOAuth2TokenStore.js` - In-memory token caching
+- `src/gainsight/utils/GainsightProxy.js` - Gainsight API handler with OAuth2
+- `src/gainsight/utils/GainsightOAuth2Service.js` - OAuth2 token management
+- `src/gainsight/utils/GainsightOAuth2TokenStore.js` - In-memory token caching
 
 ### Modified Files
 
-- `src/khoros/index.js` - Platform routing logic
+- `src/gainsight/index.js` - Platform routing logic
 - `app.config.yaml` - Public action renamed to `gainsight`
 - `build/express.js` - Environment variable handling and local `/gainsight/` routing
 - `.github/workflows/deploy-action.yaml` - Deployment configuration
