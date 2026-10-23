@@ -36,14 +36,14 @@ Frontend calls use `/gainsight/` URLs without `platform=gainsight`. Gainsight is
 
 ### Required Configuration
 
-| Variable                       | Type     | Description            | Example                                |
-| ------------------------------ | -------- | ---------------------- | -------------------------------------- |
-| `IMS_ORIGIN`                   | Secret   | IMS token validation origin | `https://ims-na1.adobelogin.com` |
-| `GAINSIGHT_API_URL`             | Secret   | Gainsight API base URL | `https://api2-us-west-2.insided.com`     |
-| `GAINSIGHT_OAUTH2_CLIENT_ID`     | Secret   | OAuth2 client ID       | `c37a71bc-...`                          |
-| `GAINSIGHT_OAUTH2_CLIENT_SECRET` | Secret   | OAuth2 client secret   | `d521443a...`                           |
-| `GAINSIGHT_OAUTH2_SCOPE`         | Variable | OAuth2 scope           | `read`                                 |
-| `GAINSIGHT_COMMUNITY_URL`        | Variable | Community base URL     | `https://adobe-en-community.insided.com` |
+| Variable                         | Type     | Description                 | Example                                  |
+| -------------------------------- | -------- | --------------------------- | ---------------------------------------- |
+| `IMS_ORIGIN`                     | Secret   | IMS token validation origin | `https://ims-na1.adobelogin.com`         |
+| `GAINSIGHT_API_URL`              | Secret   | Gainsight API base URL      | `https://api2-us-west-2.insided.com`     |
+| `GAINSIGHT_OAUTH2_CLIENT_ID`     | Secret   | OAuth2 client ID            | `c37a71bc-...`                           |
+| `GAINSIGHT_OAUTH2_CLIENT_SECRET` | Secret   | OAuth2 client secret        | `d521443a...`                            |
+| `GAINSIGHT_OAUTH2_SCOPE`         | Variable | OAuth2 scope                | `read`                                   |
+| `GAINSIGHT_COMMUNITY_URL`        | Variable | Community base URL          | `https://adobe-en-community.insided.com` |
 
 ### Local Development
 
