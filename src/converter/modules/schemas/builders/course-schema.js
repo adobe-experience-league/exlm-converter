@@ -34,6 +34,7 @@ export const buildCourseSchema = (document, path) => {
   addIfPresent(schema, '@type', COURSE_TYPE);
   addIfPresent(schema, '@id', `${canonicalUrl}#/schema`);
   addIfPresent(schema, 'url', canonicalUrl);
+  addIfPresent(schema, 'name', headline);
   addIfPresent(schema, 'headline', headline);
   addIfPresent(schema, 'description', description);
   addIfPresent(schema, 'inLanguage', inLanguage);
@@ -41,6 +42,7 @@ export const buildCourseSchema = (document, path) => {
   addIfPresent(schema, 'datePublished', datePublished);
   addIfPresent(schema, 'dateModified', dateModified);
   addIfPresent(schema, 'publisher', ADOBE_PUBLISHER);
+  addIfPresent(schema, 'provider', ADOBE_PUBLISHER);
 
   if (audienceType.length > 0) {
     addIfPresent(schema, 'audience', {
