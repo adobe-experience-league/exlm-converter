@@ -4,19 +4,18 @@
 
 ## Overview
 
-This integration adds support for the Gainsight community platform alongside the existing Khoros platform. It is designed to **not impact existing Khoros functionality** and enables a smooth transition from Khoros to Gainsight.
+This integration supports the Gainsight community platform through the `gainsight` action.
 
-**Key Design:** Both platforms run simultaneously. Platform selection is controlled via the `platform` query parameter, with Khoros as the default for complete backward compatibility.
+## Endpoint URL
 
-## Platform Selection
+- **Gainsight:** `/gainsight/profile-details`
 
-- **Khoros (default):** `/khoros/profile-details`
-- **Gainsight:** `/khoros/profile-details?platform=gainsight`
+Frontend calls use `/gainsight/` URLs without `platform=gainsight`. Gainsight is the default, so the parameter is optional; explicitly passing `platform=gainsight` remains supported.
 
 ## Supported Endpoints
 
-1. **`/profile-details`** - Returns user profile (username, location, title, company, profile URL)
-2. **`/profile-menu-list`** - Returns navigation menu items for user profile dropdown
+1. **`/gainsight/profile-details`** - Returns user profile (username, location, title, company, profile URL)
+2. **`/gainsight/profile-menu-list`** - Returns navigation menu items for user profile dropdown
 
 ## Files Modified
 
@@ -29,19 +28,21 @@ This integration adds support for the Gainsight community platform alongside the
 ### Modified Files
 
 - `src/khoros/index.js` - Platform routing logic
-- `build/express.js` - Environment variable handling
+- `app.config.yaml` - Public action renamed to `gainsight`
+- `build/express.js` - Environment variable handling and local `/gainsight/` routing
 - `.github/workflows/deploy-action.yaml` - Deployment configuration
 
 ## Environment Variables
 
 ### Required Configuration
 
-| Variable                         | Type     | Description            | Example                                  |
-| -------------------------------- | -------- | ---------------------- | ---------------------------------------- |
-| `GAINSIGHT_API_URL`              | Secret   | Gainsight API base URL | `https://api2-us-west-2.insided.com`     |
-| `GAINSIGHT_OAUTH2_CLIENT_ID`     | Secret   | OAuth2 client ID       | `c37a71bc-...`                           |
-| `GAINSIGHT_OAUTH2_CLIENT_SECRET` | Secret   | OAuth2 client secret   | `d521443a...`                            |
-| `GAINSIGHT_OAUTH2_SCOPE`         | Variable | OAuth2 scope           | `read`                                   |
+| Variable                       | Type     | Description            | Example                                |
+| ------------------------------ | -------- | ---------------------- | -------------------------------------- |
+| `IMS_ORIGIN`                   | Secret   | IMS token validation origin | `https://ims-na1.adobelogin.com` |
+| `GAINSIGHT_API_URL`             | Secret   | Gainsight API base URL | `https://api2-us-west-2.insided.com`     |
+| `GAINSIGHT_OAUTH2_CLIENT_ID`     | Secret   | OAuth2 client ID       | `c37a71bc-...`                          |
+| `GAINSIGHT_OAUTH2_CLIENT_SECRET` | Secret   | OAuth2 client secret   | `d521443a...`                           |
+| `GAINSIGHT_OAUTH2_SCOPE`         | Variable | OAuth2 scope           | `read`                                 |
 | `GAINSIGHT_COMMUNITY_URL`        | Variable | Community base URL     | `https://adobe-en-community.insided.com` |
 
 ### Local Development
@@ -60,35 +61,13 @@ GAINSIGHT_COMMUNITY_URL=https://adobedx-en-sandbox-community.insided.com
 
 Configure in **Repository Settings → Secrets and variables → Actions** for each environment.
 
-## Impact on Khoros
-
-**✅ Zero Impact:**
-
-- Default behavior unchanged (Khoros)
-- No modifications to existing Khoros endpoints
-- Platform parameter is optional
-- Gainsight configuration is independent
-
-## Community Transition
-
-This implementation supports a phased migration:
-
-1. **Parallel Operation** - Both platforms available, frontend controls routing
-2. **Transition Period** - Gradual traffic shift to Gainsight
-3. **Full Migration** - Switch default, maintain rollback capability
-
-The design ensures zero disruption during the transition from Khoros to Gainsight.
-
 ## Testing
 
 **Local:**
 
 ```bash
-# Khoros (default)
-curl -H "x-ims-token: TOKEN" http://localhost:3030/khoros/profile-details
-
 # Gainsight
-curl -H "x-ims-token: TOKEN" http://localhost:3030/khoros/profile-details?platform=gainsight
+curl -H "x-ims-token: TOKEN" http://localhost:3030/gainsight/profile-details
 ```
 
 ## Key Features
@@ -97,7 +76,7 @@ curl -H "x-ims-token: TOKEN" http://localhost:3030/khoros/profile-details?platfo
 - Profile field mapping (City → location, Job Title → title, Company → company)
 - PII protection in logs (masked email/user IDs)
 - Error handling (404, 401, 502)
-- Response format compatibility with Khoros
+- Unchanged profile response format
 
 ---
 

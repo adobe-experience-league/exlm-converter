@@ -21,7 +21,7 @@ import {
   getDefaultGainsightProxy,
 } from './utils/GainsightProxy.js';
 
-export const aioLogger = Logger('khoros');
+export const aioLogger = Logger('gainsight');
 export const main = async function main(params) {
   const {
     // eslint-disable-next-line camelcase
@@ -48,9 +48,7 @@ export const main = async function main(params) {
   // eslint-disable-next-line camelcase
   const imsToken = __ow_headers['x-ims-token'] || '';
 
-  // Parse platform parameter from query string or direct parameter (default: khoros)
-  // Default to 'khoros' if not provided
-  const platform = platformParam || 'khoros';
+  const platform = platformParam || 'gainsight';
   const pathWithoutQuery = path.split('?')[0];
 
   aioLogger.debug(`Platform selected: ${platform}`);
@@ -125,7 +123,6 @@ export const main = async function main(params) {
     });
   }
 
-  // Default: Khoros platform
   if (!khorosApiSecret) return sendError(401, 'Missing Khoros Token');
   if (!khorosOrigin) return sendError(500, 'Missing Config: Khoros Origin');
 

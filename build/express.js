@@ -12,7 +12,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
-import { main as khorosMain } from '../src/khoros/index.js';
+import { main as gainsightMain } from '../src/khoros/index.js';
 import { main as tocMain } from '../src/tocs/index.js';
 import { main as coveoMain } from '../src/coveo/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
@@ -118,9 +118,9 @@ const converterHandler = async (req, res) => {
   }
 };
 
-const khorosHandler = async (req, res) => {
+const gainsightHandler = async (req, res) => {
   const { path: originalPath, query, headers } = req;
-  const path = originalPath.replace('/khoros', '');
+  const path = originalPath.replace(/^\/gainsight/, '');
   const params = {
     __ow_path: path,
     __ow_headers: headers,
@@ -139,7 +139,7 @@ const khorosHandler = async (req, res) => {
     ...query,
   };
 
-  const { body, statusCode } = await khorosMain(params);
+  const { body, statusCode } = await gainsightMain(params);
   res.status(statusCode || 200);
   res.send(body);
 };
@@ -194,7 +194,7 @@ const coveoHandler = async (req, res) => {
   res.json(body);
 };
 
-app.get('/khoros/**', khorosHandler);
+app.get('/gainsight/**', gainsightHandler);
 app.get('/toc/**', tocHandler);
 app.get('/coveo-token', coveoHandler);
 app.get('/**', converterHandler);
@@ -203,7 +203,7 @@ app.listen(port, () =>
   console.log(`
   
   Converter: http://localhost:${port}/en/docs
-  Khoros: http://localhost:${port}/khoros
+  Gainsight: http://localhost:${port}/gainsight
   Toc: http://localhost:${port}/toc
   Coveo Token: http://localhost:${port}/coveo-token
 `),
