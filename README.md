@@ -80,7 +80,7 @@ ACCESS_TOKEN=<token>
 
 The `gainsight` action is available locally at
 `http://localhost:3030/gainsight/profile-details` when you run `npm run serve`.
-Gainsight is the default, so `platform=gainsight` is optional and can be omitted.
+The action always uses Gainsight; the `platform` query parameter is not needed.
 See [Gainsight integration](src/gainsight/GAINSIGHT_INTEGRATION.md) for configuration.
 
 ### Working with the Coveo token action locally

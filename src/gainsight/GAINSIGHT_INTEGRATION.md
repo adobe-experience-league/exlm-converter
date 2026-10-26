@@ -10,7 +10,7 @@ This integration supports the Gainsight community platform through the `gainsigh
 
 - **Gainsight:** `/gainsight/profile-details`
 
-Frontend calls use `/gainsight/` URLs without `platform=gainsight`. Gainsight is the default, so the parameter is optional; explicitly passing `platform=gainsight` remains supported.
+Frontend calls use `/gainsight/` URLs without `platform=gainsight`. The action always uses Gainsight; the `platform` query parameter is ignored if supplied.
 
 ## Supported Endpoints
 
@@ -27,7 +27,7 @@ Frontend calls use `/gainsight/` URLs without `platform=gainsight`. Gainsight is
 
 ### Modified Files
 
-- `src/gainsight/index.js` - Platform routing logic
+- `src/gainsight/index.js` - Gainsight profile action
 - `app.config.yaml` - Public action renamed to `gainsight`
 - `build/express.js` - Environment variable handling and local `/gainsight/` routing
 - `.github/workflows/deploy-action.yaml` - Deployment configuration

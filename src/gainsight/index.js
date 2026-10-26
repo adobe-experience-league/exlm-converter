@@ -14,7 +14,6 @@ import Logger from '@adobe/aio-lib-core-logging';
 import { jwtDecode } from 'jwt-decode';
 import { sendError } from '../common/utils/response-utils.js';
 import { getDefaultImsService } from './utils/IMSService.js';
-import { KhorosProxy, getDefaultKhorosProxy } from './utils/KhorosProxy.js';
 import { getDefaultGainsightOAuth2Service } from './utils/GainsightOAuth2Service.js';
 import {
   GainsightProxy,
@@ -28,49 +27,29 @@ export const main = async function main(params) {
     __ow_path,
     // eslint-disable-next-line camelcase
     __ow_headers,
-    khorosApiSecret,
-    khorosOrigin,
     imsOrigin,
-    imsClientId,
-    imsClientSecret,
-    imsAuthorizationCode,
-    ipassApiKey,
     gainsightApiUrl,
     gainsightOAuth2ClientId,
     gainsightOAuth2ClientSecret,
     gainsightOAuth2Scope,
     gainsightCommunityUrl,
-    platform: platformParam,
-    lang = 'en',
   } = params;
   // eslint-disable-next-line camelcase
   const path = __ow_path || '';
   // eslint-disable-next-line camelcase
   const imsToken = __ow_headers['x-ims-token'] || '';
 
-  const platform = platformParam || 'gainsight';
   const pathWithoutQuery = path.split('?')[0];
 
-  aioLogger.debug(`Platform selected: ${platform}`);
-
   // Basic validation
-  if (
-    !KhorosProxy.canHandle(pathWithoutQuery) &&
-    !GainsightProxy.canHandle(pathWithoutQuery)
-  ) {
+  if (!GainsightProxy.canHandle(pathWithoutQuery)) {
     return sendError(404, 'Not Found');
   }
   if (!imsOrigin) return sendError(500, 'Missing Config: IMS Origin');
   if (!imsToken) return sendError(401, 'Missing IMS Token');
 
-  const shouldUseIpass =
-    imsClientId && imsClientSecret && imsAuthorizationCode && ipassApiKey;
-
   const imsService = getDefaultImsService({
     imsOrigin,
-    clientId: imsClientId,
-    clientSecret: imsClientSecret,
-    authorizationCode: imsAuthorizationCode,
   });
 
   // validate provided ims token
@@ -85,64 +64,35 @@ export const main = async function main(params) {
   // eslint-disable-next-line camelcase
   const { user_id: userId } = decodedToken;
 
-  // Platform routing
-  if (platform === 'gainsight') {
-    // Gainsight configuration validation
-    if (!gainsightApiUrl) {
-      return sendError(500, 'Missing Config: Gainsight API URL');
-    }
-    if (!gainsightOAuth2ClientId) {
-      return sendError(500, 'Missing Config: Gainsight OAuth2 Client ID');
-    }
-    if (!gainsightOAuth2ClientSecret) {
-      return sendError(500, 'Missing Config: Gainsight OAuth2 Client Secret');
-    }
-    if (!gainsightCommunityUrl) {
-      return sendError(500, 'Missing Config: Gainsight Community URL');
-    }
-
-    // Initialize Gainsight OAuth2 service and proxy
-    const gainsightOAuth2Service = getDefaultGainsightOAuth2Service({
-      apiUrl: gainsightApiUrl,
-      clientId: gainsightOAuth2ClientId,
-      clientSecret: gainsightOAuth2ClientSecret,
-      scope: gainsightOAuth2Scope || 'read',
-    });
-
-    const gainsightProxy = getDefaultGainsightProxy({
-      gainsightApiUrl,
-      gainsightCommunityUrl,
-      oauth2Service: gainsightOAuth2Service,
-    });
-
-    // Route to Gainsight
-    return gainsightProxy.proxyPath({
-      path: pathWithoutQuery,
-      userId,
-      additionalHeaders: {},
-    });
+  if (!gainsightApiUrl) {
+    return sendError(500, 'Missing Config: Gainsight API URL');
+  }
+  if (!gainsightOAuth2ClientId) {
+    return sendError(500, 'Missing Config: Gainsight OAuth2 Client ID');
+  }
+  if (!gainsightOAuth2ClientSecret) {
+    return sendError(500, 'Missing Config: Gainsight OAuth2 Client Secret');
+  }
+  if (!gainsightCommunityUrl) {
+    return sendError(500, 'Missing Config: Gainsight Community URL');
   }
 
-  if (!khorosApiSecret) return sendError(401, 'Missing Khoros Token');
-  if (!khorosOrigin) return sendError(500, 'Missing Config: Khoros Origin');
-
-  const khorosProxy = getDefaultKhorosProxy({
-    khorosOrigin,
-    khorosApiSecret,
+  const gainsightOAuth2Service = getDefaultGainsightOAuth2Service({
+    apiUrl: gainsightApiUrl,
+    clientId: gainsightOAuth2ClientId,
+    clientSecret: gainsightOAuth2ClientSecret,
+    scope: gainsightOAuth2Scope || 'read',
   });
 
-  const additionalHeaders = {};
-  // get access token if we should use ipass
-  if (shouldUseIpass) {
-    const token = await imsService.getAccessToken();
-    additionalHeaders.Authorization = `${token}`;
-    additionalHeaders.api_key = ipassApiKey;
-  }
+  const gainsightProxy = getDefaultGainsightProxy({
+    gainsightApiUrl,
+    gainsightCommunityUrl,
+    oauth2Service: gainsightOAuth2Service,
+  });
 
-  return khorosProxy.proxyPath({
-    path,
-    pathPrefix: shouldUseIpass ? '' : '/plugins/custom/adobe/adobedx',
-    params: { user: userId, lang },
-    additionalHeaders,
+  return gainsightProxy.proxyPath({
+    path: pathWithoutQuery,
+    userId,
+    additionalHeaders: {},
   });
 };
