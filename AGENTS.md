@@ -13,7 +13,7 @@ src/
     renderers/            # render-doc, render-aem, render-playlist, render-landing, ...
     modules/              # MD→HTML, blocks, schemas, API clients, utils
     static/fragments/     # i18n header/footer HTML (en, de, fr, ...)
-  khoros/                 # Community/Gainsight proxy action
+  gainsight/              # Community/Gainsight proxy action
   tocs/                   # TOC HTML via EXL API
   files/                  # File upload/download (presigned URLs)
   coveo/                  # Coveo search token action
