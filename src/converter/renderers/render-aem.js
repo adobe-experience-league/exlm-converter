@@ -47,6 +47,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
 
+  // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
   if (paramMemoryStore.hasFeatureFlag('usetq')) {
     updateLegacyAndV2Tags(document);
   }

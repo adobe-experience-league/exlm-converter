@@ -9,6 +9,7 @@ const MAPPING_TO_TRANSLATE = [
   },
 ];
 
+// List of tags key mapping
 const TAGS_LABEL_MAPPING = {
   'content-type': 'types',
   'experience-level': 'levels',
@@ -19,23 +20,41 @@ const TAGS_LABEL_MAPPING = {
   topic: 'topics',
 };
 
+const taxonomyUuidRegex =
+  /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/gi;
+
+/**
+ * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
+ * @param {string} inputString - The topics tag. E.g. exl:topic/QXBwIEJ1aWxkZXI=
+ * @returns the topic tag. E.g. QXBwIEJ1aWxkZXI=
+ */
 function formattedTags(inputString) {
   const resultArray = [];
-  inputString.split(',').forEach((item) => {
+  const items = inputString.split(',');
+
+  items.forEach((item) => {
+    let base64EncodedTagsArray;
+    let product;
+    let version;
+
     const [type, productBase64, versionBase64] = item.split('/');
-    const product = productBase64 ? atob(productBase64) : '';
-    const version = versionBase64 ? atob(versionBase64) : '';
+    if (productBase64) {
+      product = atob(productBase64);
+    }
+    if (versionBase64) {
+      version = atob(versionBase64);
+    }
+
+    // Check if product and version are not undefined before appending to base64EncodedTagsArray
     if (product || version) {
-      resultArray.push(
-        `${type}${product ? `/${product}` : ''}${version ? `/${version}` : ''}`,
-      );
+      base64EncodedTagsArray = `${type}${product ? `/${product}` : ''}${
+        version ? `/${version}` : ''
+      }`;
+      resultArray.push(base64EncodedTagsArray);
     }
   });
   return resultArray;
 }
-
-const taxonomyUuidRegex =
-  /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/gi;
 
 /**
  * Fetch taxonomy data directly from API to get both prefLabel and displayLabel
@@ -51,10 +70,7 @@ async function fetchTaxonomyLabels(uuid, lang, baseUrl) {
     url.searchParams.set('lang', lang);
 
     const response = await fetch(url.toString());
-    if (!response.ok) {
-      console.error(`getTaxonomy HTTP ${response.status} for ${uuid}`);
-      return { prefLabel: null, displayLabel: null };
-    }
+    if (!response.ok) return { prefLabel: null, displayLabel: null };
 
     const body = await response.json();
     if (
@@ -62,7 +78,6 @@ async function fetchTaxonomyLabels(uuid, lang, baseUrl) {
       !Array.isArray(body.data) ||
       body.data.length < 1
     ) {
-      console.error(`getTaxonomy returned no labels for ${uuid}`);
       return { prefLabel: null, displayLabel: null };
     }
 
@@ -70,14 +85,14 @@ async function fetchTaxonomyLabels(uuid, lang, baseUrl) {
       prefLabel: body.data[0]?.prefLabel || null,
       displayLabel: body.data[0]?.displayLabel || null,
     };
-  } catch (error) {
-    console.error(`Failed to fetch taxonomy labels for ${uuid}`, error);
+  } catch {
     return { prefLabel: null, displayLabel: null };
   }
 }
 
 /**
- * Resolve TQ UUIDs in Browse filter cells via exlia getTaxonomy.
+ * Browse-filters / author dialog may include bare TQ UUIDs or unified_taxonomy URLs in the tag cell.
+ * Resolve them via exlia getTaxonomy (parallel to legacy ExL tag translation).
  * @param {string} rawTags
  * @param {string} lang
  * @param {Awaited<ReturnType<typeof createExliaTaxonomyLabelResolver>>} resolver
@@ -99,6 +114,7 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
 
   if (uuids.size === 0) return '';
 
+  // Get base URL from params
   const { paramMemoryStore } = await import(
     '../../modules/utils/param-memory-store.js'
   );
@@ -116,6 +132,7 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
       );
       if (!displayLabel) return null;
 
+      // Use prefLabel for English, displayLabel for translated
       const enLabel = prefLabel || displayLabel;
       return `tq/${uuid}/${enLabel}:${displayLabel}`;
     }),
@@ -125,9 +142,12 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
 }
 
 /**
- * Adds a row containing translated authored legacy or TQ tags to Browse filters.
- * @param {Document} document
- * @param {string} lang
+ * Translate the required tags in a block
+ * (Update MAPPING_TO_TRANSLATE in tag-translation-utils.js
+ * to add new tags for translation).
+ * @param {HTMLAllCollection} document - The document object.
+ * @param {string} lang - The language to translate to.
+ * @summary This function adds a new div with the translated tags to the block.
  */
 export const translateBlockTags = async (document, lang) => {
   const defaultExlClient = await createDefaultExlClient();
@@ -137,6 +157,7 @@ export const translateBlockTags = async (document, lang) => {
       const block = document.querySelector(`.${blockDetails.name}`);
       if (!block) return;
 
+      // Collect translations from all positions first
       const allTranslations = await Promise.all(
         blockDetails.tagsPositions.map(async (position) => {
           const tagElement = block.children[position]?.firstElementChild;
@@ -145,39 +166,64 @@ export const translateBlockTags = async (document, lang) => {
           const rawTags = tagElement.textContent.trim();
           if (!rawTags) return '';
 
+          let legacyTags = '';
+          let taxonomyTags = '';
+
+          // Check if rawTags is in JSON format [{uri:'', label:''}]
           if (rawTags.startsWith('[') && rawTags.includes('{')) {
-            return translateTaxonomySegmentsInRawTags(
+            // TQ format - translate via taxonomy resolver
+            taxonomyTags = await translateTaxonomySegmentsInRawTags(
               rawTags,
               lang,
               taxonomyResolver,
             );
           }
 
-          if (!rawTags.includes('exl:')) return '';
+          if (rawTags.includes('exl:')) {
+            // Legacy ExL format - translate via ExL client
+            const translatedTags = await Promise.all(
+              formattedTags(rawTags).map(async (rawTag) => {
+                const values = rawTag.split('/').reverse();
+                const tag = values.shift().trim();
+                const key = `${values.pop().replace('exl:', '').trim()}`;
+                const keyMapping = TAGS_LABEL_MAPPING[key];
+                const solution = values.length ? values[0] : '';
+                if (!keyMapping) return { solution, key, tag, result: tag };
+                const result = await defaultExlClient.getLabelFromEndpoint(
+                  keyMapping,
+                  tag,
+                  lang,
+                );
+                return { solution, key, tag, result };
+              }),
+            );
 
-          const translatedTags = await Promise.all(
-            formattedTags(rawTags).map(async (rawTag) => {
-              const values = rawTag.split('/').reverse();
-              const tag = values.shift().trim();
-              const key = values.pop().replace('exl:', '').trim();
-              const keyMapping = TAGS_LABEL_MAPPING[key];
-              const solution = values.length ? values[0] : '';
-              const result = keyMapping
-                ? await defaultExlClient.getLabelFromEndpoint(
-                    keyMapping,
-                    tag,
-                    lang,
-                  )
-                : tag;
-              return solution
-                ? `${key}/${solution}/${tag}:${result}`
-                : `${key}/${tag}:${result}`;
-            }),
-          );
-          return translatedTags.join(',');
+            legacyTags = translatedTags
+              .map((translatedTag) => {
+                const { solution, key, tag, result } = translatedTag;
+                return solution
+                  ? `${key}/${solution}/${tag}:${result}`
+                  : `${key}/${tag}:${result}`;
+              })
+              .join(',');
+
+            // Also check for any taxonomy UUIDs in legacy format
+            const additionalTaxonomyTags =
+              await translateTaxonomySegmentsInRawTags(
+                rawTags,
+                lang,
+                taxonomyResolver,
+              );
+            if (additionalTaxonomyTags) {
+              taxonomyTags = additionalTaxonomyTags;
+            }
+          }
+
+          return [legacyTags, taxonomyTags].filter(Boolean).join(',');
         }),
       );
 
+      // Combine all translations from all positions into a single nested div structure
       const allTags = allTranslations.filter(Boolean).join(',');
       if (allTags) {
         const outerDiv = document.createElement('div');
