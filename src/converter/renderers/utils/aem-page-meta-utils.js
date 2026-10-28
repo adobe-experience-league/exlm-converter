@@ -2,10 +2,6 @@ import jsdom from 'jsdom';
 import crypto from 'crypto';
 import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
 import {
-  createDefaultExlClient,
-  EXL_LABEL_ENDPOINTS,
-} from '../../modules/ExlClient.js';
-import {
   createExliaTaxonomyLabelResolver,
   extractTqUuid,
 } from '../../modules/exlia-taxonomy-client.js';
@@ -17,16 +13,6 @@ export function generateHash(input) {
   return Object.freeze(
     crypto.createHash('sha256').update(input).digest('hex').substring(0, 49),
   );
-}
-
-/**
- * Formats aem tagpicker data
- */
-export function formatPageMetaTags(inputString) {
-  return inputString
-    .replace(/exl:[^/]*\/*/g, '')
-    .split(',')
-    .map((part) => part.trim());
 }
 
 /**
@@ -43,7 +29,6 @@ export function decodeBase64(encodedString) {
  */
 
 /**
- *
  * @param {string} authorBioHtml author bio html
  * @returns {AuthorBioData}
  */
@@ -60,20 +45,6 @@ export function getAuthorBioData(authorBioHtml) {
     return { authorName, authorType };
   }
   return {};
-}
-
-/**
- * Decode and update metadata
- * @param {Document} document
- * @param {string} metaName
- * @returns
- */
-export function updateEncodedMetadata(document, metaName) {
-  const metaValues = getMetadata(document, metaName);
-  if (!metaValues || metaValues.length === 0) return;
-  const formattedMetaValues = formatPageMetaTags(metaValues);
-  const decodedMetaValues = formattedMetaValues.map((m) => decodeBase64(m));
-  setMetadata(document, metaName, decodedMetaValues);
 }
 
 /**
@@ -94,7 +65,6 @@ export function decodeCQMetadata(document, metaName) {
   setMetadata(document, metaName, decodedCQTags.join(', '));
 }
 
-// HTML entity decoder utility
 function decodeHtmlEntities(str) {
   if (!str || typeof str !== 'string') return str;
 
@@ -103,92 +73,6 @@ function decodeHtmlEntities(str) {
   const textarea = dom.window.document.createElement('textarea');
   textarea.innerHTML = str;
   return textarea.value;
-}
-
-/**
- * Update Legacy and TQ Tags metadata when usetq FF is enabled
- * @param {Document} document
- */
-export function updateLegacyAndV2Tags(document) {
-  // First, migrate legacy tags to _v1
-  const legacyToV1Mapping = {
-    role: 'role_v1',
-    level: 'level_v1',
-    'coveo-solution': 'product_v1',
-    feature: 'feature_v1',
-    'sub-feature': 'subfeature_v1',
-    industry: 'industry_v1',
-    topic: 'topic_v1',
-    solution: 'solution_v1',
-  };
-
-  Object.entries(legacyToV1Mapping).forEach(([legacyKey, v1Key]) => {
-    const value = getMetadata(document, legacyKey);
-    if (value) {
-      setMetadata(document, v1Key, value);
-    }
-  });
-
-  // Then, migrate _v2 tags to legacy (without suffix)
-  const v2ToLegacyMapping = {
-    role_v2: 'role',
-    level_v2: 'level',
-    product_v2: 'coveo-solution',
-    feature_v2: 'feature',
-    subfeature_v2: 'sub-feature',
-    industry_v2: 'industry',
-    topic_v2: 'topic',
-  };
-
-  Object.entries(v2ToLegacyMapping).forEach(([sourceKey, targetKey]) => {
-    const value = getMetadata(document, sourceKey);
-    if (!value) return;
-
-    let formatted = value.trim();
-
-    // Only product needs different separator
-    if (sourceKey === 'product_v2') {
-      formatted = formatted
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean)
-        .join(';');
-    }
-
-    setMetadata(document, targetKey, formatted);
-  });
-
-  const coveoSolutions = getMetadata(document, 'coveo-solution');
-
-  if (coveoSolutions) {
-    const solutionParts = [
-      ...new Set(
-        coveoSolutions
-          .split(';')
-          .map((s) => s.trim())
-          .filter(Boolean),
-      ),
-    ];
-
-    setMetadata(document, 'solution', solutionParts.join(','));
-    setMetadata(document, 'original-solution', solutionParts.join(', '));
-  }
-
-  // Remove _v2 tags after processing
-  const v2TagsToRemove = [
-    'role_v2',
-    'level_v2',
-    'product_v2',
-    'feature_v2',
-    'subfeature_v2',
-    'industry_v2',
-    'topic_v2',
-  ];
-
-  v2TagsToRemove.forEach((tag) => {
-    const metaTags = document.head.querySelectorAll(`meta[name="${tag}"]`);
-    metaTags.forEach((metaTag) => metaTag.remove());
-  });
 }
 
 /**
@@ -202,19 +86,18 @@ function englishLabelFromTqItem(item) {
 }
 
 /**
- * Update TQ Tags metadata
- * Converts JSON metadata -> label-only metadata
+ * Converts JSON TQ metadata to standard label-only metadata.
  * @param {Document} document
  */
 export function updateTQTagsMetadata(document) {
   const keyMapping = {
-    'tq-roles': 'role_v2',
-    'tq-levels': 'level_v2',
-    'tq-products': 'product_v2',
-    'tq-features': 'feature_v2',
-    'tq-subfeatures': 'subfeature_v2',
-    'tq-industries': 'industry_v2',
-    'tq-topics': 'topic_v2',
+    'tq-roles': 'role',
+    'tq-levels': 'level',
+    'tq-products': 'coveo-solution',
+    'tq-features': 'feature',
+    'tq-subfeatures': 'sub-feature',
+    'tq-industries': 'industry',
+    'tq-topics': 'topic',
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
@@ -226,13 +109,19 @@ export function updateTQTagsMetadata(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const labels = parsed
-          .map((item) => item?.label)
-          .filter(Boolean)
-          .join(', ');
+        const labels = parsed.map((item) => item?.label).filter(Boolean);
 
-        if (labels) {
-          setMetadata(document, newKey, labels);
+        if (labels.length) {
+          setMetadata(
+            document,
+            newKey,
+            labels.join(key === 'tq-products' ? ';' : ', '),
+          );
+          if (key === 'tq-products') {
+            const products = [...new Set(labels)];
+            setMetadata(document, 'solution', products.join(','));
+            setMetadata(document, 'original-solution', products.join(', '));
+          }
         }
       }
     } catch (e) {
@@ -295,15 +184,11 @@ export async function createTranslatedV2TQMetadata(document, pathLang) {
           parsed.map(async (item) => {
             if (!item || typeof item !== 'object') return null;
 
-            // Get English label as fallback
             const en = englishLabelFromTqItem(item);
-
-            // Get tag ID for translation lookup
             const tagId = item.id || item.uri || item.tag || null;
 
             if (!localize || !tagId) return en || null;
 
-            // Try to get localized label
             const loc = await getLocalizedOrNull(tagId);
             return loc || en || null;
           }),
@@ -319,120 +204,6 @@ export async function createTranslatedV2TQMetadata(document, pathLang) {
     }),
   );
 }
-
-/**
- * Update Coveo Solution metadata
- * @param {Document} document
- */
-export function updateCoveoSolutionMetadata(document) {
-  const coveoSolutionMeta = getMetadata(document, 'coveo-solution');
-  const featureMeta = getMetadata(document, 'feature');
-
-  const decodeAEMTagValues = (values) =>
-    values
-      .map((val) => val.split('/'))
-      .map((parts) => parts.map((part) => decodeBase64(part.trim())));
-
-  let coveoSolution = '';
-  if (coveoSolutionMeta) {
-    const solutions = formatPageMetaTags(coveoSolutionMeta);
-    // Decode and split each solution into parts
-    const decodedSolutions = decodeAEMTagValues(solutions);
-
-    // Transform the solutions to coveo compatible format
-    const transformedSolutions = decodedSolutions.map((parts) => {
-      if (parts.length > 1) {
-        const solution = parts[0];
-        const subSolution = parts[1];
-        return `${solution}|${solution} ${subSolution}`;
-      }
-      return parts[0];
-    });
-
-    coveoSolution = transformedSolutions.join(';');
-    setMetadata(document, 'coveo-solution', coveoSolution);
-
-    // Adding version meta tag
-    decodedSolutions.forEach((parts) => {
-      if (parts.length > 1) {
-        const version = parts[parts.length - 1];
-        setMetadata(document, 'version', version);
-      }
-    });
-  }
-
-  if (featureMeta) {
-    const features = formatPageMetaTags(featureMeta);
-    // Decode and split each feature into parts
-    const decodedFeatures = decodeAEMTagValues(features);
-
-    // Flatten the decoded features and join them with '|'
-    const flattenedDecodedFeatures = decodedFeatures
-      .map((parts) => parts.join('|'))
-      .join(',');
-
-    setMetadata(document, 'feature-solution', flattenedDecodedFeatures);
-
-    // Transform the features to coveo compatible format
-    const transformedFeatures = decodedFeatures
-      .map((parts) => {
-        if (parts.length > 1) {
-          const feature = parts[1];
-          if (!coveoSolution.includes(parts[0])) {
-            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
-            setMetadata(document, 'coveo-solution', coveoSolution);
-          }
-          return `${feature}`;
-        }
-        // Append parts[0] to coveo-solution if it exists
-        if (parts[0] && !coveoSolution.includes(parts[0])) {
-          coveoSolution += (coveoSolution ? ';' : '') + parts[0];
-          setMetadata(document, 'coveo-solution', coveoSolution);
-        }
-        return '';
-      })
-      .filter(Boolean);
-    const coveoFeature = transformedFeatures.join(',');
-    setMetadata(document, 'feature', coveoFeature);
-  }
-  // Add "solution" meta tag
-  if (coveoSolution) {
-    const solutionParts = coveoSolution.split(';');
-    const solutionsMeta = solutionParts.map((part) =>
-      part.includes('|') ? part.split('|')[1] : part,
-    );
-    setMetadata(document, 'solution', solutionsMeta.join(','));
-    setMetadata(document, 'original-solution', solutionsMeta.join(', '));
-  }
-}
-
-/**
- * Utility function to map meta tags to titles based on a taxonomy data set.
- *
- * @param {string} meta
- * @param {Array} taxonomyData
- * @returns {string[]}
- */
-export const mapTagsToTitles = (meta, taxonomyData) => {
-  let locTitles = [];
-  if (!meta?.length) return [];
-  if (!Array.isArray(taxonomyData) || !taxonomyData?.length) {
-    return [];
-  }
-
-  const tags = meta.split(',').map((tag) => tag.trim());
-  locTitles = tags
-    .map((tag) => {
-      const match = taxonomyData.find((item) => item.tag.trim() === tag);
-      return match ? match.title : null;
-    })
-    .filter(Boolean);
-
-  if (locTitles.length) {
-    locTitles = locTitles.join(', ');
-  }
-  return locTitles;
-};
 
 /**
  * Gets the module count from the course-breakdown block
@@ -490,59 +261,3 @@ export function getChildPageIds(document, prefixSegments) {
 
   return [...ids];
 }
-
-/**
- * Creates translated metadata for role, level, and feature meta types.
- *
- * @param {Document} document
- * @param {string} lang
- * @returns {Promise<void>} A promise that resolves once all metadata is updated.
- */
-export const createTranslatedMetadata = async (document, lang) => {
-  const defaultExlClient = await createDefaultExlClient();
-
-  const metaTypes = {
-    roles: 'role',
-    levels: 'level',
-    features: 'feature',
-  };
-
-  await Promise.all(
-    Object.keys(metaTypes).map(async (key) => {
-      const metaType = metaTypes[key];
-      const metaContent = getMetadata(document, metaType);
-
-      if (metaContent) {
-        const tags = metaContent.split(',').map((tag) => tag.trim());
-
-        const translatedLabels = await Promise.allSettled(
-          tags.map((tag) =>
-            defaultExlClient
-              .getLabelFromEndpoint(
-                EXL_LABEL_ENDPOINTS[key.toUpperCase()],
-                tag,
-                lang,
-              )
-              .catch((error) => {
-                console.error(
-                  `Error fetching translated label for ${metaType} with Tag: ${tag}`,
-                  error,
-                );
-                return tag;
-              }),
-          ),
-        );
-
-        const localizedLabels = translatedLabels.map((result, index) =>
-          result.status === 'fulfilled' ? result.value : tags[index],
-        );
-
-        setMetadata(
-          document,
-          `loc-legacy-${metaType}`,
-          localizedLabels.join(','),
-        );
-      }
-    }),
-  );
-};

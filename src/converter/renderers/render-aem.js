@@ -9,20 +9,15 @@ import {
 } from '../../common/utils/link-utils.js';
 import {
   getAuthorBioData,
-  updateEncodedMetadata,
-  updateCoveoSolutionMetadata,
   updateTQTagsMetadata,
   createTranslatedV2TQMetadata,
   decodeCQMetadata,
   generateHash,
-  createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
   getChildPageIds,
-  updateLegacyAndV2Tags,
 } from './utils/aem-page-meta-utils.js';
 import { getMetadata, setMetadata } from '../modules/utils/dom-utils.js';
-import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 import { writeStringToFileAndGetPresignedURL } from '../../common/utils/file-utils.js';
 import FranklinServletClient from './utils/franklin-servlet-client.js';
 import { translateBlockTags } from './utils/tag-translation-utils.js';
@@ -44,15 +39,6 @@ async function transformAemPageMetadata(htmlString, params, path) {
   decodeCQMetadata(document, 'cq-tags');
   updateTQTagsMetadata(document);
   await createTranslatedV2TQMetadata(document, lang);
-  updateEncodedMetadata(document, 'role');
-  updateEncodedMetadata(document, 'level');
-  updateCoveoSolutionMetadata(document);
-  await createTranslatedMetadata(document, lang);
-
-  // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
-  if (paramMemoryStore.hasFeatureFlag('usetq')) {
-    updateLegacyAndV2Tags(document);
-  }
 
   // Fetch and set cq:translationMethod from jcr:content.json
   // Note: fetchJson uses 24-hour cache - fetches from cache if available, otherwise from API
