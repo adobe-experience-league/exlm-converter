@@ -1,3 +1,4 @@
+import { createDefaultExlClient } from '../../modules/ExlClient.js';
 import { createExliaTaxonomyLabelResolver } from '../../modules/exlia-taxonomy-client.js';
 
 // List of blocks and position of the tags inside blocks to translate.
@@ -7,6 +8,31 @@ const MAPPING_TO_TRANSLATE = [
     tagsPositions: [2, 5, 6],
   },
 ];
+
+const TAGS_LABEL_MAPPING = {
+  'content-type': 'types',
+  'experience-level': 'levels',
+  feature: 'features',
+  industry: 'industries',
+  role: 'roles',
+  solution: null,
+  topic: 'topics',
+};
+
+function formattedTags(inputString) {
+  const resultArray = [];
+  inputString.split(',').forEach((item) => {
+    const [type, productBase64, versionBase64] = item.split('/');
+    const product = productBase64 ? atob(productBase64) : '';
+    const version = versionBase64 ? atob(versionBase64) : '';
+    if (product || version) {
+      resultArray.push(
+        `${type}${product ? `/${product}` : ''}${version ? `/${version}` : ''}`,
+      );
+    }
+  });
+  return resultArray;
+}
 
 const taxonomyUuidRegex =
   /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/gi;
@@ -99,11 +125,12 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
 }
 
 /**
- * Adds a row containing translated TQ tags to Browse filter blocks.
+ * Adds a row containing translated authored legacy or TQ tags to Browse filters.
  * @param {Document} document
  * @param {string} lang
  */
 export const translateBlockTags = async (document, lang) => {
+  const defaultExlClient = await createDefaultExlClient();
   const taxonomyResolver = await createExliaTaxonomyLabelResolver();
   await Promise.all(
     MAPPING_TO_TRANSLATE.map(async (blockDetails) => {
@@ -118,13 +145,36 @@ export const translateBlockTags = async (document, lang) => {
           const rawTags = tagElement.textContent.trim();
           if (!rawTags) return '';
 
-          if (!rawTags.startsWith('[') || !rawTags.includes('{')) return '';
+          if (rawTags.startsWith('[') && rawTags.includes('{')) {
+            return translateTaxonomySegmentsInRawTags(
+              rawTags,
+              lang,
+              taxonomyResolver,
+            );
+          }
 
-          return translateTaxonomySegmentsInRawTags(
-            rawTags,
-            lang,
-            taxonomyResolver,
+          if (!rawTags.includes('exl:')) return '';
+
+          const translatedTags = await Promise.all(
+            formattedTags(rawTags).map(async (rawTag) => {
+              const values = rawTag.split('/').reverse();
+              const tag = values.shift().trim();
+              const key = values.pop().replace('exl:', '').trim();
+              const keyMapping = TAGS_LABEL_MAPPING[key];
+              const solution = values.length ? values[0] : '';
+              const result = keyMapping
+                ? await defaultExlClient.getLabelFromEndpoint(
+                    keyMapping,
+                    tag,
+                    lang,
+                  )
+                : tag;
+              return solution
+                ? `${key}/${solution}/${tag}:${result}`
+                : `${key}/${tag}:${result}`;
+            }),
           );
+          return translatedTags.join(',');
         }),
       );
 

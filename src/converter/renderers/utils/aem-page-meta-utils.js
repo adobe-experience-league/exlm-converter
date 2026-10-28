@@ -16,6 +16,16 @@ export function generateHash(input) {
 }
 
 /**
+ * Formats aem tagpicker data
+ */
+export function formatPageMetaTags(inputString) {
+  return inputString
+    .replace(/exl:[^/]*\/*/g, '')
+    .split(',')
+    .map((part) => part.trim());
+}
+
+/**
  * Decodes base64 strings
  */
 export function decodeBase64(encodedString) {
@@ -45,6 +55,20 @@ export function getAuthorBioData(authorBioHtml) {
     return { authorName, authorType };
   }
   return {};
+}
+
+/**
+ * Decode and update metadata
+ * @param {Document} document
+ * @param {string} metaName
+ * @returns
+ */
+export function updateEncodedMetadata(document, metaName) {
+  const metaValues = getMetadata(document, metaName);
+  if (!metaValues || metaValues.length === 0) return;
+  const formattedMetaValues = formatPageMetaTags(metaValues);
+  const decodedMetaValues = formattedMetaValues.map((m) => decodeBase64(m));
+  setMetadata(document, metaName, decodedMetaValues);
 }
 
 /**
@@ -86,18 +110,104 @@ function englishLabelFromTqItem(item) {
 }
 
 /**
- * Converts JSON TQ metadata to standard label-only metadata.
+ * Update Legacy and TQ Tags metadata when usetq FF is enabled
+ * @param {Document} document
+ */
+export function updateLegacyAndV2Tags(document) {
+  // First, migrate legacy tags to _v1
+  const legacyToV1Mapping = {
+    role: 'role_v1',
+    level: 'level_v1',
+    'coveo-solution': 'product_v1',
+    feature: 'feature_v1',
+    'sub-feature': 'subfeature_v1',
+    industry: 'industry_v1',
+    topic: 'topic_v1',
+    solution: 'solution_v1',
+  };
+
+  Object.entries(legacyToV1Mapping).forEach(([legacyKey, v1Key]) => {
+    const value = getMetadata(document, legacyKey);
+    if (value) {
+      setMetadata(document, v1Key, value);
+    }
+  });
+
+  // Then, migrate _v2 tags to legacy (without suffix)
+  const v2ToLegacyMapping = {
+    role_v2: 'role',
+    level_v2: 'level',
+    product_v2: 'coveo-solution',
+    feature_v2: 'feature',
+    subfeature_v2: 'sub-feature',
+    industry_v2: 'industry',
+    topic_v2: 'topic',
+  };
+
+  Object.entries(v2ToLegacyMapping).forEach(([sourceKey, targetKey]) => {
+    const value = getMetadata(document, sourceKey);
+    if (!value) return;
+
+    let formatted = value.trim();
+
+    // Only product needs different separator
+    if (sourceKey === 'product_v2') {
+      formatted = formatted
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .join(';');
+    }
+
+    setMetadata(document, targetKey, formatted);
+  });
+
+  const coveoSolutions = getMetadata(document, 'coveo-solution');
+
+  if (coveoSolutions) {
+    const solutionParts = [
+      ...new Set(
+        coveoSolutions
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      ),
+    ];
+
+    setMetadata(document, 'solution', solutionParts.join(','));
+    setMetadata(document, 'original-solution', solutionParts.join(', '));
+  }
+
+  // Remove _v2 tags after processing
+  const v2TagsToRemove = [
+    'role_v2',
+    'level_v2',
+    'product_v2',
+    'feature_v2',
+    'subfeature_v2',
+    'industry_v2',
+    'topic_v2',
+  ];
+
+  v2TagsToRemove.forEach((tag) => {
+    const metaTags = document.head.querySelectorAll(`meta[name="${tag}"]`);
+    metaTags.forEach((metaTag) => metaTag.remove());
+  });
+}
+
+/**
+ * Converts JSON TQ metadata to label-only metadata.
  * @param {Document} document
  */
 export function updateTQTagsMetadata(document) {
   const keyMapping = {
-    'tq-roles': 'role',
-    'tq-levels': 'level',
-    'tq-products': 'coveo-solution',
-    'tq-features': 'feature',
-    'tq-subfeatures': 'sub-feature',
-    'tq-industries': 'industry',
-    'tq-topics': 'topic',
+    'tq-roles': 'role_v2',
+    'tq-levels': 'level_v2',
+    'tq-products': 'product_v2',
+    'tq-features': 'feature_v2',
+    'tq-subfeatures': 'subfeature_v2',
+    'tq-industries': 'industry_v2',
+    'tq-topics': 'topic_v2',
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
@@ -109,19 +219,13 @@ export function updateTQTagsMetadata(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const labels = parsed.map((item) => item?.label).filter(Boolean);
+        const labels = parsed
+          .map((item) => item?.label)
+          .filter(Boolean)
+          .join(', ');
 
-        if (labels.length) {
-          setMetadata(
-            document,
-            newKey,
-            labels.join(key === 'tq-products' ? ';' : ', '),
-          );
-          if (key === 'tq-products') {
-            const products = [...new Set(labels)];
-            setMetadata(document, 'solution', products.join(','));
-            setMetadata(document, 'original-solution', products.join(', '));
-          }
+        if (labels) {
+          setMetadata(document, newKey, labels);
         }
       }
     } catch (e) {
@@ -203,6 +307,92 @@ export async function createTranslatedV2TQMetadata(document, pathLang) {
       }
     }),
   );
+}
+
+/**
+ * Update Coveo Solution metadata
+ * @param {Document} document
+ */
+export function updateCoveoSolutionMetadata(document) {
+  const coveoSolutionMeta = getMetadata(document, 'coveo-solution');
+  const featureMeta = getMetadata(document, 'feature');
+
+  const decodeAEMTagValues = (values) =>
+    values
+      .map((val) => val.split('/'))
+      .map((parts) => parts.map((part) => decodeBase64(part.trim())));
+
+  let coveoSolution = '';
+  if (coveoSolutionMeta) {
+    const solutions = formatPageMetaTags(coveoSolutionMeta);
+    // Decode and split each solution into parts
+    const decodedSolutions = decodeAEMTagValues(solutions);
+
+    // Transform the solutions to coveo compatible format
+    const transformedSolutions = decodedSolutions.map((parts) => {
+      if (parts.length > 1) {
+        const solution = parts[0];
+        const subSolution = parts[1];
+        return `${solution}|${solution} ${subSolution}`;
+      }
+      return parts[0];
+    });
+
+    coveoSolution = transformedSolutions.join(';');
+    setMetadata(document, 'coveo-solution', coveoSolution);
+
+    // Adding version meta tag
+    decodedSolutions.forEach((parts) => {
+      if (parts.length > 1) {
+        const version = parts[parts.length - 1];
+        setMetadata(document, 'version', version);
+      }
+    });
+  }
+
+  if (featureMeta) {
+    const features = formatPageMetaTags(featureMeta);
+    // Decode and split each feature into parts
+    const decodedFeatures = decodeAEMTagValues(features);
+
+    // Flatten the decoded features and join them with '|'
+    const flattenedDecodedFeatures = decodedFeatures
+      .map((parts) => parts.join('|'))
+      .join(',');
+
+    setMetadata(document, 'feature-solution', flattenedDecodedFeatures);
+
+    // Transform the features to coveo compatible format
+    const transformedFeatures = decodedFeatures
+      .map((parts) => {
+        if (parts.length > 1) {
+          const feature = parts[1];
+          if (!coveoSolution.includes(parts[0])) {
+            coveoSolution += (coveoSolution ? ';' : '') + parts[0];
+            setMetadata(document, 'coveo-solution', coveoSolution);
+          }
+          return `${feature}`;
+        }
+        // Append parts[0] to coveo-solution if it exists
+        if (parts[0] && !coveoSolution.includes(parts[0])) {
+          coveoSolution += (coveoSolution ? ';' : '') + parts[0];
+          setMetadata(document, 'coveo-solution', coveoSolution);
+        }
+        return '';
+      })
+      .filter(Boolean);
+    const coveoFeature = transformedFeatures.join(',');
+    setMetadata(document, 'feature', coveoFeature);
+  }
+  // Add "solution" meta tag
+  if (coveoSolution) {
+    const solutionParts = coveoSolution.split(';');
+    const solutionsMeta = solutionParts.map((part) =>
+      part.includes('|') ? part.split('|')[1] : part,
+    );
+    setMetadata(document, 'solution', solutionsMeta.join(','));
+    setMetadata(document, 'original-solution', solutionsMeta.join(', '));
+  }
 }
 
 /**

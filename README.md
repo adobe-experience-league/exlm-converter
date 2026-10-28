@@ -13,13 +13,17 @@ EXL is setup to use [Bring Your Own Markup](https://www.aem.live/developer/byom)
 
 > [!NOTE]
 > Docs articles, Docs landing pages, playlists, and TOCs use rendered HTML from the V2 Delivery API.
+> V1-only block builders have been removed; V2 supplies the block markup directly.
 > TOCs are served through the converter at `/<lang>/toc/<toc-id>`.
 
 The standalone `tocs` action has been removed. Verify its removal from existing
 Runtime deployments as well.
 
-The `docs-v2`, `landing-v2`, `playlists-v2`, and `usetq` migration flags and the
+The `docs-v2`, `landing-v2`, and `playlists-v2` migration flags and the
 `V2_PATHS` setting are no longer used.
+The `usetq` flag and existing authored-tag compatibility processing are retained.
+Browse filters also retain legacy Tag API label lookup for published `exl:` cells
+until those cells are migrated to TQ.
 
 ## Build
 
