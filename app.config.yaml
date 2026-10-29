@@ -22,13 +22,12 @@ application:
               exlApiHost: $EXL_API_HOST
               exliaTaxonomyBaseUrl: $EXLIA_TAXONOMY_BASE_URL
               featureFlags: $FEATURE_FLAGS
-              v2Paths: $V2_PATHS
               eventsV2Paths: $EVENTS_V2_PATHS
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true
-          khoros:
-            function: dist/khoros # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
+          gainsight:
+            function: dist/gainsight # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:
@@ -45,15 +44,6 @@ application:
               gainsightOAuth2ClientSecret: $GAINSIGHT_OAUTH2_CLIENT_SECRET
               gainsightOAuth2Scope: $GAINSIGHT_OAUTH2_SCOPE
               gainsightCommunityUrl: $GAINSIGHT_COMMUNITY_URL
-            annotations:
-              require-adobe-auth: false # explicitly unauthenticated action
-              final: true
-          tocs:
-            function: dist/tocs # this is a folder that is built by the pre-app-build hook. needs to be a folder to serve static fragment files
-            web: 'yes'
-            runtime: 'nodejs:18'
-            inputs:
-              LOG_LEVEL: debug
             annotations:
               require-adobe-auth: false # explicitly unauthenticated action
               final: true

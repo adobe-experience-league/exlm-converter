@@ -48,7 +48,7 @@ export default async function renderFragment(path, parentFolderPath) {
 
   if (!body) {
     // dynamic fragments are used when we have to split a page into multiple fragments
-    // for example, when handling pages with too many images (over 100, @see too-many-images.js)
+    // Keep serving previously generated fragments for pages with many images.
     body = await getDynamicFragment(path);
   }
 
