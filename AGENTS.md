@@ -11,10 +11,9 @@ src/
   converter/              # main/convert — BYOM entry point
     index.js              # Path-based render() dispatcher
     renderers/            # render-doc, render-aem, render-playlist, render-landing, ...
-    modules/              # MD→HTML, blocks, schemas, API clients, utils
+    modules/              # schemas, API clients, utils
     static/fragments/     # i18n header/footer HTML (en, de, fr, ...)
   gainsight/              # Community/Gainsight proxy action
-  tocs/                   # TOC HTML via EXL API
   files/                  # File upload/download (presigned URLs)
   coveo/                  # Coveo search token action
   publish/                # HLX preview-then-publish (non-web action)
@@ -22,7 +21,7 @@ build/
   build.js                # esbuild bundle → dist/
   serve.js                # Local dev: watch + nodemon
   express.js              # Express wrapper on port 3030
-app.config.yaml           # Runtime manifest (6 actions, nodejs:18)
+app.config.yaml           # Runtime manifest (5 actions, nodejs:18)
 ```
 
 **Data flow:**
@@ -56,7 +55,7 @@ EXL_API_HOST=https://experienceleague.adobe.com
 
 For AEM pages, add `AEM_AUTHOR_URL`, `OWNER`, `REPO`, `BRANCH`, `ACCESS_TOKEN`. See [README.md](README.md) for khoros, coveo-token, and full variable tables.
 
-**Feature flags:** Set via GitHub environment → `FEATURE_FLAGS` input in `app.config.yaml` (comma-separated). Examples: `playlists-v2`, `schema-org-playlist`, `schema-org`.
+**Feature flags:** Set via GitHub environment → `FEATURE_FLAGS` input in `app.config.yaml` (comma-separated). Examples: `usetq`, `schema-org-playlist`, `schema-org`. Docs, landing pages, playlists and TOCs always use V2 Delivery; the migration flags are no longer used.
 
 ## Scope
 
@@ -70,7 +69,7 @@ Do **not** add browser-side block decoration, player UX, or client scripts here 
 
 ### Playlist pages and schema.org
 
-- **Renderer:** `src/converter/renderers/render-playlist.js` — if `playlists-v2`, fetch v2 HTML; if `schema-org-playlist`, inject `buildPlaylistSchema` into `<head>` as `exl-schema-org-jsonld`
+- **Renderer:** `src/converter/renderers/render-playlist.js` — always fetch V2 HTML; if `schema-org-playlist`, inject `buildPlaylistSchema` into `<head>` as `exl-schema-org-jsonld`
 - **Schema builder:** `src/converter/modules/schemas/builders/playlist-schema.js`
 
 Verify schema in **view-source `<head>`** (`id="exl-schema-org-jsonld"`) on converter output (`localhost:3030` or deployed `.../main/convert/en/playlists/{id}`), not `<code>` blocks in `<main>`.
