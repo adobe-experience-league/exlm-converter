@@ -15,7 +15,6 @@ import {
   createTranslatedV2TQMetadata,
   decodeCQMetadata,
   generateHash,
-  createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
   getChildPageIds,
@@ -47,7 +46,6 @@ async function transformAemPageMetadata(htmlString, params, path) {
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
-  await createTranslatedMetadata(document, lang);
 
   // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
   if (paramMemoryStore.hasFeatureFlag('usetq')) {
@@ -106,8 +104,13 @@ async function transformAemPageMetadata(htmlString, params, path) {
       );
 
       const promises = authorBioUrls.map(async (authorBioUrl) => {
+        // The incoming source location points to the article being converted,
+        // not the author bio page, so it must not be forwarded here.
         // eslint-disable-next-line no-use-before-define
-        const { body } = await renderAem(authorBioUrl, params);
+        const { body } = await renderAem(authorBioUrl, {
+          ...params,
+          sourceLocation: undefined,
+        });
         return getAuthorBioData(body);
       });
 

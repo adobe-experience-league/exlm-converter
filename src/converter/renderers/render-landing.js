@@ -1,10 +1,5 @@
-import md2html from '../modules/ExlMd2Html.js';
-import { DOCPAGETYPE } from '../../common/utils/doc-page-types.js';
 import { matchLandingPath } from '../modules/utils/path-match-utils.js';
-import { createDefaultExlClient } from '../modules/ExlClient.js';
-import { LANDING_IDS, dedupeAnchors } from './utils/landing-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
-import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 
 export async function renderLandingV2({ landingName, lang, authorization }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
@@ -40,43 +35,6 @@ export async function renderLandingV2({ landingName, lang, authorization }) {
   };
 }
 
-/**
- * handles a markdown doc path
- */
-async function renderLandingv1({ path, pageType, landingName, lang }) {
-  const defaultExlClient = await createDefaultExlClient();
-  const landingPage = await defaultExlClient.getLandingPageByFileName(
-    landingName,
-    lang,
-  );
-
-  if (landingPage !== undefined) {
-    let md = landingPage?.Markdown;
-    const meta = landingPage?.FullMeta;
-    const potentialDuplicateAnchors = Object.values(LANDING_IDS);
-    md = dedupeAnchors(md, potentialDuplicateAnchors);
-
-    const { convertedHtml, originalHtml } = await md2html({
-      mdString: md,
-      meta,
-      data: {},
-      pageType,
-      reqLang: lang,
-    });
-    return {
-      body: convertedHtml,
-      headers: {
-        'Content-Type': 'text/html',
-      },
-      md,
-      original: originalHtml,
-    };
-  }
-  return {
-    error: new Error(`No Page found for: ${path}`),
-  };
-}
-
 export default async function renderLanding(path, authorization) {
   const {
     params: { lang, solution },
@@ -92,14 +50,9 @@ export default async function renderLanding(path, authorization) {
 
   // default to landing page (in case solution is not provided)
   let landingName = 'home';
-  let pageType = DOCPAGETYPE.DOC_LANDING;
   if (lang && solution && solution !== 'home') {
     landingName = solution;
-    pageType = DOCPAGETYPE.SOLUTION_LANDING;
   }
 
-  if (paramMemoryStore.hasFeatureFlag('landing-v2')) {
-    return renderLandingV2({ path, landingName, lang, authorization });
-  }
-  return renderLandingv1({ path, pageType, landingName, lang });
+  return renderLandingV2({ landingName, lang, authorization });
 }

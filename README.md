@@ -5,15 +5,25 @@ For AI coding agents, see [AGENTS.md](AGENTS.md).
 Despite the name, this is a collection of Web Actions (on adobe io):
 
 1. `converter`: The entry point for Experience League [Edge Deliver BYOM](https://www.aem.live/developer/byom). AKA where EDS sources the HTML for exl pages when they are published.
-2. `khoros`: Proxies requests to a custom khoros endpoint to get Current User Community links.
-3. `tocs`: given a TOC ID, Provides the HTML for the TOC via EXL API.
+2. `gainsight`: Returns the current user's community profile details and links from Gainsight.
 
 ## More on the converter.
 
 EXL is setup to use [Bring Your Own Markup](https://www.aem.live/developer/byom) on Edge Delivery with the `conevter` Web Action. When a page is [previewed](https://www.aem.live/docs/admin.html#tag/preview) this action will be [invoked](src/converter/index.js) (GET) and the action will determine where to source the HTML based on path, (docs, landing playlist, tocs, slide) will come from API, others will come from AEM. The content is then transformed and served as HTML.
 
 > [!NOTE]
-> Currently, this converter does the HTML conversion, but in V2 architecture, it will served already-converter HTML from the V2 delivery API.
+> Docs articles, Docs landing pages, playlists, and TOCs use rendered HTML from the V2 Delivery API.
+> V1-only block builders have been removed; V2 supplies the block markup directly.
+> TOCs are served through the converter at `/<lang>/toc/<toc-id>`.
+
+The standalone `tocs` action has been removed. Verify its removal from existing
+Runtime deployments as well.
+
+The `docs-v2`, `landing-v2`, and `playlists-v2` migration flags and the
+`V2_PATHS` setting are no longer used.
+The `usetq` flag and existing authored-tag compatibility processing are retained.
+Browse filters also retain legacy Tag API label lookup for published `exl:` cells
+until those cells are migrated to TQ.
 
 ## Build
 
@@ -88,31 +98,12 @@ ACCESS_TOKEN=<token>
 
 > Developer tokens are short lived and should only be used for local testing/debugging.
 
-### Working with the khoros API (and action locally)
+### Working with the Gainsight API (and action locally)
 
-> This is specifically for the khoros action.
-
-in local, and lower environments, iPaaS is used to proxy to khoros services.
-
-The khoros action is available locally at `localhost:3030/khoros/<proxy path here>` when you run `npm run serve`
-
-this local setup requires the follwoing env variables to be added to `build/.local.env`
-
-> please reach out to the dev team for these values
-
-```
-KHOROS_ORIGIN=<the ipass origin used to proxy to khoros>
-KHOROS_API_SECRET=<the khoros dev env API secret>
-IMS_ORIGIN=<the ims origin to auth agains, use the stage origin>
-IMS_CLIENT_ID=<the ims client id used to obtain a token to access iPaaS>
-IMS_CLIENT_SECRET=<the ims client secret used to obtain a token to access iPaaS>
-IMS_AUTHORIZATION_CODET=<the ims client auth code used to obtain a token to access iPaaS>
-IPASS_API_KEY=<the ipass api key for dev iPaaS service for the given KHOROS_ORIGIN>
-```
-
-> see description of these env variables in the `Application environment variables` section.
-
-> Please note, on Prod, iPaaS is not used, the khoros endpoint is called directly.
+The `gainsight` action is available locally at
+`http://localhost:3030/gainsight/profile-details` when you run `npm run serve`.
+The action always uses Gainsight; the `platform` query parameter is not needed.
+See [Gainsight integration](src/gainsight/GAINSIGHT_INTEGRATION.md) for configuration.
 
 ### Working with the Coveo token action locally
 
@@ -187,33 +178,33 @@ The action requires the follwoing environment variables/secrets to be set:
 
 ## Application environment variables
 
-| Name                             | Type   | required for Prod? | description                                                                                            |
-| -------------------------------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------ |
-| `OWNER`                          | var    | yes                | this repo owner, sent to AEM for AEM content                                                           |
-| `REPO`                           | var    | yes                | this repo name, sent to AEM for AEM content                                                            |
-| `BRANCH`                         | var    | yes                | this repo branch, sent to AEM for AEM content                                                          |
-| `AEM_AUTHOR_URL`                 | var    | yes                | AEM author instance url to get content from                                                            |
-| `KHOROS_ORIGIN`                  | secret | yes                | the origin used to proxy khoros requests                                                               |
-| `KHOROS_API_SECRET`              | secret | yes                | the API secret used for khoros requests                                                                |
-| `IMS_ORIGIN`                     | secret | yes                | the IMS origin to call for IMS authentication                                                          |
-| `IMS_CLIENT_ID`                  | secret | no                 | the IMS client id to use for IMS authentication                                                        |
-| `IMS_CLIENT_SECRET`              | secret | no                 | the IMS client secret to use for IMS authentication                                                    |
-| `IMS_AUTHORIZATION_CODE`         | secret | no                 | the IMS auth code to use for IMS authentication                                                        |
-| `IPASS_API_KEY`                  | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments                                           |
-| `EXL_API_HOST`                   | var    | no                 | `https://experienceleague.adobe.com`                                                                   |
+| Name                        | Type   | required for Prod? | description                                                           |
+| --------------------------- | ------ | ------------------ | --------------------------------------------------------------------- |
+| `OWNER`                     | var    | yes                | this repo owner, sent to AEM for AEM content                          |
+| `REPO`                      | var    | yes                | this repo name, sent to AEM for AEM content                           |
+| `BRANCH`                    | var    | yes                | this repo branch, sent to AEM for AEM content                         |
+| `AEM_AUTHOR_URL`            | var    | yes                | AEM author instance url to get content from                           |
+| `KHOROS_ORIGIN`             | secret | yes                | the origin used to proxy khoros requests                              |
+| `KHOROS_API_SECRET`         | secret | yes                | the API secret used for khoros requests                               |
+| `IMS_ORIGIN`                | secret | yes                | the IMS origin to call for IMS authentication                         |
+| `IMS_CLIENT_ID`             | secret | no                 | the IMS client id to use for IMS authentication                       |
+| `IMS_CLIENT_SECRET`         | secret | no                 | the IMS client secret to use for IMS authentication                   |
+| `IMS_AUTHORIZATION_CODE`    | secret | no                 | the IMS auth code to use for IMS authentication                       |
+| `IPASS_API_KEY`             | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments          |
+| `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
 | `EXL_DELIVERY_API_IMS_ORIGIN`    | secret | review only        | IMS origin for EXL Delivery API authentication (e.g., `https://ims-na1.adobelogin.com` for production) |
 | `EXL_DELIVERY_API_CLIENT_ID`     | secret | review only        | dedicated IMS client id (authorization_code grant) for the review Cluster Gateway                      |
 | `EXL_DELIVERY_API_CLIENT_SECRET` | secret | review only        | dedicated IMS client secret (authorization_code grant) for the review Cluster Gateway                  |
 | `EXL_DELIVERY_API_CLIENT_CODE`   | secret | review only        | pre-issued technical-account authorization code exchanged for the review Cluster Gateway service token |
-| `FEATURE_FLAGS`                  | var    | no                 | comma separated feature flags that affect converter behavior                                           |
-| `V2_PATHS`                       | var    | no                 | comma separated path-to-regexp to render v2 docs                                                       |
-| `EVENTS_V2_PATHS`                | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events                                       |
-| `VAULT_ENDPOINT`                 | secret | yes                | HashiCorp Vault endpoint URL                                                                           |
-| `VAULT_ROLE_ID`                  | secret | yes                | Vault AppRole role_id for authentication                                                               |
-| `VAULT_SECRET_ID`                | secret | yes                | Vault AppRole secret_id for authentication                                                             |
-| `COVEO_SECRET_PATH_PROD`         | var    | yes                | Vault path to production Coveo token (e.g., `secret/data/coveo/prod`)                                  |
-| `COVEO_SECRET_PATH_NONPROD`      | var    | yes                | Vault path to nonprod Coveo token (e.g., `secret/data/coveo/nonprod`)                                  |
-| `COVEO_SECRET_KEY`               | var    | no                 | Key name for token in Vault secret (default: `token`)                                                  |
+| `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior          |
+| `EXLIA_TAXONOMY_BASE_URL`   | var    | yes                | taxonomy service base URL for localized TQ labels                     |
+| `EVENTS_V2_PATHS`           | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events      |
+| `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |
+| `VAULT_ROLE_ID`             | secret | yes                | Vault AppRole role_id for authentication                              |
+| `VAULT_SECRET_ID`           | secret | yes                | Vault AppRole secret_id for authentication                            |
+| `COVEO_SECRET_PATH_PROD`    | var    | yes                | Vault path to production Coveo token (e.g., `secret/data/coveo/prod`) |
+| `COVEO_SECRET_PATH_NONPROD` | var    | yes                | Vault path to nonprod Coveo token (e.g., `secret/data/coveo/nonprod`) |
+| `COVEO_SECRET_KEY`          | var    | no                 | Key name for token in Vault secret (default: `token`)                 |
 
 > `IMS_CLIENT_ID`, `IMS_CLIENT_SECRET`, `IMS_AUTHORIZATION_CODE` and `IPASS_API_KEY` are not required
 > for prod and are maked so because we do not use iPaaS in prod, which requires IMS authentication

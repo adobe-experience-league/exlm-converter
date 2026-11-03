@@ -12,8 +12,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
-import { main as khorosMain } from '../src/khoros/index.js';
-import { main as tocMain } from '../src/tocs/index.js';
+import { main as gainsightMain } from '../src/gainsight/index.js';
 import { main as coveoMain } from '../src/coveo/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
 
@@ -38,7 +37,6 @@ const {
   EXL_DELIVERY_API_CLIENT_SECRET,
   EXL_DELIVERY_API_CLIENT_CODE,
   FEATURE_FLAGS,
-  V2_PATHS,
   EVENTS_V2_PATHS,
   GAINSIGHT_API_URL,
   GAINSIGHT_OAUTH2_CLIENT_ID,
@@ -96,7 +94,6 @@ const converterHandler = async (req, res) => {
     exlDeliveryApiClientSecret: EXL_DELIVERY_API_CLIENT_SECRET,
     exlDeliveryApiClientCode: EXL_DELIVERY_API_CLIENT_CODE,
     featureFlags: FEATURE_FLAGS,
-    v2Paths: V2_PATHS,
     eventsV2Paths: EVENTS_V2_PATHS,
     exliaTaxonomyBaseUrl: EXLIA_TAXONOMY_BASE_URL,
   };
@@ -127,9 +124,9 @@ const converterHandler = async (req, res) => {
   }
 };
 
-const khorosHandler = async (req, res) => {
+const gainsightHandler = async (req, res) => {
   const { path: originalPath, query, headers } = req;
-  const path = originalPath.replace('/khoros', '');
+  const path = originalPath.replace(/^\/gainsight/, '');
   const params = {
     __ow_path: path,
     __ow_headers: headers,
@@ -148,22 +145,7 @@ const khorosHandler = async (req, res) => {
     ...query,
   };
 
-  const { body, statusCode } = await khorosMain(params);
-  res.status(statusCode || 200);
-  res.send(body);
-};
-
-const tocHandler = async (req, res) => {
-  console.log('toc handler');
-  const { path: originalPath, query } = req;
-  const path = originalPath.replace('/toc', '');
-  const lang = query.lang || 'en';
-  const params = {
-    __ow_path: path,
-    lang,
-  };
-
-  const { body, statusCode } = await tocMain(params);
+  const { body, statusCode } = await gainsightMain(params);
   res.status(statusCode || 200);
   res.send(body);
 };
@@ -203,8 +185,7 @@ const coveoHandler = async (req, res) => {
   res.json(body);
 };
 
-app.get('/khoros/**', khorosHandler);
-app.get('/toc/**', tocHandler);
+app.get('/gainsight/**', gainsightHandler);
 app.get('/coveo-token', coveoHandler);
 app.get('/**', converterHandler);
 
@@ -212,8 +193,8 @@ app.listen(port, () =>
   console.log(`
   
   Converter: http://localhost:${port}/en/docs
-  Khoros: http://localhost:${port}/khoros
-  Toc: http://localhost:${port}/toc
+  Gainsight: http://localhost:${port}/gainsight
+  Toc: http://localhost:${port}/en/toc/<toc-id>
   Coveo Token: http://localhost:${port}/coveo-token
 `),
 );
