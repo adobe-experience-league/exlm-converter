@@ -5,7 +5,7 @@ For AI coding agents, see [AGENTS.md](AGENTS.md).
 Despite the name, this is a collection of Web Actions (on adobe io):
 
 1. `converter`: The entry point for Experience League [Edge Deliver BYOM](https://www.aem.live/developer/byom). AKA where EDS sources the HTML for exl pages when they are published.
-2. `khoros`: Proxies requests to a custom khoros endpoint to get Current User Community links.
+2. `gainsight`: Returns the current user's community profile details and links from Gainsight.
 3. `tocs`: given a TOC ID, Provides the HTML for the TOC via EXL API.
 
 ## More on the converter.
@@ -76,31 +76,12 @@ ACCESS_TOKEN=<token>
 
 > Developer tokens are short lived and should only be used for local testing/debugging.
 
-### Working with the khoros API (and action locally)
+### Working with the Gainsight API (and action locally)
 
-> This is specifically for the khoros action.
-
-in local, and lower environments, iPaaS is used to proxy to khoros services.
-
-The khoros action is available locally at `localhost:3030/khoros/<proxy path here>` when you run `npm run serve`
-
-this local setup requires the follwoing env variables to be added to `build/.local.env`
-
-> please reach out to the dev team for these values
-
-```
-KHOROS_ORIGIN=<the ipass origin used to proxy to khoros>
-KHOROS_API_SECRET=<the khoros dev env API secret>
-IMS_ORIGIN=<the ims origin to auth agains, use the stage origin>
-IMS_CLIENT_ID=<the ims client id used to obtain a token to access iPaaS>
-IMS_CLIENT_SECRET=<the ims client secret used to obtain a token to access iPaaS>
-IMS_AUTHORIZATION_CODET=<the ims client auth code used to obtain a token to access iPaaS>
-IPASS_API_KEY=<the ipass api key for dev iPaaS service for the given KHOROS_ORIGIN>
-```
-
-> see description of these env variables in the `Application environment variables` section.
-
-> Please note, on Prod, iPaaS is not used, the khoros endpoint is called directly.
+The `gainsight` action is available locally at
+`http://localhost:3030/gainsight/profile-details` when you run `npm run serve`.
+The action always uses Gainsight; the `platform` query parameter is not needed.
+See [Gainsight integration](src/gainsight/GAINSIGHT_INTEGRATION.md) for configuration.
 
 ### Working with the Coveo token action locally
 
