@@ -89,8 +89,8 @@ const matchesPath = (path, matchPath) => {
     return docsMatcher(path) !== false;
   } catch {
     // A malformed path-to-regexp template (e.g. an unbalanced group) throws synchronously at
-    // compile time. globPaths often comes from an ops-populated CSV env var (V2_PATHS,
-    // EVENTS_V2_PATHS) that can contain a typo -- fail closed for this one entry instead of
+    // compile time. globPaths often comes from an ops-populated CSV env var
+    // (EVENTS_V2_PATHS) that can contain a typo -- fail closed for this one entry instead of
     // throwing, which would otherwise crash matchAnyPath's whole loop and 500 every request
     // that reaches it, not just ones matching the bad pattern (PR #794 review, Matt Lawrence).
     return false;
