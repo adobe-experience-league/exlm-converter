@@ -13,7 +13,18 @@ Despite the name, this is a collection of Web Actions (on adobe io):
 EXL is setup to use [Bring Your Own Markup](https://www.aem.live/developer/byom) on Edge Delivery with the `conevter` Web Action. When a page is [previewed](https://www.aem.live/docs/admin.html#tag/preview) this action will be [invoked](src/converter/index.js) (GET) and the action will determine where to source the HTML based on path, (docs, landing playlist, tocs, slide) will come from API, others will come from AEM. The content is then transformed and served as HTML.
 
 > [!NOTE]
-> Currently, this converter does the HTML conversion, but in V2 architecture, it will served already-converter HTML from the V2 delivery API.
+> Docs articles, Docs landing pages, playlists, and TOCs use rendered HTML from the V2 Delivery API.
+> V1-only block builders have been removed; V2 supplies the block markup directly.
+> TOCs are served through the converter at `/<lang>/toc/<toc-id>`.
+
+The standalone `tocs` action has been removed. Verify its removal from existing
+Runtime deployments as well.
+
+The `docs-v2`, `landing-v2`, and `playlists-v2` migration flags and the
+`V2_PATHS` setting are no longer used.
+The `usetq` flag and existing authored-tag compatibility processing are retained.
+Browse filters also retain legacy Tag API label lookup for published `exl:` cells
+until those cells are migrated to TQ.
 
 ## Build
 
@@ -171,7 +182,7 @@ The action requires the follwoing environment variables/secrets to be set:
 | `IPASS_API_KEY`             | secret | no                 | the API KEY for iPaaS - for khoros API in lower environments          |
 | `EXL_API_HOST`              | var    | no                 | `https://experienceleague.adobe.com`                                  |
 | `FEATURE_FLAGS`             | var    | no                 | comma separated feature flags that affect converter behavior          |
-| `V2_PATHS`                  | var    | no                 | comma separated path-to-regexp to render v2 docs                      |
+| `EXLIA_TAXONOMY_BASE_URL`   | var    | yes                | taxonomy service base URL for localized TQ labels                     |
 | `EVENTS_V2_PATHS`           | var    | no                 | comma separated path-to-regexp allowlist for v2 on-demand events      |
 | `VAULT_ENDPOINT`            | secret | yes                | HashiCorp Vault endpoint URL                                          |
 | `VAULT_ROLE_ID`             | secret | yes                | Vault AppRole role_id for authentication                              |

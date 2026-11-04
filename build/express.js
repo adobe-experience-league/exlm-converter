@@ -34,7 +34,6 @@ const {
   IPASS_API_KEY,
   EXL_API_HOST,
   FEATURE_FLAGS,
-  V2_PATHS,
   EVENTS_V2_PATHS,
   GAINSIGHT_API_URL,
   GAINSIGHT_OAUTH2_CLIENT_ID,
@@ -87,7 +86,6 @@ const converterHandler = async (req, res) => {
     authorization,
     exlApiHost: EXL_API_HOST,
     featureFlags: FEATURE_FLAGS,
-    v2Paths: V2_PATHS,
     eventsV2Paths: EVENTS_V2_PATHS,
     exliaTaxonomyBaseUrl: EXLIA_TAXONOMY_BASE_URL,
   };
