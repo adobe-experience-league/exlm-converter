@@ -67,6 +67,10 @@ export const EXL_LABEL_ENDPOINTS = {
  */
 
 export default class ExlClient {
+  /**
+   *
+   * @param {ExlClientOptions} options
+   */
   constructor({
     host = 'https://experienceleague.adobe.com',
     state,
