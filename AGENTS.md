@@ -74,13 +74,6 @@ Do **not** add browser-side block decoration, player UX, or client scripts here 
 
 Verify schema in **view-source `<head>`** (`id="exl-schema-org-jsonld"`) on converter output (`localhost:3030` or deployed `.../main/convert/en/playlists/{id}`), not `<code>` blocks in `<main>`.
 
-### Perspectives articles and schema.org
-
-- **Injection:** `injectSchemaOrg` in `src/converter/index.js` when the `schema-org` flag is on and `coveo-content-type` is `Perspective`.
-- **Builder:** `src/converter/modules/schemas/builders/perspective-schema.js`
-- **Tests:** `node --test test/perspective-schema.node-test.mjs` (not part of `npm test`, which is mocha `*.test.js` only).
-- **BlogPosting exceptions vs docs:** Person `author` from `author-name` / `author-bio-page` (omit when the name is empty). `dateModified` is the later of `modified-time` and `published-time` (`YYYY-MM-DD`), not `last-update`. `about` is one `SoftwareApplication` per deduped `tq-products` label, falling back to `solution` when `tq-products` is empty. `keywords` are those labels, then the `feature` meta (not `feature_v1`), capped at 10. Description is the meta description when it differs from the headline; otherwise the helix 25-word intro. No `image`.
-
 ## Pull requests
 
 - Base branches: `main`, `develop`, `stage`
