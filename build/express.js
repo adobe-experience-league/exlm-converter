@@ -13,6 +13,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { render } from '../src/converter/index.js';
 import { main as gainsightMain } from '../src/gainsight/index.js';
+import { main as tocMain } from '../src/tocs/index.js';
 import { main as coveoMain } from '../src/coveo/index.js';
 import { ensureExpressEnv } from './ensure-env.js';
 
@@ -37,6 +38,7 @@ const {
   EXL_DELIVERY_API_CLIENT_SECRET,
   EXL_DELIVERY_API_CLIENT_CODE,
   FEATURE_FLAGS,
+  V2_PATHS,
   EVENTS_V2_PATHS,
   GAINSIGHT_API_URL,
   GAINSIGHT_OAUTH2_CLIENT_ID,
@@ -94,6 +96,7 @@ const converterHandler = async (req, res) => {
     exlDeliveryApiClientSecret: EXL_DELIVERY_API_CLIENT_SECRET,
     exlDeliveryApiClientCode: EXL_DELIVERY_API_CLIENT_CODE,
     featureFlags: FEATURE_FLAGS,
+    v2Paths: V2_PATHS,
     eventsV2Paths: EVENTS_V2_PATHS,
     exliaTaxonomyBaseUrl: EXLIA_TAXONOMY_BASE_URL,
   };
@@ -150,6 +153,21 @@ const gainsightHandler = async (req, res) => {
   res.send(body);
 };
 
+const tocHandler = async (req, res) => {
+  console.log('toc handler');
+  const { path: originalPath, query } = req;
+  const path = originalPath.replace('/toc', '');
+  const lang = query.lang || 'en';
+  const params = {
+    __ow_path: path,
+    lang,
+  };
+
+  const { body, statusCode } = await tocMain(params);
+  res.status(statusCode || 200);
+  res.send(body);
+};
+
 const coveoHandler = async (req, res) => {
   const { headers } = req;
   const params = {
@@ -186,6 +204,7 @@ const coveoHandler = async (req, res) => {
 };
 
 app.get('/gainsight/**', gainsightHandler);
+app.get('/toc/**', tocHandler);
 app.get('/coveo-token', coveoHandler);
 app.get('/**', converterHandler);
 
@@ -194,7 +213,7 @@ app.listen(port, () =>
   
   Converter: http://localhost:${port}/en/docs
   Gainsight: http://localhost:${port}/gainsight
-  Toc: http://localhost:${port}/en/toc/<toc-id>
+  Toc: http://localhost:${port}/toc
   Coveo Token: http://localhost:${port}/coveo-token
 `),
 );
