@@ -1,10 +1,11 @@
-import { getMetadata } from '../utils/dom-utils.js';
+import { getMetadata, setMetadata } from '../utils/dom-utils.js';
 
 export const EXL_HOST = 'https://experienceleague.adobe.com';
 export const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 export const WEB_PAGE_TYPE = 'WebPage';
 export const AUDIENCE_TYPE = 'Audience';
 export const SOFTWARE_APPLICATION_TYPE = 'SoftwareApplication';
+export const PERSON_TYPE = 'Person';
 const EPOCH_ISO_DATE = '1970-01-01';
 
 export const ADOBE_PUBLISHER = {
@@ -21,6 +22,75 @@ export const toIsoDate = (value) => {
   return isoDate === EPOCH_ISO_DATE ? '' : isoDate;
 };
 
+/** Latest YYYY-MM-DD among values. Empty and unparseable inputs are ignored. */
+export const laterIsoDate = (...values) =>
+  values
+    .map((value) => toIsoDate(value))
+    .filter(Boolean)
+    .sort()
+    .pop() || '';
+
+/** Absolute Experience League URL. Relative paths resolve against EXL_HOST. */
+export const toAbsoluteExlUrl = (value) => {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const parsed = new URL(raw, EXL_HOST);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    parsed.hash = '';
+    parsed.search = '';
+    return parsed.toString();
+  } catch (e) {
+    return '';
+  }
+};
+
+/**
+ * Same rule as helix-html-pipeline extractDescription: the first div > p with at
+ * least 10 words (or one long token), capped at 25 words. The pipeline writes
+ * this into meta description when the page has no description of its own, and
+ * Perspectives JSON-LD has to match that served meta value.
+ */
+export const extractPipelineDescription = (document) => {
+  const paragraphs = document.querySelectorAll('div > p');
+  for (let i = 0; i < paragraphs.length; i += 1) {
+    const words = paragraphs[i].textContent.trim().split(/\s+/).filter(Boolean);
+    const longEnough =
+      words.length >= 10 ||
+      words.some((word) => word.length > 25 && !word.startsWith('http'));
+    if (longEnough) {
+      const slice = words.slice(0, 25).join(' ');
+      return words.length > 25 ? `${slice} ...` : slice;
+    }
+  }
+  return '';
+};
+
+/**
+ * Description that will show up in the served meta description.
+ * A head description equal to the headline is the page title copied into the
+ * meta tag; the pipeline replaces that with the article intro, so JSON-LD must
+ * follow the intro too. A real blurb is kept and wins over the intro.
+ */
+export const resolvePerspectiveDescription = (document, headline) => {
+  const metaDescription = getMetadata(document, 'description').trim();
+  const ogDescription = getMetadata(document, 'og:description').trim();
+  const explicit = [metaDescription, ogDescription].find(
+    (value) => value && value !== headline,
+  );
+  if (explicit) return explicit;
+
+  const fromArticle = extractPipelineDescription(document);
+  if (fromArticle) {
+    setMetadata(document, 'description', fromArticle);
+    if (!ogDescription || ogDescription === headline) {
+      setMetadata(document, 'og:description', fromArticle);
+    }
+    return fromArticle;
+  }
+  return metaDescription || ogDescription || headline;
+};
+
 export const getCsvValues = (value = '') =>
   String(value)
     .split(',')
@@ -28,6 +98,25 @@ export const getCsvValues = (value = '') =>
     .filter((item) => item.length > 0);
 
 export const dedupeStrings = (values = []) => [...new Set(values)];
+
+/** Deduped tq-products labels, in authored order. Empty when the meta is missing or not JSON. */
+export const getTqProductLabels = (document) => {
+  const raw = getMetadata(document, 'tq-products').trim();
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return dedupeStrings(
+      parsed
+        .map((item) =>
+          item && typeof item.label === 'string' ? item.label.trim() : '',
+        )
+        .filter(Boolean),
+    );
+  } catch (e) {
+    return [];
+  }
+};
 
 export const toSingleOrArray = (arr) => (arr.length === 1 ? arr[0] : arr);
 
