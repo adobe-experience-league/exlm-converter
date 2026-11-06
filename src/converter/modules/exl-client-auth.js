@@ -1,5 +1,5 @@
 import { isReviewEnvironment } from '../../common/utils/environment-utils.js';
-import { getDefaultImsService } from '../../khoros/utils/IMSService.js';
+import { getDefaultImsService } from '../../gainsight/utils/IMSService.js';
 import { paramMemoryStore } from './utils/param-memory-store.js';
 
 /**
