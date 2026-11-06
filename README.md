@@ -44,6 +44,10 @@ EXL_API_HOST=https://experienceleague.adobe.com
 # EXL_ENV=review
 ```
 
+# Optional: enable IMS authentication for review environment (requires enable-review-ims-auth feature flag)
+
+# FEATURE_FLAGS=enable-review-ims-auth
+
 > Review environment auth is auto-detected from the Runtime namespace (`*-review`) when deployed.
 > `EXL_ENV=review` is for local development only and is not passed during deploy.
 > In review, the EXL delivery API sits behind a Cluster Gateway that requires an IMS service token.

@@ -1,5 +1,8 @@
 import { isReviewEnvironment } from '../../common/utils/environment-utils.js';
 import { getDefaultImsService } from '../../gainsight/utils/IMSService.js';
+import { paramMemoryStore } from './utils/param-memory-store.js';
+
+const enableReviewImsAuth = 'enable-review-ims-auth';
 
 /**
  * Auth headers for EXL delivery API calls in review.
@@ -56,7 +59,11 @@ async function getExlDeliveryApiAuthHeaders({
  * @returns {Promise<{ isReview: boolean, reviewAuthHeaders?: Record<string, string> }>}
  */
 export async function buildExlClientAuthOptions(config) {
-  if (!isReviewEnvironment()) {
+  // Check if we're in review environment AND the feature flag is enabled
+  if (
+    !isReviewEnvironment() ||
+    !paramMemoryStore.hasFeatureFlag(enableReviewImsAuth)
+  ) {
     return { isReview: false };
   }
 
