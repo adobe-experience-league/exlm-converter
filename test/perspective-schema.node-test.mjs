@@ -43,9 +43,12 @@ const baseMetas = {
     { label: 'Experience Platform' },
     { label: 'Commerce' },
   ]),
-  solution: 'Experience Platform,Commerce',
+  solution: 'Experience Platform, Experience Platform, Commerce',
+  solution_v1: 'Experience Platform, Commerce',
   feature: 'Catalog management, Configuration, Accounts',
-  feature_v1: 'Should Not Appear, Admin Workspace',
+  feature_v1: 'Catalog management, Configuration',
+  subfeature_v1: 'Accounts',
+  topic_v1: 'Order Management System',
   'coveo-content-type': 'Perspective',
   'og:image': 'https://experienceleague.adobe.com/default-image.png',
 };
@@ -83,9 +86,10 @@ test('BlogPosting uses author, meta description, and the later date', () => {
     'Catalog management',
     'Configuration',
     'Accounts',
+    'Order Management System',
   ]);
   assert.equal(schema.image, undefined);
-  assert.equal(schema.mainEntityOfPage.headline, undefined);
+  assert.equal(schema.mainEntityOfPage.headline, schema.headline);
   assert.equal(schema.mainEntityOfPage.description, schema.description);
   assert.equal(schema.mainEntityOfPage.name, schema.headline);
 });
@@ -133,12 +137,18 @@ test('description follows the article intro when the meta description is the tit
   assert.equal(getMetadata(document, 'og:description'), schema.description);
 });
 
-test('empty tq-products falls back to solution for about and keywords', () => {
+test('empty product tags fall back to solution, and keywords include feature, sub-feature, and topic', () => {
   const document = perspectiveDocument({
     ...baseMetas,
     'tq-products': '',
+    solution_v1: '',
     solution: 'Workfront',
+    feature_v1: '',
     feature: 'Reports and Dashboards, Reports and Dashboards',
+    subfeature_v1: '',
+    'sub-feature': 'People Teams and Groups',
+    topic_v1: '',
+    topic: 'Strategic Planning',
   });
   const schema = buildPerspectiveSchema(
     document,
@@ -147,7 +157,12 @@ test('empty tq-products falls back to solution for about and keywords', () => {
   assert.deepEqual(schema.about, [
     { '@type': 'SoftwareApplication', name: 'Workfront' },
   ]);
-  assert.deepEqual(schema.keywords, ['Workfront', 'Reports and Dashboards']);
+  assert.deepEqual(schema.keywords, [
+    'Workfront',
+    'Reports and Dashboards',
+    'People Teams and Groups',
+    'Strategic Planning',
+  ]);
 });
 
 test('docs articles still take dateModified from last-update', () => {

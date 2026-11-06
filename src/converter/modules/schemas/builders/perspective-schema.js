@@ -13,14 +13,10 @@ import {
   laterIsoDate,
   toAbsoluteExlUrl,
   resolvePerspectiveDescription,
-  getTqProductLabels,
   getCsvValues,
-  dedupeStrings,
 } from '../schema-helpers.js';
 
 const PERSPECTIVE_TYPE = 'BlogPosting';
-// Docs keywords are capped at 10. Perspectives keep that cap.
-const KEYWORD_LIMIT = 10;
 
 const buildAuthor = (document) => {
   const names = getCsvValues(getMetadata(document, 'author-name'));
@@ -40,8 +36,11 @@ const buildAuthor = (document) => {
 /**
  * BlogPosting for a Perspectives article.
  * Same fields as a docs article, with the Perspectives exceptions: no product
- * suffix on the headline, Person author, about/keywords from tq-products, and
- * dateModified = the later of modified-time and published-time (not last-update).
+ * suffix on the headline, Person author, about as an array, and dateModified
+ * = the later of modified-time and published-time (not last-update).
+ * about and keywords come from the shared metadata read. about is the
+ * deduped solution list. keywords prefer the V1 tags (solution, feature,
+ * sub-feature, topic) and that read already caps them at 10.
  */
 export const buildPerspectiveSchema = (document, path) => {
   const {
@@ -49,7 +48,8 @@ export const buildPerspectiveSchema = (document, path) => {
     headline,
     inLanguage,
     audienceType,
-    about: solutionAbout,
+    about: productLabels,
+    keywords,
   } = extractCommonMetadata(document, path);
 
   const description = resolvePerspectiveDescription(document, headline);
@@ -61,16 +61,6 @@ export const buildPerspectiveSchema = (document, path) => {
     getMetadata(document, 'published-time'),
   );
   const published = datePublished || dateModified;
-
-  const tqLabels = getTqProductLabels(document);
-  const productLabels = tqLabels.length > 0 ? tqLabels : solutionAbout;
-  const featureLabels = dedupeStrings(
-    getCsvValues(getMetadata(document, 'feature')),
-  );
-  const keywords = dedupeStrings([...productLabels, ...featureLabels]).slice(
-    0,
-    KEYWORD_LIMIT,
-  );
 
   const schema = {};
 
@@ -110,9 +100,10 @@ export const buildPerspectiveSchema = (document, path) => {
   addIfPresent(schema, 'mainEntityOfPage', {
     '@type': WEB_PAGE_TYPE,
     '@id': canonicalUrl,
-    url: canonicalUrl,
     name: headline,
     description,
+    headline,
+    url: canonicalUrl,
   });
 
   return schema;

@@ -99,25 +99,6 @@ export const getCsvValues = (value = '') =>
 
 export const dedupeStrings = (values = []) => [...new Set(values)];
 
-/** Deduped tq-products labels, in authored order. Empty when the meta is missing or not JSON. */
-export const getTqProductLabels = (document) => {
-  const raw = getMetadata(document, 'tq-products').trim();
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return dedupeStrings(
-      parsed
-        .map((item) =>
-          item && typeof item.label === 'string' ? item.label.trim() : '',
-        )
-        .filter(Boolean),
-    );
-  } catch (e) {
-    return [];
-  }
-};
-
 export const toSingleOrArray = (arr) => (arr.length === 1 ? arr[0] : arr);
 
 export const getFirstNonEmpty = (...values) =>
