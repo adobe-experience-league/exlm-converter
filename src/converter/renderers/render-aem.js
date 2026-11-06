@@ -106,8 +106,13 @@ async function transformAemPageMetadata(htmlString, params, path) {
       );
 
       const promises = authorBioUrls.map(async (authorBioUrl) => {
+        // The incoming source location points to the article being converted,
+        // not the author bio page, so it must not be forwarded here.
         // eslint-disable-next-line no-use-before-define
-        const { body } = await renderAem(authorBioUrl, params);
+        const { body } = await renderAem(authorBioUrl, {
+          ...params,
+          sourceLocation: undefined,
+        });
         return getAuthorBioData(body);
       });
 
