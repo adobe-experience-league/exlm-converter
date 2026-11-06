@@ -69,26 +69,38 @@ export const extractPipelineDescription = (document) => {
 /**
  * Description that will show up in the served meta description.
  * A head description equal to the headline is the page title copied into the
- * meta tag; the pipeline replaces that with the article intro, so JSON-LD must
- * follow the intro too. A real blurb is kept and wins over the intro.
+ * meta tag. The pipeline replaces an empty or title-only description with the
+ * article intro, so a real blurb (meta, otherwise og) is written onto those
+ * tags and JSON-LD uses that same string. When both tags are only the title,
+ * JSON-LD follows the intro and writes it back so the two stay aligned.
  */
 export const resolvePerspectiveDescription = (document, headline) => {
+  const title = String(headline || '').trim();
   const metaDescription = getMetadata(document, 'description').trim();
   const ogDescription = getMetadata(document, 'og:description').trim();
+  const isTitleCopy = (value) => !value || value === title;
   const explicit = [metaDescription, ogDescription].find(
-    (value) => value && value !== headline,
+    (value) => value && value !== title,
   );
-  if (explicit) return explicit;
+  if (explicit) {
+    if (isTitleCopy(metaDescription)) {
+      setMetadata(document, 'description', explicit);
+    }
+    if (isTitleCopy(ogDescription)) {
+      setMetadata(document, 'og:description', explicit);
+    }
+    return explicit;
+  }
 
   const fromArticle = extractPipelineDescription(document);
   if (fromArticle) {
     setMetadata(document, 'description', fromArticle);
-    if (!ogDescription || ogDescription === headline) {
+    if (isTitleCopy(ogDescription)) {
       setMetadata(document, 'og:description', fromArticle);
     }
     return fromArticle;
   }
-  return metaDescription || ogDescription || headline;
+  return metaDescription || ogDescription || title;
 };
 
 export const getCsvValues = (value = '') =>
