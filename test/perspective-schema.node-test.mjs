@@ -147,23 +147,6 @@ test('omits author when author-name is empty', () => {
   assert.equal(schema.author, undefined);
 });
 
-test('a real social description replaces a title copied into the meta description', () => {
-  const blurb =
-    'A commerce story about journey design, kept distinct from the page title.';
-  const document = perspectiveDocument({
-    ...baseMetas,
-    description: 'From data to delight',
-    'og:description': blurb,
-  });
-  const schema = buildPerspectiveSchema(
-    document,
-    '/en/perspectives/from-data-to-delight',
-  );
-  assert.equal(schema.description, blurb);
-  assert.equal(getMetadata(document, 'description'), blurb);
-  assert.equal(getMetadata(document, 'og:description'), blurb);
-});
-
 test('two authors stay separate people with their own bio pages', () => {
   const document = perspectiveDocument({
     ...baseMetas,
@@ -189,7 +172,7 @@ test('two authors stay separate people with their own bio pages', () => {
   ]);
 });
 
-test('description follows the article intro when the meta description is the title', () => {
+test('keeps the authored description and does not invent one from the article', () => {
   const document = perspectiveDocument({
     ...baseMetas,
     description: 'From data to delight',
@@ -199,13 +182,9 @@ test('description follows the article intro when the meta description is the tit
     document,
     '/en/perspectives/from-data-to-delight',
   );
-  assert.equal(
-    schema.description,
-    'Design scalable commerce experiences by moving beyond conversion funnels and enabling journey-based engagement with data for every shopper.',
-  );
-  assert.notEqual(schema.description, schema.headline);
-  assert.equal(getMetadata(document, 'description'), schema.description);
-  assert.equal(getMetadata(document, 'og:description'), schema.description);
+  assert.equal(schema.description, 'From data to delight');
+  assert.equal(getMetadata(document, 'description'), 'From data to delight');
+  assert.equal(getMetadata(document, 'og:description'), 'From data to delight');
 });
 
 test('empty product tags fall back to solution, and keywords include feature, sub-feature, and topic', () => {

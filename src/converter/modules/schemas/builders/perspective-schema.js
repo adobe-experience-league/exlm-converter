@@ -12,7 +12,6 @@ import {
   toIsoDate,
   laterIsoDate,
   toAbsoluteExlUrl,
-  resolvePerspectiveDescription,
   getCsvValues,
 } from '../schema-helpers.js';
 
@@ -38,21 +37,22 @@ const buildAuthor = (document) => {
  * Same fields as a docs article, with the Perspectives exceptions: no product
  * suffix on the headline, Person author, about as an array, and dateModified
  * = the later of modified-time and published-time (not last-update).
- * about and keywords come from the shared metadata read. about is the
- * deduped solution list. keywords prefer the V1 tags (solution, feature,
- * sub-feature, topic) and that read already caps them at 10.
+ * about, keywords, and description come from the shared metadata read.
+ * description is the authored meta description. Pages with no description
+ * need one in AEM. about is the deduped solution list. keywords prefer the
+ * V1 tags (solution, feature, sub-feature, topic) and that read already
+ * caps them at 10.
  */
 export const buildPerspectiveSchema = (document, path) => {
   const {
     canonicalUrl,
     headline,
+    description,
     inLanguage,
     audienceType,
     about: productLabels,
     keywords,
   } = extractCommonMetadata(document, path);
-
-  const description = resolvePerspectiveDescription(document, headline);
   if (!canonicalUrl || !headline || !description) return null;
 
   const datePublished = toIsoDate(getMetadata(document, 'published-time'));

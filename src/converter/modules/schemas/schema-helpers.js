@@ -1,4 +1,4 @@
-import { getMetadata, setMetadata } from '../utils/dom-utils.js';
+import { getMetadata } from '../utils/dom-utils.js';
 
 export const EXL_HOST = 'https://experienceleague.adobe.com';
 export const SCHEMA_ORG_CONTEXT = 'https://schema.org';
@@ -43,64 +43,6 @@ export const toAbsoluteExlUrl = (value) => {
   } catch (e) {
     return '';
   }
-};
-
-/**
- * Same rule as helix-html-pipeline extractDescription: the first div > p with at
- * least 10 words (or one long token), capped at 25 words. The pipeline writes
- * this into meta description when the page has no description of its own, and
- * Perspectives JSON-LD has to match that served meta value.
- */
-export const extractPipelineDescription = (document) => {
-  const paragraphs = document.querySelectorAll('div > p');
-  for (let i = 0; i < paragraphs.length; i += 1) {
-    const words = paragraphs[i].textContent.trim().split(/\s+/).filter(Boolean);
-    const longEnough =
-      words.length >= 10 ||
-      words.some((word) => word.length > 25 && !word.startsWith('http'));
-    if (longEnough) {
-      const slice = words.slice(0, 25).join(' ');
-      return words.length > 25 ? `${slice} ...` : slice;
-    }
-  }
-  return '';
-};
-
-/**
- * Description that will show up in the served meta description.
- * A head description equal to the headline is the page title copied into the
- * meta tag. The pipeline replaces an empty or title-only description with the
- * article intro, so a real blurb (meta, otherwise og) is written onto those
- * tags and JSON-LD uses that same string. When both tags are only the title,
- * JSON-LD follows the intro and writes it back so the two stay aligned.
- */
-export const resolvePerspectiveDescription = (document, headline) => {
-  const title = String(headline || '').trim();
-  const metaDescription = getMetadata(document, 'description').trim();
-  const ogDescription = getMetadata(document, 'og:description').trim();
-  const isTitleCopy = (value) => !value || value === title;
-  const explicit = [metaDescription, ogDescription].find(
-    (value) => value && value !== title,
-  );
-  if (explicit) {
-    if (isTitleCopy(metaDescription)) {
-      setMetadata(document, 'description', explicit);
-    }
-    if (isTitleCopy(ogDescription)) {
-      setMetadata(document, 'og:description', explicit);
-    }
-    return explicit;
-  }
-
-  const fromArticle = extractPipelineDescription(document);
-  if (fromArticle) {
-    setMetadata(document, 'description', fromArticle);
-    if (isTitleCopy(ogDescription)) {
-      setMetadata(document, 'og:description', fromArticle);
-    }
-    return fromArticle;
-  }
-  return metaDescription || ogDescription || title;
 };
 
 export const getCsvValues = (value = '') =>
