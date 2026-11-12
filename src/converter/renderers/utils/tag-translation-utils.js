@@ -1,4 +1,4 @@
-import { createDefaultExlClient } from '../../modules/ExlClient.js';
+import { createDefaultExlClientV2 } from '../../modules/ExlClientV2.js';
 import { createExliaTaxonomyLabelResolver } from '../../modules/exlia-taxonomy-client.js';
 
 // List of blocks and position of the tags inside blocks to translate.
@@ -150,7 +150,7 @@ async function translateTaxonomySegmentsInRawTags(rawTags, lang, resolver) {
  * @summary This function adds a new div with the translated tags to the block.
  */
 export const translateBlockTags = async (document, lang) => {
-  const defaultExlClient = await createDefaultExlClient();
+  const defaultExlClient = await createDefaultExlClientV2();
   const taxonomyResolver = await createExliaTaxonomyLabelResolver();
   await Promise.all(
     MAPPING_TO_TRANSLATE.map(async (blockDetails) => {

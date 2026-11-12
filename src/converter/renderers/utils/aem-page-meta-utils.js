@@ -2,10 +2,6 @@ import jsdom from 'jsdom';
 import crypto from 'crypto';
 import { getMetadata, setMetadata } from '../../modules/utils/dom-utils.js';
 import {
-  createDefaultExlClient,
-  EXL_LABEL_ENDPOINTS,
-} from '../../modules/ExlClient.js';
-import {
   createExliaTaxonomyLabelResolver,
   extractTqUuid,
 } from '../../modules/exlia-taxonomy-client.js';
@@ -43,7 +39,6 @@ export function decodeBase64(encodedString) {
  */
 
 /**
- *
  * @param {string} authorBioHtml author bio html
  * @returns {AuthorBioData}
  */
@@ -94,7 +89,6 @@ export function decodeCQMetadata(document, metaName) {
   setMetadata(document, metaName, decodedCQTags.join(', '));
 }
 
-// HTML entity decoder utility
 function decodeHtmlEntities(str) {
   if (!str || typeof str !== 'string') return str;
 
@@ -103,6 +97,16 @@ function decodeHtmlEntities(str) {
   const textarea = dom.window.document.createElement('textarea');
   textarea.innerHTML = str;
   return textarea.value;
+}
+
+/**
+ * @param {Record<string, unknown>} item
+ * @returns {string}
+ */
+function englishLabelFromTqItem(item) {
+  if (!item || typeof item !== 'object') return '';
+  const label = item.displayLabel ?? item.prefLabel ?? '';
+  return typeof label === 'string' ? label.trim() : '';
 }
 
 /**
@@ -192,18 +196,7 @@ export function updateLegacyAndV2Tags(document) {
 }
 
 /**
- * @param {Record<string, unknown>} item
- * @returns {string}
- */
-function englishLabelFromTqItem(item) {
-  if (!item || typeof item !== 'object') return '';
-  const label = item.displayLabel ?? item.prefLabel ?? '';
-  return typeof label === 'string' ? label.trim() : '';
-}
-
-/**
- * Update TQ Tags metadata
- * Converts JSON metadata -> label-only metadata
+ * Converts JSON TQ metadata to label-only metadata.
  * @param {Document} document
  */
 export function updateTQTagsMetadata(document) {
@@ -295,15 +288,11 @@ export async function createTranslatedV2TQMetadata(document, pathLang) {
           parsed.map(async (item) => {
             if (!item || typeof item !== 'object') return null;
 
-            // Get English label as fallback
             const en = englishLabelFromTqItem(item);
-
-            // Get tag ID for translation lookup
             const tagId = item.id || item.uri || item.tag || null;
 
             if (!localize || !tagId) return en || null;
 
-            // Try to get localized label
             const loc = await getLocalizedOrNull(tagId);
             return loc || en || null;
           }),
@@ -407,34 +396,6 @@ export function updateCoveoSolutionMetadata(document) {
 }
 
 /**
- * Utility function to map meta tags to titles based on a taxonomy data set.
- *
- * @param {string} meta
- * @param {Array} taxonomyData
- * @returns {string[]}
- */
-export const mapTagsToTitles = (meta, taxonomyData) => {
-  let locTitles = [];
-  if (!meta?.length) return [];
-  if (!Array.isArray(taxonomyData) || !taxonomyData?.length) {
-    return [];
-  }
-
-  const tags = meta.split(',').map((tag) => tag.trim());
-  locTitles = tags
-    .map((tag) => {
-      const match = taxonomyData.find((item) => item.tag.trim() === tag);
-      return match ? match.title : null;
-    })
-    .filter(Boolean);
-
-  if (locTitles.length) {
-    locTitles = locTitles.join(', ');
-  }
-  return locTitles;
-};
-
-/**
  * Gets the module count from the course-breakdown block
  * @param {Document} document - The DOM document
  * @returns {number} - The module count value
@@ -490,59 +451,3 @@ export function getChildPageIds(document, prefixSegments) {
 
   return [...ids];
 }
-
-/**
- * Creates translated metadata for role, level, and feature meta types.
- *
- * @param {Document} document
- * @param {string} lang
- * @returns {Promise<void>} A promise that resolves once all metadata is updated.
- */
-export const createTranslatedMetadata = async (document, lang) => {
-  const defaultExlClient = await createDefaultExlClient();
-
-  const metaTypes = {
-    roles: 'role',
-    levels: 'level',
-    features: 'feature',
-  };
-
-  await Promise.all(
-    Object.keys(metaTypes).map(async (key) => {
-      const metaType = metaTypes[key];
-      const metaContent = getMetadata(document, metaType);
-
-      if (metaContent) {
-        const tags = metaContent.split(',').map((tag) => tag.trim());
-
-        const translatedLabels = await Promise.allSettled(
-          tags.map((tag) =>
-            defaultExlClient
-              .getLabelFromEndpoint(
-                EXL_LABEL_ENDPOINTS[key.toUpperCase()],
-                tag,
-                lang,
-              )
-              .catch((error) => {
-                console.error(
-                  `Error fetching translated label for ${metaType} with Tag: ${tag}`,
-                  error,
-                );
-                return tag;
-              }),
-          ),
-        );
-
-        const localizedLabels = translatedLabels.map((result, index) =>
-          result.status === 'fulfilled' ? result.value : tags[index],
-        );
-
-        setMetadata(
-          document,
-          `loc-legacy-${metaType}`,
-          localizedLabels.join(','),
-        );
-      }
-    }),
-  );
-};
