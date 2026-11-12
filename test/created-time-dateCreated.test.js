@@ -1,0 +1,107 @@
+/**
+ * EXLM-6191-1: created-time (jcr:created) drives schema.org dateCreated.
+ * Run: node --test test/created-time-dateCreated.test.js
+ */
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+import { JSDOM } from 'jsdom';
+import { extractCommonMetadata } from '../src/converter/modules/schemas/schema-helpers.js';
+import { buildPerspectiveSchema } from '../src/converter/modules/schemas/builders/perspective-schema.js';
+import { buildArticleSchema } from '../src/converter/modules/schemas/builders/article-schema.js';
+import { buildCourseSchema } from '../src/converter/modules/schemas/builders/course-schema.js';
+
+const PATH = '/en/perspectives/sample-article';
+const DOCS_PATH = '/en/docs/analytics/implementation/home';
+const COURSE_PATH = '/en/courses/sample-course';
+
+const baseHead = `
+  <link rel="canonical" href="https://experienceleague.adobe.com${PATH}">
+  <meta name="title" content="Sample Perspective">
+  <meta name="description" content="Authored description for schema.">
+  <meta name="published-time" content="2026-11-11T06:33:20.942Z">
+  <meta name="modified-time" content="2026-05-14T17:54:58.334Z">
+  <meta name="author-name" content="Ada Author">
+`;
+
+const docsHead = `
+  <link rel="canonical" href="https://experienceleague.adobe.com${DOCS_PATH}">
+  <meta name="title" content="Sample Doc">
+  <meta name="description" content="Docs description.">
+  <meta name="published-time" content="2026-11-11T06:33:20.942Z">
+  <meta name="last-update" content="2026-10-01T00:00:00.000Z">
+`;
+
+const courseHead = `
+  <link rel="canonical" href="https://experienceleague.adobe.com${COURSE_PATH}">
+  <meta name="title" content="Sample Course">
+  <meta name="description" content="Course description.">
+  <meta name="published-time" content="2026-11-11T06:33:20.942Z">
+  <meta name="last-update" content="2026-10-01T00:00:00.000Z">
+`;
+
+const docFrom = (head) =>
+  new JSDOM(`<!DOCTYPE html><html><head>${head}</head><body></body></html>`)
+    .window.document;
+
+describe('dateCreated from created-time', () => {
+  it('extractCommonMetadata prefers created-time over published-time', () => {
+    const document = docFrom(
+      `${baseHead}<meta name="created-time" content="2024-03-15T12:00:00.000Z">`,
+    );
+    const { dateCreated, datePublished } = extractCommonMetadata(
+      document,
+      PATH,
+    );
+    assert.equal(dateCreated, '2024-03-15');
+    assert.equal(datePublished, '2026-11-11');
+  });
+
+  it('extractCommonMetadata falls back to published when created-time is missing', () => {
+    const document = docFrom(baseHead);
+    const { dateCreated, datePublished } = extractCommonMetadata(
+      document,
+      PATH,
+    );
+    assert.equal(dateCreated, datePublished);
+    assert.equal(dateCreated, '2026-11-11');
+  });
+
+  it('Perspectives BlogPosting uses created-time for dateCreated', () => {
+    const document = docFrom(
+      `${baseHead}<meta name="created-time" content="2024-03-15T12:00:00.000Z">`,
+    );
+    const schema = buildPerspectiveSchema(document, PATH);
+    assert.equal(schema['@type'], 'BlogPosting');
+    assert.equal(schema.dateCreated, '2024-03-15');
+    assert.equal(schema.datePublished, '2026-11-11');
+    // later of modified (2026-05-14) and published (2026-11-11)
+    assert.equal(schema.dateModified, '2026-11-11');
+  });
+
+  it('Perspectives falls back to published for dateCreated without created-time', () => {
+    const document = docFrom(baseHead);
+    const schema = buildPerspectiveSchema(document, PATH);
+    assert.equal(schema.dateCreated, '2026-11-11');
+    assert.equal(schema.datePublished, '2026-11-11');
+  });
+
+  it('docs article schema uses created-time for dateCreated', () => {
+    const document = docFrom(
+      `${docsHead}<meta name="created-time" content="2023-01-20T08:00:00.000Z">`,
+    );
+    const schema = buildArticleSchema(document, DOCS_PATH);
+    assert.ok(schema);
+    assert.equal(schema.dateCreated, '2023-01-20');
+    assert.equal(schema.datePublished, '2026-11-11');
+  });
+
+  it('course schema uses created-time for dateCreated', () => {
+    const document = docFrom(
+      `${courseHead}<meta name="created-time" content="2022-06-01T00:00:00.000Z">`,
+    );
+    const schema = buildCourseSchema(document, COURSE_PATH);
+    assert.ok(schema);
+    assert.equal(schema.dateCreated, '2022-06-01');
+    assert.equal(schema.datePublished, '2026-11-11');
+  });
+});

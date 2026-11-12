@@ -126,8 +126,11 @@ export const extractCommonMetadata = (document, path) => {
   const datePublished = toIsoDate(
     getFirstNonEmpty(getMetadata(document, 'published-time'), dateModified),
   );
-  // fallback to published date as created date in meta is not available
-  const dateCreated = toIsoDate(getFirstNonEmpty(datePublished));
+  // Prefer AEM jcr:created (converter sets created-time). Fall back to
+  // published when author jcr fetch fails or the property is missing.
+  const dateCreated = toIsoDate(
+    getFirstNonEmpty(getMetadata(document, 'created-time'), datePublished),
+  );
   const image = getFirstNonEmpty(
     getMetadata(document, 'og:image:secure_url'),
     getMetadata(document, 'og:image'),

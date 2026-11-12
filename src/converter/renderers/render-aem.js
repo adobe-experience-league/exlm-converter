@@ -54,12 +54,20 @@ async function transformAemPageMetadata(htmlString, params, path) {
     updateLegacyAndV2Tags(document);
   }
 
-  // Fetch and set cq:translationMethod from jcr:content.json
-  // Note: fetchJson uses 24-hour cache - fetches from cache if available, otherwise from API
-  if (lang !== 'en') {
-    try {
-      const client = new FranklinServletClient(params);
-      const json = await client.fetchPageJcrJson(path);
+  // Fetch jcr:content.json once (24h cache). Fail-open: schema and
+  // translation keep working if author is unreachable or unauthorized.
+  // - created-time ← jcr:created (all langs) for schema.org dateCreated
+  // - translation-mechanism ← cq:translationMethod (non-en only)
+  try {
+    const client = new FranklinServletClient(params);
+    const json = await client.fetchPageJcrJson(path);
+
+    const jcrCreated = json?.['jcr:created'];
+    if (jcrCreated) {
+      setMetadata(document, 'created-time', String(jcrCreated));
+    }
+
+    if (lang !== 'en') {
       const translationMap = {
         HUMAN_TRANSLATION: 'HT',
         MACHINE_TRANSLATION: 'MT',
@@ -73,9 +81,9 @@ async function transformAemPageMetadata(htmlString, params, path) {
       if (translationMethod) {
         setMetadata(document, 'translation-mechanism', translationMethod);
       }
-    } catch (error) {
-      aioLogger.warn('Failed to fetch or set cq:translationMethod', error);
     }
+  } catch (error) {
+    aioLogger.warn('Failed to fetch or apply jcr:content.json metadata', error);
   }
 
   const publishedTime = getMetadata(document, 'published-time');
