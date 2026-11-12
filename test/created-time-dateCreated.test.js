@@ -178,7 +178,7 @@ describe('dateCreated from created-time', () => {
     );
   });
 
-  it('gitCreatedFromArticleSearch does not guess when path misses', () => {
+  it('gitCreatedFromArticleSearch does not guess among multiple path misses', () => {
     assert.equal(
       gitCreatedFromArticleSearch(
         {
@@ -186,6 +186,10 @@ describe('dateCreated from created-time', () => {
             {
               path: '/en/docs/other',
               git: { created: '2020-01-01T00:00:00.000Z' },
+            },
+            {
+              path: '/en/docs/another',
+              git: { created: '2021-01-01T00:00:00.000Z' },
             },
           ],
         },
@@ -196,19 +200,38 @@ describe('dateCreated from created-time', () => {
   });
 
   it('htmlFromArticleSearch returns text/html transformedContent', () => {
-    const html = htmlFromArticleSearch({
-      data: {
-        path: DOCS_PATH,
-        transformedContent: [
-          { contentType: 'text/markdown', raw: '# md' },
-          {
-            contentType: 'text/html; charset=utf-8',
-            raw: '<!doctype html><html><head></head><body>doc</body></html>',
-          },
-        ],
+    const html = htmlFromArticleSearch(
+      {
+        data: {
+          path: DOCS_PATH,
+          transformedContent: [
+            { contentType: 'text/markdown', raw: '# md' },
+            {
+              contentType: 'text/html; charset=utf-8',
+              raw: '<!doctype html><html><head></head><body>doc</body></html>',
+            },
+          ],
+        },
       },
       DOCS_PATH,
-    });
+    );
     assert.match(html, /<body>doc<\/body>/);
+  });
+
+  it('gitCreatedFromArticleSearch uses sole row when path string differs', () => {
+    assert.equal(
+      gitCreatedFromArticleSearch(
+        {
+          data: [
+            {
+              path: `${DOCS_PATH}/`,
+              git: { created: '2022-02-17T21:30:53.000Z' },
+            },
+          ],
+        },
+        DOCS_PATH,
+      ),
+      '2022-02-17T21:30:53.000Z',
+    );
   });
 });

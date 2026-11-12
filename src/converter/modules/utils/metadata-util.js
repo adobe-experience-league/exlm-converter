@@ -100,9 +100,18 @@ export const createMetaData = (
 
   // Docs create day for schema.org dateCreated (git history, not AEM jcr).
   // Upsert via setMetadata so FullMeta cannot duplicate the tag.
-  const gitCreated = data?.git?.created;
-  if (gitCreated) {
-    setMetadata(document, 'created-time', String(gitCreated));
+  const gitCreatedRaw = data?.git?.created;
+  let gitCreated = '';
+  if (gitCreatedRaw) {
+    const raw = String(gitCreatedRaw);
+    const createdDate =
+      raw.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(raw)
+        ? new Date(raw)
+        : new Date(`${raw}Z`);
+    if (!Number.isNaN(createdDate.getTime())) {
+      gitCreated = createdDate.toISOString();
+      setMetadata(document, 'created-time', gitCreated);
+    }
   }
 
   if (fullMetadata.solution) {

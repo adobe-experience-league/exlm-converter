@@ -20,17 +20,31 @@ export const articleFromSearchPayload = (payload, path = '') => {
   const data = payload?.data;
   if (Array.isArray(data)) {
     if (path) {
-      return data.find((row) => row?.path === path) || null;
+      const match = data.find((row) => row?.path === path);
+      if (match) return match;
+      // Path-scoped search often returns one row with a slightly different path string.
+      return data.length === 1 ? data[0] : null;
     }
     return data[0] || null;
   }
   return data || null;
 };
 
+/** Normalize create timestamps the same way as AEM jcr:created (UTC ISO). */
+export const toCreatedTimeMeta = (value) => {
+  if (!value) return '';
+  const raw = String(value);
+  const date =
+    raw.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(raw)
+      ? new Date(raw)
+      : new Date(`${raw}Z`);
+  return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+};
+
 /** Pull git.created from articles/search JSON (object or list payload). */
 export const gitCreatedFromArticleSearch = (payload, path = '') => {
   const item = articleFromSearchPayload(payload, path);
-  return item?.git?.created ? String(item.git.created) : '';
+  return toCreatedTimeMeta(item?.git?.created);
 };
 
 /** HTML body from articles/search JSON transformedContent (text/html). */
