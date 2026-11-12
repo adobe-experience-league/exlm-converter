@@ -40,14 +40,22 @@ export default class ExlClientV2 {
     return this.doFetchHtml(path, requestOptions);
   }
 
-  async getArticleHtmlByPath(path, lang = 'en', requestOptions = {}) {
+  // eslint-disable-next-line class-methods-use-this
+  articleSearchPath(path, lang = 'en') {
     const searchParams = new URLSearchParams({
       field: 'path',
       value: path,
       lang,
     });
-    const searchPath = `api/v2/articles/search?${searchParams.toString()}`;
-    return this.doFetchHtml(searchPath, requestOptions);
+    return `api/v2/articles/search?${searchParams.toString()}`;
+  }
+
+  async getArticleHtmlByPath(path, lang = 'en', requestOptions = {}) {
+    return this.doFetchHtml(this.articleSearchPath(path, lang), requestOptions);
+  }
+
+  async getArticleJsonByPath(path, lang = 'en', requestOptions = {}) {
+    return this.doFetchJson(this.articleSearchPath(path, lang), requestOptions);
   }
 
   async getTocHtmlById(id, lang = 'en', requestOptions = {}) {
