@@ -1,5 +1,6 @@
 import yaml from 'js-yaml';
 import { DOCPAGETYPE } from '../../../common/utils/doc-page-types.js';
+import { setMetadata } from './dom-utils.js';
 
 /**
  * Generates an SEO-friendly string by combining input arguments.
@@ -98,12 +99,10 @@ export const createMetaData = (
     .map((key) => ({ name: key.toLowerCase(), content: data[key] }));
 
   // Docs create day for schema.org dateCreated (git history, not AEM jcr).
+  // Upsert via setMetadata so FullMeta cannot duplicate the tag.
   const gitCreated = data?.git?.created;
   if (gitCreated) {
-    metaProperties.push({
-      name: 'created-time',
-      content: String(gitCreated),
-    });
+    setMetadata(document, 'created-time', String(gitCreated));
   }
 
   if (fullMetadata.solution) {
@@ -136,6 +135,7 @@ export const createMetaData = (
 
   // Dynamic Metadata from API
   Object.entries(fullMetadata).forEach(([key, value]) => {
+    if (key === 'created-time' && gitCreated) return;
     const metaTag = document.createElement('meta');
     metaTag.setAttribute('name', key);
 

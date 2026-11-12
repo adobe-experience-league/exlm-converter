@@ -54,9 +54,15 @@ async function transformAemPageMetadata(htmlString, params, path) {
     updateLegacyAndV2Tags(document);
   }
 
-  // Same UTC normalization as published / content-modified (AEM often omits Z).
-  const parseDate = (dateStr) =>
-    dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
+  // AEM often omits Z; keep explicit offsets (+00:00) intact.
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date(NaN);
+    const value = String(dateStr);
+    if (value.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(value)) {
+      return new Date(value);
+    }
+    return new Date(`${value}Z`);
+  };
 
   // Fetch jcr:content.json once (24h cache). Fail-open: schema and
   // translation keep working if author is unreachable or unauthorized.

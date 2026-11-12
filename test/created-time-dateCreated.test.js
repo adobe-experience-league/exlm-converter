@@ -178,6 +178,23 @@ describe('dateCreated from created-time', () => {
     );
   });
 
+  it('gitCreatedFromArticleSearch does not guess when path misses', () => {
+    assert.equal(
+      gitCreatedFromArticleSearch(
+        {
+          data: [
+            {
+              path: '/en/docs/other',
+              git: { created: '2020-01-01T00:00:00.000Z' },
+            },
+          ],
+        },
+        DOCS_PATH,
+      ),
+      '',
+    );
+  });
+
   it('htmlFromArticleSearch returns text/html transformedContent', () => {
     const html = htmlFromArticleSearch({
       data: {
@@ -185,7 +202,7 @@ describe('dateCreated from created-time', () => {
         transformedContent: [
           { contentType: 'text/markdown', raw: '# md' },
           {
-            contentType: 'text/html',
+            contentType: 'text/html; charset=utf-8',
             raw: '<!doctype html><html><head></head><body>doc</body></html>',
           },
         ],

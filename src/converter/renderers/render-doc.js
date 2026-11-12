@@ -11,6 +11,7 @@ import {
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 import { setMetadata } from '../modules/utils/dom-utils.js';
+import { isHTML } from '../modules/utils/media-utils.js';
 
 export const aioLogger = Logger('render-doc');
 
@@ -19,8 +20,7 @@ export const articleFromSearchPayload = (payload, path = '') => {
   const data = payload?.data;
   if (Array.isArray(data)) {
     if (path) {
-      const match = data.find((row) => row?.path === path);
-      if (match) return match;
+      return data.find((row) => row?.path === path) || null;
     }
     return data[0] || null;
   }
@@ -39,7 +39,7 @@ export const htmlFromArticleSearch = (payload, path = '') => {
   const blocks = item?.transformedContent;
   if (!Array.isArray(blocks)) return '';
   const htmlBlock = blocks.find(
-    (block) => block?.contentType === 'text/html' && block?.raw,
+    (block) => isHTML(block?.contentType) && block?.raw,
   );
   return htmlBlock?.raw ? String(htmlBlock.raw) : '';
 };
@@ -101,8 +101,10 @@ async function renderDocV2({ path, lang, authorization }) {
     },
   };
 
-  // Single JSON fetch: HTML lives in transformedContent; git.created for schema.
-  // Fall back to the HTML Accept endpoint if JSON/HTML is unavailable.
+  let gitCreated = '';
+  let htmlFromJson = '';
+
+  // Prefer one JSON fetch: HTML in transformedContent + git.created for schema.
   try {
     const docJsonResponse = await defaultExlClientv2.getArticleJsonByPath(
       path,
@@ -111,25 +113,23 @@ async function renderDocV2({ path, lang, authorization }) {
     );
     if (docJsonResponse.ok) {
       const payload = await docJsonResponse.json();
-      const htmlFromJson = htmlFromArticleSearch(payload, path);
-      if (htmlFromJson) {
-        const gitCreated = gitCreatedFromArticleSearch(payload, path);
-        const html = withCreatedTimeMeta(htmlFromJson, gitCreated);
-        return {
-          body: html,
-          headers: {
-            'Content-Type': 'text/html',
-          },
-          md: '',
-          original: html,
-        };
-      }
+      gitCreated = gitCreatedFromArticleSearch(payload, path);
+      htmlFromJson = htmlFromArticleSearch(payload, path);
     }
   } catch (error) {
-    aioLogger.warn(
-      `Failed to render docs v2 from article JSON: path=${path}`,
-      error,
-    );
+    aioLogger.warn(`Failed to fetch docs v2 article JSON: path=${path}`, error);
+  }
+
+  if (htmlFromJson) {
+    const html = withCreatedTimeMeta(htmlFromJson, gitCreated);
+    return {
+      body: html,
+      headers: {
+        'Content-Type': 'text/html',
+      },
+      md: '',
+      original: html,
+    };
   }
 
   const docHtmlResponse = await defaultExlClientv2.getArticleHtmlByPath(
@@ -151,7 +151,8 @@ async function renderDocV2({ path, lang, authorization }) {
     };
   }
 
-  const html = await docHtmlResponse.text();
+  // Keep git.created from the JSON attempt when falling back to HTML Accept.
+  const html = withCreatedTimeMeta(await docHtmlResponse.text(), gitCreated);
   return {
     body: html,
     headers: {
