@@ -15,12 +15,18 @@ import { isHTML } from '../modules/utils/media-utils.js';
 
 export const aioLogger = Logger('render-doc');
 
+const normalizeArticlePath = (value = '') =>
+  String(value || '').replace(/\/+$/, '');
+
 /** Prefer the row matching `path`; otherwise first list item or object payload. */
 export const articleFromSearchPayload = (payload, path = '') => {
   const data = payload?.data;
+  const wanted = normalizeArticlePath(path);
   if (Array.isArray(data)) {
-    if (path) {
-      const match = data.find((row) => row?.path === path);
+    if (wanted) {
+      const match = data.find(
+        (row) => normalizeArticlePath(row?.path) === wanted,
+      );
       if (match) return match;
       // Path-scoped search often returns one row with a slightly different path string.
       return data.length === 1 ? data[0] : null;
