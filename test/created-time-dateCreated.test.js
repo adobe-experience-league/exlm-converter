@@ -12,7 +12,10 @@ import { buildCourseSchema } from '../src/converter/modules/schemas/builders/cou
 import { createMetaData } from '../src/converter/modules/utils/metadata-util.js';
 import { getMetadata } from '../src/converter/modules/utils/dom-utils.js';
 import { DOCPAGETYPE } from '../src/common/utils/doc-page-types.js';
-import { gitCreatedFromArticleSearch } from '../src/converter/renderers/render-doc.js';
+import {
+  gitCreatedFromArticleSearch,
+  htmlFromArticleSearch,
+} from '../src/converter/renderers/render-doc.js';
 
 const PATH = '/en/perspectives/sample-article';
 const DOCS_PATH = '/en/docs/analytics/implementation/home';
@@ -152,5 +155,43 @@ describe('dateCreated from created-time', () => {
       '2021-05-01T00:00:00.000Z',
     );
     assert.equal(gitCreatedFromArticleSearch({ data: {} }), '');
+  });
+
+  it('gitCreatedFromArticleSearch prefers the row matching path', () => {
+    assert.equal(
+      gitCreatedFromArticleSearch(
+        {
+          data: [
+            {
+              path: '/en/docs/other',
+              git: { created: '2020-01-01T00:00:00.000Z' },
+            },
+            {
+              path: DOCS_PATH,
+              git: { created: '2022-02-17T21:30:53.000Z' },
+            },
+          ],
+        },
+        DOCS_PATH,
+      ),
+      '2022-02-17T21:30:53.000Z',
+    );
+  });
+
+  it('htmlFromArticleSearch returns text/html transformedContent', () => {
+    const html = htmlFromArticleSearch({
+      data: {
+        path: DOCS_PATH,
+        transformedContent: [
+          { contentType: 'text/markdown', raw: '# md' },
+          {
+            contentType: 'text/html',
+            raw: '<!doctype html><html><head></head><body>doc</body></html>',
+          },
+        ],
+      },
+      DOCS_PATH,
+    });
+    assert.match(html, /<body>doc<\/body>/);
   });
 });

@@ -54,6 +54,10 @@ async function transformAemPageMetadata(htmlString, params, path) {
     updateLegacyAndV2Tags(document);
   }
 
+  // Same UTC normalization as published / content-modified (AEM often omits Z).
+  const parseDate = (dateStr) =>
+    dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
+
   // Fetch jcr:content.json once (24h cache). Fail-open: schema and
   // translation keep working if author is unreachable or unauthorized.
   // - created-time ← jcr:created (all langs) for schema.org dateCreated
@@ -64,7 +68,10 @@ async function transformAemPageMetadata(htmlString, params, path) {
 
     const jcrCreated = json?.['jcr:created'];
     if (jcrCreated) {
-      setMetadata(document, 'created-time', String(jcrCreated));
+      const createdDate = parseDate(String(jcrCreated));
+      if (!Number.isNaN(createdDate.getTime())) {
+        setMetadata(document, 'created-time', createdDate.toISOString());
+      }
     }
 
     if (lang !== 'en') {
@@ -88,9 +95,6 @@ async function transformAemPageMetadata(htmlString, params, path) {
 
   const publishedTime = getMetadata(document, 'published-time');
   const contentModifiedTime = getMetadata(document, 'content-modified-time');
-
-  const parseDate = (dateStr) =>
-    dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
 
   const lastUpdate = contentModifiedTime
     ? parseDate(contentModifiedTime)

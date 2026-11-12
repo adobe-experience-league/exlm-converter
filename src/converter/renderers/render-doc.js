@@ -14,11 +14,41 @@ import { setMetadata } from '../modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('render-doc');
 
-/** Pull git.created from articles/search JSON (object or list payload). */
-export const gitCreatedFromArticleSearch = (payload) => {
+/** Prefer the row matching `path`; otherwise first list item or object payload. */
+export const articleFromSearchPayload = (payload, path = '') => {
   const data = payload?.data;
-  const item = Array.isArray(data) ? data[0] : data;
+  if (Array.isArray(data)) {
+    if (path) {
+      const match = data.find((row) => row?.path === path);
+      if (match) return match;
+    }
+    return data[0] || null;
+  }
+  return data || null;
+};
+
+/** Pull git.created from articles/search JSON (object or list payload). */
+export const gitCreatedFromArticleSearch = (payload, path = '') => {
+  const item = articleFromSearchPayload(payload, path);
   return item?.git?.created ? String(item.git.created) : '';
+};
+
+/** HTML body from articles/search JSON transformedContent (text/html). */
+export const htmlFromArticleSearch = (payload, path = '') => {
+  const item = articleFromSearchPayload(payload, path);
+  const blocks = item?.transformedContent;
+  if (!Array.isArray(blocks)) return '';
+  const htmlBlock = blocks.find(
+    (block) => block?.contentType === 'text/html' && block?.raw,
+  );
+  return htmlBlock?.raw ? String(htmlBlock.raw) : '';
+};
+
+const withCreatedTimeMeta = (html, gitCreated) => {
+  if (!gitCreated) return html;
+  const dom = new jsdom.JSDOM(html);
+  setMetadata(dom.window.document, 'created-time', gitCreated);
+  return dom.serialize();
 };
 
 async function renderDocV1({ path, lang, solution, docRelPath }) {
@@ -65,15 +95,47 @@ async function renderDocV1({ path, lang, solution, docRelPath }) {
 
 async function renderDocV2({ path, lang, authorization }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
+  const authHeaders = {
+    headers: {
+      ...(authorization && { authorization }),
+    },
+  };
+
+  // Single JSON fetch: HTML lives in transformedContent; git.created for schema.
+  // Fall back to the HTML Accept endpoint if JSON/HTML is unavailable.
+  try {
+    const docJsonResponse = await defaultExlClientv2.getArticleJsonByPath(
+      path,
+      lang,
+      authHeaders,
+    );
+    if (docJsonResponse.ok) {
+      const payload = await docJsonResponse.json();
+      const htmlFromJson = htmlFromArticleSearch(payload, path);
+      if (htmlFromJson) {
+        const gitCreated = gitCreatedFromArticleSearch(payload, path);
+        const html = withCreatedTimeMeta(htmlFromJson, gitCreated);
+        return {
+          body: html,
+          headers: {
+            'Content-Type': 'text/html',
+          },
+          md: '',
+          original: html,
+        };
+      }
+    }
+  } catch (error) {
+    aioLogger.warn(
+      `Failed to render docs v2 from article JSON: path=${path}`,
+      error,
+    );
+  }
 
   const docHtmlResponse = await defaultExlClientv2.getArticleHtmlByPath(
     path,
     lang,
-    {
-      headers: {
-        ...(authorization && { authorization }),
-      },
-    },
+    authHeaders,
   );
 
   if (!docHtmlResponse.ok) {
@@ -89,35 +151,7 @@ async function renderDocV2({ path, lang, authorization }) {
     };
   }
 
-  let html = await docHtmlResponse.text();
-
-  // Fail-open: inject created-time from article JSON git.created for schema.org.
-  try {
-    const docJsonResponse = await defaultExlClientv2.getArticleJsonByPath(
-      path,
-      lang,
-      {
-        headers: {
-          ...(authorization && { authorization }),
-        },
-      },
-    );
-    if (docJsonResponse.ok) {
-      const payload = await docJsonResponse.json();
-      const gitCreated = gitCreatedFromArticleSearch(payload);
-      if (gitCreated) {
-        const dom = new jsdom.JSDOM(html);
-        setMetadata(dom.window.document, 'created-time', gitCreated);
-        html = dom.serialize();
-      }
-    }
-  } catch (error) {
-    aioLogger.warn(
-      `Failed to inject docs created-time from article JSON: path=${path}`,
-      error,
-    );
-  }
-
+  const html = await docHtmlResponse.text();
   return {
     body: html,
     headers: {
