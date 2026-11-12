@@ -85,7 +85,11 @@ class FranklinServletClient {
    */
   async fetchPageJcrJson(path) {
     const { aemAuthorUrl } = this.config;
-    const cacheKey = `${path}/jcr:content.json`;
+    // Paths often arrive as `/en/...`; AEM content path has no leading slash.
+    const contentPath = String(path || '')
+      .replace(/^\/+/, '')
+      .replace(/\/+$/, '');
+    const cacheKey = `${contentPath}/jcr:content.json`;
 
     // Check cache first
     const cachedData = getCachedData(cacheKey);
@@ -96,7 +100,7 @@ class FranklinServletClient {
     // Cache miss or expired, fetch from AEM
     const { authorization } = this.config;
     // Example: https://author-p122525-e1200861.adobeaemcloud.com/content/exlm/global/de/browse/jcr:content.json
-    const jsonUrl = `${aemAuthorUrl}/content/exlm/global/${path}/jcr:content.json`;
+    const jsonUrl = `${aemAuthorUrl}/content/exlm/global/${contentPath}/jcr:content.json`;
     const headers = { 'cache-control': 'no-cache' };
     if (authorization) headers.authorization = authorization;
 

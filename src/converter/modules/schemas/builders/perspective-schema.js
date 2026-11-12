@@ -49,6 +49,7 @@ export const buildPerspectiveSchema = (document, path) => {
     headline,
     description,
     inLanguage,
+    dateCreated: createdFromMeta,
     audienceType,
     about: productLabels,
     keywords,
@@ -61,6 +62,8 @@ export const buildPerspectiveSchema = (document, path) => {
     getMetadata(document, 'published-time'),
   );
   const published = datePublished || dateModified;
+  // createdFromMeta prefers created-time; else published (from extractCommonMetadata).
+  const dateCreated = createdFromMeta || published;
 
   const schema = {};
 
@@ -71,8 +74,7 @@ export const buildPerspectiveSchema = (document, path) => {
   addIfPresent(schema, 'headline', headline);
   addIfPresent(schema, 'description', description);
   addIfPresent(schema, 'inLanguage', inLanguage);
-  // dateCreated matches docs: the published day. There is no separate created meta.
-  addIfPresent(schema, 'dateCreated', published);
+  addIfPresent(schema, 'dateCreated', dateCreated);
   addIfPresent(schema, 'datePublished', published);
   addIfPresent(schema, 'dateModified', dateModified || published);
   addIfPresent(schema, 'author', buildAuthor(document));

@@ -52,12 +52,33 @@ async function transformAemPageMetadata(htmlString, params, path) {
     updateLegacyAndV2Tags(document);
   }
 
-  // Fetch and set cq:translationMethod from jcr:content.json
-  // Note: fetchJson uses 24-hour cache - fetches from cache if available, otherwise from API
-  if (lang !== 'en') {
-    try {
-      const client = new FranklinServletClient(params);
-      const json = await client.fetchPageJcrJson(path);
+  // AEM often omits Z; keep explicit offsets (+00:00) intact.
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date(NaN);
+    const value = String(dateStr);
+    if (value.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(value)) {
+      return new Date(value);
+    }
+    return new Date(`${value}Z`);
+  };
+
+  // Fetch jcr:content.json once (24h cache). Fail-open: schema and
+  // translation keep working if author is unreachable or unauthorized.
+  // - created-time ← jcr:created (all langs) for schema.org dateCreated
+  // - translation-mechanism ← cq:translationMethod (non-en only)
+  try {
+    const client = new FranklinServletClient(params);
+    const json = await client.fetchPageJcrJson(path);
+
+    const jcrCreated = json?.['jcr:created'];
+    if (jcrCreated) {
+      const createdDate = parseDate(String(jcrCreated));
+      if (!Number.isNaN(createdDate.getTime())) {
+        setMetadata(document, 'created-time', createdDate.toISOString());
+      }
+    }
+
+    if (lang !== 'en') {
       const translationMap = {
         HUMAN_TRANSLATION: 'HT',
         MACHINE_TRANSLATION: 'MT',
@@ -71,16 +92,13 @@ async function transformAemPageMetadata(htmlString, params, path) {
       if (translationMethod) {
         setMetadata(document, 'translation-mechanism', translationMethod);
       }
-    } catch (error) {
-      aioLogger.warn('Failed to fetch or set cq:translationMethod', error);
     }
+  } catch (error) {
+    aioLogger.warn('Failed to fetch or apply jcr:content.json metadata', error);
   }
 
   const publishedTime = getMetadata(document, 'published-time');
   const contentModifiedTime = getMetadata(document, 'content-modified-time');
-
-  const parseDate = (dateStr) =>
-    dateStr?.endsWith('Z') ? new Date(dateStr) : new Date(`${dateStr}Z`);
 
   const lastUpdate = contentModifiedTime
     ? parseDate(contentModifiedTime)
