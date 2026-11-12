@@ -1,4 +1,5 @@
 import Logger from '@adobe/aio-lib-core-logging';
+import jsdom from 'jsdom';
 import { createDefaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
@@ -9,8 +10,66 @@ import {
 } from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
+import { setMetadata } from '../modules/utils/dom-utils.js';
+import { isHTML } from '../modules/utils/media-utils.js';
 
 export const aioLogger = Logger('render-doc');
+
+const normalizeArticlePath = (value = '') =>
+  String(value || '').replace(/\/+$/, '');
+
+/** Prefer the row matching `path`; otherwise first list item or object payload. */
+export const articleFromSearchPayload = (payload, path = '') => {
+  const data = payload?.data;
+  const wanted = normalizeArticlePath(path);
+  if (Array.isArray(data)) {
+    if (wanted) {
+      const match = data.find(
+        (row) => normalizeArticlePath(row?.path) === wanted,
+      );
+      if (match) return match;
+      // Path-scoped search often returns one row with a slightly different path string.
+      return data.length === 1 ? data[0] : null;
+    }
+    return data[0] || null;
+  }
+  return data || null;
+};
+
+/** Normalize create timestamps the same way as AEM jcr:created (UTC ISO). */
+export const toCreatedTimeMeta = (value) => {
+  if (!value) return '';
+  const raw = String(value);
+  const date =
+    raw.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(raw)
+      ? new Date(raw)
+      : new Date(`${raw}Z`);
+  return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+};
+
+/** Pull git.created from articles/search JSON (object or list payload). */
+export const gitCreatedFromArticleSearch = (payload, path = '') => {
+  const item = articleFromSearchPayload(payload, path);
+  return toCreatedTimeMeta(item?.git?.created);
+};
+
+/** HTML body from articles/search JSON transformedContent (text/html). */
+export const htmlFromArticleSearch = (payload, path = '') => {
+  const item = articleFromSearchPayload(payload, path);
+  const blocks = item?.transformedContent;
+  if (!Array.isArray(blocks)) return '';
+  const htmlBlock = blocks.find(
+    (block) => isHTML(block?.contentType) && block?.raw,
+  );
+  return htmlBlock?.raw ? String(htmlBlock.raw) : '';
+};
+
+const withCreatedTimeMeta = (html, gitCreated) => {
+  if (!gitCreated) return html;
+  const dom = new jsdom.JSDOM(html);
+  setMetadata(dom.window.document, 'created-time', gitCreated);
+  return dom.serialize();
+};
 
 async function renderDocV1({ path, lang, solution, docRelPath }) {
   // construct the path in the articles API
@@ -56,15 +115,47 @@ async function renderDocV1({ path, lang, solution, docRelPath }) {
 
 async function renderDocV2({ path, lang, authorization }) {
   const defaultExlClientv2 = await createDefaultExlClientV2();
+  const authHeaders = {
+    headers: {
+      ...(authorization && { authorization }),
+    },
+  };
+
+  let gitCreated = '';
+  let htmlFromJson = '';
+
+  // Prefer one JSON fetch: HTML in transformedContent + git.created for schema.
+  try {
+    const docJsonResponse = await defaultExlClientv2.getArticleJsonByPath(
+      path,
+      lang,
+      authHeaders,
+    );
+    if (docJsonResponse.ok) {
+      const payload = await docJsonResponse.json();
+      gitCreated = gitCreatedFromArticleSearch(payload, path);
+      htmlFromJson = htmlFromArticleSearch(payload, path);
+    }
+  } catch (error) {
+    aioLogger.warn(`Failed to fetch docs v2 article JSON: path=${path}`, error);
+  }
+
+  if (htmlFromJson) {
+    const html = withCreatedTimeMeta(htmlFromJson, gitCreated);
+    return {
+      body: html,
+      headers: {
+        'Content-Type': 'text/html',
+      },
+      md: '',
+      original: html,
+    };
+  }
 
   const docHtmlResponse = await defaultExlClientv2.getArticleHtmlByPath(
     path,
     lang,
-    {
-      headers: {
-        ...(authorization && { authorization }),
-      },
-    },
+    authHeaders,
   );
 
   if (!docHtmlResponse.ok) {
@@ -80,8 +171,8 @@ async function renderDocV2({ path, lang, authorization }) {
     };
   }
 
-  const html = await docHtmlResponse.text();
-
+  // Keep git.created from the JSON attempt when falling back to HTML Accept.
+  const html = withCreatedTimeMeta(await docHtmlResponse.text(), gitCreated);
   return {
     body: html,
     headers: {
