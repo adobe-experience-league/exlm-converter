@@ -62,7 +62,7 @@ export const buildPerspectiveSchema = (document, path) => {
     getMetadata(document, 'published-time'),
   );
   const published = datePublished || dateModified;
-  // createdFromMeta prefers created-time (jcr:created); else published.
+  // createdFromMeta prefers created-time; else published (from extractCommonMetadata).
   const dateCreated = createdFromMeta || published;
 
   const schema = {};

@@ -1,4 +1,5 @@
 import Logger from '@adobe/aio-lib-core-logging';
+import jsdom from 'jsdom';
 import { createDefaultExlClient } from '../modules/ExlClient.js';
 import md2html from '../modules/ExlMd2Html.js';
 import { removeExtension } from '../modules/utils/path-utils.js';
@@ -9,8 +10,16 @@ import {
 } from '../modules/utils/path-match-utils.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
+import { setMetadata } from '../modules/utils/dom-utils.js';
 
 export const aioLogger = Logger('render-doc');
+
+/** Pull git.created from articles/search JSON (object or list payload). */
+export const gitCreatedFromArticleSearch = (payload) => {
+  const data = payload?.data;
+  const item = Array.isArray(data) ? data[0] : data;
+  return item?.git?.created ? String(item.git.created) : '';
+};
 
 async function renderDocV1({ path, lang, solution, docRelPath }) {
   // construct the path in the articles API
@@ -80,7 +89,34 @@ async function renderDocV2({ path, lang, authorization }) {
     };
   }
 
-  const html = await docHtmlResponse.text();
+  let html = await docHtmlResponse.text();
+
+  // Fail-open: inject created-time from article JSON git.created for schema.org.
+  try {
+    const docJsonResponse = await defaultExlClientv2.getArticleJsonByPath(
+      path,
+      lang,
+      {
+        headers: {
+          ...(authorization && { authorization }),
+        },
+      },
+    );
+    if (docJsonResponse.ok) {
+      const payload = await docJsonResponse.json();
+      const gitCreated = gitCreatedFromArticleSearch(payload);
+      if (gitCreated) {
+        const dom = new jsdom.JSDOM(html);
+        setMetadata(dom.window.document, 'created-time', gitCreated);
+        html = dom.serialize();
+      }
+    }
+  } catch (error) {
+    aioLogger.warn(
+      `Failed to inject docs created-time from article JSON: path=${path}`,
+      error,
+    );
+  }
 
   return {
     body: html,

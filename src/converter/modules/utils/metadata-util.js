@@ -97,6 +97,15 @@ export const createMetaData = (
     .filter((key) => data[key])
     .map((key) => ({ name: key.toLowerCase(), content: data[key] }));
 
+  // Docs create day for schema.org dateCreated (git history, not AEM jcr).
+  const gitCreated = data?.git?.created;
+  if (gitCreated) {
+    metaProperties.push({
+      name: 'created-time',
+      content: String(gitCreated),
+    });
+  }
+
   if (fullMetadata.solution) {
     metaProperties.push({
       name: 'coveo-solution',
