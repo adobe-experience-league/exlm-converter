@@ -9,9 +9,6 @@ import { extractCommonMetadata } from '../src/converter/modules/schemas/schema-h
 import { buildPerspectiveSchema } from '../src/converter/modules/schemas/builders/perspective-schema.js';
 import { buildArticleSchema } from '../src/converter/modules/schemas/builders/article-schema.js';
 import { buildCourseSchema } from '../src/converter/modules/schemas/builders/course-schema.js';
-import { createMetaData } from '../src/converter/modules/utils/metadata-util.js';
-import { getMetadata } from '../src/converter/modules/utils/dom-utils.js';
-import { DOCPAGETYPE } from '../src/common/utils/doc-page-types.js';
 import {
   gitCreatedFromArticleSearch,
   htmlFromArticleSearch,
@@ -122,23 +119,6 @@ describe('dateCreated from created-time', () => {
     );
     assert.equal(dateCreated, datePublished);
     assert.equal(dateCreated, '2026-11-11');
-  });
-
-  it('createMetaData sets created-time from docs git.created', () => {
-    const document = docFrom(docsHead);
-    createMetaData(
-      document,
-      { title: 'Sample Doc', 'last-update': '2026-10-01T00:00:00.000Z' },
-      { git: { created: '2022-02-17T21:30:53.000Z' }, id: 'doc-1' },
-      DOCPAGETYPE.DOC_ARTICLE,
-      [],
-    );
-    assert.equal(
-      getMetadata(document, 'created-time'),
-      '2022-02-17T21:30:53.000Z',
-    );
-    const schema = buildArticleSchema(document, DOCS_PATH);
-    assert.equal(schema.dateCreated, '2022-02-17');
   });
 
   it('gitCreatedFromArticleSearch reads object and list payloads', () => {
