@@ -1,6 +1,5 @@
 import jsdom from 'jsdom';
 import { matchPlaylistPath } from '../modules/utils/path-match-utils.js';
-import { paramMemoryStore } from '../modules/utils/param-memory-store.js';
 import { createDefaultExlClientV2 } from '../modules/ExlClientV2.js';
 import { upsertJsonLdScript } from '../modules/schemas/json-ld-util.js';
 import { buildPlaylistSchema } from '../modules/schemas/builders/playlist-schema.js';
@@ -16,13 +15,11 @@ async function renderPlaylistV2({ playlistId, lang, authorization }) {
         ...(authorization && { authorization }),
       },
     }),
-    paramMemoryStore.hasFeatureFlag('schema-org-playlist')
-      ? defaultExlClientv2.getPlaylistJsonById(playlistId, lang, {
-          headers: {
-            ...(authorization && { authorization }),
-          },
-        })
-      : Promise.resolve(null),
+    defaultExlClientv2.getPlaylistJsonById(playlistId, lang, {
+      headers: {
+        ...(authorization && { authorization }),
+      },
+    }),
   ]);
 
   if (!playlistHtmlResponse.ok) {

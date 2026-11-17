@@ -55,7 +55,7 @@ EXL_API_HOST=https://experienceleague.adobe.com
 
 For AEM pages, add `AEM_AUTHOR_URL`, `OWNER`, `REPO`, `BRANCH`, `ACCESS_TOKEN`. See [README.md](README.md) for khoros, coveo-token, and full variable tables.
 
-**Feature flags:** Set via GitHub environment → `FEATURE_FLAGS` input in `app.config.yaml` (comma-separated). Examples: `usetq`, `schema-org-playlist`, `schema-org`. Docs, landing pages, playlists and TOCs always use V2 Delivery; the migration flags are no longer used.
+**Feature flags:** Set via GitHub environment → `FEATURE_FLAGS` input in `app.config.yaml` (comma-separated). Example: `usetq`. Schema.org generation is always enabled for supported content. Docs, landing pages, playlists and TOCs always use V2 Delivery; the migration flags are no longer used.
 
 ## Scope
 
@@ -69,7 +69,7 @@ Do **not** add browser-side block decoration, player UX, or client scripts here 
 
 ### Playlist pages and schema.org
 
-- **Renderer:** `src/converter/renderers/render-playlist.js` — always fetch V2 HTML; if `schema-org-playlist`, inject `buildPlaylistSchema` into `<head>` as `exl-schema-org-jsonld`
+- **Renderer:** `src/converter/renderers/render-playlist.js` — always fetch V2 HTML and JSON; inject `buildPlaylistSchema` into `<head>` as `exl-schema-org-jsonld` when schema data is available
 - **Schema builder:** `src/converter/modules/schemas/builders/playlist-schema.js`
 
 Verify schema in **view-source `<head>`** (`id="exl-schema-org-jsonld"`) on converter output (`localhost:3030` or deployed `.../main/convert/en/playlists/{id}`), not `<code>` blocks in `<main>`.
