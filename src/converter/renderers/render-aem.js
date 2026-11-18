@@ -15,6 +15,7 @@ import {
   createTranslatedV2TQMetadata,
   decodeCQMetadata,
   generateHash,
+  createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
   getChildPageIds,
@@ -46,6 +47,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
+  await createTranslatedMetadata(document, lang);
 
   // If usetq feature flag is on, rename legacy to _v1 tags and update legacy tags with _v2 tags
   if (paramMemoryStore.hasFeatureFlag('usetq')) {
