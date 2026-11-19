@@ -15,6 +15,7 @@ import {
   createTranslatedV2TQMetadata,
   decodeCQMetadata,
   generateHash,
+  createTranslatedMetadata,
   getModuleCount,
   getCourseDuration,
   getChildPageIds,
@@ -45,6 +46,7 @@ async function transformAemPageMetadata(htmlString, params, path) {
   updateEncodedMetadata(document, 'role');
   updateEncodedMetadata(document, 'level');
   updateCoveoSolutionMetadata(document);
+  await createTranslatedMetadata(document, lang);
 
   // removed featureflag always uses tq tags
   updateLegacyAndV2Tags(document);
