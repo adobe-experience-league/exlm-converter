@@ -1,5 +1,6 @@
 import yaml from 'js-yaml';
 import { DOCPAGETYPE } from '../../../common/utils/doc-page-types.js';
+import { setMetadata } from './dom-utils.js';
 
 /**
  * Generates an SEO-friendly string by combining input arguments.
@@ -97,6 +98,22 @@ export const createMetaData = (
     .filter((key) => data[key])
     .map((key) => ({ name: key.toLowerCase(), content: data[key] }));
 
+  // Docs create day for schema.org dateCreated (git history, not AEM jcr).
+  // Upsert via setMetadata so FullMeta cannot duplicate the tag.
+  const gitCreatedRaw = data?.git?.created;
+  let gitCreated = '';
+  if (gitCreatedRaw) {
+    const raw = String(gitCreatedRaw);
+    const createdDate =
+      raw.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(raw)
+        ? new Date(raw)
+        : new Date(`${raw}Z`);
+    if (!Number.isNaN(createdDate.getTime())) {
+      gitCreated = createdDate.toISOString();
+      setMetadata(document, 'created-time', gitCreated);
+    }
+  }
+
   if (fullMetadata.solution) {
     metaProperties.push({
       name: 'coveo-solution',
@@ -127,6 +144,7 @@ export const createMetaData = (
 
   // Dynamic Metadata from API
   Object.entries(fullMetadata).forEach(([key, value]) => {
+    if (key === 'created-time' && gitCreated) return;
     const metaTag = document.createElement('meta');
     metaTag.setAttribute('name', key);
 

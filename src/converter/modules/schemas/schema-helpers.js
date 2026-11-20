@@ -5,6 +5,7 @@ export const SCHEMA_ORG_CONTEXT = 'https://schema.org';
 export const WEB_PAGE_TYPE = 'WebPage';
 export const AUDIENCE_TYPE = 'Audience';
 export const SOFTWARE_APPLICATION_TYPE = 'SoftwareApplication';
+export const PERSON_TYPE = 'Person';
 const EPOCH_ISO_DATE = '1970-01-01';
 
 export const ADOBE_PUBLISHER = {
@@ -19,6 +20,29 @@ export const toIsoDate = (value) => {
   if (Number.isNaN(date.getTime())) return '';
   const isoDate = date.toISOString().slice(0, 10);
   return isoDate === EPOCH_ISO_DATE ? '' : isoDate;
+};
+
+/** Latest YYYY-MM-DD among values. Empty and unparseable inputs are ignored. */
+export const laterIsoDate = (...values) =>
+  values
+    .map((value) => toIsoDate(value))
+    .filter(Boolean)
+    .sort()
+    .pop() || '';
+
+/** Absolute Experience League URL. Relative paths resolve against EXL_HOST. */
+export const toAbsoluteExlUrl = (value) => {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const parsed = new URL(raw, EXL_HOST);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    parsed.hash = '';
+    parsed.search = '';
+    return parsed.toString();
+  } catch (e) {
+    return '';
+  }
 };
 
 export const getCsvValues = (value = '') =>
@@ -102,8 +126,10 @@ export const extractCommonMetadata = (document, path) => {
   const datePublished = toIsoDate(
     getFirstNonEmpty(getMetadata(document, 'published-time'), dateModified),
   );
-  // fallback to published date as created date in meta is not available
-  const dateCreated = toIsoDate(getFirstNonEmpty(datePublished));
+  // Prefer created-time (AEM jcr:created or docs git.created). Parse first,
+  // then fall back to published when missing/unparseable (fail-open).
+  const dateCreated =
+    toIsoDate(getMetadata(document, 'created-time')) || datePublished;
   const image = getFirstNonEmpty(
     getMetadata(document, 'og:image:secure_url'),
     getMetadata(document, 'og:image'),
